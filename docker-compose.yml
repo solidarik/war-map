@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+
+  some-postgres:
+    image: postgres
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pguser
+      POSTGRES_DB: pgdb
+  
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+#
+# some-postgis:
+##    image: mdillon/postgis
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      - POSTGRES_PASSWORD=dev
+#    depends_on:
+#      - db
+#    command: sh -c 'exec psql -h "0.0.0.0" -p 5432 -U postgres'
+
+#  pgadmin:
+#    image: dpage/pgadmin4
+#    environment:
+#      - PG_ADMIN_DEFAULT_EMAIL=ildar" \
+#      - PG_ADMIN_DEFAULT_PASSWORD=dev" \
+#    ports:
+#      - "80:80"
+#    depends_on:
+#      - some-postgis
+#)
