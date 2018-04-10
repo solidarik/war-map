@@ -1,0 +1,15 @@
+extends layout
+
+block content
+
+  form(action="/login" method="post")
+    h1 Please sign in
+    .form-group
+      label(for="email") Email
+      input.form-control(type="email" id="email" name="email" placeholder="my@mail.com" required autofocus)
+    .form-group
+      label(for="password") Password
+      input.form-control(type="password" id="password" name="password" required)
+    input(type="hidden" name="_csrf" value=csrf())
+
+    button.btn.btn-lg.btn-primary.btn-block(type="submit") Login

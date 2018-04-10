@@ -1,0 +1,5 @@
+
+each messages, type in flash
+  - if (type == 'error') type = 'danger' // bootstrap class
+  each message in messages
+    div(class="alert alert-" + type)!= message
