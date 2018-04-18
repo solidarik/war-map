@@ -42,5 +42,5 @@ router.post('/logout', require('./routes/logout').post);
 app.use(router.routes());
 
 const socket = require('./libs/socket');
-const server = app.listen(3000);
+const server = app.listen(config.port);
 socket(server);

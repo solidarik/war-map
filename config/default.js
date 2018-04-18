@@ -5,8 +5,10 @@ module.exports = {
   // secret data can be moved to env variables
   // or a separate config
   secret:   'mysecret',
+  port: process.env.PORT || 3000,
+  redis_uri: process.env.REDISCLOUD_URL || { host: 'localhost', port: 6379 },
   mongoose: {
-    uri:     'mongodb://localhost/app',
+    uri: process.env.MONGODB_URI || 'mongodb://localhost/app',
     options: {
       keepAlive: 1,
       poolSize: 5,
@@ -25,5 +27,5 @@ module.exports = {
       return path.join(cfg.root, 'templates');
     })
   },
-  root:     process.cwd()
+  root: process.cwd(),
 };

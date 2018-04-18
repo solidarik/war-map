@@ -13,7 +13,7 @@ let sessionStore = require('./sessionStore');
 function socket(server) {
 
   let io = socketIO(server);
-  io.adapter(socketRedis({ host: 'localhost', port: 6379 }));
+  io.adapter(socketRedis(config.redis_uri));
 
   io.use(function(socket, next) { // req
     let handshakeData = socket.request;
