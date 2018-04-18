@@ -6,7 +6,7 @@ module.exports = {
   // or a separate config
   secret:   'mysecret',
   port: process.env.PORT || 3000,
-  redis_uri: process.env.REDISCLOUD_URL || { host: 'localhost', port: 6379 },
+  redis_uri: {host: process.env.REDISCLOUD_URL || 'localhost', port: 6379},
   mongoose: {
     uri: process.env.MONGODB_URI || 'mongodb://localhost/app',
     options: {
