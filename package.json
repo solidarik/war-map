@@ -1,0 +1,47 @@
+{
+  "name": "war-map",
+  "version": "1.0.0",
+  "description": "War moves",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/solidarik/war-map.git"
+  },
+  "keywords": [
+    "warmap",
+    "openlayer",
+    "nodejs",
+    "koa",
+    "move",
+    "troops",
+    "WWII"
+  ],
+  "author": "Ildar Gubaydullin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/solidarik/war-map/issues"
+  },
+  "homepage": "https://github.com/solidarik/war-map#readme",
+  "dependencies": {
+    "co-busboy": "^1.4.0",
+    "config": "^1.30.0",
+    "koa": "^2.5.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-favicon": "^2.0.1",
+    "koa-logger": "^3.2.0",
+    "koa-passport": "^4.0.1",
+    "koa-router": "^7.4.0",
+    "koa-session": "^5.8.1",
+    "koa-session-mongoose": "^2.0.5",
+    "koa-static": "^4.0.2",
+    "mongoose": "^5.0.15",
+    "passport-local": "^1.0.0",
+    "pug": "^2.0.3",
+    "socket.io": "^2.1.0",
+    "socket.io-emitter": "^3.1.1",
+    "socket.io-redis": "^5.2.0"
+  }
+}
