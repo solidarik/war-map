@@ -1,0 +1,70 @@
+extends layout
+
+block content
+
+  div.modal(class='fade' id='regModal' role='dialog' )
+    div.modal-dialog
+      div.modal-content
+        div.modal-header
+          button.close(type='button' data-dismiss='modal')
+            | &times
+          form(action="/reg" method="post")
+            h1 Регистрация
+            input(type="hidden" name="_csrf" value=`csrf()`)
+            .form-group
+              label(for="reg-email") Почта
+              input.form-control(type="email" id="reg-email" name="reg-email" placeholder="my@mail.com" required autofocus)
+            .form-group
+              label(for="reg-password") Пароль
+              input.form-control(type="password" id="reg-password" name="reg-password" required)
+          button.btn.btn-lg.btn-primary.btn-block(type="submit") Создать учетку
+
+  div.modal(class='fade' id='loginModal' role='dialog' )
+    div.modal-dialog
+      div.modal-content
+        div.modal-header
+          button.close(type='button' data-dismiss='modal')
+            | &times        
+          form(action="/login" method="post")
+            h1 Войти в систему
+            input(type="hidden" name="_csrf" value=`csrf()`)
+            .form-group
+              label(for="login-email") Почта
+              input.form-control(type="email" id="login-email" name="login-email" placeholder="my@mail.com" required autofocus)
+            .form-group
+              label(for="login-password") Пароль
+              input.form-control(type="password" id="login-password" name="login-password" required)
+            button.btn.btn-lg.btn-primary.btn-block(type="submit") Войти в систему
+  
+  nav(class='navbar navbar-default' role="header")
+    div.container-fluid
+      div.navbar-header
+        a(class='navbar-brand' href='#')
+          | WarMap
+      ul(class='nav navbar-nav')
+        li.active
+          a(data-toggle='tab' href='#map')
+            | Карта
+        li
+          a(data-toggle='tab' href='#mapdata')
+            | Данные
+      ul(class='nav navbar-nav navbar-right')
+        li
+          a(data-toggle='modal' data-target='#regModal' href='#regModal')
+            span(class='glyphicon glyphicon-user' data-toggle='modal' data-target='#regModal')
+            |  Регистрация
+        li
+          a(data-toggle='modal' data-target='#loginModal' href='#loginModal')
+            span(class='glyphicon glyphicon-log-in' data-toggle='modal' data-target='#loginModal')
+            |  Вход
+
+  div.content(role="content")
+    div.navbar
+      form.form-inline
+        | Тип геометрии &nbsp          
+        select(id='type')
+          option(value='Point') Точка
+          option(value='LineString') Линия
+          option(value='Polygon') Полигон
+          option(value='Circle') Окружность
+    div.map(class='fill panel panel-default' id='map' role='map')

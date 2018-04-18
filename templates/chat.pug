@@ -1,0 +1,60 @@
+extends layout
+
+block head
+  //- @see https://github.com/Automattic/socket.io-client
+  script(src="/socket.io/socket.io.js")
+
+  script.
+    const socket = io();
+
+    function showStatus(status, message) {
+      document.querySelector('[data-status]').innerHTML = message || status;
+      document.querySelector('[data-status]').setAttribute('data-status', status);
+    }
+
+    socket
+      .on('error', function(message) {
+        console.error(message);
+        showStatus('error', message);
+      });
+
+    'connect disconnect reconnect reconnecting reconnect_failed'.split(' ').forEach(function(event) {
+      socket.on(event, function() {
+        showStatus(event);
+      })
+    });
+
+    let emit = socket.emit;
+    socket.emit = function(event) {
+      console.log(event);
+      return emit.apply(this, arguments);
+    };
+
+    socket.on('logout', function(data) {
+      socket.disconnect();
+      alert("You logged out");
+      window.location.reload();
+    })
+
+    socket.on('message', function(message, cb) {
+      console.log(message);
+      cb("from client");
+    });
+
+    socket.on('welcome', (msg) => console.log(msg));
+
+block content
+
+  h1 Welcome
+
+  p You are logged in.
+
+
+  form(method="POST" action="/logout")
+    button logout
+
+  h1 Chat
+
+  .alert.alert-info
+    | State:
+    span(data-status)
