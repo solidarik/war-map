@@ -38,9 +38,9 @@ block content
   
   nav(class='navbar navbar-default' role="header")
     div.container-fluid
-      div.navbar-header
+      //div.navbar-header
         a(class='navbar-brand' href='#')
-          | WarMap
+          | WarMap      
       ul(class='nav navbar-nav')
         li.active
           a(data-toggle='tab' href='#map')
@@ -48,7 +48,7 @@ block content
         li
           a(data-toggle='tab' href='#mapdata')
             | Данные
-      ul(class='nav navbar-nav navbar-right')
+      //ul(class='nav navbar-nav navbar-right')
         li
           a(data-toggle='modal' data-target='#regModal' href='#regModal')
             span(class='glyphicon glyphicon-user' data-toggle='modal' data-target='#regModal')
@@ -59,12 +59,9 @@ block content
             |  Вход
 
   div.content(role="content")
-    div.navbar
-      form.form-inline
-        | Тип геометрии &nbsp          
-        select(id='type')
-          option(value='Point') Точка
-          option(value='LineString') Линия
-          option(value='Polygon') Полигон
-          option(value='Circle') Окружность
-    div.map(class='fill panel panel-default' id='map' role='map')
+    div.map(class='fill panel panel-default' id='map' role='map')    
+    //input(type='text' class="datepicker-here" data-position="right top")
+    //div(class='html5-date')
+      label(for="when")
+        | Дата события: 
+      input(id="when" name="when" type="date")

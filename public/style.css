@@ -11,13 +11,29 @@ html, body {height:100%;}
   min-height:100%;
 }
 
-.container-fluid {
+.navbar {
+  margin: 6px 0;
+  border-radius: 4px;
 }
 
-.navbar {
-  margin-top: 6px;
-  margin-bottom: 6px;
+.navbar-nav {
+  margin: 0;
 }
+
+.navbar > .container-fluid {
+  padding: 0;
+}
+
+.navbar-nav li {
+  float: left;
+}
+
+.navbar-nav > li > a, .navbar-brand {
+  padding-top:4px !important; 
+  padding-bottom:0 !important;
+  height: 30px;
+}
+.navbar {min-height:30px !important;}
 
 .fill { 
   min-height: 100%;
@@ -26,16 +42,26 @@ html, body {height:100%;}
   padding: 0px;
 }
 
-.rotate-north {
-  top: 65px;
+#custom-control {
+  top: 5em;
   left: .5em;
 }
-.ol-touch .rotate-north {
-  top: 80px;
+
+/*.point-control {
+  top: 4.5em;
+  left: .5em;
 }
 
-#map {
+.polyline-control {
+  top: 6.2em;
+  left: .5em;
 }
+
+.debug-control {
+  top: 7.9em;
+  left: .5em;
+}
+*/
 
 .navbar-toggle .icon-bar {
   display: block;

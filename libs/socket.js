@@ -1,100 +1,57 @@
-let Cookies = require('cookies');
 let config = require('config');
 let mongoose = require('mongoose');
-let co = require('co');
 let User = require('../models/user');
-
+let Feature = require('../models/feature');
 let socketIO = require('socket.io');
-
-let socketRedis = require('socket.io-redis');
-
-let sessionStore = require('./sessionStore');
 
 function socket(server) {
 
   let io = socketIO(server);
-  io.adapter(socketRedis(config.redis_uri));
 
-  io.use(function(socket, next) { // req
-    let handshakeData = socket.request;
+  io.on('connection', (socket) => {
+    console.log('a user connected');
 
-    let cookies = new Cookies(handshakeData, {}, config.keys);
+    Feature.find({}, (err, features) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
 
-    let sid = 'koa:sess:' + cookies.get('sid');
-
-    co(function* () {
-
-      let session = yield* sessionStore.get(sid, true);
-
-      console.log(session);
-
-      if (!session) {
-        throw new Error("No session");
-      }
-
-      if (!session.passport && !session.passport.user) {
-        throw new Error("Anonymous session not allowed");
-      }
-
-      // if needed: check if the user is allowed to join
-      socket.user = yield User.findById(session.passport.user);
-
-      // if needed later: refresh socket.session on events
-      socket.session = session;
-
-      // on restarts may be junk sockedIds
-      // no problem in them
-      session.socketIds = session.socketIds ? session.socketIds.concat(socket.id) : [socket.id];
-
-      console.log(session.socketIds);
-      yield sessionStore.save(sid, session);
-
-      socket.on('disconnect', function() {
-        co(function* clearSocketId() {
-          let session = yield* sessionStore.get(sid, true);
-          if (session) {
-            session.socketIds.splice(session.socketIds.indexOf(socket.id), 1);
-            yield* sessionStore.save(sid, session);
-          }
-        }).catch(function(err) {
-          console.error("session clear error", err);
+        let ftToCl = [];
+        features.forEach(ft => {
+            ftToCl.push({kind: ft.kind, coords: ft.coords});
         });
-      });
 
-    }).then(function() {
-      next();
-    }).catch(function(err) {
-      console.error(err);
-      next(new Error("Error has occured."));
+        socket.emit('srvFeatures', JSON.stringify({features: ftToCl}));
     });
 
-  });
-
-  io.on('connection', function (socket) {
-    // const t = setTimeout(() => socket.disconnect(), 5000);
-    //
-    // socket.on('auth', (login, password) => {
-    //   if (true) {
-    //     clearTimeout(t);
-    //   } else {
-    //     clearTimeout(t);
-    //     socket.disconnect();
-    //   }
-    // })
-
-    socket.emit('message', 'hello', function(response) {
-      console.log("delivered", response);
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
     });
 
-    // socket.on('', () => {...});
+    socket.on('clAddFeature', (msg) => {
+        let ft = JSON.parse(msg);
+        console.log('feature: ' + JSON.parse(msg));
+        let feature = new Feature({kind: ft.type, coords: ft.coords});
+        feature.save((err) => {
+            if (!err) {
+                console.log("success");
+                console.log(JSON.stringify(feature));
+            } else {
+                console.error("error: " + err);
+            }
+        });
+    });
 
-    socket.broadcast.emit('welcome', `user ${socket.user.displayName} connected!`);
+    socket.on('clClearDb', (msg) => {
+        Feature.remove({}, (err) => {
+            if (!err)
+                socket.emit('srvClearDb', 'cleared');
+        });    
+    });
+
+    
   });
 }
-
-
-let socketEmitter = require('socket.io-emitter');
-let redisClient = require('redis').createClient(config.redis_uri, {no_ready_check: true});
-socket.emitter = socketEmitter(redisClient);
 
 module.exports = socket;
