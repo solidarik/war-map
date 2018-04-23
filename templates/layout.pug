@@ -25,13 +25,15 @@ html
 
     //local
     link(rel="stylesheet" href="/style.css")        
-    script(src="/map.js")
+    script(src="/main.js")
+    script(src="/mapControl.js")
+    script(src="/mapInfo.js")
     script(src="/socket.io/socket.io.js")
     
     title Хроника военных действий
     block head
       
-  body(onload="loadMap()")
+  body(onload="startApp()")
     .wrap
       .container-fluid
         //include messages

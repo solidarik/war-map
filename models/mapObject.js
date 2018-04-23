@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
-var featureSchema = new mongoose.Schema({
+var mapObjectSchema = new mongoose.Schema({
+  uid: {
+    type: String,
+    required: "Не задан уникальный идентификатор",
+    unique: true,
+  },
   kind: {
     type:     String,
     required: "Не задан тип геометрии."
@@ -15,4 +20,4 @@ var featureSchema = new mongoose.Schema({
 });
 
 
-module.exports = mongoose.model('Feature', featureSchema);
+module.exports = mongoose.model('MapObject', mapObjectSchema);
