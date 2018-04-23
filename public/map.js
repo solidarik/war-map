@@ -52,7 +52,7 @@ function loadMap() {
             //center: new ol.proj.fromLonLat([56.004 , 54.6950]), //ufa place
             //zoom: 18
             center: new ol.proj.fromLonLat([37.617499, 55.752023]), //moscow kremlin
-            zoom: 2
+            zoom: 3
         })
     });    
 
