@@ -40,13 +40,27 @@ class MapControl {
 
         var modify = new ol.interaction.Modify({ source: vectorSource });
         map.addInteraction(modify);
+        
+        modify.on('modifyend',  function(e) {
+            if (!this.changeFeaturesFn || (0 == e.features.getArray().length)) {
+                return;
+            }
+
+            let mapObjects = [];
+            e.features.getArray().forEach( (ft) => {
+                mapObjects.push(this._getMapObjectFromFeature(ft));
+            });            
+
+            this.changeFeaturesFn(mapObjects);            
+        }, this);
 
         this.map = map;
         this.vectorSource = vectorSource;
         this.draw = null;
         this.snap = null;
         this.addFeatureEnabled = true;
-        this.clearDb = undefined;
+        this.clearDbFn = undefined;
+        this.changeFeaturesFn = undefined;
 
         setTimeout(() => {this._addButtons();}, 10);        
     }
@@ -61,30 +75,66 @@ class MapControl {
                 this.vectorSource.on('addfeature', (event) => {                    
                     if (!this.addFeatureEnabled)
                         return;
-                    
-                    cb(event.feature);
+                                        
+                    cb( this._createMapObjectByFeature(event.feature) );
                 });
-                break;
+            break;
             case("clearMap"):
-                this.clearDb = cb;
-                break;
+                this.clearDbFn = cb;
+            break;
+            case("changeFeatures"):
+                this.changeFeaturesFn = cb;
+            break;
         }        
-    }    
+    }
 
-    addObjectsToMap(data) {
+    _getMapObjectFromFeature(ft) {
+        return {
+            "kind": ft.getGeometry().getType(),
+            "coords": ft.getGeometry().getCoordinates(),
+            "uid": ft.getId()
+        };
+    }
+
+    _createMapObjectByFeature(ft) {
+        return {
+            "kind": ft.getGeometry().getType(),            
+            "coords": ft.getGeometry().getCoordinates(),
+            "uid": this._createUid()
+        };
+    }
+
+    _createUid() {
+        function s4() {
+            return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+        }
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+    }
+
+    changeObjectInMap(mo) {
         this.addFeatureEnabled = false;
-        data.mapObjects.forEach( ft => {
-            let geom;
-            switch(ft.kind) {
-                case 'Point':
-                    geom = new ol.geom.Point(ft.coords);
-                    break;
-                case 'Polygon':
-                    geom = new ol.geom.Polygon(ft.coords);
-                    break;
+        let features = this.vectorSource.getFeatures();
+        for (let i = 0; i < features.length; i++) {
+            let ft = features[i];            
+            if (mo.uid == ft.getId()) {
+                ft.setGeometry(this._createGeom(mo));
+                break;            
             }
-            this.vectorSource.addFeature(new ol.Feature({geometry: geom}));
-        });
+        };
+        this.addFeatureEnabled = true;
+    }
+
+    addObjectToMap(mapObj) {
+        this.addFeatureEnabled = false;
+        //data.mapObjects.forEach( mapObj => {
+            let geom = this._createGeom(mapObj);            
+            let ft = new ol.Feature({geometry: geom});
+            ft.setId(mapObj.uid);
+            
+            this.vectorSource.addFeature(ft);
+        //});
         this.addFeatureEnabled = true;        
     }
 
@@ -92,11 +142,33 @@ class MapControl {
         this.vectorSource.clear();
     }
 
+    _createGeom(mo) {
+        let geom;
+        switch(mo.kind) {
+            case 'Point':
+                geom = new ol.geom.Point(mo.coords);
+                break;
+            case 'LineString':
+                geom = new ol.geom.LineString(mo.coords);
+                break;
+            case 'Polygon':
+                geom = new ol.geom.Polygon(mo.coords);
+                break;
+        }
+        return geom;
+    }
+
     _addButtons() {
         this.map.addControl(new CustomControl({
             caption: "Связанные отрезки",
             class: "polyline-control",
             icon: "mdi mdi-vector-polyline",
+            handler: () => { this._addInteraction("LineString"); },
+        }));
+        this.map.addControl(new CustomControl({
+            caption: "Замкнутый контур",
+            class: "polygon-control",
+            icon: "mdi mdi-vector-polygon",
             handler: () => { this._addInteraction("Polygon"); },
         }));
         
@@ -105,14 +177,7 @@ class MapControl {
             class: "point-control",
             icon: "mdi mdi-circle-outline",
             handler: () => { this._addInteraction("Point"); },
-        }));
-    
-        this.map.addControl(new CustomControl({
-            caption: "Разработка",
-            class: "debug-control",
-            icon: "mdi mdi-developer-board",
-            handler: () => { this.clearDb(); },
-        }));
+        }));        
     }
     
     _addInteraction(type) {
