@@ -35,7 +35,7 @@ class MapInfo {
 
         socket.on("srvMapObjects", (data) => {                    
             let json = JSON.parse(data);
-            this._renewObjects(json.mapObjects);
+            this._renewObjects(json.mapObjects, 'fromServer');
             // json.mapObjects.forEach( (mo) => {                        
             //     this.objects.push( new MapObject(mo.uid, mo.coords, mo.kind) );
             // });
@@ -88,7 +88,7 @@ class MapInfo {
         let changes = this._getChanges(moArray);
         console.log("mapInfo -> changeFeature -> changes " + changes); 
         
-        this._renewObjects(changes);
+        this._renewObjects(changes, 'fromClient');
 
         let msg = JSON.stringify(changes);
         this.socket.emit('clChangeFeatures', msg);
@@ -104,16 +104,20 @@ class MapInfo {
 
     _getChanges(moArray) {
         let onlyChanges = [];        
-        moArray.forEach((newest) => {   
+        for (let i = 0; i < moArray.length; i++) {
+            let newest = moArray[i];   
             let older = this._getObjectByUid(newest.uid);
-            if (older && !newest.coords.equals(older.coords))
+            if (older) {
+                if (!newest.coords.equals(older.coords))
                     onlyChanges.push( newest );                
-            }                     
-        );
+            } else {
+                onlyChanges.push( newest );
+            }
+        };
         return onlyChanges;
     }
 
-    _renewObjects(changes) {
+    _renewObjects(changes, fromServer) {
         for(let i = 0; i < changes.length; i++) {
             let ch = changes[i];
             let obj = this._getObjectByUid(ch.uid);
@@ -123,7 +127,8 @@ class MapInfo {
             } else {
                 if (!obj.equals(ch)) {
                     obj.assign(ch);
-                    this.changeObjectFn(obj);
+                    if (fromServer == 'fromServer')
+                        this.changeObjectFn(obj);
                 }
             }
         };

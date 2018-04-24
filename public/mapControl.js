@@ -47,9 +47,10 @@ class MapControl {
             }
 
             let mapObjects = [];
-            e.features.getArray().forEach( (ft) => {
+            for(let i = 0; i < e.features.getArray().length; i++) {
+                let ft = e.features.getArray()[i];
                 mapObjects.push(this._getMapObjectFromFeature(ft));
-            });            
+            };            
 
             this.changeFeaturesFn(mapObjects);            
         }, this);
@@ -75,8 +76,10 @@ class MapControl {
                 this.vectorSource.on('addfeature', (event) => {                    
                     if (!this.addFeatureEnabled)
                         return;
-                                        
-                    cb( this._createMapObjectByFeature(event.feature) );
+                            
+                    let mo = this._createMapObjectByFeature(event.feature);
+                    event.feature.setId(mo.uid);
+                    cb( mo );
                 });
             break;
             case("clearMap"):
