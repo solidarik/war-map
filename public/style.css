@@ -47,6 +47,14 @@ html, body {height:100%;}
   left: .5em;
 }
 
+#panel-info {
+  position: absolute;
+  top: 44px;
+  right: 14px;
+  opacity: 0.8;
+  width: 400px;
+}
+
 /*.point-control {
   top: 4.5em;
   left: .5em;

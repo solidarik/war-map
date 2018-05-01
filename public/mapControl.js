@@ -52,7 +52,7 @@ class MapControl {
                 mapObjects.push(this._getMapObjectFromFeature(ft));
             };            
 
-            this.changeFeaturesFn(mapObjects);            
+            this.changeFeaturesFn(mapObjects);
         }, this);
 
         this.map = map;
@@ -62,8 +62,12 @@ class MapControl {
         this.addFeatureEnabled = true;
         this.clearDbFn = undefined;
         this.changeFeaturesFn = undefined;
+        this.selectFn = undefined;
 
-        setTimeout(() => {this._addButtons();}, 10);        
+        setTimeout(() => {
+            this._addButtons();
+            //this._addSelectInteraction();
+        }, 10);        
     }
 
     static create() {
@@ -82,12 +86,15 @@ class MapControl {
                     cb( mo );
                 });
             break;
+            case("selectFeature"):
+                this.selectFn = cb;
+            break;
             case("clearMap"):
                 this.clearDbFn = cb;
             break;
             case("changeFeatures"):
                 this.changeFeaturesFn = cb;
-            break;
+            break;            
         }        
     }
 
@@ -163,11 +170,21 @@ class MapControl {
 
     _addButtons() {
         this.map.addControl(new CustomControl({
+            caption: "Выбрать объект",
+            class: "select-control",
+            icon: "mdi mdi-cursor-default-outline",
+            handler: () => { 
+                console.log("select control");
+            },
+        }));
+
+        this.map.addControl(new CustomControl({
             caption: "Связанные отрезки",
             class: "polyline-control",
             icon: "mdi mdi-vector-polyline",
             handler: () => { this._addInteraction("LineString"); },
         }));
+
         this.map.addControl(new CustomControl({
             caption: "Замкнутый контур",
             class: "polygon-control",
@@ -195,11 +212,30 @@ class MapControl {
         this.snap = new ol.interaction.Snap({ source: this.vectorSource });
         this.map.addInteraction(this.snap);
     }
+
+    _addSelectInteraction() {
+        let select = new ol.interaction.Select();
+        this.map.addInteraction(select);
+        select.on('select', (e) => {
+            if (!this.selectFn || (0 == e.features.getArray().length)) {
+                return;
+            }
+
+            let mapObjects = [];
+            for(let i = 0; i < e.features.getArray().length; i++) {
+                let ft = e.features.getArray()[i];
+                mapObjects.push(this._getMapObjectFromFeature(ft));
+            };            
+
+            this.selectFn(mapObjects);          
+        });
+    }
 }
 
 class CustomControl extends ol.control.Control {
     
     constructor(inputParams) {        
+        
         super(inputParams);
 
         const caption = get(inputParams, 'caption');

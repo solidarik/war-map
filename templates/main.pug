@@ -59,7 +59,16 @@ block content
             |  Вход
 
   div.content(role="content")
-    div.map(class='fill panel panel-default' id='map' role='map')    
+    div.map(class='fill panel panel-default' id='map' role='map')
+    div.panel(class='panel-primary' id='panel-info')
+      div.panel-heading
+        | Отладочная информация
+      div.panel-body
+        textarea.form-control(rows='10', id='debug')      
+      div.panel-footer
+        button(class='btn btn-primary btn-sm' type='button' onClick='clearDebug()')
+          | Очистить
+
     //input(type='text' class="datepicker-here" data-position="right top")
     //div(class='html5-date')
       label(for="when")
