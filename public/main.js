@@ -22,8 +22,7 @@ function selectFeature(ft) {
 }
 
 function addToDebug(text) {
-    //$("#debug").val('');
-    $("#debug").append('\n' + text);
+    $("#debug")[0].value = text;
 }
 
 function clearDebug() {

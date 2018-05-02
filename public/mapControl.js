@@ -36,24 +36,7 @@ class MapControl {
                 center: new ol.proj.fromLonLat([37.617499, 55.752023]), //moscow kremlin
                 zoom: 3
             })
-        });    
-
-        var modify = new ol.interaction.Modify({ source: vectorSource });
-        map.addInteraction(modify);
-        
-        modify.on('modifyend',  function(e) {
-            if (!this.changeFeaturesFn || (0 == e.features.getArray().length)) {
-                return;
-            }
-
-            let mapObjects = [];
-            for(let i = 0; i < e.features.getArray().length; i++) {
-                let ft = e.features.getArray()[i];
-                mapObjects.push(this._getMapObjectFromFeature(ft));
-            };            
-
-            this.changeFeaturesFn(mapObjects);
-        }, this);
+        });
 
         this.map = map;
         this.vectorSource = vectorSource;
@@ -65,8 +48,8 @@ class MapControl {
         this.selectFn = undefined;
 
         setTimeout(() => {
-            this._addButtons();
-            //this._addSelectInteraction();
+            this._addSelectInteraction();
+            this._addButtons();            
         }, 10);        
     }
 
@@ -174,6 +157,8 @@ class MapControl {
             class: "select-control",
             icon: "mdi mdi-cursor-default-outline",
             handler: () => { 
+                this.map.removeInteraction(this.draw);
+                this.map.removeInteraction(this.snap);
                 console.log("select control");
             },
         }));
@@ -199,6 +184,27 @@ class MapControl {
             handler: () => { this._addInteraction("Point"); },
         }));        
     }
+
+    _addModify() {
+        let modify = new ol.interaction.Modify({ source: vectorSource });
+        map.addInteraction(modify);
+        
+        modify.on('modifyend',  function(e) {
+            if (!this.changeFeaturesFn || (0 == e.features.getArray().length)) {
+                return;
+            }
+
+            let mapObjects = [];
+            for(let i = 0; i < e.features.getArray().length; i++) {
+                let ft = e.features.getArray()[i];
+                mapObjects.push(this._getMapObjectFromFeature(ft));
+            };            
+
+            this.changeFeaturesFn(mapObjects);
+        }, this);
+
+        this.map.modify = modify;
+    }
     
     _addInteraction(type) {
         this.map.removeInteraction(this.draw);
@@ -208,22 +214,37 @@ class MapControl {
             source: this.vectorSource,
             type: type
         });
-        this.map.addInteraction(this.draw);
+
+        this.draw.on ('drawstart', (e) => {
+            this.select.setActive(false);
+        });           
+            
+        this.draw.on('drawend', (e) => {
+            e.preventDefault();
+            setTimeout(() => { 
+                this.select.setActive(true); 
+            }, 300);
+        });
+
+        this.map.addInteraction(this.draw);        
+        
         this.snap = new ol.interaction.Snap({ source: this.vectorSource });
         this.map.addInteraction(this.snap);
     }
 
     _addSelectInteraction() {
         let select = new ol.interaction.Select();
+        this.select = select;
         this.map.addInteraction(select);
-        select.on('select', (e) => {
-            if (!this.selectFn || (0 == e.features.getArray().length)) {
+        
+        select.on('select', (e) => {            
+            if (!this.selectFn || (0 == e.selected.length)) {
                 return;
             }
 
             let mapObjects = [];
-            for(let i = 0; i < e.features.getArray().length; i++) {
-                let ft = e.features.getArray()[i];
+            for(let i = 0; i < e.selected.length; i++) {
+                let ft = e.selected[i];
                 mapObjects.push(this._getMapObjectFromFeature(ft));
             };            
 
@@ -259,6 +280,8 @@ class CustomControl extends ol.control.Control {
         this.element = parentDiv;        
         
         ol.control.Control.call(this, {
+            label: caption,
+            tipLabel: caption,
             element: parentDiv,
             target: get(inputParams, "target")
         });

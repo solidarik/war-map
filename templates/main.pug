@@ -36,17 +36,18 @@ block content
               input.form-control(type="password" id="login-password" name="login-password" required)
             button.btn.btn-lg.btn-primary.btn-block(type="submit") Войти в систему
   
-  nav(class='navbar navbar-default' role="header")
-    div.container-fluid
+  nav(class='navbar navbar-expand-lg navbar-dark bg-dark' role="header")
+    //div.container-fluid
       //div.navbar-header
         a(class='navbar-brand' href='#')
           | WarMap      
-      ul(class='nav navbar-nav')
-        li.active
-          a(data-toggle='tab' href='#map')
+    div(class='collapse navbar-collapse' id='navbarColor01')
+      ul(class='navbar-nav')
+        li(class='nav-item active')
+          a(class='nav-link' data-toggle='tab' href='#map')
             | Карта
-        li
-          a(data-toggle='tab' href='#mapdata')
+        li(class='nav-item')
+          a(class='nav-link' data-toggle='tab' href='#mapdata')
             | Данные
       //ul(class='nav navbar-nav navbar-right')
         li
@@ -64,9 +65,9 @@ block content
       div.panel-heading
         | Отладочная информация
       div.panel-body
-        textarea.form-control(rows='10', id='debug')      
+        textarea.form-control(rows='4', id='debug')      
       div.panel-footer
-        button(class='btn btn-primary btn-sm' type='button' onClick='clearDebug()')
+        button(class='btn btn-dark btn-sm' type='button' onClick='clearDebug()')
           | Очистить
 
     //input(type='text' class="datepicker-here" data-position="right top")
