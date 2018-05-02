@@ -37,11 +37,11 @@ block content
             button.btn.btn-lg.btn-primary.btn-block(type="submit") Войти в систему
   
   nav(class='navbar navbar-expand-lg navbar-dark bg-dark' role="header")
-    //div.container-fluid
+    div.container-fluid
       //div.navbar-header
         a(class='navbar-brand' href='#')
           | WarMap      
-    div(class='collapse navbar-collapse' id='navbarColor01')
+      //div(class='collapse navbar-collapse' id='navbarColor01')
       ul(class='navbar-nav')
         li(class='nav-item active')
           a(class='nav-link' data-toggle='tab' href='#map')
@@ -60,13 +60,34 @@ block content
             |  Вход
 
   div.content(role="content")
-    div.map(class='fill panel panel-default' id='map' role='map')
-    div.panel(class='panel-primary' id='panel-info')
-      div.panel-heading
-        | Отладочная информация
-      div.panel-body
+    div.map(class='fill panel panel-default' id='map' role='map')    
+    div(class='card border-secondary mb-3' id='panel-info')
+      div.card-header
+        | Параметры объекта
+      div.card-body
+        div.form-group(class='row')
+          div(class='col')
+            label(for='objectName')
+              | Имя объекта
+            input(class='form-control' id='objectName' type="text" placeholder="Ввести имя")
+          div(class='col')
+            label(for='troopKind')
+              | Род войск
+            select(id="inputState" class="form-control")
+              option(selected)
+                | Выбрать род...
+              option
+                | Артиллерия
+              option
+                | Технические войска
+              option
+                | Бронетанковые войска
+              option
+                | Пехота, мотострелки
         textarea.form-control(rows='4', id='debug')      
-      div.panel-footer
+      div.card-footer
+        button(class='btn btn-dark btn-sm' type='button' onClick='clearDebug()')
+          | Сохранить
         button(class='btn btn-dark btn-sm' type='button' onClick='clearDebug()')
           | Очистить
 
