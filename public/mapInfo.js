@@ -46,6 +46,7 @@ class MapInfo {
         this.objects = [];
         this.addObjectFn = undefined;
         this.changeObjectFn = undefined;
+        this.getKindTroopsFn = undefined;
     }
 
     static create() {
@@ -74,6 +75,9 @@ class MapInfo {
             break;     
             case("changeObject"):
                 this.changeObjectFn = cb;
+            break;
+            case("getKindTroops"):
+                this.getKindTroopsFn = cb;
             break;
         }        
     }

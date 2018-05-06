@@ -2,7 +2,7 @@ extends layout
 
 block content
 
-  div.modal(class='fade' id='regModal' role='dialog' )
+  //div.modal(class='fade' id='regModal' role='dialog' )
     div.modal-dialog
       div.modal-content
         div.modal-header
@@ -19,7 +19,7 @@ block content
               input.form-control(type="password" id="reg-password" name="reg-password" required)
           button.btn.btn-lg.btn-primary.btn-block(type="submit") Создать учетку
 
-  div.modal(class='fade' id='loginModal' role='dialog' )
+  //div.modal(class='fade' id='loginModal' role='dialog' )
     div.modal-dialog
       div.modal-content
         div.modal-header
@@ -36,7 +36,7 @@ block content
               input.form-control(type="password" id="login-password" name="login-password" required)
             button.btn.btn-lg.btn-primary.btn-block(type="submit") Войти в систему
   
-  nav(class='navbar navbar-expand-lg navbar-dark bg-dark' role="header")
+  //nav(class='navbar navbar-expand-lg navbar-dark bg-dark' role="header")
     div.container-fluid
       //div.navbar-header
         a(class='navbar-brand' href='#')
@@ -61,21 +61,59 @@ block content
 
   div.content(role="content")
     div.map(class='fill panel panel-default' id='map' role='map')    
+    div(class='card border-secondary mb-3' id='panel-date')
+      div.card-header
+        | Привязка к дате 01.01.1945
+        div(class="btn-super-group")
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" class="btn btn-secondary mdi mdi-plus btn-add" title="Добавить новую дату")
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" class="btn btn-secondary mdi mdi-check btn-apply" title="Изменить текущую дату")          
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" class="btn btn-secondary mdi mdi-delete-variant btn-delete" title="Удалить текущую дату")
+      div.card-body
+        div(class="form-group row")                    
+          div(class='col-sm-8')
+            input.form-control(id='dateCaption' type="text" placeholder="Название события")
+          div(class="col-sm-4")
+            input.form-control(id='dateValue' type="date" style="display: none" onBlur="CheckDate(this, dateValuePlaceHolder)")
+            input.form-control(id="dateValuePlaceHolder" type="text" placeholder="Дата события" onClick="ChangeVisible(dateValue, this)")        
+        div(class="form-group row")
+          div(class="col")
+            div.timeline-container(id="timelineContainer")
+              div(class="timeline-nav nav-past" id="navPast")
+                span(class='mdi mdi-arrow-left')
+              div(id="timelineWrapper")
+                div(id="timeline")
+                  ol(id ="ticks")
+                  ol(id="eventList")
+              div(class="timeline-nav nav-future" id="navFuture")
+                span(class='mdi mdi-arrow-right')
+              //div(id="eventDetailContainer" class="event-detail-container")
+                  div.selected-event
+                    div.event-title
+                    //div.event-date-range
+                      div.event-start-date
+                      div.event-separator
+                        | &nbsp;-&nbsp;
+                      div.event-end-date                  
+                    //div.event-notes              
     div(class='card border-secondary mb-3' id='panel-info')
       div.card-header
-        | Параметры объекта
+        | Описание объекта
+        div(class="btn-super-group")          
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" class="btn btn-secondary mdi mdi-check btn-apply" title="Изменить объект")          
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" class="btn btn-secondary mdi mdi-delete-variant btn-delete" title="Удалить объект")
       div.card-body
         div.form-group(class='row')
-          div(class='col')
-            label(for='objectName')
-              | Имя объекта
-            input(class='form-control' id='objectName' type="text" placeholder="Ввести имя")
-          div(class='col')
-            label(for='troopKind')
-              | Род войск
-            select(id="inputState" class="form-control")
+          div(class='col-sm-8')            
+            input.form-control(id='objectName' type="text" placeholder="Имя объекта")          
+          div(class='col-sm-4')                        
+            select.form-control(id="troopKind")
               option(selected)
-                | Выбрать род...
+                | Род войск...
               option
                 | Артиллерия
               option
@@ -84,15 +122,8 @@ block content
                 | Бронетанковые войска
               option
                 | Пехота, мотострелки
-        textarea.form-control(rows='4', id='debug')      
-      div.card-footer
-        button(class='btn btn-dark btn-sm' type='button' onClick='clearDebug()')
-          | Сохранить
-        button(class='btn btn-dark btn-sm' type='button' onClick='clearDebug()')
-          | Очистить
-
-    //input(type='text' class="datepicker-here" data-position="right top")
-    //div(class='html5-date')
-      label(for="when")
-        | Дата события: 
-      input(id="when" name="when" type="date")
+        div.form-group(class="row")
+          div(class='col')
+            label(for='coords')
+              | Координаты объекта
+            textarea.form-control(rows='4', id='debug')

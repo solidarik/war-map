@@ -25,7 +25,7 @@ class MapControl {
         });
 
         const map = new ol.Map({
-            controls: ol.control.defaults().extend([
+            controls: ol.control.defaults({ attribution: false, zoom: false }).extend([
                 new ol.control.FullScreen()            
             ]),
             layers: [rasterLayer, vectorLayer],

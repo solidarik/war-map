@@ -1,0 +1,4 @@
+class ObjInfo {
+    constructor() {
+    }
+}
