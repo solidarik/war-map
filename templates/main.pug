@@ -63,7 +63,14 @@ block content
     div.map(class='fill panel panel-default' id='map' role='map')    
     div(class='card border-secondary mb-3' id='panel-date')
       div.card-header
-        | Привязка к дате 01.01.1945
+        | Событие
+        div(class="btn-super-nav-group")
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" class="btn btn-secondary mdi mdi-skip-previous" title="Предыдущее событие")
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" class="btn btn-secondary mdi mdi-play" title="Воспроизвести")
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" class="btn btn-secondary mdi mdi-skip-next" title="Следующее событие")
         div(class="btn-super-group")
           div(class="btn-group btn-group-sm" role="group")
             button(type="button" class="btn btn-secondary mdi mdi-plus btn-add" title="Добавить новую дату")
@@ -100,7 +107,12 @@ block content
                     //div.event-notes              
     div(class='card border-secondary mb-3' id='panel-info')
       div.card-header
-        | Описание объекта
+        | Объект
+        div(class="btn-super-nav-group btn-super-nav-group-object")
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" class="btn btn-secondary mdi mdi-chevron-left" title="Предыдущий объект")
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" class="btn btn-secondary mdi mdi-chevron-right" title="Следующий объект")
         div(class="btn-super-group")          
           div(class="btn-group btn-group-sm" role="group")
             button(type="button" class="btn btn-secondary mdi mdi-check btn-apply" title="Изменить объект")          
@@ -125,5 +137,5 @@ block content
         div.form-group(class="row")
           div(class='col')
             label(for='coords')
-              | Координаты объекта
+              | Координаты
             textarea.form-control(rows='4', id='debug')

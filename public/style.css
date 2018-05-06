@@ -134,6 +134,21 @@ input.form-control {
   margin-bottom: 2px;
 }
 
+.btn-super-nav-group {
+  position: absolute;
+  right: 94px;
+  top: 3px;
+  height: 22px;
+  min-height: 22px;
+  line-height: 22px;
+  padding: 0px;
+}
+
+.btn-super-nav-group-object {
+  right: 70px;
+}
+
+
 .btn-super-group {
   position: absolute;
   right: 10px;
