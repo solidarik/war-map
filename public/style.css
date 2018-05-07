@@ -48,7 +48,8 @@ html, body {height:100%;}
 }
 
 .ol-control button{ 
-  background-color: rgba(40, 40, 40, 0.85) !important;
+  background-color: rgba(40, 40, 40, 0.85) !important;  
+  font-size: 14px !important;
 }
 
 /* .ol-zoom {  
