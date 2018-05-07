@@ -212,7 +212,8 @@ class MapControl {
     
         this.draw = new ol.interaction.Draw({
             source: this.vectorSource,
-            type: type
+            type: type,
+            freehand: true
         });
 
         this.draw.on ('drawstart', (e) => {
