@@ -61,6 +61,19 @@ function socket(server) {
         
     });
 
+    socket.on('clChangeObject', (msg) => {
+        let data = JSON.parse(msg);
+            
+        MapObject.update({uid: data.uid}, data, function(err, raw) {
+            if (err) {
+                console.error("Failed update object: " + err);
+            }
+            getDbOneObject( data.uid, (res) => {
+                socket.broadcast.emit('srvMapObjects', JSON.stringify({mapObjects: res}));
+            });
+        });        
+    });
+
     
   });
 }
@@ -75,7 +88,7 @@ function getDbObjects(cb) {
 
         let mapObjectsToClient = [];
         mapObjects.forEach(mo => {
-            mapObjectsToClient.push({uid: mo.uid, kind: mo.kind, coords: mo.coords});
+            mapObjectsToClient.push({uid: mo.uid, kind: mo.kind, coords: mo.coords, name: mo.name});
         });
 
         cb(mapObjectsToClient);
@@ -91,7 +104,7 @@ function getDbOneObject(uid, cb) {
 
         let mapObjectsToClient = [];
         mapObjects.forEach(mo => {
-            mapObjectsToClient.push({uid: mo.uid, kind: mo.kind, coords: mo.coords});
+            mapObjectsToClient.push({uid: mo.uid, kind: mo.kind, coords: mo.coords, name: mo.name});
         });
 
         cb(mapObjectsToClient);

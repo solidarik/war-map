@@ -39,3 +39,7 @@ Object.defineProperty(Array.prototype, "equals", {enumerable: false});
 $.fn.exists = function () {
     return this.length !== 0;
 }
+
+function enableButton(elem, status){
+    elem.prop("disabled", !status);
+}

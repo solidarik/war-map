@@ -7,8 +7,11 @@ var mapObjectSchema = new mongoose.Schema({
     unique: true,
   },
   kind: {
-    type:     String,
+    type: String,
     required: "Не задан тип геометрии."
+  },
+  name: {
+    type: String,
   },
   coords: {
     type:     Array,

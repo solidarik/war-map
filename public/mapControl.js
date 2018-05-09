@@ -43,9 +43,9 @@ class MapControl {
         this.draw = null;
         this.snap = null;
         this.addFeatureEnabled = true;
-        this.clearDbFn = undefined;
-        this.changeFeaturesFn = undefined;
-        this.selectFn = undefined;
+        this.clearDbFn = () => {};
+        this.changeFeaturesFn = () => {};
+        this.selectFn = () => {};
 
         setTimeout(() => {
             this._addSelectInteraction();
@@ -121,13 +121,13 @@ class MapControl {
 
     addObjectToMap(mapObj) {
         this.addFeatureEnabled = false;
-        //data.mapObjects.forEach( mapObj => {
-            let geom = this._createGeom(mapObj);            
+        for (let i = 0; i < mapObj.length; i++) {
+            let geom = this._createGeom(mapObj[i]);            
             let ft = new ol.Feature({geometry: geom});
-            ft.setId(mapObj.uid);
+            ft.setId(mapObj[i].uid);
             
             this.vectorSource.addFeature(ft);
-        //});
+        };
         this.addFeatureEnabled = true;        
     }
 

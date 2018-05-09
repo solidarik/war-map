@@ -135,6 +135,15 @@ input.form-control {
   margin-bottom: 2px;
 }
 
+.card-counter {
+  position: absolute;  
+  top: 0px;
+  left: 50%;
+  width: 400px;
+  margin-left: -200px;
+  text-align: center;
+}
+
 .btn-super-nav-group {
   position: absolute;
   right: 94px;

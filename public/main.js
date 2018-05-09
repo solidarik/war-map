@@ -5,15 +5,40 @@ var app = window.app;
 
 function startApp() {
     let mapControl = MapControl.create();
-    let mapInfo = MapInfo.create(); //dbInfo > db
-    //let objInfo = ObjInfo.create();
+    let mapInfo = MapInfo.create();
+    let objControl = ObjControl.create();
 
-    mapControl.on("addFeature", (ft) => mapInfo.addFeature(ft));
+    mapControl.on("addFeature", (ft) => {
+        mapInfo.addFeature(ft);
+        objControl.showInfo(ft, mapInfo.getCount());
+        
+    });
+
     mapControl.on("changeFeatures", (ft) => mapInfo.changeFeatures(ft));
     mapControl.on("clearMap", () => mapInfo.clearDb());
-    mapControl.on("selectFeature", (ft) => selectFeature(ft));
+    mapControl.on("selectFeature", (ft) => objControl.showInfo(ft, mapInfo.getCount()));
 
-    mapInfo.on("addObject", (obj) => mapControl.addObjectToMap(obj));
+    var tryOnce = false;
+
+    mapInfo.on("addObject", (obj) => {
+        mapControl.addObjectToMap(obj);
+        objControl.changeCount(mapInfo.getCount());
+
+        if ((0 < mapInfo.getCount()) && !tryOnce) {
+            objControl.showInfo(mapInfo.getFirstObject());
+            tryOnce = true;
+        }
+    });
+
+    objControl.on("getObjectPosition", (uid) => mapInfo.getObjectPosition(uid));
+    objControl.on("getPrevObject", (uid) => mapInfo.getPrevObject(uid));
+    objControl.on("getNextObject", (uid) => mapInfo.getNextObject(uid));
+    objControl.on("prev", (uid) => objControl.showInfo(mapInfo.getPrevObject(uid)));
+    objControl.on("next", (uid) => objControl.showInfo(mapInfo.getNextObject(uid)));
+    objControl.on("changeObject", (obj) => mapInfo.changeObjectFromClient(obj));
+    
+    objControl.on("delete", (obj) => {});
+
     mapInfo.on("changeObject", (obj) => mapControl.changeObjectInMap(obj));
     mapInfo.on("clearDb", () => mapControl.clearMap());  
     
@@ -23,11 +48,8 @@ function startApp() {
     $(document.getElementsByClassName('ol-attribution ol-unselectable ol-control ol-collapsed')).remove();
 }
 
-function selectFeature(ft) {
-    addToDebug(JSON.stringify(ft));
-}
-
 function addToDebug(text) {
+    console.log("add to debug " + text);
     $("#debug")[0].value = text;
 }
 

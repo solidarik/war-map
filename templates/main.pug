@@ -61,6 +61,41 @@ block content
 
   div.content(role="content")
     div.map(class='fill panel panel-default' id='map' role='map')    
+    div(class='card border-secondary mb-3' id='panel-info')
+      div.card-header
+        | Объект
+        div(class="card-counter" id="objectCounter")          
+        div(class="btn-super-nav-group btn-super-nav-group-object")
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" id="btnPrevObject" class="btn btn-secondary mdi mdi-chevron-left" title="Предыдущий объект")
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" id="btnNextObject" class="btn btn-secondary mdi mdi-chevron-right" title="Следующий объект")
+        div(class="btn-super-group")          
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" id="btnChangeObject" class="btn btn-secondary mdi mdi-check btn-apply" title="Изменить объект")          
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" id="btnDeleteObject" class="btn btn-secondary mdi mdi-delete-variant btn-delete" title="Удалить объект")        
+      div.card-body
+        div.form-group(class='row')
+          div(class='col-sm-8')            
+            input.form-control(id='objectName' type="text" placeholder="Имя объекта")          
+          div(class='col-sm-4')                        
+            select.form-control(id="troopKind")
+              option(selected)
+                | Род войск...
+              option
+                | Артиллерия
+              option
+                | Технические войска
+              option
+                | Бронетанковые войска
+              option
+                | Пехота, мотострелки
+        div.form-group(class="row")
+          div(class='col')
+            label(for='coords')
+              | Доп. информация
+            textarea.form-control(rows='4', id='objectInnerInfo')
     div(class='card border-secondary mb-3' id='panel-date')
       div.card-header
         | Событие
@@ -104,38 +139,4 @@ block content
                       div.event-separator
                         | &nbsp;-&nbsp;
                       div.event-end-date                  
-                    //div.event-notes              
-    div(class='card border-secondary mb-3' id='panel-info')
-      div.card-header
-        | Объект
-        div(class="btn-super-nav-group btn-super-nav-group-object")
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" class="btn btn-secondary mdi mdi-chevron-left" title="Предыдущий объект")
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" class="btn btn-secondary mdi mdi-chevron-right" title="Следующий объект")
-        div(class="btn-super-group")          
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" class="btn btn-secondary mdi mdi-check btn-apply" title="Изменить объект")          
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" class="btn btn-secondary mdi mdi-delete-variant btn-delete" title="Удалить объект")
-      div.card-body
-        div.form-group(class='row')
-          div(class='col-sm-8')            
-            input.form-control(id='objectName' type="text" placeholder="Имя объекта")          
-          div(class='col-sm-4')                        
-            select.form-control(id="troopKind")
-              option(selected)
-                | Род войск...
-              option
-                | Артиллерия
-              option
-                | Технические войска
-              option
-                | Бронетанковые войска
-              option
-                | Пехота, мотострелки
-        div.form-group(class="row")
-          div(class='col')
-            label(for='coords')
-              | Координаты
-            textarea.form-control(rows='4', id='debug')
+                    //div.event-notes
