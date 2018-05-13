@@ -169,7 +169,7 @@ class MapControl {
                 return this._getMedianXY(geom.getCoordinates());
                 break;
             case 'Polygon':
-                return this._getMedianXY(geom.getCoordinates());
+                return this._getMedianXY(geom.getCoordinates()[0]);
                 break;
         }
         return kremlinLocation;
@@ -386,10 +386,7 @@ class MapControl {
     }
 
     _getSelectStyleFunction(feature, resolution) {        
-        return new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: 'blue'
-            }),
+        return new ol.style.Style({            
             stroke: new ol.style.Stroke({                
                 color: 'blue',
                 width: 3
