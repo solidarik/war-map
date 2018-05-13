@@ -50,6 +50,7 @@ html, body {height:100%;}
 .ol-control button{ 
   background-color: rgba(40, 40, 40, 0.85) !important;  
   font-size: 14px !important;
+  touch-action: manipulation;
 }
 
 /* .ol-zoom {  
@@ -116,6 +117,7 @@ html, body {height:100%;}
 }
 
 .card-header  {  
+  touch-action: manipulation;
   height: 32px;
   min-height: 32px;
   line-height: 32px;
@@ -145,6 +147,7 @@ input.form-control {
 }
 
 .btn-super-nav-group {
+  touch-action: manipulation;
   position: absolute;
   right: 94px;
   top: 3px;
@@ -207,6 +210,7 @@ input.form-control {
 }
 
 .card-footer > button {
+  touch-action: manipulation;
   padding-top: 0px;
   margin-bottom: 4px; 
   margin-right: 4px;

@@ -21,7 +21,7 @@ function socket(server) {
 
     socket.on('clNewMapObject', (msg) => {
         let data = JSON.parse(msg);
-        let mapObject = new MapObject({kind: data.kind, coords: data.coords, uid: data.uid});
+        let mapObject = new MapObject({kind: data.kind, coords: data.coords, uid: data.uid, country: data.country});
         mapObject.save((err) => {
             if (!err) {
                 getDbObjects( (res) => {
@@ -73,7 +73,19 @@ function socket(server) {
             });
         });        
     });
-
+    
+    socket.on('clDeleteObject', (msg) => {
+        let data = JSON.parse(msg);
+            
+        MapObject.deleteOne({uid: data.uid}, function(err) {
+            if (err) {
+                console.error("Failed delete object: " + err);
+                return;
+            }
+                        
+            socket.broadcast.emit('srvDeleteObject', JSON.stringify({uid: [uid]}));            
+        });        
+    });
     
   });
 }
@@ -88,7 +100,7 @@ function getDbObjects(cb) {
 
         let mapObjectsToClient = [];
         mapObjects.forEach(mo => {
-            mapObjectsToClient.push({uid: mo.uid, kind: mo.kind, coords: mo.coords, name: mo.name});
+            mapObjectsToClient.push({uid: mo.uid, kind: mo.kind, coords: mo.coords, name: mo.name, country: mo.country});
         });
 
         cb(mapObjectsToClient);
@@ -104,7 +116,7 @@ function getDbOneObject(uid, cb) {
 
         let mapObjectsToClient = [];
         mapObjects.forEach(mo => {
-            mapObjectsToClient.push({uid: mo.uid, kind: mo.kind, coords: mo.coords, name: mo.name});
+            mapObjectsToClient.push({uid: mo.uid, kind: mo.kind, coords: mo.coords, name: mo.name, country: mo.country});
         });
 
         cb(mapObjectsToClient);

@@ -6,6 +6,32 @@
     }
 }(this));
 
+(function($) {
+    var IS_IOS = /iphone|ipad/i.test(navigator.userAgent);
+    $.fn.nodoubletapzoom = function() {
+      if (IS_IOS)
+        $(this).bind('touchstart', function preventZoom(e) {
+          var t2 = e.timeStamp
+            , t1 = $(this).data('lastTouch') || t2
+            , dt = t2 - t1
+            , fingers = e.originalEvent.touches.length;
+          $(this).data('lastTouch', t2);
+          if (!dt || dt > 500 || fingers > 1) return; // not double-tap
+  
+          e.preventDefault(); // double tap - prevent the zoom
+          // also synthesize click events we just swallowed up
+          $(this).trigger('click').trigger('click');
+        });
+    };
+  })(jQuery);
+
+// Array Remove - By John Resig (MIT Licensed)
+Array.prototype.remove = function(from, to) {
+    var rest = this.slice((to || from) + 1 || this.length);
+    this.length = from < 0 ? this.length + from : from;
+    return this.push.apply(this, rest);
+};
+
 // Warn if overriding existing method
 if(Array.prototype.equals)
     console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");

@@ -1,13 +1,14 @@
 class MapObject {
-    constructor(uid, coords, kind, name) {
+    constructor(uid, coords, kind, name, country) {
         this.uid = uid;
         this.coords = coords;
         this.kind = kind;
         this.name = name;
+        this.country = country;
     }
 
-    static create(uid, coords, kind, name) {
-        return new MapObject(uid, coords, kind, name);
+    static create(uid, coords, kind, name, country) {
+        return new MapObject(uid, coords, kind, name, country);
     }
 
     assign(obj) {
@@ -15,10 +16,11 @@ class MapObject {
         this.coords = obj.coords;
         this.kind = obj.kind;
         this.name = obj.name;
+        this.country = obj.country;
     }
 
     equals(obj) {
-        return (this.coords.equals(obj.coords) && this.kind == obj.kind && this.name == obj.name);
+        return (this.coords.equals(obj.coords) && this.kind == obj.kind && this.name == obj.name && this.country == obj.country);
     }
 }
 
@@ -35,7 +37,7 @@ class MapInfo {
             window.location.reload();
         });         
 
-        socket.on("srvMapObjects", (data) => {                    
+        socket.on('srvMapObjects', (data) => {                    
             let json = JSON.parse(data);
             this._renewObjects(json.mapObjects, 'fromServer');
             // json.mapObjects.forEach( (mo) => {                        
@@ -43,6 +45,13 @@ class MapInfo {
             // });
             //cb(json);            
         }, this);
+
+        socket.on('srvDeleteObject', (data) => {
+            let json = JSON.parse(data);
+            data.forEach( (uid) => {
+                //todo MapObject.
+            });
+        });
 
         this.socket = socket;
         this.objects = [];
@@ -86,7 +95,7 @@ class MapInfo {
 
     addFeature(mo) {
         let msg = JSON.stringify(mo);
-        this.objects.push( new MapObject(mo.uid, mo.coords, mo.kind, undefined) );                
+        this.objects.push( new MapObject(mo.uid, mo.coords, mo.kind, mo.country) );                
         this.socket.emit('clNewMapObject', msg);        
     }
 
@@ -103,9 +112,21 @@ class MapInfo {
     changeObjectFromClient(obj) {        
         let objPos = this.getObjectPosition(obj.uid);
         this.objects[objPos].name = obj.name;
+        this.objects[objPos].country = obj.country;
 
-        let msg = JSON.stringify(this.objects[objPos]);        
+        this.changeObjectFn(this.objects[objPos]);
+
+        let msg = JSON.stringify(this.objects[objPos]);
         this.socket.emit('clChangeObject', msg);
+        
+    }
+
+    deleteFromClient(obj) {
+        let objPos = this.getObjectPosition(obj.uid);
+        if (!objPos) return;
+
+        let msg = JSON.stringify(this.objects[objPos]);
+        this.socket.emit('clDeleteObject', msg);
     }
 
     getCount() {
@@ -181,7 +202,7 @@ class MapInfo {
             let ch = changes[i];
             let obj = this._getObjectByUid(ch.uid);
             if (!obj) {
-                this.objects.push(new MapObject(ch.uid, ch.coords, ch.kind, ch.name));
+                this.objects.push(new MapObject(ch.uid, ch.coords, ch.kind, ch.name, ch.country));
                 toAddObjects.push(ch);                
             } else {
                 if (!obj.equals(ch)) {

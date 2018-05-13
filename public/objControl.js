@@ -3,7 +3,19 @@ class ObjControl {
         this.cName = $("#objectName");
         this.cKind = $("#objectKind");
         this.cCounter = $("#objectCounter");
-        this.cInnerInfo = $("#objectInnerInfo");
+        this.cCountry = $("#objectCountry");
+        
+        //this.cInnerInfo = $("#objectInnerInfo");
+
+        this.cName.focusout( () => {
+            this.applyChange();
+        });
+
+        this.cName.keyup( (e) => {
+            if (e.keyCode == 13) {
+                this.applyChange();
+            }
+        });
 
         this.currentUid = undefined;
         this.count = 0;
@@ -13,10 +25,12 @@ class ObjControl {
         this.changeFn = (obj) => {};
         this.getPrevObjectFn = (obj) => {};
         this.getNextObjectFn = (obj) => {};
+        this.selectObjectFn = (obj) => {};
+        this.deleteFn = (obj) => {};
         
         this.btnPrev = $("#btnPrevObject");
         this.btnNext = $("#btnNextObject");
-        this.btnChange = $("#btnChangeObject");
+        //this.btnChange = $("#btnChangeObject");
         this.btnDelete = $("#btnDeleteObject");
 
         this.btnPrev.click(() => {
@@ -29,13 +43,13 @@ class ObjControl {
             this.nextFn(this.currentUid);
         });
 
-        this.btnChange.click(() => {
-            if (!this.currentUid) return;
-            let obj = { uid: this.currentUid }
-            obj.name = this.cName.val();
-                
-            this.changeFn(obj);
+        this.btnDelete.click(() => {
+            this.deleteFn(this.currentUid);
         });
+
+        // this.btnChange.click(() => {
+        //     this.applyChange();            
+        // });
 
         this.checkActiveButtons();
     }
@@ -49,6 +63,15 @@ class ObjControl {
         this.updatePosition();
     }
 
+    applyChange() {
+        if (!this.currentUid) return;
+        let obj = { uid: this.currentUid }
+        obj.name = this.cName.val();
+        obj.country = this.getCurrentCountry();
+            
+        this.changeFn(obj);
+    }
+
     showInfo(mo, cnt) {
         var one_mo = mo;
         if (Array.isArray(mo))
@@ -56,9 +79,12 @@ class ObjControl {
         
         this.currentUid = one_mo.uid;
         this.cName[0].value = one_mo.name ? one_mo.name : "";
-        this.cInnerInfo[0].value = JSON.stringify(one_mo);
+        //this.cInnerInfo[0].value = JSON.stringify(one_mo);
+        this.cCountry[0].value = one_mo.country;
+
         this.changeCount(cnt ? cnt : this.count);
         this.checkActiveButtons();
+        this.selectObjectFn(one_mo);
     }
 
     updatePosition() {
@@ -68,6 +94,10 @@ class ObjControl {
             pos += 1;
             this.cCounter.text( pos + ' из ' + this.count );
         }            
+    }
+
+    getCurrentCountry() {
+        return this.cCountry.val();
     }
 
     checkActiveButtons() {
@@ -80,7 +110,7 @@ class ObjControl {
             enableButton(this.btnNext, this.currentUid != this.getNextObjectFn(this.currentUid).uid);
         }
 
-        enableButton(this.btnChange, (this.currentUid));
+        //enableButton(this.btnChange, (this.currentUid));
         enableButton(this.btnDelete, (this.currentUid));
     }
 
@@ -103,8 +133,10 @@ class ObjControl {
             break;
             case("getNextObject"):
                 this.getNextObjectFn = cb;
-            break;            
             break;
-        }        
-    }
+            case("selectObject"):
+                this.selectObjectFn = cb;        
+                break;
+            }        
+        }
 }

@@ -14,6 +14,7 @@ function startApp() {
         
     });
 
+    mapControl.on("getCurrentCountry", () => { return objControl.getCurrentCountry();});
     mapControl.on("changeFeatures", (ft) => mapInfo.changeFeatures(ft));
     mapControl.on("clearMap", () => mapInfo.clearDb());
     mapControl.on("selectFeature", (ft) => objControl.showInfo(ft, mapInfo.getCount()));
@@ -36,6 +37,8 @@ function startApp() {
     objControl.on("prev", (uid) => objControl.showInfo(mapInfo.getPrevObject(uid)));
     objControl.on("next", (uid) => objControl.showInfo(mapInfo.getNextObject(uid)));
     objControl.on("changeObject", (obj) => mapInfo.changeObjectFromClient(obj));
+    objControl.on("selectObject", (obj) => mapControl.selectObject(obj));
+    objControl.on("deleteObject", (obj => mapInfo.deleteFromClient(obj)));
     
     objControl.on("delete", (obj) => {});
 

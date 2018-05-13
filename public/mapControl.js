@@ -1,3 +1,5 @@
+const kremlinLocation = new ol.proj.fromLonLat([37.617499, 55.752023]); //moscow kremlin
+
 class MapControl {
     constructor() {
         let rasterLayer = new ol.layer.Tile({
@@ -7,21 +9,16 @@ class MapControl {
         let vectorSource = new ol.source.Vector();
         let vectorLayer = new ol.layer.Vector({
             source: vectorSource,
-            style: new ol.style.Style({
-                fill: new ol.style.Fill({
-                    color: 'rgba(255, 255, 0, 0.2)'
-                }),
-                stroke: new ol.style.Stroke({
-                    color: '#ff0000',
-                    width: 2
-                }),
-                image: new ol.style.Circle({
-                    radius: 6,
-                    fill: new ol.style.Fill({
-                        color: '#0000ff'
-                    })
-                })
-            })
+            style: (feature, resolution) => {               
+                return this._getStyleFunction.call(this, feature, resolution);
+            }
+        });
+
+        let view = new ol.View({
+            //center: new ol.proj.fromLonLat([56.004 , 54.6950]), //ufa place
+            //zoom: 18
+            center: kremlinLocation,
+            zoom: 3
         });
 
         const map = new ol.Map({
@@ -30,22 +27,19 @@ class MapControl {
             ]),
             layers: [rasterLayer, vectorLayer],
             target: 'map',
-            view: new ol.View({
-                //center: new ol.proj.fromLonLat([56.004 , 54.6950]), //ufa place
-                //zoom: 18
-                center: new ol.proj.fromLonLat([37.617499, 55.752023]), //moscow kremlin
-                zoom: 3
-            })
-        });
+            view: view
+        });        
 
         this.map = map;
         this.vectorSource = vectorSource;
+        this.view = view;
         this.draw = null;
         this.snap = null;
         this.addFeatureEnabled = true;
         this.clearDbFn = () => {};
         this.changeFeaturesFn = () => {};
         this.selectFn = () => {};
+        this.getCurrentCountryFn = () => {};
 
         setTimeout(() => {
             this._addSelectInteraction();
@@ -66,6 +60,7 @@ class MapControl {
                             
                     let mo = this._createMapObjectByFeature(event.feature);
                     event.feature.setId(mo.uid);
+                    event.feature.set("country", mo.country);
                     cb( mo );
                 });
             break;
@@ -77,7 +72,10 @@ class MapControl {
             break;
             case("changeFeatures"):
                 this.changeFeaturesFn = cb;
-            break;            
+            break;    
+            case("getCurrentCountry"):
+                this.getCurrentCountryFn = cb;
+            break;        
         }        
     }
 
@@ -85,7 +83,9 @@ class MapControl {
         return {
             "kind": ft.getGeometry().getType(),
             "coords": ft.getGeometry().getCoordinates(),
-            "uid": ft.getId()
+            "uid": ft.getId(),
+            "name": ft.get("name"),
+            "country": ft.get("country")
         };
     }
 
@@ -93,7 +93,8 @@ class MapControl {
         return {
             "kind": ft.getGeometry().getType(),            
             "coords": ft.getGeometry().getCoordinates(),
-            "uid": this._createUid()
+            "uid": this._createUid(),
+            "country": this.getCurrentCountryFn()
         };
     }
 
@@ -106,6 +107,21 @@ class MapControl {
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     }
 
+    selectObject(obj) {
+        this.addFeatureEnabled = false;
+        let features = this.vectorSource.getFeatures();
+        for (let i = 0; i < features.length; i++) {
+            let ft = features[i];            
+            if (obj.uid == ft.getId()) {
+                this.select.getFeatures().clear();
+                this.select.getFeatures().push(ft);
+                this._doCenterView(ft);
+                break;
+            }
+        };        
+        this.addFeatureEnabled = true;
+    }
+
     changeObjectInMap(mo) {
         this.addFeatureEnabled = false;
         let features = this.vectorSource.getFeatures();
@@ -113,18 +129,22 @@ class MapControl {
             let ft = features[i];            
             if (mo.uid == ft.getId()) {
                 ft.setGeometry(this._createGeom(mo));
+                ft.set("name", mo.name);
+                ft.set("country", mo.country);
                 break;            
             }
         };
         this.addFeatureEnabled = true;
     }
 
-    addObjectToMap(mapObj) {
+    addObjectToMap(mo) {
         this.addFeatureEnabled = false;
-        for (let i = 0; i < mapObj.length; i++) {
-            let geom = this._createGeom(mapObj[i]);            
+        for (let i = 0; i < mo.length; i++) {
+            let geom = this._createGeom(mo[i]);            
             let ft = new ol.Feature({geometry: geom});
-            ft.setId(mapObj[i].uid);
+            ft.setId(mo[i].uid);
+            ft.set("name", mo[i].name);
+            ft.set("country", mo[i].country);
             
             this.vectorSource.addFeature(ft);
         };
@@ -133,6 +153,47 @@ class MapControl {
 
     clearMap() {
         this.vectorSource.clear();
+    }
+
+    _doCenterView(ft) {
+        this.map.getView().animate({center: this._getCenterCoord(ft)});
+    }
+
+    _getCenterCoord(ft) {
+        let geom = ft.getGeometry();
+        switch(geom.getType()) {
+            case 'Point':
+                return geom.getCoordinates();
+                break;
+            case 'LineString':
+                return this._getMedianXY(geom.getCoordinates());
+                break;
+            case 'Polygon':
+                return this._getMedianXY(geom.getCoordinates());
+                break;
+        }
+        return kremlinLocation;
+    }
+
+    _getMedianXY(coords) {
+        var valuesX = [];
+        var valuesY = [];
+        coords.forEach( (coord) => {
+            valuesX.push(coord[0]);
+            valuesY.push(coord[1]);
+        });
+        return [this._getMedian(valuesX), this._getMedian(valuesY)];
+    }
+
+    _getMedian(values) {
+        values.sort( function(a,b) {return a - b;} );
+    
+        var half = Math.floor(values.length/2);
+    
+        if(values.length % 2)
+            return values[half];
+        else
+            return (values[half-1] + values[half]) / 2.0;
     }
 
     _createGeom(mo) {
@@ -159,7 +220,6 @@ class MapControl {
             handler: () => { 
                 this.map.removeInteraction(this.draw);
                 this.map.removeInteraction(this.snap);
-                console.log("select control");
             },
         }));
 
@@ -234,7 +294,11 @@ class MapControl {
     }
 
     _addSelectInteraction() {
-        let select = new ol.interaction.Select();
+        let select = new ol.interaction.Select( {
+            style: (feature, resolution) => {               
+                return this._getSelectStyleFunction.call(this, feature, resolution);
+            }
+        });
         this.select = select;
         this.map.addInteraction(select);
         
@@ -251,6 +315,170 @@ class MapControl {
 
             this.selectFn(mapObjects);          
         });
+    }
+
+    _getStyleFunction(feature, resolution) {    
+        
+        var stroke = new ol.style.Stroke({
+            color: '#ff0000',
+            width: 2
+        });
+
+        var fill = new ol.style.Fill({
+            color: 'rgba(255, 255, 0, 0.2)'
+        });
+
+        var imageStyle = new ol.style.Circle({
+            radius: 5,
+            fill: new ol.style.Fill({
+                color: 'red'
+            }),
+            stroke: new ol.style.Stroke({
+                color: 'black',
+                width: 1
+            })
+       });
+
+       var textColor = 'red';
+                    
+        switch (feature.get('country')) {
+            case("germany"):
+                stroke = new ol.style.Stroke({
+                    color: '#000000',
+                    width: 2
+                });
+
+                imageStyle = new ol.style.Circle({
+                    radius: 5,
+                    fill: new ol.style.Fill({
+                        color: 'black'
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: 'black',
+                        width: 1
+                    })
+               });
+
+               textColor = 'black';
+                    
+        }
+        
+        return new ol.style.Style({
+            fill: fill,
+            stroke: stroke,
+            image: imageStyle,
+            text: this._createTextStyle.call(this, feature, resolution, {
+                align: 'center',
+                baseline: 'middle',
+                size: '14px',
+                offsetX: 0,
+                offsetY: 15,
+                weight: 'bold',
+                overflow: 'true',
+                rotation: 0,
+                font: 'Arial',
+                color: textColor,
+                outline: 'black',
+                outlineWidth: 0,
+                maxreso: 20000,
+            })
+        });
+    }
+
+    _getSelectStyleFunction(feature, resolution) {        
+        return new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: 'blue'
+            }),
+            stroke: new ol.style.Stroke({                
+                color: 'blue',
+                width: 3
+            }),
+            image: new ol.style.Circle({
+                 radius: 5,
+                 fill: new ol.style.Fill({
+                     color: 'blue'
+                 }),
+                 stroke: new ol.style.Stroke({
+                     color: 'blue',
+                     width: 1
+                 })
+            }),
+            text: this._createTextStyle.call(this, feature, resolution, {
+                align: 'center',
+                baseline: 'middle',
+                size: '14px',
+                offsetX: 0,
+                offsetY: 15,
+                weight: 'bold',
+                overflow: 'true',
+                rotation: 0,
+                font: 'Arial',
+                color: 'blue',
+                outline: 'yellow',
+                outlineWidth: 0,
+                maxreso: 20000,
+            })
+        });
+    }
+
+    _createTextStyle(feature, resolution, dom) {                     
+        let align = dom.align;
+        let baseline = dom.baseline;
+        let size = dom.size;
+        let offsetX = parseInt(dom.offsetX, 10);
+        let offsetY = parseInt(dom.offsetY, 10);
+        let weight = dom.weight;
+        let placement = dom.placement ? dom.placement : undefined;
+        let maxAngle = dom.maxangle ? parseFloat(dom.maxangle) : undefined;
+        let overflow = dom.overflow ? (dom.overflow == 'true') : undefined;
+        let rotation = parseFloat(dom.rotation);
+        // if (dom.font == '\'Open Sans\'' && !openSansAdded) {
+        //   let openSans = document.createElement('link');
+        //   openSans.href = 'https://fonts.googleapis.com/css?family=Open+Sans';
+        //   openSans.rel = 'stylesheet';
+        //   document.getElementsByTagName('head')[0].appendChild(openSans);
+        //   openSansAdded = true;
+        // }
+        let font = weight + ' ' + size + ' ' + dom.font;
+        let fillColor = dom.color;
+        let outlineColor = dom.outline;
+        let outlineWidth = parseInt(dom.outlineWidth, 10);        
+
+        return new ol.style.Text({
+            textAlign: align == '' ? undefined : align,
+            textBaseline: baseline,
+            font: font,
+            text: this._getText(feature, resolution, dom),
+            fill: new ol.style.Fill({color: fillColor}),
+            stroke: outlineWidth == 0 ? undefined : new ol.style.Stroke({color: outlineColor, width: outlineWidth}),
+            offsetX: offsetX,
+            offsetY: offsetY,
+            placement: placement,
+            maxAngle: maxAngle,
+            overflow: overflow,
+            rotation: rotation
+        });
+    }
+
+    _getText(feature, resolution, dom) {        
+        let type = dom.text;
+        let maxResolution = dom.maxreso;
+        
+        var text = feature.get('name');
+        text = text ? text : "";
+
+        if (resolution > maxResolution) {
+            text = '';
+        } else if (type == 'hide') {
+            text = '';
+        } else if (type == 'shorten') {
+            text = text.trunc(12);
+        } else if (type == 'wrap' && dom.placement != 'line') {
+            text = stringDivider(text, 16, '\n');
+        }
+
+        return text;
     }
 }
 

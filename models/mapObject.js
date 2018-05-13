@@ -8,14 +8,18 @@ var mapObjectSchema = new mongoose.Schema({
   },
   kind: {
     type: String,
-    required: "Не задан тип геометрии."
+    required: "Не задан тип геометрии"
+  },
+  country: {
+    type: String,
+    required: "Не задана принадлежность страны"
   },
   name: {
     type: String,
   },
   coords: {
     type:     Array,
-    required: "Объект не может быть пустым.",
+    required: "Объект не может быть пустым",
   },
   deleted: Boolean,
 }, {
