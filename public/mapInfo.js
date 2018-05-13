@@ -46,17 +46,28 @@ class MapInfo {
             //cb(json);            
         }, this);
 
-        socket.on('srvDeleteObject', (data) => {
-            let json = JSON.parse(data);
-            data.forEach( (uid) => {
-                //todo MapObject.
+        socket.on('srvDeleteObjects', (data) => {
+            let json = JSON.parse(data);            
+            
+            if (undefined == json.uidAr)
+                return;
+            
+            json.uidAr.forEach( (uid) => {
+                let pos = this.getObjectPosition(uid);
+                if (undefined != pos) {
+                    console.log('before remove', this.objects.length);
+                    this.objects.remove(pos, pos);
+                    console.log('after remove', this.objects.length);
+                    this.deleteObjectFn(uid);
+                }                
             });
-        });
+        }, this);
 
         this.socket = socket;
         this.objects = [];
         this.addObjectFn = () => {};
         this.changeObjectFn = () => {};
+        this.deleteObjectFn = () => {};
         this.getKindTroopsFn = () => {};
     }
 
@@ -87,9 +98,12 @@ class MapInfo {
             case("changeObject"):
                 this.changeObjectFn = cb;
             break;
+            case("deleteObject"):
+                this.deleteObjectFn = cb;
+            break;
             case("getKindTroops"):
                 this.getKindTroopsFn = cb;
-            break;
+            break;            
         }        
     }
 
@@ -121,9 +135,9 @@ class MapInfo {
         
     }
 
-    deleteFromClient(obj) {
-        let objPos = this.getObjectPosition(obj.uid);
-        if (!objPos) return;
+    deleteFromClient(uid) {
+        let objPos = this.getObjectPosition(uid);
+        if (undefined == objPos) return;
 
         let msg = JSON.stringify(this.objects[objPos]);
         this.socket.emit('clDeleteObject', msg);

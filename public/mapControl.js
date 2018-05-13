@@ -136,6 +136,22 @@ class MapControl {
         };
         this.addFeatureEnabled = true;
     }
+    
+    deleteObjectInMap(uid) {
+
+        let ft = this.vectorSource.getFeatureById(uid);
+        this.vectorSource.removeFeature(ft);        
+        this.select.getFeatures().remove(ft);        
+        // return;
+        // let features = this.vectorSource.getFeatures();
+        // for (let i = 0; i < features.length; i++) {
+        //     let ft = features[i];            
+        //     if (mo.uid == ft.getId()) {
+        //         this.vectorSource.removeFeatures()
+        //         break;            
+        //     }
+        // };
+    }
 
     addObjectToMap(mo) {
         this.addFeatureEnabled = false;

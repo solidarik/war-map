@@ -76,14 +76,13 @@ function socket(server) {
     
     socket.on('clDeleteObject', (msg) => {
         let data = JSON.parse(msg);
-            
+        
         MapObject.deleteOne({uid: data.uid}, function(err) {
             if (err) {
                 console.error("Failed delete object: " + err);
                 return;
             }
-                        
-            socket.broadcast.emit('srvDeleteObject', JSON.stringify({uid: [uid]}));            
+            socket.emit('srvDeleteObjects', JSON.stringify({uidAr: [data.uid]}));            
         });        
     });
     

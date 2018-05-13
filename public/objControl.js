@@ -73,6 +73,16 @@ class ObjControl {
     }
 
     showInfo(mo, cnt) {
+
+        if (undefined == mo) {
+            this.cCounter.text('');
+            this.currentUid = undefined;
+            this.cName[0].value = '';            
+            this.changeCount(cnt);
+            this.checkActiveButtons();
+            return;
+        }
+
         var one_mo = mo;
         if (Array.isArray(mo))
             one_mo = mo[0];
@@ -127,6 +137,9 @@ class ObjControl {
             break;
             case("changeObject"):
                 this.changeFn = cb;
+            break;
+            case("deleteObject"):
+                this.deleteFn = cb;
             break;
             case("getPrevObject"):
                 this.getPrevObjectFn = cb;

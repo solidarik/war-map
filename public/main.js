@@ -39,14 +39,14 @@ function startApp() {
     objControl.on("changeObject", (obj) => mapInfo.changeObjectFromClient(obj));
     objControl.on("selectObject", (obj) => mapControl.selectObject(obj));
     objControl.on("deleteObject", (obj => mapInfo.deleteFromClient(obj)));
-    
-    objControl.on("delete", (obj) => {});
 
     mapInfo.on("changeObject", (obj) => mapControl.changeObjectInMap(obj));
-    mapInfo.on("clearDb", () => mapControl.clearMap());  
-    
-    //objInfo.on("saveObj", (obj) => mapInfo.saveObject(obj));
-    //mapInfo.on("getKindTroops", (troops) => objInfo.addTroops(troops));
+    mapInfo.on("deleteObject", (obj) => {  
+        console.log(mapInfo.getCount());      
+        mapControl.deleteObjectInMap(obj);        
+        objControl.showInfo(mapInfo.getFirstObject(), mapInfo.getCount());        
+    });
+    mapInfo.on("clearDb", () => mapControl.clearMap());
 
     $(document.getElementsByClassName('ol-attribution ol-unselectable ol-control ol-collapsed')).remove();
 }
