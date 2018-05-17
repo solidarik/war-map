@@ -291,7 +291,7 @@ class MapControl {
             type: type,
             freehand: true
         });
-
+        
         this.draw.on ('drawstart', (e) => {
             this.select.setActive(false);
         });           

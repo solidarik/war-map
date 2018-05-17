@@ -10,14 +10,14 @@ function startApp() {
 
     mapControl.on("addFeature", (ft) => {
         mapInfo.addFeature(ft);
-        objControl.showInfo(ft, mapInfo.getCount());
+        objControl.showInfo({obj: ft, count: mapInfo.getCount(), selectOnMap: false});
         
     });
 
     mapControl.on("getCurrentCountry", () => { return objControl.getCurrentCountry();});
     mapControl.on("changeFeatures", (ft) => mapInfo.changeFeatures(ft));
     mapControl.on("clearMap", () => mapInfo.clearDb());
-    mapControl.on("selectFeature", (ft) => objControl.showInfo(ft, mapInfo.getCount()));
+    mapControl.on("selectFeature", (ft) => objControl.showInfo({obj: ft,  count: mapInfo.getCount()}));
 
     var tryOnce = false;
 
@@ -26,7 +26,7 @@ function startApp() {
         objControl.changeCount(mapInfo.getCount());
 
         if ((0 < mapInfo.getCount()) && !tryOnce) {
-            objControl.showInfo(mapInfo.getFirstObject());
+            objControl.showInfo({obj: mapInfo.getFirstObject()});
             tryOnce = true;
         }
     });
@@ -34,8 +34,8 @@ function startApp() {
     objControl.on("getObjectPosition", (uid) => mapInfo.getObjectPosition(uid));
     objControl.on("getPrevObject", (uid) => mapInfo.getPrevObject(uid));
     objControl.on("getNextObject", (uid) => mapInfo.getNextObject(uid));
-    objControl.on("prev", (uid) => objControl.showInfo(mapInfo.getPrevObject(uid)));
-    objControl.on("next", (uid) => objControl.showInfo(mapInfo.getNextObject(uid)));
+    objControl.on("prev", (uid) => objControl.showInfo({obj: mapInfo.getPrevObject(uid)}));
+    objControl.on("next", (uid) => objControl.showInfo({obj: mapInfo.getNextObject(uid)}));
     objControl.on("changeObject", (obj) => mapInfo.changeObjectFromClient(obj));
     objControl.on("selectObject", (obj) => mapControl.selectObject(obj));
     objControl.on("deleteObject", (obj => mapInfo.deleteFromClient(obj)));
@@ -44,7 +44,7 @@ function startApp() {
     mapInfo.on("deleteObject", (obj) => {  
         console.log(mapInfo.getCount());      
         mapControl.deleteObjectInMap(obj);        
-        objControl.showInfo(mapInfo.getFirstObject(), mapInfo.getCount());        
+        objControl.showInfo({obj: mapInfo.getFirstObject(), count: mapInfo.getCount()});
     });
     mapInfo.on("clearDb", () => mapControl.clearMap());
 

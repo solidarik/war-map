@@ -31,6 +31,7 @@ class ObjControl {
         this.btnPrev = $("#btnPrevObject");
         this.btnNext = $("#btnNextObject");
         //this.btnChange = $("#btnChangeObject");
+        this.btnData = $("#btnDataObject");
         this.btnDelete = $("#btnDeleteObject");
 
         this.btnPrev.click(() => {
@@ -72,29 +73,31 @@ class ObjControl {
         this.changeFn(obj);
     }
 
-    showInfo(mo, cnt) {
+    showInfo(data) {
 
-        if (undefined == mo) {
+        if (undefined == data.obj) {
             this.cCounter.text('');
             this.currentUid = undefined;
             this.cName[0].value = '';            
-            this.changeCount(cnt);
+            this.changeCount(data.count);
             this.checkActiveButtons();
             return;
         }
 
-        var one_mo = mo;
-        if (Array.isArray(mo))
-            one_mo = mo[0];
+        var one_mo = data.obj;
+        if (Array.isArray(data.obj))
+            one_mo = data.obj[0];
         
         this.currentUid = one_mo.uid;
         this.cName[0].value = one_mo.name ? one_mo.name : "";
         //this.cInnerInfo[0].value = JSON.stringify(one_mo);
         this.cCountry[0].value = one_mo.country;
 
-        this.changeCount(cnt ? cnt : this.count);
+        this.changeCount(data.count ? data.count : this.count);
         this.checkActiveButtons();
-        this.selectObjectFn(one_mo);
+
+        if (false !== data.selectOnMap)
+            this.selectObjectFn(one_mo);
     }
 
     updatePosition() {
@@ -122,6 +125,7 @@ class ObjControl {
 
         //enableButton(this.btnChange, (this.currentUid));
         enableButton(this.btnDelete, (this.currentUid));
+        enableButton(this.btnData, (this.currentUid));
     }
 
     on(event, cb) {        
