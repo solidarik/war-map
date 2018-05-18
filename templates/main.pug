@@ -62,7 +62,7 @@ block content
   div.content(role="content")
     div.map(class='fill panel panel-default' id='map' role='map')    
     div(class='card border-secondary mb-3' id='panel-info')
-      div.card-header
+      div(class="card-header")
         | Объект
         div(class="card-counter" id="objectCounter")          
         div(class="btn-super-nav-group btn-super-nav-group-object")
@@ -77,7 +77,7 @@ block content
             button(type="button" id="btnDataObject" class="btn btn-secondary mdi mdi-table-large btn-data" title="Привязать данные")          
           div(class="btn-group btn-group-sm" role="group")
             button(type="button" id="btnDeleteObject" class="btn btn-secondary mdi mdi-delete-variant btn-delete" title="Удалить объект")        
-      div.card-body
+      div(class="card-body")      
         div.form-group(class='row')
           div(class='col-sm-8')            
             input.form-control(id='objectName' type="text" placeholder="Имя объекта")          
@@ -93,7 +93,7 @@ block content
               | Доп. информация
             textarea.form-control(rows='4', id='objectInnerInfo')
     div(class='card border-secondary mb-3' id='panel-date')
-      div.card-header
+      div(class="card-header")
         | Событие
         div(class="btn-super-nav-group")
           div(class="btn-group btn-group-sm" role="group")
@@ -109,7 +109,7 @@ block content
             button(type="button" class="btn btn-secondary mdi mdi-check btn-apply" title="Изменить текущую дату")          
           div(class="btn-group btn-group-sm" role="group")
             button(type="button" class="btn btn-secondary mdi mdi-delete-variant btn-delete" title="Удалить текущую дату")
-      div.card-body
+      div(class="card-body")
         div(class="form-group row")                    
           div(class='col-sm-8')
             input.form-control(id='dateCaption' type="text" placeholder="Название события")
@@ -136,3 +136,9 @@ block content
                         | &nbsp;-&nbsp;
                       div.event-end-date                  
                     //div.event-notes
+    div(class='card border-secondary mb-3' id='panel-data')
+      div(class='card-header')
+        | Данные
+      div(class='card-body')
+        div(class='form-group row')
+          div(class='handsontable-example' id='handsontable-example')

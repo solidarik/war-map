@@ -49,6 +49,26 @@ function startApp() {
     mapInfo.on("clearDb", () => mapControl.clearMap());
 
     $(document.getElementsByClassName('ol-attribution ol-unselectable ol-control ol-collapsed')).remove();
+
+
+    var data = [
+        ["", "Ford", "Tesla", "Toyota", "Honda"],
+        ["2017", 10, 11, 12, 13],
+        ["2018", 20, 11, 14, 13],
+        ["2019", 30, 15, 12, 13]
+      ];
+      
+      var container = document.getElementById('handsontable-example');
+      console.log(container);
+      var hot = new Handsontable(container, {
+        data: data,
+        rowHeaders: true,
+        colHeaders: true,
+        filters: true,
+        language: 'ru-RU',
+        contextMenu: true,
+        dropdownMenu: true
+      });
 }
 
 function addToDebug(text) {
