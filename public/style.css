@@ -217,3 +217,7 @@ input.form-control {
   height: 26px;
   line-height: 26px;
 }
+
+#dataCounter {
+  font-weight: bold;
+}

@@ -1,14 +1,18 @@
 class MapObject {
-    constructor(uid, coords, kind, name, country) {
+    constructor(uid, coords, kind, name, country, headerStr, headerArr, data) {
         this.uid = uid;
         this.coords = coords;
         this.kind = kind;
         this.name = name;
         this.country = country;
+                
+        this.headerStr = headerStr ? headerStr : "";        
+        this.headerArr = (undefined == headerArr || 0 == headerArr.length) ? [] : headerArr;
+        this.data = (undefined == data || 0 == data.length) ? [] : data;
     }
 
-    static create(uid, coords, kind, name, country) {
-        return new MapObject(uid, coords, kind, name, country);
+    static create(uid, coords, kind, name, country, headerStr, headerArr, data) {
+        return new MapObject(uid, coords, kind, name, country, headerStr, headerArr, data);
     }
 
     assign(obj) {
@@ -17,10 +21,20 @@ class MapObject {
         this.kind = obj.kind;
         this.name = obj.name;
         this.country = obj.country;
+        this.headerStr = obj.headerStr;
+        this.headerArr = obj.headerArr;
+        this.data = obj.data;
     }
 
     equals(obj) {
-        return (this.coords.equals(obj.coords) && this.kind == obj.kind && this.name == obj.name && this.country == obj.country);
+        return (this.coords.equals(obj.coords)
+            && this.kind == obj.kind
+            && this.name == obj.name
+            && this.country == obj.country
+            && this.headerStr == obj.headerStr
+            && this.headerArr.equals(obj.headerArr)
+            && this.data.equals(obj.data)
+        );
     }
 }
 
@@ -115,7 +129,6 @@ class MapInfo {
 
     changeFeatures(moArray) {
         let changes = this._getChanges(moArray);
-        console.log("mapInfo -> changeFeature -> changes " + changes); 
         
         this._renewObjects(changes, 'fromClient');
 
@@ -125,8 +138,17 @@ class MapInfo {
 
     changeObjectFromClient(obj) {        
         let objPos = this.getObjectPosition(obj.uid);
-        this.objects[objPos].name = obj.name;
-        this.objects[objPos].country = obj.country;
+                
+        if (undefined !== obj.name)
+            this.objects[objPos].name = obj.name;
+        
+        if (undefined !== obj.country)
+            this.objects[objPos].country = obj.country;
+
+        this.objects[objPos].headerStr = (undefined == obj.headerStr) ? "" : obj.headerStr;
+
+        this.objects[objPos].headerArr = obj.headerArr;
+        this.objects[objPos].data = obj.data;
 
         this.changeObjectFn(this.objects[objPos]);
 
@@ -153,6 +175,11 @@ class MapInfo {
             if (uid == obj.uid) return i;
         }
         return undefined;
+    }
+
+    getObject(uid) {
+        let idx = this.getObjectPosition(uid);
+        return (undefined === idx) ? undefined : this.objects[idx];
     }
 
     getFirstObject() {
@@ -216,7 +243,7 @@ class MapInfo {
             let ch = changes[i];
             let obj = this._getObjectByUid(ch.uid);
             if (!obj) {
-                this.objects.push(new MapObject(ch.uid, ch.coords, ch.kind, ch.name, ch.country));
+                this.objects.push(new MapObject(ch.uid, ch.coords, ch.kind, ch.name, ch.country, ch.headerStr, ch.headerArr, ch.data));
                 toAddObjects.push(ch);                
             } else {
                 if (!obj.equals(ch)) {

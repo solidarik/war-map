@@ -21,6 +21,15 @@ var mapObjectSchema = new mongoose.Schema({
     type:     Array,
     required: "Объект не может быть пустым",
   },
+  headerStr: {
+    type: String
+  },
+  headerArr: {
+    type: Array
+  },
+  data: {
+    type: Array
+  },
   deleted: Boolean,
 }, {
   timestamps: true

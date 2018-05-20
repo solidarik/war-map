@@ -64,7 +64,7 @@ block content
     div(class='card border-secondary mb-3' id='panel-info')
       div(class="card-header")
         | Объект
-        div(class="card-counter" id="objectCounter")          
+        div(class="card-counter" id="objectCounter")
         div(class="btn-super-nav-group btn-super-nav-group-object")
           div(class="btn-group btn-group-sm" role="group")
             button(type="button" id="btnPrevObject" class="btn btn-secondary mdi mdi-chevron-left" title="Предыдущий объект")
@@ -86,15 +86,32 @@ block content
               option(selected value='russia')
                 | Россия
               option(value='germany')
-                | Германия             
+                | Германия
         //div.form-group(class="row")
           div(class='col')
             label(for='coords')
               | Доп. информация
-            textarea.form-control(rows='4', id='objectInnerInfo')
+            textarea.form-control(rows='4', id='objectInnerInfo')    
+    div(class='card border-secondary mb-3' id='panel-data')
+      div(class='card-header')
+        | Данные
+        div(class="card-counter" id="dataCounter")
+        div(class="btn-super-group")             
+          div(class="btn-group btn-group-sm" role="group")
+            button(type="button" id="btnChangeData" class="btn btn-secondary mdi mdi-check btn-apply" title="Сохранить данные")
+          div(class="btn-group btn-group-sm" role="group")          
+            button(type="button" id="btnDeleteData" class="btn btn-secondary mdi mdi-delete-variant btn-delete" title="Удалить данные")
+      div(class='card-body')
+        div(class='form-group row')
+          div(class='col')
+            input.form-control(id='dataHeader' type="text" placeholder="Названия колонок через ;")          
+        div(class='form-group row')
+          div(class='col')
+            div(class='dataTable' id='dataTable')
     div(class='card border-secondary mb-3' id='panel-date')
       div(class="card-header")
         | Событие
+        div(class="card-counter" id="eventCounter")
         div(class="btn-super-nav-group")
           div(class="btn-group btn-group-sm" role="group")
             button(type="button" class="btn btn-secondary mdi mdi-skip-previous" title="Предыдущее событие")
@@ -136,9 +153,3 @@ block content
                         | &nbsp;-&nbsp;
                       div.event-end-date                  
                     //div.event-notes
-    div(class='card border-secondary mb-3' id='panel-data')
-      div(class='card-header')
-        | Данные
-      div(class='card-body')
-        div(class='form-group row')
-          div(class='handsontable-example' id='handsontable-example')

@@ -69,3 +69,21 @@ $.fn.exists = function () {
 function enableButton(elem, status){
     elem.prop("disabled", !status);
 }
+
+function checkDate(d) {
+    if ( Object.prototype.toString.call(d) === "[object Date]" ) {
+        // it is a date
+        if ( isNaN( d.getTime() ) ) {
+            // date is not valid
+            return false;
+        }
+        else {
+            // date is valid
+            return true;
+        }
+    }
+    else {
+        // not a date
+        return false;
+    }
+}

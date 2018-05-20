@@ -4,10 +4,32 @@ window.app = {};
 var app = window.app;
 
 function startApp() {
-    let mapControl = MapControl.create();
     let mapInfo = MapInfo.create();
+    let mapControl = MapControl.create();    
     let objControl = ObjControl.create();
+    let dataControl = DataControl.create();    
 
+    var tryOnce = false;
+
+    //mapInfo
+    mapInfo.on("addObject", (obj) => {
+        mapControl.addObjectToMap(obj);
+        objControl.changeCount(mapInfo.getCount());
+
+        if ((0 < mapInfo.getCount()) && !tryOnce) {
+            objControl.showInfo({obj: mapInfo.getFirstObject()});
+            tryOnce = true;
+        }
+    });
+    mapInfo.on("changeObject", (obj) => mapControl.changeObjectInMap(obj));
+    mapInfo.on("deleteObject", (obj) => {  
+        console.log(mapInfo.getCount());      
+        mapControl.deleteObjectInMap(obj);        
+        objControl.showInfo({obj: mapInfo.getFirstObject(), count: mapInfo.getCount()});
+    });
+    mapInfo.on("clearDb", () => mapControl.clearMap());
+
+    //mapControl
     mapControl.on("addFeature", (ft) => {
         mapInfo.addFeature(ft);
         objControl.showInfo({obj: ft, count: mapInfo.getCount(), selectOnMap: false});
@@ -19,56 +41,24 @@ function startApp() {
     mapControl.on("clearMap", () => mapInfo.clearDb());
     mapControl.on("selectFeature", (ft) => objControl.showInfo({obj: ft,  count: mapInfo.getCount()}));
 
-    var tryOnce = false;
-
-    mapInfo.on("addObject", (obj) => {
-        mapControl.addObjectToMap(obj);
-        objControl.changeCount(mapInfo.getCount());
-
-        if ((0 < mapInfo.getCount()) && !tryOnce) {
-            objControl.showInfo({obj: mapInfo.getFirstObject()});
-            tryOnce = true;
-        }
-    });
-
+    // objControl
     objControl.on("getObjectPosition", (uid) => mapInfo.getObjectPosition(uid));
     objControl.on("getPrevObject", (uid) => mapInfo.getPrevObject(uid));
     objControl.on("getNextObject", (uid) => mapInfo.getNextObject(uid));
     objControl.on("prev", (uid) => objControl.showInfo({obj: mapInfo.getPrevObject(uid)}));
     objControl.on("next", (uid) => objControl.showInfo({obj: mapInfo.getNextObject(uid)}));
     objControl.on("changeObject", (obj) => mapInfo.changeObjectFromClient(obj));
-    objControl.on("selectObject", (obj) => mapControl.selectObject(obj));
-    objControl.on("deleteObject", (obj => mapInfo.deleteFromClient(obj)));
-
-    mapInfo.on("changeObject", (obj) => mapControl.changeObjectInMap(obj));
-    mapInfo.on("deleteObject", (obj) => {  
-        console.log(mapInfo.getCount());      
-        mapControl.deleteObjectInMap(obj);        
-        objControl.showInfo({obj: mapInfo.getFirstObject(), count: mapInfo.getCount()});
+    objControl.on("selectObject", (obj) => {
+        mapControl.selectObject(obj);
+        let dataObj = mapInfo.getObject(obj.uid);
+        dataControl.showInfo(dataObj);
     });
-    mapInfo.on("clearDb", () => mapControl.clearMap());
+    objControl.on("deleteObject", (obj => mapInfo.deleteFromClient(obj)));    
+
+    // dataControl
+    dataControl.on("changeObject", (obj) => mapInfo.changeObjectFromClient(obj));    
 
     $(document.getElementsByClassName('ol-attribution ol-unselectable ol-control ol-collapsed')).remove();
-
-
-    var data = [
-        ["", "Ford", "Tesla", "Toyota", "Honda"],
-        ["2017", 10, 11, 12, 13],
-        ["2018", 20, 11, 14, 13],
-        ["2019", 30, 15, 12, 13]
-      ];
-      
-      var container = document.getElementById('handsontable-example');
-      console.log(container);
-      var hot = new Handsontable(container, {
-        data: data,
-        rowHeaders: true,
-        colHeaders: true,
-        filters: true,
-        language: 'ru-RU',
-        contextMenu: true,
-        dropdownMenu: true
-      });
 }
 
 function addToDebug(text) {

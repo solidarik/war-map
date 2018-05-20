@@ -21,7 +21,15 @@ function socket(server) {
 
     socket.on('clNewMapObject', (msg) => {
         let data = JSON.parse(msg);
-        let mapObject = new MapObject({kind: data.kind, coords: data.coords, uid: data.uid, country: data.country});
+        let mapObject = new MapObject({
+            kind: data.kind,
+            coords: data.coords,
+            uid: data.uid,
+            country: data.country,
+            headerStr: data.headerStr,
+            headerArr: data.headerArr,
+            data: data.data
+        });
         mapObject.save((err) => {
             if (!err) {
                 getDbObjects( (res) => {
@@ -63,11 +71,13 @@ function socket(server) {
 
     socket.on('clChangeObject', (msg) => {
         let data = JSON.parse(msg);
+        console.log(msg);
             
         MapObject.update({uid: data.uid}, data, function(err, raw) {
             if (err) {
                 console.error("Failed update object: " + err);
             }
+            
             getDbOneObject( data.uid, (res) => {
                 socket.broadcast.emit('srvMapObjects', JSON.stringify({mapObjects: res}));
             });
@@ -97,12 +107,7 @@ function getDbObjects(cb) {
             return;
          }
 
-        let mapObjectsToClient = [];
-        mapObjects.forEach(mo => {
-            mapObjectsToClient.push({uid: mo.uid, kind: mo.kind, coords: mo.coords, name: mo.name, country: mo.country});
-        });
-
-        cb(mapObjectsToClient);
+        sendToClient(mapObjects, cb);
     });
 }
 
@@ -113,13 +118,26 @@ function getDbOneObject(uid, cb) {
             return;
          }
 
-        let mapObjectsToClient = [];
-        mapObjects.forEach(mo => {
-            mapObjectsToClient.push({uid: mo.uid, kind: mo.kind, coords: mo.coords, name: mo.name, country: mo.country});
-        });
-
-        cb(mapObjectsToClient);
+        sendToClient(mapObjects, cb);
     });
+}
+
+function sendToClient(mapObjects, cb) {
+    let mapObjectsToClient = [];
+    mapObjects.forEach(mo => {
+        mapObjectsToClient.push({
+            uid: mo.uid,
+            kind: mo.kind,
+            coords: mo.coords,
+            name: mo.name,
+            country: mo.country,
+            headerStr: mo.headerStr,
+            headerArr: mo.headerArr,
+            data: mo.data,
+        });
+    });
+
+    cb(mapObjectsToClient);
 }
 
 module.exports = socket;
