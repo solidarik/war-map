@@ -9,6 +9,7 @@ class MapObject {
         this.headerStr = headerStr ? headerStr : "";        
         this.headerArr = (undefined == headerArr || 0 == headerArr.length) ? [] : headerArr;
         this.data = (undefined == data || 0 == data.length) ? [] : data;
+        this.currentObject = undefined;
     }
 
     static create(uid, coords, kind, name, country, headerStr, headerArr, data) {
@@ -51,7 +52,8 @@ class MapInfo {
             window.location.reload();
         });         
 
-        socket.on('srvMapObjects', (data) => {                    
+        socket.on('srvMapObjects', (data) => {
+            console.log('Update info from server');
             let json = JSON.parse(data);
             this._renewObjects(json.mapObjects, 'fromServer');
             // json.mapObjects.forEach( (mo) => {                        
@@ -123,8 +125,9 @@ class MapInfo {
 
     addFeature(mo) {
         let msg = JSON.stringify(mo);
+        console.log("coords: " + mo.coords);
         this.objects.push( new MapObject(mo.uid, mo.coords, mo.kind, mo.country) );                
-        this.socket.emit('clNewMapObject', msg);        
+        this.socket.emit('clNewMapObject', msg);
     }
 
     changeFeatures(moArray) {
@@ -158,6 +161,9 @@ class MapInfo {
     }
 
     deleteFromClient(uid) {
+
+        this.currentObject = this.getPrevObject(uid);
+        
         let objPos = this.getObjectPosition(uid);
         if (undefined == objPos) return;
 
@@ -190,6 +196,10 @@ class MapInfo {
         return this.objects[0];
     }
 
+    getCurrentObject() {
+        return this.currentObject;
+    }
+
     getPrevObject(uid) {
         var res = -1;
         for (let i = 0; i < this.objects.length; i++) {
@@ -219,7 +229,7 @@ class MapInfo {
             let obj = this.objects[i];            
             if (uid == obj.uid) return obj;                        
         }
-        return null;
+        return undefined;
     }
 
     _getChanges(moArray) {

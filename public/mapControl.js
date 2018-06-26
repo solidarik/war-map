@@ -14,6 +14,14 @@ class MapControl {
             }
         });
 
+        let vectorSource2 = new ol.source.Vector();
+        let vectorLayer2 = new ol.layer.Vector({
+            source: vectorSource2,
+            style: (feature, resolution) => {               
+                return this._getStyleFunction.call(this, feature, resolution);
+            }
+        });
+
         let view = new ol.View({
             //center: new ol.proj.fromLonLat([56.004 , 54.6950]), //ufa place
             //zoom: 18
@@ -25,21 +33,24 @@ class MapControl {
             controls: ol.control.defaults({ attribution: false, zoom: false }).extend([
                 new ol.control.FullScreen()            
             ]),
-            layers: [rasterLayer, vectorLayer],
+            layers: [rasterLayer, vectorLayer, vectorLayer2],
             target: 'map',
             view: view
-        });        
+        });
 
         this.map = map;
         this.vectorSource = vectorSource;
+        this.vectorSource2 = vectorSource2;
         this.view = view;
-        this.draw = null;
-        this.snap = null;
+        this.draw = undefined;
+        this.snap = undefined;
+        this.dragBox = {};
         this.addFeatureEnabled = true;
         this.clearDbFn = () => {};
         this.changeFeaturesFn = () => {};
         this.selectFn = () => {};
         this.getCurrentCountryFn = () => {};
+        this.activeButton = undefined;
 
         setTimeout(() => {
             this._addSelectInteraction();
@@ -54,7 +65,10 @@ class MapControl {
     on(event, cb) {        
         switch(event) {
             case("addFeature"):
-                this.vectorSource.on('addfeature', (event) => {                    
+                this.vectorSource.on('addfeature', (event) => {
+
+                    console.log('addfeature');
+
                     if (!this.addFeatureEnabled)
                         return;
                             
@@ -155,24 +169,52 @@ class MapControl {
 
     addObjectToMap(mo) {
         this.addFeatureEnabled = false;
-        for (let i = 0; i < mo.length; i++) {
-            let geom = this._createGeom(mo[i]);            
-            let ft = new ol.Feature({geometry: geom});
-            ft.setId(mo[i].uid);
-            ft.set("name", mo[i].name);
-            ft.set("country", mo[i].country);
-            
+        for (let i = 0; i < mo.length; i++) {            
+            let ft = new ol.Feature({id: mo[i].uid, geometry: this._createGeom(mo[i]), name: mo[i].name, country: mo[i].country});
+            ft.setId(mo[i].uid); //засунул передачу всех свойств в верхнюю строку, в метод ol.Feature
+
             this.vectorSource.addFeature(ft);
         };
         this.addFeatureEnabled = true;        
     }
+
+    _addDragBoxToMap(obj) {        
+
+        let p1 = [obj.start.x, obj.start.y];
+        let p2 = [obj.end.x, obj.start.y];
+        let p3 = [obj.end.x, obj.end.y];
+        let p4 = [obj.start.x, obj.end.y];
+
+        // this._addPointToVS2( p1 );
+        // this._addPointToVS2( p2 );
+        // this._addPointToVS2( p3 );
+        // this._addPointToVS2( p4 );
+        
+        this._addLineToVS2( [p1, p2, p3, p4, p1] );
+        // this._addLineToVS2( [p2, p3] );
+        // this._addLineToVS2( [p3, p4] );
+        // this._addLineToVS2( [p4, p1] );
+    }
+
+    _addPointToVS2(p) {
+        this.vectorSource2.addFeature( new ol.Feature({geometry: this._createGeom({kind: "Point", coords: p})}) );
+    }
+
+    _addLineToVS2(p) {        
+        console.log('addPolygon to VS2: ' + p )
+        this.vectorSource2.addFeature( new ol.Feature({geometry: this._createGeom({kind: "Polygon", coords: p})}) );
+    }
+
 
     clearMap() {
         this.vectorSource.clear();
     }
 
     _doCenterView(ft) {
-        this.map.getView().animate({center: this._getCenterCoord(ft)});
+        this.map.getView().animate({
+            center: this._getCenterCoord(ft),
+            duration: 300
+        });
     }
 
     _getCenterCoord(ft) {
@@ -222,6 +264,7 @@ class MapControl {
                 geom = new ol.geom.LineString(mo.coords);
                 break;
             case 'Polygon':
+                console.log("add polygon " + mo.coords);
                 geom = new ol.geom.Polygon(mo.coords);
                 break;
         }
@@ -231,34 +274,67 @@ class MapControl {
     _addButtons() {
         this.map.addControl(new CustomControl({
             caption: "Выбрать объект",
-            class: "select-control",
+            class: "pointer-control",
             icon: "mdi mdi-cursor-default-outline",
-            handler: () => { 
+            handler: (btn) => {
+                this._setActiveButton(btn);
                 this.map.removeInteraction(this.draw);
                 this.map.removeInteraction(this.snap);
             },
+            callback: (btn) => {
+                this._setActiveButton(btn);
+            }
         }));
 
         this.map.addControl(new CustomControl({
             caption: "Связанные отрезки",
             class: "polyline-control",
             icon: "mdi mdi-vector-polyline",
-            handler: () => { this._addInteraction("LineString"); },
+            handler: (btn) => { 
+                this._setActiveButton(btn);
+                this._addInteraction("LineString");
+            },            
         }));
 
         this.map.addControl(new CustomControl({
             caption: "Замкнутый контур",
             class: "polygon-control",
             icon: "mdi mdi-vector-polygon",
-            handler: () => { this._addInteraction("Polygon"); },
+            handler: (btn) => { 
+                this._setActiveButton(btn);
+                this._addInteraction("Polygon");
+            },
         }));
         
         this.map.addControl(new CustomControl({
             caption: "Точки",        
             class: "point-control",
             icon: "mdi mdi-circle-outline",
-            handler: () => { this._addInteraction("Point"); },
+            handler: (btn) => { 
+                this._setActiveButton(btn);
+                this._addInteraction("Point");
+            },
         }));        
+
+        this.map.addControl(new CustomControl({
+            caption: "Изображение",
+            class: "image-control",
+            icon: "mdi mdi-image",
+            handler: (btn) => { 
+                this._setActiveButton(btn);
+                this._addInteraction("Image");
+            },
+        }));
+
+        this.map.addControl(new CustomControl({
+            caption: "Выбор",
+            class: "box-control",
+            icon: "mdi mdi-select",
+            handler: (btn) => { 
+                this._setActiveButton(btn);
+                this._addInteraction("BoxControl");
+            },
+        }));
     }
 
     _addModify() {
@@ -279,29 +355,72 @@ class MapControl {
             this.changeFeaturesFn(mapObjects);
         }, this);
 
-        this.map.modify = modify;
+        this.map.modify = modify;    
+    }
+
+    _setActiveButton(btn) {
+        if (this.activeButton) {
+            $(this.activeButton).removeClass('glow-button');            
+        }
+
+        this.activeButton = btn;
+        $(btn).addClass('glow-button');
     }
     
     _addInteraction(type) {
         this.map.removeInteraction(this.draw);
-        this.map.removeInteraction(this.snap);
-    
-        this.draw = new ol.interaction.Draw({
-            source: this.vectorSource,
-            type: type,
-            freehand: true
-        });
-        
-        this.draw.on ('drawstart', (e) => {
-            this.select.setActive(false);
-        });           
+        this.map.removeInteraction(this.snap);        
+
+        if ("Image" == type) {
             
-        this.draw.on('drawend', (e) => {
-            e.preventDefault();
-            setTimeout(() => { 
-                this.select.setActive(true); 
-            }, 300);
-        });
+            this.draw = new ol.interaction.DragBox({  
+                source: this.vectorSource2              
+            });
+
+            this.dragBox = {};
+            this.vectorSource2.clear();
+
+            this.draw.on('boxend', (ev) => {
+                //let extent = this.draw.getGeometry().getExtent();
+                this.dragBox["end"] = {"x": ev.coordinate[0], "y": ev.coordinate[1]};
+                this._addDragBoxToMap(this.dragBox);
+                // vectorSource.forEachFeatureIntersectingExtent(extent, function(feature) {
+                //      //this.select.push(feature);
+                // });
+            });
+            
+            this.draw.on('boxstart', (ev) => {                
+                this.dragBox["start"] = {"x": ev.coordinate[0], "y": ev.coordinate[1]};
+            });
+        }
+        else if ("BoxControl" == type) {
+
+            this.draw = new ol.interaction.Draw({
+                source: this.vectorSource2,
+                type: 'Circle',
+                geometryFunction: ol.interaction.Draw.createBox()
+            });
+        
+        } else {
+        
+            this.draw = new ol.interaction.Draw({
+                source: this.vectorSource,
+                type: type,
+                //freehand: true
+            });
+            
+            this.draw.on ('drawstart', (e) => {
+                this.select.setActive(false);
+            });           
+                
+            this.draw.on('drawend', (e) => {
+                e.preventDefault();
+                setTimeout(() => { 
+                    this.select.setActive(true); 
+                }, 300);
+            });
+        
+        }
 
         this.map.addInteraction(this.draw);        
         
@@ -505,19 +624,20 @@ class CustomControl extends ol.control.Control {
         const hint = get(inputParams, 'hint') || caption;
         let button = document.createElement('button');
         button.innerHTML = this.getBSIconHTML(get(inputParams, 'icon'));
-        button.className = get(inputParams, 'class');// + ' ol-unselectable ol-control';
+        button.className = get(inputParams, 'class');
         const handler = get(inputParams, 'handler');
         if (handler) {
-            button.addEventListener('click', handler, false);
-            button.addEventListener('touchstart', handler, false);
-        }
+            button.addEventListener('click', () => { handler(button); }, false);
+            button.addEventListener('touchstart', () => { handler(button) }, false);
+        }        
         
-        let parentDiv = $('#custom-control')[0];
+        let parentDiv = $('#custom-control')[0];        
         if (!parentDiv) {
             parentDiv = document.createElement('div');
-            parentDiv.className = 'ol-unselectable ol-control';
-            parentDiv.setAttribute("id", 'custom-control');
-        }            
+            parentDiv.className = 'ol-control';
+            parentDiv.setAttribute("id", 'custom-control');            
+        }        
+
         parentDiv.appendChild(button);
         this.element = parentDiv;        
         
@@ -527,6 +647,11 @@ class CustomControl extends ol.control.Control {
             element: parentDiv,
             target: get(inputParams, "target")
         });
+
+        const callback = get(inputParams, 'callback');
+        if (callback) {
+            callback(button);
+        }
     }
 
     getBSIconHTML(name) {

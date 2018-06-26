@@ -47,7 +47,12 @@ html, body {height:100%;}
   border-radius: 1px;
 }
 
-.ol-control button{ 
+.glow-button {
+  box-shadow: 0 4px 15px rgba(255, 0, 0, .4) !important;
+  outline: 4px auto  rgba(255, 0, 0, .4) !important;
+}
+
+.ol-control button { 
   background-color: rgba(40, 40, 40, 0.85) !important;  
   font-size: 14px !important;
   touch-action: manipulation;

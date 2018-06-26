@@ -144,7 +144,7 @@ class DataControl {
     showInfo(obj) {
 
         if (undefined == obj.uid) {
-            this.cHeader.text('');
+            this.cHeader[0].value = "";
             this.currentUid = undefined;
             this.checkActiveButtons();
             return;
