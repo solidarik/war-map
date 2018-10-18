@@ -9,7 +9,7 @@ class MapObject {
         this.headerStr = headerStr ? headerStr : "";        
         this.headerArr = (undefined == headerArr || 0 == headerArr.length) ? [] : headerArr;
         this.data = (undefined == data || 0 == data.length) ? [] : data;
-        this.currentObject = undefined;
+        this.currentObject = undefined;        
     }
 
     static create(uid, coords, kind, name, country, headerStr, headerArr, data) {
@@ -77,7 +77,7 @@ class MapInfo {
                     this.deleteObjectFn(uid);
                 }                
             });
-        }, this);
+        }, this);        
 
         this.socket = socket;
         this.objects = [];

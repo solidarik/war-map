@@ -3,7 +3,8 @@
 window.app = {};
 var app = window.app;
 
-function retrieveImageFromClipboardAsBlob(pasteEvent, callback){
+function retrieveImageFromClipboardAsBlob(pasteEvent, callback){    
+
 	if(pasteEvent.clipboardData == false){
         if(typeof(callback) == "function"){
             callback(undefined);
@@ -19,6 +20,7 @@ function retrieveImageFromClipboardAsBlob(pasteEvent, callback){
     };
 
     for (var i = 0; i < items.length; i++) {
+
         // Skip content if not image
         if (items[i].type.indexOf("image") == -1) continue;
         // Retrieve image on clipboard as blob
@@ -88,7 +90,7 @@ function startApp() {
     mapInfo.on("clearDb", () => mapControl.clearMap());
 
     //mapControl
-    mapControl.on("addFeature", (ft) => {
+    mapControl.on("addFeature", (ft) => {        
         mapInfo.addFeature(ft);
         objControl.showInfo({obj: ft, count: mapInfo.getCount(), selectOnMap: false});
     });
@@ -114,6 +116,9 @@ function startApp() {
 
     // dataControl
     dataControl.on("changeObject", (obj) => mapInfo.changeObjectFromClient(obj));    
+
+    var something = document.getElementById('content');
+    something.style.cursor = 'pointer'; 
 
     $(document.getElementsByClassName('ol-attribution ol-unselectable ol-control ol-collapsed')).remove();
 }

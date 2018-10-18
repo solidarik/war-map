@@ -1,0 +1,8 @@
+<script src="http://geacron.com/dropbox/geacron/map/OpenLayers.js?n=800"></script>
+<script language="JavaScript" src="mapal_REPOS.js?n=810"></script>
+<script language="JavaScript" src="http://geacron.com/dropbox/geacron/map/atlas/funciones2.js?n=801"></script>
+<script language="JavaScript" src="http://geacron.com/dropbox/geacron/map/atlas/dates.js?n=814"></script>
+<script language="JavaScript" src="http://geacron.com/dropbox/geacron/map/atlas/idioma1.js?n=800"></script>
+<script language="JavaScript" src="http://geacron.com/dropbox/geacron/map/atlas/tilesaccess.js?n=803"></script>
+<script language="JavaScript" type="text/javascript" src="http://geacron.com/dropbox/geacron/map/atlas/ajax_search.js?n=800"></script>                
+<script src="http://geacron.com/dropbox/geacron/map/atlas/aes.js"></script>
