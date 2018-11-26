@@ -1,65 +1,42 @@
 const kremlinLocation = new ol.proj.fromLonLat([37.617499, 55.752023]); //moscow kremlin
 
 class MapControl {
-    
-    _get_my_url(bounds) { 
-        var x = bounds[0];
-        var y = bounds[1];
-        var z = bounds[2];
 
-        /*var res = this.view.getResolution(); 
-        var x = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileSize.w)); 
-        var y = Math.round((this.maxExtent.top - bounds.top) / (res * this.tileSize.h)); 
-        var z = this.view.getZoom(); 
-        */
-        var limit = Math.pow(2, z);
+    _getYearLayerUrl (tileCoord, pixelRatio, projection) {
 
-        return "http://cdn.geacron.com" + "/GIS/Medium2/Z" + z + "/" + y + "_" + x + ".png" + "?v=0";
+        let ano = this.currentYear;
+        var anow = "" + ano;
+        anow = anow.replace("-", "B");
 
-        // if (y < 0 || y >= limit) { 
-        //     return null; 
-        // } else { 
-            x = ((x % limit) + limit) % limit; 
+        let z = tileCoord[0];
+        let x = tileCoord[1];
+        let y = -tileCoord[2] - 1;
 
-            if (z >= 0 && z <= 4) { var path = "cdn.geacron.com" + "/GIS/Small2/Z" + z + "/" + y + "_" + x + ".png" + "?v=0";}
-            else if (z >= 5 && z <= 6 ) { var path = "cdn.geacron.com" + "/GIS/Medium2/Z" + z + "/" + y + "_" + x + ".png" + "?v=0"; }
+        if (0 == z || z > 6)
+            return;
 
-            var url = this.url;
-            return url + path; 
-        // } 
-    } 
+        let url = "http://cdn.geacron.com" + "/tiles/area/" + anow + "/Z" + z + "/" + y + "/" + x + ".png";
+        return url;
+    }
 
     constructor() {
 
         let fileImportElem = document.getElementById('fileImport');
         fileImportElem.onchange = (filePath) => {
-            this._readFile(fileImportElem.files[0]);
+            this._importFile(fileImportElem.files[0]);
         };
 
-        var mio =new ol.layer.Tile({
-            preload: 1,
-            opacity: 0.8,
-            source:  new ol.source.XYZ({
-                tileUrlFunction: (bound) => { this._get_my_url.call(this, bound) }, 
-                displayOutsideMaxExtent: true,
-                wrapDateLine: true,
-                transitionEffect: 'resize'
-            })
-        });
-
-        // var plano =new ol.layer.Tile('relief',
-        //     "http://", {'getURL': this._get_my_urlplano, displayOutsideMaxExtent: true,  wrapDateLine: true, transitionEffect: 'resize'  });
-
-        // var mosm = new ol.source.OSM();
-
         let rasterLayer = new ol.layer.Tile({
+            opacity: 1,
+            zIndex: 0,
             source: new ol.source.OSM()
         });
 
         let vectorSource = new ol.source.Vector();
         let vectorLayer = new ol.layer.Vector({
             source: vectorSource,
-            style: (feature, resolution) => {               
+            zIndex: 2,
+            style: (feature, resolution) => {
                 return this._getStyleFunction.call(this, feature, resolution);
             },
             updateWhileAnimating: true,
@@ -69,7 +46,8 @@ class MapControl {
         let vectorSource2 = new ol.source.Vector();
         let vectorLayer2 = new ol.layer.Vector({
             source: vectorSource2,
-            style: (feature, resolution) => {               
+            zIndex: 3,
+            style: (feature, resolution) => {
                 return this._getStyleFunction.call(this, feature, resolution);
             },
             updateWhileAnimating: true,
@@ -77,15 +55,16 @@ class MapControl {
         });
 
         let view = new ol.View({
-            //center: new ol.proj.fromLonLat([56.004 , 54.6950]), //ufa place
+            center: new ol.proj.fromLonLat([56.004 , 54.6950]), //ufa place
             //zoom: 18
-            center: kremlinLocation,
-            zoom: 3
+            //center: kremlinLocation,
+            zoom: 3,
+            //projection: 'EPSG:4326'
         });
 
         const map = new ol.Map({
             controls: ol.control.defaults({ attribution: false, zoom: false }).extend([
-                new ol.control.FullScreen()            
+                new ol.control.FullScreen()
             ]),
             layers: [rasterLayer, vectorLayer, vectorLayer2],
             target: 'map',
@@ -93,14 +72,17 @@ class MapControl {
         });
 
         map.on('click', function(evt) {
-            var coordinates = evt.coordinate;
-            console.log('clicked on map with coordinates: ' + coordinates);
+            let coordinates = evt.coordinate;
+            let lonLatCoords = new ol.proj.toLonLat(coordinates);
+            console.log('clicked on map with coordinates: ' + coordinates + '; WGS: ' + lonLatCoords);
         });
 
         this.map = map;
         this.vectorSource = vectorSource;
         this.vectorSource2 = vectorSource2;
         this.firstFeature = undefined;
+
+        this.currentYear = 1933;
 
         this.view = view;
         this.draw = undefined;
@@ -119,23 +101,24 @@ class MapControl {
 
         setTimeout(() => {
             this._addSelectInteraction();
-            this._addButtons(); 
-            this.map.addLayer(mio);           
-        }, 10);        
+            this._addYearLayer();
+            this._addButtons();
+            this._addYearControl();
+        }, 10);
     }
 
     static create() {
         return new MapControl();
     }
 
-    on(event, cb) {        
+    on(event, cb) {
         switch(event) {
             case("addFeature"):
                 this.vectorSource.on('addfeature', (event) => {
 
                     if (!this.addFeatureEnabled)
                         return;
-                            
+
                     let mo = this._createMapObjectByFeature(event.feature);
                     event.feature.setId(mo.uid);
                     event.feature.set("country", mo.country);
@@ -150,11 +133,25 @@ class MapControl {
             break;
             case("changeFeatures"):
                 this.changeFeaturesFn = cb;
-            break;    
+            break;
             case("getCurrentCountry"):
                 this.getCurrentCountryFn = cb;
-            break;        
-        }        
+            break;
+        }
+    }
+
+    _addYearLayer() {
+        var yearLayer = new ol.layer.Tile({
+            preload: 5,
+            opacity: 0.2,
+            zIndex: 2,
+            source:  new ol.source.XYZ({
+                tileUrlFunction: (tileCoord, pixelRatio, projection) => { return this._getYearLayerUrl.call(this, tileCoord, pixelRatio, projection) }
+            })
+        });
+
+        this.yearLayer = yearLayer;
+        this.map.addLayer(yearLayer);
     }
 
     _getMapObjectFromFeature(ft) {
@@ -169,7 +166,7 @@ class MapControl {
 
     _createMapObjectByFeature(ft) {
         return {
-            "kind": ft.getGeometry().getType(),            
+            "kind": ft.getGeometry().getType(),
             "coords": ft.getGeometry().getCoordinates(),
             "uid": this._createUid(),
             "country": this.getCurrentCountryFn()
@@ -185,39 +182,53 @@ class MapControl {
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     }
 
-    _readFile(filePath) {
+    _importFile(filePath) {
         let reader = new FileReader();
-        reader.readAsDataURL(filePath);
-
         reader.onload = (e) => {
-            let text = reader.result;
-            console.log(text);
+            let contents = reader.result;
+            let lines = contents.split('\n');
+            let jsonFromFile = JSON.parse(lines);
 
-            let vectorLayer = new ol.layer.Vector({
-                source: new ol.source.Vector({
-                  url: text,
-                  format: new ol.format.KML()
-                })
-            });
-    
-            this.map.addLayer(vectorLayer);
+            // let vectorLayer = new ol.layer.Vector({
+            //     source: new ol.source.Vector({
+            //       url: contents,
+            //       format: new ol.format.KML()
+            //     })
+            // });
+
+            for (let i = 0; i < jsonFromFile.features.length; i++) {
+                let fj = jsonFromFile.features[i].geometry;
+                var coords = [];
+                if ('Point' === fj.type) {
+                    coords = new ol.proj.fromLonLat(fj.coordinates);
+                } else {
+                    let srcCoords = ('Polygon' === fj.typ) ? fj.coordinates[0] : fj.coordinates;
+                    for (let j = 0; j < srcCoords.length; j++) {
+                        let point = new ol.proj.fromLonLat(srcCoords[j]);
+                        coords.push(point);
+                    }
+                }
+                let ft = new ol.Feature({uid: 100, name: 'test', geometry: this._createGeom({kind: fj.type, coords: coords})});
+                this.vectorSource2.addFeature(ft);
+            };
         }
+        reader.readAsText(filePath);
 
-        console.log(filePath);        
+        console.log(filePath);
     }
 
     selectObject(obj) {
         this.addFeatureEnabled = false;
         let features = this.vectorSource.getFeatures();
         for (let i = 0; i < features.length; i++) {
-            let ft = features[i];            
+            let ft = features[i];
             if (obj.uid == ft.getId()) {
                 this.select.getFeatures().clear();
                 this.select.getFeatures().push(ft);
-                this._doCenterView(ft);
+                //this._doCenterView(ft);
                 break;
             }
-        };        
+        };
         this.addFeatureEnabled = true;
     }
 
@@ -225,12 +236,12 @@ class MapControl {
         this.addFeatureEnabled = false;
         let features = this.vectorSource.getFeatures();
         for (let i = 0; i < features.length; i++) {
-            let ft = features[i];            
+            let ft = features[i];
             if (mo.uid == ft.getId()) {
                 ft.setGeometry(this._createGeom(mo));
                 ft.set("name", mo.name);
                 ft.set("country", mo.country);
-                break;            
+                break;
             }
         };
         this.addFeatureEnabled = true;
@@ -241,35 +252,35 @@ class MapControl {
         this.vectorSource2.clear();
         this._addPointToVS2(this.firstFeature)
     }
-    
+
     deleteObjectInMap(uid) {
 
         let ft = this.vectorSource.getFeatureById(uid);
-        this.vectorSource.removeFeature(ft);        
-        this.select.getFeatures().remove(ft);        
+        this.vectorSource.removeFeature(ft);
+        this.select.getFeatures().remove(ft);
         // return;
         // let features = this.vectorSource.getFeatures();
         // for (let i = 0; i < features.length; i++) {
-        //     let ft = features[i];            
+        //     let ft = features[i];
         //     if (mo.uid == ft.getId()) {
         //         this.vectorSource.removeFeatures()
-        //         break;            
+        //         break;
         //     }
         // };
     }
 
     addObjectToMap(mo) {
         this.addFeatureEnabled = false;
-        for (let i = 0; i < mo.length; i++) {            
+        for (let i = 0; i < mo.length; i++) {
             let ft = new ol.Feature({id: mo[i].uid, geometry: this._createGeom(mo[i]), name: mo[i].name, country: mo[i].country});
             ft.setId(mo[i].uid); //засунул передачу всех свойств в верхнюю строку, в метод ol.Feature
 
             this.vectorSource.addFeature(ft);
         };
-        this.addFeatureEnabled = true;        
+        this.addFeatureEnabled = true;
     }
 
-    _addDragBoxToMap(obj) {        
+    _addDragBoxToMap(obj) {
 
         let p1 = [obj.start.x, obj.start.y];
         let p2 = [obj.end.x, obj.start.y];
@@ -280,7 +291,7 @@ class MapControl {
         this._addPointToVS2( p2 );
         this._addPointToVS2( p3 );
         this._addPointToVS2( p4 );
-        
+
         this._addLineToVS2( [p1, p2, p3, p4, p1] );
     }
 
@@ -288,7 +299,7 @@ class MapControl {
         return this.vectorSource2.addFeature( new ol.Feature({geometry: this._createGeom({kind: "Point", coords: p})}) );
     }
 
-    _addLineToVS2(p) {        
+    _addLineToVS2(p) {
         console.log('addPolygon to VS2: ' + p )
         this.vectorSource2.addFeature( new ol.Feature({geometry: this._createGeom({kind: "Polygon", coords: [p]})}) );
     }
@@ -333,9 +344,9 @@ class MapControl {
 
     _getMedian(values) {
         values.sort( function(a,b) {return a - b;} );
-    
+
         var half = Math.floor(values.length/2);
-    
+
         if(values.length % 2)
             return values[half];
         else
@@ -359,6 +370,21 @@ class MapControl {
         return geom;
     }
 
+    _addYearControl() {
+        this.map.addControl(new YearControl({
+            caption: "Выбрать год событий",
+            year: this.currentYear,
+            handler: (year) => {
+                this._changeYear(year);
+            },
+        }));
+    }
+
+    _changeYear(year) {
+        this.currentYear = year;
+        this.yearLayer.getSource().refresh();
+    }
+
     _addButtons() {
         this.map.addControl(new CustomControl({
             caption: "Выбрать объект",
@@ -373,13 +399,13 @@ class MapControl {
         }));
 
         this.map.addControl(new CustomControl({
-            caption: "Связанные отрезки",
+            caption: "Рисовать связанные отрезки",
             class: "polyline-control",
             icon: "mdi mdi-vector-polyline",
-            handler: (btn) => { 
+            handler: (btn) => {
                 this._setActiveButton(btn);
                 this._addInteraction("LineString");
-            },            
+            },
         }));
 
         // каждый объект имеет свою логику работы с vectorsource
@@ -389,31 +415,31 @@ class MapControl {
 
 
         this.map.addControl(new CustomControl({
-            caption: "Замкнутый контур",
+            caption: "Рисовать замкнутый контур",
             class: "polygon-control",
             icon: "mdi mdi-vector-polygon",
-            handler: (btn) => { 
+            handler: (btn) => {
                 this._setActiveButton(btn);
                 this._addInteraction("Polygon");
             },
         }));
-        
+
         this.map.addControl(new CustomControl({
-            caption: "Точки",        
+            caption: "Добавить точку на карту",
             class: "point-control",
             icon: "mdi mdi-circle-outline",
-            handler: (btn) => { 
+            handler: (btn) => {
                 this._setActiveButton(btn);
                 this._addInteraction("Point");
             },
-        }));        
+        }));
 
         /*
         this.map.addControl(new CustomControl({
             caption: "Изображение",
             class: "image-control",
             icon: "mdi mdi-image",
-            handler: (btn) => { 
+            handler: (btn) => {
                 this._setActiveButton(btn);
                 this._addInteraction("Image");
             },
@@ -421,9 +447,9 @@ class MapControl {
         */
 
         this.map.addControl(new CustomControl({
-            caption: "Выбор",
+            caption: "Выбрать элементы на карте",
             class: "box-control",
-            icon: "mdi mdi-select",            
+            icon: "mdi mdi-select",
             handler: (btn) => {
                 console.log('click to handler\'s boxcontrol');
                 this._setActiveButton(btn);
@@ -432,12 +458,13 @@ class MapControl {
         }));
 
         this.map.addControl(new CustomControl({
-            caption: "Импорт",
+            caption: "Импортировать объекты из geojson-файла",
             class: "box-control",
             icon: "mdi mdi-import",
             handler: (btn) => {
-                console.log('click to import...');                                
-                document.getElementById('fileImport').click();                
+                console.log('click to import...');
+                this._setActiveButton(btn);
+                document.getElementById('fileImport').click();
             }
         }));
     }
@@ -445,7 +472,7 @@ class MapControl {
     _addModify() {
         let modify = new ol.interaction.Modify({ source: vectorSource });
         map.addInteraction(modify);
-        
+
         modify.on('modifyend',  function(e) {
             if (!this.changeFeaturesFn || (0 == e.features.getArray().length)) {
                 return;
@@ -455,47 +482,46 @@ class MapControl {
             for(let i = 0; i < e.features.getArray().length; i++) {
                 let ft = e.features.getArray()[i];
                 mapObjects.push(this._getMapObjectFromFeature(ft));
-            };            
+            };
 
             this.changeFeaturesFn(mapObjects);
         }, this);
 
-        this.map.modify = modify;    
+        this.map.modify = modify;
     }
 
     _setActiveButton(btn) {
-        console.log('active button: ' + btn.className);
         if (this.activeButton) {
-            $(this.activeButton).removeClass('glow-button');            
+            $(this.activeButton).removeClass('glow-button');
         }
 
         this.activeButton = btn;
         $(btn).addClass('glow-button');
     }
-    
-    _addInteraction(type) {        
+
+    _addInteraction(type) {
         this.map.removeInteraction(this.draw);
-        this.map.removeInteraction(this.snap);   
+        this.map.removeInteraction(this.snap);
 
         if ("Image" == type) {
-            
-            this.draw = new ol.interaction.DragBox({  
+
+            this.draw = new ol.interaction.DragBox({
                 source: this.vectorSource2
             });
-            
+
             this.draw.on('boxstart', (ev) => {
                 console.log('boxstart: ' + ev.coordinate);
                 this.firstFeature = ev.coordinate;
-                
-                this.dragBox = {};                
-                this.dragBox["start"] = {"x": ev.coordinate[0], "y": ev.coordinate[1]};                
+
+                this.dragBox = {};
+                this.dragBox["start"] = {"x": ev.coordinate[0], "y": ev.coordinate[1]};
             });
 
-            this.draw.on('boxend', (ev) => {               
-                this.dragBox["end"] = {"x": ev.coordinate[0], "y": ev.coordinate[1]};                
-                this._addDragBoxToMap(this.dragBox);                
-            });           
-            
+            this.draw.on('boxend', (ev) => {
+                this.dragBox["end"] = {"x": ev.coordinate[0], "y": ev.coordinate[1]};
+                this._addDragBoxToMap(this.dragBox);
+            });
+
             this.map.addInteraction(this.draw);
             this.snap = new ol.interaction.Snap({ source: this.vectorSource2 });
             this.map.addInteraction(this.snap);
@@ -513,50 +539,50 @@ class MapControl {
                 console.log('change event');
             });
 
-            
-            
+
+
             this.map.addInteraction(this.draw);
             this.snap = new ol.interaction.Snap({ source: this.vectorSource2 });
             this.map.addInteraction(this.snap);
             return;
-        
+
         } else {
-        
+
             this.draw = new ol.interaction.Draw({
                 source: this.vectorSource,
                 type: type,
                 //freehand: true
             });
-            
+
             this.draw.on ('drawstart', (e) => {
                 this.select.setActive(false);
-            });           
-                
+            });
+
             this.draw.on('drawend', (e) => {
                 e.preventDefault();
-                setTimeout(() => { 
-                    this.select.setActive(true); 
+                setTimeout(() => {
+                    this.select.setActive(true);
                 }, 300);
             });
-        
+
         }
 
         this.map.addInteraction(this.draw);
-        
+
         this.snap = new ol.interaction.Snap({ source: this.vectorSource });
         this.map.addInteraction(this.snap);
     }
 
     _addSelectInteraction() {
         let select = new ol.interaction.Select( {
-            style: (feature, resolution) => {               
+            style: (feature, resolution) => {
                 return this._getSelectStyleFunction.call(this, feature, resolution);
             }
         });
         this.select = select;
         this.map.addInteraction(select);
-        
-        select.on('select', (e) => {            
+
+        select.on('select', (e) => {
             if (!this.selectFn || (0 == e.selected.length)) {
                 return;
             }
@@ -565,14 +591,14 @@ class MapControl {
             for(let i = 0; i < e.selected.length; i++) {
                 let ft = e.selected[i];
                 mapObjects.push(this._getMapObjectFromFeature(ft));
-            };            
+            };
 
-            this.selectFn(mapObjects);          
+            this.selectFn(mapObjects);
         });
     }
 
-    _getStyleFunction(feature, resolution) {    
-        
+    _getStyleFunction(feature, resolution) {
+
         var stroke = new ol.style.Stroke({
             color: '#ff0000',
             width: 2
@@ -594,7 +620,7 @@ class MapControl {
        });
 
        var textColor = 'red';
-                    
+
         switch (feature.get('country')) {
             case("germany"):
                 stroke = new ol.style.Stroke({
@@ -614,9 +640,9 @@ class MapControl {
                });
 
                textColor = 'black';
-                    
+
         }
-        
+
         return new ol.style.Style({
             fill: fill,
             stroke: stroke,
@@ -639,9 +665,9 @@ class MapControl {
         });
     }
 
-    _getSelectStyleFunction(feature, resolution) {        
-        return new ol.style.Style({            
-            stroke: new ol.style.Stroke({                
+    _getSelectStyleFunction(feature, resolution) {
+        return new ol.style.Style({
+            stroke: new ol.style.Stroke({
                 color: 'blue',
                 width: 3
             }),
@@ -673,7 +699,7 @@ class MapControl {
         });
     }
 
-    _createTextStyle(feature, resolution, dom) {                     
+    _createTextStyle(feature, resolution, dom) {
         let align = dom.align;
         let baseline = dom.baseline;
         let size = dom.size;
@@ -694,7 +720,7 @@ class MapControl {
         let font = weight + ' ' + size + ' ' + dom.font;
         let fillColor = dom.color;
         let outlineColor = dom.outline;
-        let outlineWidth = parseInt(dom.outlineWidth, 10);        
+        let outlineWidth = parseInt(dom.outlineWidth, 10);
 
         return new ol.style.Text({
             textAlign: align == '' ? undefined : align,
@@ -712,10 +738,10 @@ class MapControl {
         });
     }
 
-    _getText(feature, resolution, dom) {        
+    _getText(feature, resolution, dom) {
         let type = dom.text;
         let maxResolution = dom.maxreso;
-        
+
         var text = feature.get('name');
         text = text ? text : "";
 
@@ -733,33 +759,45 @@ class MapControl {
     }
 }
 
-class CustomControl extends ol.control.Control {
-    
-    constructor(inputParams) {        
-        
+class SuperCustomControl extends ol.control.Control {
+    constructor(inputParams) {
+        super(inputParams);
+    }
+
+    getBSIconHTML(name) {
+        return '<span class="' + name + '"></span>';
+    }
+}
+
+class CustomControl extends SuperCustomControl {
+
+    constructor(inputParams) {
+
         super(inputParams);
 
         const caption = get(inputParams, 'caption');
         const hint = get(inputParams, 'hint') || caption;
         let button = document.createElement('button');
         button.innerHTML = this.getBSIconHTML(get(inputParams, 'icon'));
-        button.className = get(inputParams, 'class');                
-        
-        let parentDiv = $('#custom-control')[0];        
+        button.className = get(inputParams, 'class');
+        button.title = hint;
+
+        let parentDiv = $('#custom-control')[0];
         if (!parentDiv) {
             parentDiv = document.createElement('div');
             parentDiv.className = 'ol-control';
-            parentDiv.setAttribute("id", 'custom-control');            
-        }        
+            parentDiv.setAttribute("id", 'custom-control');
+        }
 
         parentDiv.appendChild(button);
-        this.element = parentDiv;        
-        
+        this.element = parentDiv;
+
         ol.control.Control.call(this, {
             label: caption,
+            hint: hint,
             tipLabel: caption,
             element: parentDiv,
-            target: get(inputParams, "target")
+            //target: get(inputParams, "target")
         });
 
         const handler = get(inputParams, 'handler');
@@ -773,15 +811,114 @@ class CustomControl extends ol.control.Control {
             handler(button);
         }
     }
-
-    getBSIconHTML(name) {
-        return '<span class="' + name + '"></span>';
-    }
 }
 
-
-class ControlObject {
+class YearControl extends SuperCustomControl {
     constructor(inputParams) {
-        get(inputParams, 'btn');
+
+        super(inputParams);
+
+        const caption = get(inputParams, 'caption');
+        const hint = get(inputParams, 'hint') || caption;
+        this.year = get(inputParams, 'year');
+        this.handler = get(inputParams, 'handler');
+
+        let yearInput = document.createElement('input');
+        yearInput.className = 'input-without-focus';
+        yearInput.title = hint;
+        yearInput.setAttribute('id', 'year-input');
+        yearInput.value = this.year;
+        yearInput.addEventListener('keyup', (event) => { if (event.keyCode == 13) { this._inputKeyUp(); event.preventDefault(); } });
+
+        this.yearInput = yearInput;
+
+        let yearLeftButton = document.createElement('button');
+        yearLeftButton.innerHTML = this.getBSIconHTML('mdi mdi-step-backward-2');
+        yearLeftButton.title = 'Предыдущий год';
+        yearLeftButton.setAttribute('id', 'year-left-button');
+        yearLeftButton.addEventListener('click', () => { this._leftButtonClick(); }, false);
+        yearLeftButton.addEventListener('touchstart', () => { this._leftButtonClick(); }, false);
+
+        let yearRightButton = document.createElement('button');
+        yearRightButton.innerHTML = this.getBSIconHTML('mdi mdi-step-forward-2');
+        yearRightButton.title = 'Следующий год';
+        yearRightButton.setAttribute('id', 'year-right-button');
+        yearRightButton.addEventListener('click', () => { this._rightButtonClick(); }, false);
+        yearRightButton.addEventListener('touchstart', () => { this._rightButtonClick(); }, false);
+
+        let parentDiv = document.createElement('div');
+        parentDiv.className = 'ol-control';
+        parentDiv.setAttribute('id', 'year-control');
+
+        parentDiv.appendChild(yearLeftButton);
+        parentDiv.appendChild(yearInput);
+        parentDiv.appendChild(yearRightButton);
+
+        this.element = parentDiv;
+
+        ol.control.Control.call(this, {
+            label: "test",
+            hint: "test",
+            tipLabel: caption,
+            element: parentDiv,
+            //target: get(inputParams, "target")
+        });
+    }
+
+    _leftButtonClick() {
+        if (!this._checkYear(this.year, -1))
+            return;
+
+        this.year = parseInt(this.year) - 1;
+        this._setNewYear(this.year);
+
+        this.handler(this.year);
+    }
+
+    _rightButtonClick() {
+        if (!this._checkYear(this.year, +1))
+            return;
+
+        this.year = parseInt(this.year) + 1;
+        this._setNewYear(this.year);
+
+        this.handler(this.year);
+    }
+
+    _inputKeyUp() {
+
+        let year = this.yearInput.value;
+
+        if (!this._checkYear(year, 0, this.year)) {
+            this.yearInput.value = this.year;
+            return;
+        }
+
+        this.year = parseInt(year);
+        this._setNewYear(this.year);
+
+        this.handler(this.year);
+    }
+
+    _checkYear(year, incr, oldValue = undefined) {
+
+        var reg = /^[1][9]\d{2}$/;
+        if (!reg.test(year))
+            return false;
+
+        let intYear = parseInt(year) + incr;
+        if (intYear < 1933)
+            return false;
+        if (intYear > 1955)
+            return false;
+
+        if (oldValue == intYear)
+            return false;
+
+        return true;
+    }
+
+    _setNewYear(year) {
+        this.yearInput.value = this.year;
     }
 }

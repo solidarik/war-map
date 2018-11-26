@@ -4,39 +4,36 @@ html
   head
     meta(name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0")
 
-    //boostrap    
+    //boostrap
     //script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
-    //script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")  
-    //link(rel="stylesheet" href="/bootstrap.min.css")        
+    //script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")
+    //link(rel="stylesheet" href="/bootstrap.min.css")
     script(src="/libs/jquery.min.js")
-    script(src="/libs/bootstrap.min.js")  
-    link(rel="stylesheet" href="/libs/bootstrap.min.css")    
+    script(src="/libs/bootstrap.min.js")
+    link(rel="stylesheet" href="/libs/bootstrap.min.css")
 
     //timeline
-    //- link(rel="stylesheet" href="https://www.jqueryscript.net/css/jquerysctipttop.css")
-    //- link(rel="stylesheet" href="/eventline.css")
-    //- script(src="/eventline.js")
-    //- script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js")
-    link(rel="stylesheet" href="/libs/jquerysctipttop.css")
-    link(rel="stylesheet" href="/libs/eventline.css")
-    script(src="/libs/eventline.js")
-    script(src="/libs/moment.min.js")
-    
+    //--временно отключил
+    //- link(rel="stylesheet" href="/libs/jquerysctipttop.css")
+    //- link(rel="stylesheet" href="/libs/eventline.css")
+    //- script(src="/libs/eventline.js")
+    //- script(src="/libs/moment.min.js")
+
     //icons
     ////link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
     ////link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
     //link(rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css")
     //link(rel="stylesheet" href="https://cdn.materialdesignicons.com/2.2.43/css/materialdesignicons.min.css")
     link(rel="stylesheet" href="/libs/materialdesignicons.min.css")
-    
+
     //open layer
     ////link(rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css")
     ////script(src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL")
     ////script(src="https://openlayers.org/en/v4.6.5/build/ol.js")
     link(rel="stylesheet" href="/libs/ol.css")
     //script(src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL")
-    script(src="/libs/ol.js")    
-    
+    script(src="/libs/ol.js")
+
 
     //handsontable
     ////script(src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/2.0.0/handsontable.min.js")
@@ -52,7 +49,7 @@ html
     //favicon
     link(rel="icon" type="image/png" href="/favicon/favicon-32x32.png" sizes="32x32")
     link(rel="icon" type="image/png" href="/favicon/favicon-16x16.png" sizes="16x16")
-    link(rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png")    
+    link(rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png")
     link(rel="manifest" href="/site.webmanifest")
     link(rel="mask-icon" href="/safari-pinned-tab.svg" color="#ff0000")
     meta(name="msapplication-TileColor" content="#2b5797")
@@ -60,17 +57,17 @@ html
 
     //local
     link(rel="stylesheet" href="/style.css")
-    script(src="/hooks.js")    
+    script(src="/hooks.js")
     script(src="/mapControl.js")
-    script(src="/mapInfo.js")    
+    script(src="/mapInfo.js")
     script(src="/objControl.js")
     script(src="/dataControl.js")
     script(src="/main.js")
     script(src="/socket.io/socket.io.js")
-    
+
     title Хроника военных действий
     block head
-      
+
   body(onload="startApp()")
     .wrap
       .container-fluid

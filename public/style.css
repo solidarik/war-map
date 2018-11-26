@@ -32,7 +32,7 @@ html, body {height:100%;}
 }
 
 .navbar-nav > li > a, .navbar-brand {
-  padding-top:2px !important; 
+  padding-top:2px !important;
   padding-bottom:0 !important;
   height: 26px;
 }
@@ -52,13 +52,14 @@ html, body {height:100%;}
   outline: 4px auto  rgba(255, 0, 0, .4) !important;
 }
 
-.ol-control button { 
-  background-color: rgba(40, 40, 40, 0.85) !important;  
+.ol-control button, #year-input {
+  background-color: rgba(40, 40, 40, 0.85) !important;
+  cursor: pointer;
   font-size: 14px !important;
   touch-action: manipulation;
 }
 
-/* .ol-zoom {  
+/* .ol-zoom {
   top: 50px;
   left: auto;
   right: 5px;
@@ -69,12 +70,57 @@ html, body {height:100%;}
   right: 5px;
 }
 
+.ol-full-screen > button {
+  width: 20px !important;
+  height: 20px !important;
+  line-height: 20px !important;
+}
+
 #custom-control {
   top: 5px;
   left: 5px;
 }
 
-.fill { 
+.ol-overlaycontainer-stopevent {
+  text-align: center;
+}
+
+#year-control {
+  top: 5px;
+  margin: 0 auto;
+  transform: translate(-50%, 0);
+  display: inline-block;
+  padding: 0px;
+  color: yellow;
+}
+
+#year-control > * {
+  float: left;
+  border: none !important;
+  height: 22px !important;
+  line-height: 22px !important;
+}
+
+#year-control > button {
+  width: 22px;
+}
+
+#year-input {
+  border-radius: 3px;
+  width: 44px;
+  font-size: 14px;
+  color: white;
+  border: 1px solid #ccc;
+  text-align: center;
+  font-weight: bold;
+  margin: 1px 0;
+}
+
+.input-without-focus:focus {
+  outline-width: 0;
+}
+
+.fill {
   min-height: 100%;
   height: 100%;
   margin: 0px;
@@ -87,6 +133,7 @@ html, body {height:100%;}
   border-radius: 4px;
   border: 1px solid black;
   overflow: hidden;
+  width: 100%;
 }
 
 #panel-info {
@@ -121,7 +168,7 @@ html, body {height:100%;}
   margin-bottom: 5px !important;
 }
 
-.card-header  {  
+.card-header  {
   touch-action: manipulation;
   height: 32px;
   min-height: 32px;
@@ -143,7 +190,7 @@ input.form-control {
 }
 
 .card-counter {
-  position: absolute;  
+  position: absolute;
   top: 0px;
   left: 50%;
   width: 400px;
@@ -182,7 +229,7 @@ input.form-control {
 }
 
 .btn-apply:hover {
-  color: greenyellow;  
+  color: greenyellow;
 }
 
 .btn-delete {
@@ -197,7 +244,7 @@ input.form-control {
 .btn-group-sm {
   padding-left: 2px;
   top: 0px;
-  margin: 0; 
+  margin: 0;
   line-height: 22px;
   height: 22px;
   min-height: 22px;
@@ -217,7 +264,7 @@ input.form-control {
 .card-footer > button {
   touch-action: manipulation;
   padding-top: 0px;
-  margin-bottom: 4px; 
+  margin-bottom: 4px;
   margin-right: 4px;
   height: 26px;
   line-height: 26px;
