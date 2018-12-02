@@ -3,7 +3,7 @@
 window.app = {};
 var app = window.app;
 
-function retrieveImageFromClipboardAsBlob(pasteEvent, callback){    
+function retrieveImageFromClipboardAsBlob(pasteEvent, callback){
 
 	if(pasteEvent.clipboardData == false){
         if(typeof(callback) == "function"){
@@ -40,7 +40,7 @@ window.addEventListener("paste", function(e){
         if(imageBlob){
             var canvas = document.getElementById("mycanvas");
             var ctx = canvas.getContext('2d');
-            
+
             // Create an image to render the blob on the canvas
             var img = new Image();
 
@@ -66,9 +66,9 @@ window.addEventListener("paste", function(e){
 
 function startApp() {
     let mapInfo = MapInfo.create();
-    let mapControl = MapControl.create();    
+    let mapControl = MapControl.create();
     let objControl = ObjControl.create();
-    let dataControl = DataControl.create();    
+    let dataControl = DataControl.create();
 
     var tryOnce = false;
 
@@ -84,13 +84,13 @@ function startApp() {
     });
     mapInfo.on("changeObject", (obj) => mapControl.changeObjectInMap(obj));
     mapInfo.on("deleteObject", (obj) => {
-        mapControl.deleteObjectInMap(obj);        
+        mapControl.deleteObjectInMap(obj);
         objControl.showInfo({obj: mapInfo.getCurrentObject(), count: mapInfo.getCount()});
     });
     mapInfo.on("clearDb", () => mapControl.clearMap());
 
     //mapControl
-    mapControl.on("addFeature", (ft) => {        
+    mapControl.on("addFeature", (ft) => {
         mapInfo.addFeature(ft);
         objControl.showInfo({obj: ft, count: mapInfo.getCount(), selectOnMap: false});
     });
@@ -112,13 +112,13 @@ function startApp() {
         let dataObj = mapInfo.getObject(obj.uid);
         dataControl.showInfo(dataObj);
     });
-    objControl.on("deleteObject", (obj => mapInfo.deleteFromClient(obj)));    
+    objControl.on("deleteObject", (obj => mapInfo.deleteFromClient(obj)));
 
     // dataControl
-    dataControl.on("changeObject", (obj) => mapInfo.changeObjectFromClient(obj));    
+    dataControl.on("changeObject", (obj) => mapInfo.changeObjectFromClient(obj));
 
     var something = document.getElementById('content');
-    something.style.cursor = 'pointer'; 
+    something.style.cursor = 'pointer';
 
     $(document.getElementsByClassName('ol-attribution ol-unselectable ol-control ol-collapsed')).remove();
 }
@@ -135,11 +135,11 @@ function clearDebug() {
 function ChangeVisible(date, label) {
     let dateControl = $(date);
     let labelControl = $(label);
-    
+
     dateControl.toggle();
     labelControl.toggle();
-    
-    if (!labelControl.is(":visible"))        
+
+    if (!labelControl.is(":visible"))
         dateControl.focus();
 }
 

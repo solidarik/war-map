@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 var mapObjectSchema = new mongoose.Schema({
   uid: {
     type: String,

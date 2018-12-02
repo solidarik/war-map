@@ -4,7 +4,7 @@ class MapControl {
 
     _getYearLayerUrl (tileCoord, pixelRatio, projection) {
 
-        let ano = this.currentYear;
+        let ano = this.currentYearForMap;
         var anow = "" + ano;
         anow = anow.replace("-", "B");
 
@@ -82,7 +82,7 @@ class MapControl {
         this.vectorSource2 = vectorSource2;
         this.firstFeature = undefined;
 
-        this.currentYear = 1933;
+        this.currentYear = this.currentYearForMap = 1933;
 
         this.view = view;
         this.draw = undefined;
@@ -382,6 +382,7 @@ class MapControl {
 
     _changeYear(year) {
         this.currentYear = year;
+        this.currentYearForMap = (this.currentYear == 1951) ? 1950 : this.currentYear;
         this.yearLayer.getSource().refresh();
     }
 
@@ -398,6 +399,7 @@ class MapControl {
             }
         }));
 
+        return; //soli
         this.map.addControl(new CustomControl({
             caption: "Рисовать связанные отрезки",
             class: "polyline-control",

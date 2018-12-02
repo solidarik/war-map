@@ -22,6 +22,11 @@ html, body {height:100%;}
   flex-direction: row;
 }
 
+.container-fluid {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
 .navbar > .container-fluid {
   padding: 0;
 }
@@ -53,7 +58,7 @@ html, body {height:100%;}
 }
 
 .ol-control button, #year-input {
-  background-color: rgba(40, 40, 40, 0.85) !important;
+  background-color: rgba(40, 40, 40, 0.75) !important;
   cursor: pointer;
   font-size: 14px !important;
   touch-action: manipulation;
@@ -128,10 +133,8 @@ html, body {height:100%;}
 }
 
 #map {
-  margin-top: 5px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  border: 1px solid black;
+  border: 1px solid #aaa;
+  /* border-radius: 5px; */
   overflow: hidden;
   width: 100%;
 }
