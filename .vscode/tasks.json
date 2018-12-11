@@ -1,0 +1,25 @@
+{
+    "version": "2.0.0",
+    "command": "node",
+    "tasks": [
+        {
+            "label": "running current file",
+            "type": "shell",
+            "command": "node",
+            "args": [
+                "${file}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true
+            }
+        }
+    ]
+}
