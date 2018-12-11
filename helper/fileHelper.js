@@ -11,6 +11,11 @@ class FileHelper {
         return path.join(this.getRoot(),...paths);
     }
 
+    isDirectory(path) {
+        var stat = fs.lstatSync(path);
+        return stat.isDirectory();
+    }
+
     getJsonFromFile(filePath) {
         let obj = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         return obj;

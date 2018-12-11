@@ -8,8 +8,54 @@ class EngRusProtocol extends ServerProtocol {
         super.addHandler('clGetDictEngRus', this.getDictEngRus);
     }
 
-    getOneEngRus(name, cb) {
+    getEngRusObject(name) {
+        return new Promise( (resolve, reject) => {
+            let isRus = /[а-яА-ЯЁё]/.test(name);
+            DictEngRusModel.findOne( (isRus) ? {rus: name} : {eng: name})
+            .then(
+                doc => resolve((doc && typeof doc !== 'undefined') ? doc : undefined),
+                err => reject(`Ошибка в dictEngRusProtocol.getEndRusObject: ${err}`)
+            );
+        })
+    }
 
+    getEngRusObjectId(name) {
+        return new Promise( (resolve, reject) => {
+            let isRus = /[а-яА-ЯЁё]/.test(name);
+            DictEngRusModel.findOne( (isRus) ? {rus: name} : {eng: name})
+            .then(
+                doc => resolve((doc && typeof doc !== 'undefined') ? doc['_id'].toString() : undefined),
+                err => reject(`Ошибка в dictEngRusProtocol.getEndRusObjectId: ${err}`)
+            );
+        });
+    }
+
+    addEngRus(eng, rus) {
+        return new Promise( (resolve, reject) => {
+            this.getEngRusObjectId(eng)
+            .then(
+                docId => {
+                    if (docId) {
+                        resolve(docId);
+                        return(docId);
+                    }
+                    resolve(false);
+                }
+            )
+            .then(
+                docId => {
+                    if (docId) return(docId);
+
+                    const engRus = new DictEngRusModel({eng: eng, rus: rus});
+                    engRus.save()
+                    .then(
+                        res => resolve(engRus['_id'.toString()]),
+                        err => { throw err; }
+                    );
+                },
+                err => reject(`Ошибка в dictEngRusProtocol.addEngRus: ${err}`)
+            );
+        });
     }
 
     getDictEngRus(socket, msg, cb) {
