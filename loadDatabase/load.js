@@ -1,11 +1,12 @@
-const log = require('../helper/logHelper');
+require('../helper/logHelper');
 const DbHelper = require('../loadDatabase/dbHelper');
 const historyEventsJsonMediator = require('../loadDatabase/historyEventsJsonMediator');
-const dictEngRusJsonMediator = rquire('../loadDatabase/dictEngRusJsonMediator');
+const dictEngRusJsonMediator = require('../loadDatabase/dictEngRusJsonMediator');
 
 dbHelper = new DbHelper();
+
 dbHelper.saveFilesFromDir({
-    source: 'dicts.json',
+    source: 'engRus.json',
     mediator: dictEngRusJsonMediator
 })
 .then( res => {
@@ -15,6 +16,10 @@ dbHelper.saveFilesFromDir({
     })
 })
 .then(
-    () => { log.success(`Успешная загрузка`); dbHelper.free(); },
-    (err) => { log.error(`Ошибка загрузи данных: ${err}`); dbHelper.free();}
-);
+    () => { success(`Успешная загрузка`); dbHelper.free(); },
+    (err) => { throw err; }
+)
+.catch(err => {
+    dbHelper.free();
+    error(`Ошибка загрузи данных: ${err}`);
+});

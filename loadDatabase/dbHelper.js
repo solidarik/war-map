@@ -17,12 +17,12 @@ class DbHelper {
     }
 
     constructor(db) {
-        this.isOuter = (db == undefined);
-        this.db = db ? db : this.getLocalDb();
+        this.isOuter = (db != undefined);
+        this.db = (db != undefined) ? db : this.getLocalDb();
     }
 
     free() {
-        if (isOuter) return;
+        if (this.isOuter) return;
         setTimeout( () => { this.db.disconnect(); info(chalk.yellow('db disconnected')); }, 100);
     }
 
@@ -33,34 +33,42 @@ class DbHelper {
 
             let files = [];
 
-            if (fileHelper.isDirectory(input.source)) {
-                let dirPath = fileHelper.composePath(input.source);
-                files = fileHelper.getFilesFromDir(dirPath);
+            let source = fileHelper.composePath(input.source);
+
+            if (fileHelper.isDirectory(source)) {
+                files = fileHelper.getFilesFromDir(source);
             } else {
-                files.add(input.source);
+                files.push(source);
             }
 
             let promises = [];
-            let countFiles = 0;
+            let countObjects = 0;
             files.forEach( filePath => {
                 let json = fileHelper.getJsonFromFile(filePath);
                 json.forEach( jsonItem => {
                     promises.push(
-                        new Promise((resolve, reject) => {
+                        new Promise( (resolve, reject) => {
+
+                            let newJsonItem = undefined;
+
                             mediator.processJson(jsonItem)
-                                .then(newJsonItem => {
-                                    return mediator.isExistObject(newJsonItem);
-                                })
-                                .then(isExistObject => {
-                                    if (!isExistObject)
-                                        mediator.addObjectToBase(newJsonItem);
-                                    countFiles += 1;
-                                    resolve();
-                                })
-                                .catch(err => {
-                                    log.error(`Ошибка при обработке файла ${filePath} элемент {${itemStr.join(', ')}}: ${err}`);
-                                    reject();
-                                });
+                            .then(procJsonItem => {
+                                newJsonItem = procJsonItem;
+                                return mediator.isExistObject(procJsonItem);
+                            })
+                            .then(isExistObject => {
+
+                                if (!isExistObject)
+                                    countObjects += 1;
+                                    return mediator.addObjectToBase(newJsonItem);
+                            })
+                            .then(
+                                res => resolve(res)
+                            )
+                            .catch(err => {
+                                log.error(`Ошибка при обработке файла ${fileHelper.getFileNameFromPath(filePath)} элемент {${jsonItem}}: ${err}`);
+                                reject();
+                            });
                         })
                     );
                 });
@@ -68,13 +76,16 @@ class DbHelper {
             log.info(`Количество промисов: ${promises.length}`);
             Promise.all(promises).then(
                 res => {
-                    log.info(`Обработано ${countFiles} файлов`);
+                    log.info(`Обработано ${countObjects} элементов`);
                     resolve(true);
                 },
                 err => {
-                    error.info(`Ошибка при обработке файлов директории ${dirPath}`);
+                    error.info(`Ошибка при обработке файлов`);
                     reject(false);
                 }
+            )
+            .catch(
+                err => { reject(false); throw err; }
             );
         });
     }
@@ -107,8 +118,6 @@ class DbHelper {
 
         let query = DictSourcesModel.findOne({source_code: firstSource.source_code});
         query.then( (doc) => {
-
-            console.log(doc['_id']);
 
             if (!doc) {
                 firstSource.save((err) => {

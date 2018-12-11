@@ -1,11 +1,12 @@
 const HistoryEventsModel = require('../models/HistoryEventsModel');
 const dictEngRusProtocol = require('../socketProtocol/DictEngRusProtocol');
+const geoHelper = require('../helper/geoHelper');
 const moment = require('moment');
 
 class HistoryEventsJsonMediator {
 
     constructor() {
-        this.equilFields = ['start_date', 'name'];
+        this.equilFields = ['start_date', '_name'];
     }
 
     getPlacesFromJson(json) {
@@ -69,13 +70,13 @@ class HistoryEventsJsonMediator {
             Promise.all(promises)
             .then(
                 res => {
-                    let name_id, places, allies, enemies = res;
+                    let [name_id, places, allies, enemies] = res;
 
                     const newJson = {
+                        _name: name_id,
                         start_date: moment(json.start_date, 'DD.MM.YYYY'),
                         end_date: moment(json.end_date, 'DD.MM.YYYY'),
                         kind: json.kind,
-                        _name: name_id,
                         page_id: json.page_id,
                         img_url: json.img_url,
                         places: places,
@@ -86,13 +87,20 @@ class HistoryEventsJsonMediator {
                     resolve(newJson);
                 },
                 err => { reject(`Ошибка в processJson: ${err}`);
-            });
+            })
+            .catch( err => { throw err; } );
         });
     }
 
     addObjectToBase(json) {
         return new Promise( (resolve, reject) => {
-        }
+            const obj = new HistoryEventsModel(json);
+            obj.save()
+            .then(
+                res => resolve(obj['_id'.toString()]),
+                err => { throw err; }
+            );
+        });
     }
 
     isExistObject(json) {
@@ -102,13 +110,15 @@ class HistoryEventsJsonMediator {
                 findJson[element] = json[element];
             });
 
+            console.log('json: ' + JSON.stringify(findJson));
+
             HistoryEventsModel.findOne(findJson, (err, res) => {
 
                 if (err) {
                     reject(`Ошибка в isExistObject: не удалось найти объект ${err}`);
                 }
 
-                resolve(err && !res);
+                resolve(res);
             });
         });
     }

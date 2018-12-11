@@ -16,6 +16,10 @@ class FileHelper {
         return stat.isDirectory();
     }
 
+    getFileNameFromPath(filePath) {
+        return path.basename(filePath);
+    }
+
     getJsonFromFile(filePath) {
         let obj = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         return obj;

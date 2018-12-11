@@ -1,9 +1,17 @@
-{
-    "type": "FeatureCollection",
-    "metadata": {
-        "name": "Без названия",
-        "creator": "Yandex Map Constructor"
-    },
+[{
+    "start_date": "19.02.1943",
+    "end_date": "19.03.1943",
+    "kind": "battle",
+    "name": "Третья битва за Харьков",
+    "page_id": 9396487,
+    "img_url": "http://map-site.narod.ru/harkovno-1.jpg",
+    "places": [{
+        "lonlat_coordinates": [50.0000, 36.1345],
+        "name": "Харьков"}],
+    "allies": [
+        {"name": "СССР", "troops": 200000, "losses": 100000, "winner": true}],
+    "enemies": [
+        {"name": "Германия", "troops": 150000, "losses": 45000}],
     "features": [
         {
             "type": "Feature",
@@ -1220,4 +1228,4 @@
             }
         }
     ]
-}
+}]

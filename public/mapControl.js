@@ -484,7 +484,7 @@ class MapControl {
             date = ('0' + date.getDate()).slice(-2) + '.'
              + ('0' + (date.getMonth()+1)).slice(-2) + '.'
              + date.getFullYear();
-            html += `<span>${date}</span> ${this.protocol.getDictName(event._name)}\n`;
+            html += `<span>${date}</span> ${this.protocol.getDictName(event._name)}<br>`;
         });
         if ('' != html) {
             this.eventComponent.innerHTML = html;

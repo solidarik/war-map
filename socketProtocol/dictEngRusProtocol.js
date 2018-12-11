@@ -24,9 +24,12 @@ class EngRusProtocol extends ServerProtocol {
             let isRus = /[а-яА-ЯЁё]/.test(name);
             DictEngRusModel.findOne( (isRus) ? {rus: name} : {eng: name})
             .then(
-                doc => resolve((doc && typeof doc !== 'undefined') ? doc['_id'].toString() : undefined),
+                doc => {
+                    resolve((doc && typeof doc !== 'undefined') ? doc.id.toString() : undefined)
+                },
                 err => reject(`Ошибка в dictEngRusProtocol.getEndRusObjectId: ${err}`)
-            );
+            )
+            .catch( err => { throw `Ошибка ввода данных в БД: ${err}`; } );
         });
     }
 
@@ -35,11 +38,8 @@ class EngRusProtocol extends ServerProtocol {
             this.getEngRusObjectId(eng)
             .then(
                 docId => {
-                    if (docId) {
-                        resolve(docId);
-                        return(docId);
-                    }
-                    resolve(false);
+                    resolve(docId);
+                    return(docId);
                 }
             )
             .then(
