@@ -19,7 +19,10 @@ class MapControl {
         return url;
     }
 
-    constructor() {
+    constructor(protocol) {
+
+        this.protocol = protocol;
+        this.socket = protocol.getSocket();
 
         let fileImportElem = document.getElementById('fileImport');
         fileImportElem.onchange = (filePath) => {
@@ -54,6 +57,7 @@ class MapControl {
             updateWhileInteracting: true,
         });
 
+
         let view = new ol.View({
             center: new ol.proj.fromLonLat([56.004 , 54.6950]), //ufa place
             //zoom: 18
@@ -82,7 +86,9 @@ class MapControl {
         this.vectorSource2 = vectorSource2;
         this.firstFeature = undefined;
 
-        this.currentYear = this.currentYearForMap = 1933;
+        this.eventComponent = $("#eventList")[0];
+
+        this.currentYear = this.currentYearForMap = 1939;
 
         this.view = view;
         this.draw = undefined;
@@ -92,6 +98,7 @@ class MapControl {
         this.clearDbFn = () => {};
         this.changeFeaturesFn = () => {};
         this.selectFn = () => {};
+        this.changeYearFn = () => {};
         this.getCurrentCountryFn = () => {};
         this.activeButton = undefined;
 
@@ -102,13 +109,15 @@ class MapControl {
         setTimeout(() => {
             this._addSelectInteraction();
             this._addYearLayer();
+            this._addEventsLayer();
             this._addButtons();
             this._addYearControl();
+            this._initSocket();
         }, 10);
     }
 
-    static create() {
-        return new MapControl();
+    static create(protocol) {
+        return new MapControl(protocol);
     }
 
     on(event, cb) {
@@ -128,6 +137,9 @@ class MapControl {
             case("selectFeature"):
                 this.selectFn = cb;
             break;
+            case("changeYear"):
+                this.changeYearFn = cb;
+            break;
             case("clearMap"):
                 this.clearDbFn = cb;
             break;
@@ -138,6 +150,12 @@ class MapControl {
                 this.getCurrentCountryFn = cb;
             break;
         }
+    }
+
+    _initSocket() {
+        this.socket.on('srvAsnwerEvents', (msg) => {
+            console.log(msg);
+        });
     }
 
     _addYearLayer() {
@@ -152,6 +170,18 @@ class MapControl {
 
         this.yearLayer = yearLayer;
         this.map.addLayer(yearLayer);
+    }
+
+    _addEventsLayer() {
+        let eventsSource = new ol.source.Vector();
+        let eventsLayer = new ol.layer.Vector({
+            source: eventsSource,
+            zIndex: 5,
+            updateWhileAnimating: true,
+            updateWhileInteracting: true,
+        });
+        this.eventsSource = eventsSource;
+        this.map.addLayer(eventsLayer);
     }
 
     _getMapObjectFromFeature(ft) {
@@ -363,7 +393,6 @@ class MapControl {
                 geom = new ol.geom.LineString(mo.coords);
                 break;
             case 'Polygon':
-                console.log("add polygon " + mo.coords);
                 geom = new ol.geom.Polygon(mo.coords);
                 break;
         }
@@ -384,6 +413,93 @@ class MapControl {
         this.currentYear = year;
         this.currentYearForMap = (this.currentYear == 1951) ? 1950 : this.currentYear;
         this.yearLayer.getSource().refresh();
+
+        this.socket.emit('clQueryEvents', JSON.stringify({year: this.currentYear}), (msg) => {
+            let data = JSON.parse(msg);
+            console.log(JSON.stringify(data));
+            this._showCurrentEvents(data);
+        });
+    }
+
+    _hexToRgbA(hex, opacity){
+        var c;
+        if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+            c= hex.substring(1).split('');
+            if(c.length== 3){
+                c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+            }
+            c= '0x'+c.join('');
+            return [(c>>16)&255, (c>>8)&255, c&255, opacity ? opacity : 0];
+        }
+        throw new Error(`Bad Hex ${hex}`);
+    }
+
+    _showEventsOnMap(events) {
+        events.forEach((event) => {
+            let features = event.features;
+            for (let i = 0; i < features.length; i++) {
+                let geom = features[i].geometry;
+                let style_prop = features[i].properties;
+                let style = {};
+                if (style_prop.fill) {
+                    style.fill = new ol.style.Fill({
+                        color: this._hexToRgbA(style_prop.fill, style_prop['fill-opacity'])
+                    });
+                }
+                if (style_prop.stroke) {
+                    style.stroke = new ol.style.Stroke({
+                        color: this._hexToRgbA(style_prop.stroke, style_prop['stroke-opacity']),
+                        width: style_prop['stroke-width']
+                    });
+                };
+                var coords = [];
+                if ('Point' === geom.type) {
+                    coords = new ol.proj.fromLonLat(geom.coordinates);
+                } else {
+                    let srcCoords = ('Polygon' === geom.type) ? geom.coordinates[0] : geom.coordinates;
+                    for (let j = 0; j < srcCoords.length; j++) {
+                        let point = new ol.proj.fromLonLat(srcCoords[j]);
+                        coords.push(point);
+                    }
+                    if ('Polygon' === geom.type) {
+                        coords = [coords];
+                    }
+                }
+                let ft = new ol.Feature({
+                    uid: 100,
+                    name: 'test',
+                    geometry: this._createGeom({kind: geom.type, coords: coords}
+                )});
+                console.log(JSON.stringify(style));
+                ft.setStyle(new ol.style.Style(style));
+                this.eventsSource.addFeature(ft);
+            };
+        });
+    }
+
+    _showEventsOnPanel(events, listComponent) {
+        let html = '';
+        events.forEach(event => {
+            let date = new Date(event.start_date);
+            date = ('0' + date.getDate()).slice(-2) + '.'
+             + ('0' + (date.getMonth()+1)).slice(-2) + '.'
+             + date.getFullYear();
+            html += `<span>${date}</span> ${this.protocol.getDictName(event._name)}\n`;
+        });
+        if ('' != html) {
+            this.eventComponent.innerHTML = html;
+        }
+    }
+
+    _showCurrentEvents(data) {
+        this.eventsSource.clear();
+        this.eventComponent.innerHTML = '';
+
+        if (!data || !data.hasOwnProperty('events')) return;
+
+        let events = data.events;
+        this._showEventsOnMap(events);
+        this._showEventsOnPanel(events);
     }
 
     _addButtons() {
@@ -540,8 +656,6 @@ class MapControl {
             this.draw.on('change', (ev) => {
                 console.log('change event');
             });
-
-
 
             this.map.addInteraction(this.draw);
             this.snap = new ol.interaction.Snap({ source: this.vectorSource2 });

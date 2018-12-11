@@ -15,6 +15,7 @@ const mongoose = require('./libs/mongoose');
 
 // keys for in-koa KeyGrip cookie signing (used in session, maybe other modules)
 app.keys = [config.secret];
+app.mongoose = mongoose;
 
 const path = require('path');
 const fs = require('fs');
@@ -43,6 +44,15 @@ router.get('/cleardb', require('./routes/cleardb').get);
 
 app.use(router.routes());
 
-const socket = require('./libs/socket');
+const serverSocket = require('./libs/serverSocket');
 const server = app.listen(config.port);
-socket(server);
+
+let protocolFunctions = [];
+const protocolClasses = fs.readdirSync(path.join(__dirname, 'socketProtocol')).sort();
+protocolClasses.forEach(handler => {
+  let protocolClass = require('./socketProtocol/' + handler);
+  protocolClass.init();
+  protocolFunctions.push(protocolClass.getProtocol(app) );
+});
+
+app.socket = serverSocket(server, protocolFunctions);

@@ -1,0 +1,5 @@
+const dict_indicators = [
+    {
+
+    }
+];

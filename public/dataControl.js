@@ -3,7 +3,7 @@ class DataControl {
         this.cHeader = $("#dataHeader");
         this.cTable = $("#dataTable");
         this.cCounter = $("#dataCounter");
-        
+
         this.data = [["", "", ""]];
         this.headerStr = "";
         this.headerArr = [];
@@ -24,7 +24,7 @@ class DataControl {
         this.btnChange.click( () => this.applyChange() );
         this.btnDelete.click( () => {
             this.cHeader.val("");
-            this._showData([]);            
+            this._showData([]);
             this.applyChange();
         });
 
@@ -35,8 +35,8 @@ class DataControl {
         return new DataControl();
     }
 
-    init() {        
-                    
+    init() {
+        return; //soli
         this.hotTable = new Handsontable(this.cTable[0], {
             data: this.data,
             stretchH: 'all',
@@ -47,17 +47,17 @@ class DataControl {
             language: 'ru-RU',
             contextMenu: true,
             dropdownMenu: true
-        }); 
-        
+        });
+
         this._showData(this.data);
     }
 
-    applyChange() {       
+    applyChange() {
         if (!this.currentUid) return;
 
         this.headerChange(this.cHeader.val());
         let obj = { uid: this.currentUid, headerStr: this.cHeader.val(), headerArr: this.headerArr, data: this._getData()};
-            
+
         this.changeFn(obj);
     }
 
@@ -68,7 +68,7 @@ class DataControl {
         if ("" == newHeader) {
             this.headerArr = [];
             this.hotTable.updateSettings({colHeaders: true});
-        } else {            
+        } else {
             this.hotTable.updateSettings({colHeaders: headerArr})
             this.headerArr = headerArr;
         }
@@ -81,11 +81,11 @@ class DataControl {
 
     _getDateColumn(headerArr) {
         let searchArr = ['год', 'year', 'дата'];
-        
+
         for (let i = 0; i < headerArr.length; i++) {
             let words = headerArr[i].split(" ");
             if (!words) continue;
-            
+
             let firstWord = words[0].toLowerCase();
             if (0 <= searchArr.indexOf(firstWord))
                 return i;
@@ -99,7 +99,7 @@ class DataControl {
             row[dateColumnIdx] = this._getNormalizeStringDate(row[dateColumnIdx]);
         });
         hotTable.loadData(data);
-    }    
+    }
 
     _getNormalizeStringDate(value) {
         if (!value) return "";
@@ -115,31 +115,31 @@ class DataControl {
             if (parseStr && (0 < parseStr.length)) {
                 yyyy = 1900 + parseInt(parseStr[1]);
             }
-                            
+
             if (checkDate(resDate)) {
                 resDate = new Date(yyyy, resDate.getMonth(), 1);
             }
-        } else {            
+        } else {
             resDate = new Date(value);
         }
 
-        if (checkDate(resDate)) {            
+        if (checkDate(resDate)) {
             var dd = resDate.getDate();
             var mm = resDate.getMonth() + 1; //January is 0!
             var yyyy = resDate.getFullYear();
 
             if (dd < 10) {
                 dd = '0' + dd;
-            } 
+            }
             if (mm < 10) {
                 mm = '0' + mm;
-            }             
+            }
 
             return yyyy + '.' + mm + '.' + dd;
         }
-    
-        return value;        
-    }    
+
+        return value;
+    }
 
     showInfo(obj) {
 
@@ -148,20 +148,20 @@ class DataControl {
             this.currentUid = undefined;
             this.checkActiveButtons();
             return;
-        }        
-        
+        }
+
         this.cCounter.text(obj.name);
         this.currentUid = obj.uid;
-        
+
         this.cHeader[0].value = obj.headerStr ? obj.headerStr : "";
         this.headerStr = obj.headerStr ? obj.headerStr : "";
         this.headerArr = obj.headerArr ? obj.headerArr : [];
-                
+
         this._showData(obj.data);
 
-        if (Array.isArray(this.headerArr) && (0 < this.headerArr.length)) {            
+        if (Array.isArray(this.headerArr) && (0 < this.headerArr.length)) {
             this.hotTable.updateSettings({colHeaders: this.headerArr})
-        } 
+        }
 
         this.checkActiveButtons();
     }
@@ -182,11 +182,11 @@ class DataControl {
         this.hotTable.loadData(data);
     }
 
-    on(event, cb) {        
-        switch(event) {            
+    on(event, cb) {
+        switch(event) {
             case("changeObject"):
                 this.changeFn = cb;
-            break;            
+            break;
         }
     }
 

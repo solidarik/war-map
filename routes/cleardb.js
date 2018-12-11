@@ -1,4 +1,4 @@
-let MapObject = require('../models/mapObject');
+let MapObject = require('../models/mapObjectsModel');
 
 exports.get = async function(ctx, next) {
 
@@ -7,8 +7,7 @@ exports.get = async function(ctx, next) {
                 ctx.body = 'database cleared';
 
                 //TODO
-        });          
+        });
    // }
-  
+
   };
-  

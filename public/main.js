@@ -65,8 +65,9 @@ window.addEventListener("paste", function(e){
 }, false);
 
 function startApp() {
-    let mapInfo = MapInfo.create();
-    let mapControl = MapControl.create();
+    let protocol = ClientProtocol.create();
+    let mapInfo = MapInfo.create(protocol);
+    let mapControl = MapControl.create(protocol);
     let objControl = ObjControl.create();
     let dataControl = DataControl.create();
 

@@ -12,6 +12,8 @@ module.exports = {
     options: {
       keepAlive: 1,
       poolSize: 5,
+      useNewUrlParser: true,
+      useCreateIndex: true
     }
   },
   crypto: {
