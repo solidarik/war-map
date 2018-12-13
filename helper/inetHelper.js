@@ -9,7 +9,7 @@ class InetHelper {
     }
 
     getDataFromUrl(url) {
-        let promise = new Promise( (resolve, reject) => {
+        return new Promise( (resolve, reject) => {
             request(url, (err, res, body) => {
                 if (err) {
                     reject(err);
@@ -20,43 +20,56 @@ class InetHelper {
                 return body;
             });
         });
-        return promise;
     }
 
-    async getEngNameFromWiki(rusName) {
-
-        let pageId = await this.getPageId(encodeURI(rusName));
-        let engName = await this.getTitleFromPageId(pageId);
-
-        return engName;
-
+    getEngNameFromWiki(rusName) {
+        return new Promise( (resolve, reject) => {
+            this.getWikiPageId(rusName)
+                .then( pageId => {
+                    return this.getTitleFromPageId(pageId)
+                })
+                .then(engName => {
+                    resolve(engName);
+                })
+                .catch( err => { reject(err); });
+        });
     }
 
-    async getTitleFromPageId(pageId) {
+    getTitleFromPageId(pageId) {
+        return new Promise( (resolve, reject) => {
+            let url = this.composeWikiUrl({
+                action: 'query',
+                prop: 'info',
+                inprop: 'url',
+                format: 'json',
+                pageids: pageId
+            });
 
-        let options = {
-            action: 'query',
-            prop: 'info',
-            inprop: 'url',
-            format: 'json',
-            pageids: pageId
-        };
-
-        let url = this.composeWikiUrl(options);
-        log.info(url);
-        let body = await this.getDataFromUrl(url);
-        let json = JSON.parse(body);
-        let title = json['query']['pages'][pageId]['title'];
-        return(title);
+            this.getDataFromUrl(url)
+                .then(
+                    body => {
+                        let json = JSON.parse(body);
+                        let title = json['query']['pages'][pageId]['title'];
+                        resolve(title);
+                    },
+                    err => { reject(err); }
+                )
+                .catch( err => { reject(err); } )
+        });
     }
 
-    async getRusNameFromWiki(engName) {
+    getRusNameFromWiki(engName) {
 
-        let pageId = await this.getPageId(engName);
-        let rusName = await this.getLangNameFromPageId(pageId, 'ru');
-
-        return rusName;
-
+        return new Promise( (resolve, reject) => {
+            this.getWikiPageId(engName)
+                .then( pageId => {
+                    return this.getLangNameFromPageId(pageId, 'ru')
+                })
+                .then(rusName => {
+                    resolve(rusName);
+                })
+                .catch( err => { reject(err); });
+        });
     }
 
     composeWikiUrl(options) {
@@ -69,40 +82,92 @@ class InetHelper {
         return url;
     }
 
-    async getLangNameFromPageId(pageId, lang) {
-        let options = {
-            action: 'query',
-            prop: 'langlinks',
-            lllimit: 100,
-            llprop: 'url',
-            lllang: lang,
-            format: 'json',
-            pageids: pageId
-        };
+    getUrlFromPageId(pageId) {
+        return new Promise( (resolve, reject) => {
 
-        let url = this.composeWikiUrl(options);
-        log.info(url);
-        let body = await this.getDataFromUrl(url);
-        let json = JSON.parse(body);
-        let langUrl = json['query']['pages'][pageId]['langlinks'][0]['url'];
-        return(decodeURI(/[^/]*$/.exec(langUrl)[0]));
+            let url = this.composeWikiUrl({
+                action: 'query',
+                prop: 'info',
+                inprop: 'url',
+                format: 'json',
+                pageids: pageId
+            });
+
+            this.getDataFromUrl(url)
+            .then( body => {
+                let json = JSON.parse(body);
+                resolve(json['query']['pages'][pageId]['fullurl']);
+            })
+            .catch( err => { reject(err); });
+        });
     }
 
-    async getPageId(string_search) {
+    getLangNameFromPageId(pageId, lang) {
+        return new Promise( (resolve, reject) => {
 
-        let options = {
-            action: 'query',
-            list: 'search',
-            srlimit: 1,
-            srprop: 'size',
-            format: 'json',
-            srsearch: string_search
-        };
+            let url = this.composeWikiUrl({
+                action: 'query',
+                prop: 'langlinks',
+                lllimit: 100,
+                llprop: 'url',
+                lllang: lang,
+                format: 'json',
+                pageids: pageId
+            });
 
-        let url = this.composeWikiUrl(options);
-        let body = await this.getDataFromUrl(url);
-        let json = JSON.parse(body);
-        return(json['query']['search'][0]['pageid']);
+            this.getDataFromUrl(url)
+            .then( body => {
+                let json = JSON.parse(body);
+                let langUrl = json['query']['pages'][pageId]['langlinks'][0]['url'];
+                resolve(decodeURI(/[^/]*$/.exec(langUrl)[0]));
+            })
+            .catch( err => { reject(err); });
+        });
+    }
+
+    getWikiPageId(string_search) {
+        return new Promise( (resolve, reject) => {
+
+            if (!Array.isArray(string_search))
+                string_search = [string_search];
+
+            let promises = [];
+            string_search.forEach( (str) => {
+                promises.push(
+                    new Promise( (resolve, reject) => {
+                        let url = this.composeWikiUrl({
+                            action: 'query',
+                            list: 'search',
+                            srlimit: 1,
+                            srprop: 'size',
+                            format: 'json',
+                            srsearch: encodeURI(str)
+                        });
+
+                        this.getDataFromUrl(url)
+                        .then( body => {
+                            try {
+                                let json = JSON.parse(body);
+                                resolve(json['query']['search'][0]['pageid']);
+                            } catch(_) {
+                                reject();
+                            }
+                        })
+                        .catch(
+                            err => { reject(err); }
+                        );
+
+                    })
+                )
+            });
+            Promise.race(promises)
+            .then(
+                firstPageId => { resolve(firstPageId); }
+            )
+            .catch(
+                err => { reject(err); }
+            )
+        });
     }
 }
 

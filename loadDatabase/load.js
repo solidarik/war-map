@@ -1,7 +1,20 @@
 require('../helper/logHelper');
 const DbHelper = require('../loadDatabase/dbHelper');
+const inetHelper = require('../helper/inetHelper');
 const historyEventsJsonMediator = require('../loadDatabase/historyEventsJsonMediator');
 const dictEngRusJsonMediator = require('../loadDatabase/dictEngRusJsonMediator');
+
+inetHelper.getWikiPageId(['Belgorod-Kharkov Offensive Operation'])
+.then( pageId => {
+    return inetHelper.getUrlFromPageId(pageId);
+})
+.then(
+    full_url => { console.log(full_url); }
+)
+.catch(
+    err => { console.log(`catch: ${err}`); }
+)
+return;
 
 dbHelper = new DbHelper();
 
