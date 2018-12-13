@@ -1,0 +1,11 @@
+Thubms.db
+.DS_Store
+
+*.log
+*.class
+*.py[co]
+
+*.class
+
+node_modules/
+geacron/
