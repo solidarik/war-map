@@ -1,5 +1,0 @@
-const dict_indicators = [
-    {
-
-    }
-];
