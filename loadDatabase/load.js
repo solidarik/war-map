@@ -19,7 +19,7 @@ return;
 dbHelper = new DbHelper();
 
 dbHelper.saveFilesFromDir({
-    source: 'engRus.json',
+    source: 'data_sources/engRus.json',
     mediator: dictEngRusJsonMediator
 })
 .then( res => {
