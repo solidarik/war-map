@@ -5,14 +5,8 @@ var dictSourcesSchema = new mongoose.Schema({
     required: "Не задан уникальный код",
     unique: true,
   },
-  source_name_rus: {
-    type: String,
-    required: "Не задано краткое название источника (рус.)"
-  },
-  source_name_eng: {
-    type: String,
-    required: "Не задано краткое название источника (англ.)"
-  }
+  _source_name: mongoose.Schema.ObjectId,
+  aliases: []
 }, {
   timestamps: false
 });

@@ -1,25 +1,14 @@
 [
     {
         "code": "NV.IND.MANF.ZS",
-        "short_name_rus": "Добавленная стоимость",
-        "short_name_eng": "Value added",
-        "type_rus": "Производство",
-        "type_eng": "Manufacturing",
-        "full_name_rus": "Производство, добавленная стоимость (% ВВП)",
-        "full_name_eng": "Manufacturing, value added (% of GDP)",
-        "unit_rus":	"% ВВП",
-        "unit_eng":	"% of GDP"
+        "aliases": ["Manufacturing"],
+        "name": ["Manufacturing, value added", "Производство, добавленная стоимость"],
+        "unit": ["% of GDP", "% ВВП"]
     },
     {
         "code": "SP.POP.TOTL",
         "aliases": ["Population, total", "Population"],
-        "short_name_rus": "Население",
-        "short_name_eng": "Population",
-        "type_rus": "Производство",
-        "type_eng": "Manufacturing",
-        "full_name_rus": "Производство, добавленная стоимость (% ВВП)",
-        "full_name_eng": "Manufacturing, value added (% of GDP)",
-        "unit_rus":	"% ВВП",
-        "unit_eng":	"% of GDP"
+        "name": ["Population", "Население"],
+        "unit": ["number of humans", "человек"]
     }
 ]
