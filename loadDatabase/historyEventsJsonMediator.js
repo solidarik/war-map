@@ -4,10 +4,12 @@ const geoHelper = require('../helper/geoHelper');
 const inetHelper = require('../helper/inetHelper');
 const moment = require('moment');
 
-class HistoryEventsJsonMediator {
+class HistoryEventsJsonMediator extends SuperJsonMediator {
 
     constructor() {
+        super();
         this.equilFields = ['start_date', '_name'];
+        this.model = HistoryEventsModel;
     }
 
     getPlacesFromJson(json) {
@@ -94,37 +96,6 @@ class HistoryEventsJsonMediator {
                 err => { reject(`Ошибка в processJson: ${err}`);
             })
             .catch( err => { throw err; } );
-        });
-    }
-
-    addObjectToBase(json) {
-        return new Promise( (resolve, reject) => {
-            const obj = new HistoryEventsModel(json);
-            obj.save()
-            .then(
-                res => resolve(obj['_id'.toString()]),
-                err => { throw err; }
-            );
-        });
-    }
-
-    isExistObject(json) {
-        return new Promise( (resolve, reject) => {
-            let findJson = {};
-            this.equilFields.forEach(element => {
-                findJson[element] = json[element];
-            });
-
-            console.log('json: ' + JSON.stringify(findJson));
-
-            HistoryEventsModel.findOne(findJson, (err, res) => {
-
-                if (err) {
-                    reject(`Ошибка в isExistObject: не удалось найти объект ${err}`);
-                }
-
-                resolve(res);
-            });
         });
     }
 }

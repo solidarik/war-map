@@ -4,19 +4,22 @@ const inetHelper = require('../helper/inetHelper');
 const historyEventsJsonMediator = require('../loadDatabase/historyEventsJsonMediator');
 const dictEngRusJsonMediator = require('../loadDatabase/dictEngRusJsonMediator');
 
-inetHelper.getWikiPageId(['Belgorod-Kharkov Offensive Operation'])
-.then( pageId => {
-    return inetHelper.getUrlFromPageId(pageId);
-})
-.then(
-    full_url => { console.log(full_url); }
-)
-.catch(
-    err => { console.log(`catch: ${err}`); }
-)
-return;
+// inetHelper.getWikiPageId(['Aruba'])
+// .then( pageId => {
+//     return inetHelper.getUrlFromPageId(pageId);
+// })
+// .then(
+//     full_url => { console.log(full_url); }
+// )
+// .catch(
+//     err => { console.log(`catch: ${err}`); }
+// )
+// return;
 
 dbHelper = new DbHelper();
+dbHelper.clearDb();
+return;
+
 
 dbHelper.saveFilesFromDir({
     source: 'data_sources/engRus.json',

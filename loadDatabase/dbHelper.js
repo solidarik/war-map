@@ -16,6 +16,14 @@ class DbHelper {
         return mongoose;
     }
 
+    clearDb() {
+        const modelFiles = fs.readdirSync(path.join(__dirname, 'models')).sort();
+        modelFiles.forEach(handler => {
+            let modelFile = require('./models/' + handler);
+            console.log(modelFile);
+        });
+    }
+
     constructor(db) {
         this.isOuter = (db != undefined);
         this.db = (db != undefined) ? db : this.getLocalDb();

@@ -1,10 +1,15 @@
 const mongoose = require('mongoose');
 
 var countriesModel = new mongoose.Schema({
-    _name: {
+    _country: {
         type: mongoose.Schema.ObjectId,
-        required: "Не имя города",
+        required: "Не задано имя страны",
         unique: true
+    },
+    _capital: {
+        type: mongoose.Schema.ObjectId,
+        required: "Не задано имя столицы",
+        unique: false
     },
     iso2: {
         type: String,
