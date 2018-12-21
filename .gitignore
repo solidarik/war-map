@@ -7,5 +7,7 @@ Thubms.db
 
 *.class
 
+package-lock.json
+
 node_modules/
 geacron/
