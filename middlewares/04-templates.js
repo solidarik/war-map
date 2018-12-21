@@ -5,7 +5,7 @@ const pug = require('pug');
 const config = require('config');
 const path = require('path');
 
-const render = async function(ctx, next) {
+exports.init = app => app.use(async (ctx, next) => {
 
   const context = {};
 
@@ -45,6 +45,4 @@ const render = async function(ctx, next) {
 
   await next();
 
-};
-
-exports.init = app => app.use(render);
+});

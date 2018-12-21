@@ -1,13 +1,5 @@
 const mongoose = require('../libs/mongoose');
-
 const mongooseStore = require('koa-session-mongoose');
-const store = new mongooseStore({
-  connection: mongoose,
-  collection: 'appSession',
-  name: 'appSession',
-  expires: 3600 * 4
-});
-
 const session = require('koa-session');
 
 exports.init = app => app.use(
@@ -23,6 +15,11 @@ exports.init = app => app.use(
     // touch session.updatedAt in DB & reset cookie on every visit to prolong the session
     // koa-session-mongoose resaves the session as a whole, not just a single field
     rolling: true,
-    store: store
+    store: new mongooseStore({
+      connection: mongoose,
+      collection: 'appSession',
+      name: 'appSession',
+      expires: 3600 * 4
+    })
   }, app)
 );

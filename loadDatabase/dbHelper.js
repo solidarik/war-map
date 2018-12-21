@@ -119,12 +119,12 @@ class DbHelper {
 
     getSamaraSource() {
         const firstSource = new DictSourcesModel({
-            source_code: 'samara_json',
-            source_name_rus: 'Данные, предоставленные коллегами из Самары',
-            source_name_eng: 'Data from Samara colleagues'
+            sourceCode: 'samara_json',
+            sourceNameRus: 'Данные, предоставленные коллегами из Самары',
+            sourceNameEng: 'Data from Samara colleagues'
         });
 
-        let query = DictSourcesModel.findOne({source_code: firstSource.source_code});
+        let query = DictSourcesModel.findOne({sourceCode: firstSource.sourceCode});
         query.then( (doc) => {
 
             if (!doc) {

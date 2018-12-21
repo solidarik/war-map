@@ -1,9 +1,9 @@
 [{
-    "start_date": "01.10.1941",
-    "end_date": "29.10.1941",
+    "startDate": "01.10.1941",
+    "endDate": "29.10.1941",
     "kind": "battle",
     "name": "Харьковская операция (1941)",
-    "img_url": "http://900igr.net/up/datai/205114/0005-004-.png",
+    "imgUrl": "http://900igr.net/up/datai/205114/0005-004-.png",
     "places": [{
         "lonlat_coordinates": [50.0000, 36.1345],
         "name": "Харьков"}],
@@ -11,5 +11,5 @@
         {"name": "СССР", "troops": 147100, "losses": 96509}],
     "enemies": [
         {"name": "Германия", "troops": 130000, "losses": 7500, "winner": true}],
-    "features-file": "05.geojson"
+    "featuresFile": "05.geojson"
 }]

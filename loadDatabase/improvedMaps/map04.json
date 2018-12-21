@@ -1,9 +1,9 @@
 [{
-    "start_date": "03.08.1943",
-    "end_date": "23.08.1943",
+    "startDate": "03.08.1943",
+    "endDate": "23.08.1943",
     "kind": "battle",
     "name": "Белгородско-Харьковская стратегическая наступательная операция (1943)",
-    "img_url": "http://900igr.net/up/datai/205114/0005-004-.png",
+    "imgUrl": "http://900igr.net/up/datai/205114/0005-004-.png",
     "places": [{
         "lonlat_coordinates": [50.0000, 36.1345],
         "name": "Харьков"}],
@@ -11,5 +11,5 @@
         {"name": "СССР", "troops": 980000, "losses": 71600, "winner": true}],
     "enemies": [
         {"name": "Германия", "troops": 300000, "losses": 133000}],
-    "features-file": "04.geojson"
+    "featuresFile": "04.geojson"
 }]

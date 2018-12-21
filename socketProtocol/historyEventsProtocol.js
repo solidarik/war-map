@@ -14,7 +14,7 @@ class HistoryEventsProtocol extends ServerProtocol {
         let startDate = (new Date(data.year, 0, 1)).toISOString();
         let endDate = (new Date(data.year, 11, 31)).toISOString();
         HistoryEventsModel.find({
-            start_date: {
+            startDate: {
                 $gte: startDate,
                 $lt: endDate
             }

@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 
-var historyEventsModel = new mongoose.Schema({
-  start_date: {
+var historyEventsSchema = new mongoose.Schema({
+  startDate: {
     type: Date,
     required: "Не задана начальная дата события",
   },
-  end_date: Date,
+  endDate: Date,
   kind: String,
   _name: mongoose.Schema.ObjectId,
-  page_id: Number,
-  img_url: String,
+  pageId: Number,
+  imgUrl: String,
   places: [],
   enemies: [],
   allies: [],
@@ -18,4 +18,6 @@ var historyEventsModel = new mongoose.Schema({
   timestamps: false
 });
 
-module.exports = mongoose.model('history_events', historyEventsModel);
+historyEventsSchema.statics.publicFields = ["startDate", "endDate"]
+
+module.exports = mongoose.model('history_events', historyEventsSchema);

@@ -8,7 +8,7 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
 
     constructor() {
         super();
-        this.equilFields = ['start_date', '_name'];
+        this.equilFields = ['startDate', '_name'];
         this.model = HistoryEventsModel;
     }
 
@@ -81,11 +81,11 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
 
                     const newJson = {
                         _name: name_id,
-                        start_date: moment(json.start_date, 'DD.MM.YYYY'),
-                        end_date: moment(json.end_date, 'DD.MM.YYYY'),
+                        startDate: moment(json.startDate, 'DD.MM.YYYY'),
+                        endDate: moment(json.endDate, 'DD.MM.YYYY'),
                         kind: json.kind,
-                        page_id: page_id,
-                        img_url: json.img_url,
+                        page_id: pageId,
+                        img_url: json.imgUrl,
                         places: places,
                         allies: allies,
                         enemies: enemies,

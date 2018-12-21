@@ -1,6 +1,6 @@
 const log = require('../helper/logHelper');
 const ServerProtocol = require('../libs/serverProtocol');
-const dictEngRusProtocol = require('../models/dictEngRusProtocol');
+const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol');
 let countriesModel = require('../models/countriesModel');
 
 class CountriesProtocol extends ServerProtocol {

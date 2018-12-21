@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 var dictSourcesSchema = new mongoose.Schema({
-  source_code: {
+  sourceCode: {
     type: String,
     required: "Не задан уникальный код",
     unique: true,
   },
-  _source_name: mongoose.Schema.ObjectId,
+  _sourceName: mongoose.Schema.ObjectId,
   aliases: []
 }, {
   timestamps: false

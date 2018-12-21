@@ -480,7 +480,7 @@ class MapControl {
     _showEventsOnPanel(events, listComponent) {
         let html = '';
         events.forEach(event => {
-            let date = new Date(event.start_date);
+            let date = new Date(event.startDate);
             date = ('0' + date.getDate()).slice(-2) + '.'
              + ('0' + (date.getMonth()+1)).slice(-2) + '.'
              + date.getFullYear();
