@@ -12,6 +12,13 @@ class SuperJsonMediator {
         });
     }
 
+    processJson(json) {
+        return new Promise( (resolve, reject) => {
+            let newJson = json
+            resolve(newJson);
+        });
+    }
+
     isExistObject(json) {
         return new Promise( (resolve, reject) => {
             let findJson = {};
@@ -30,3 +37,5 @@ class SuperJsonMediator {
         });
     }
 }
+
+module.exports = SuperJsonMediator;

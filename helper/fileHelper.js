@@ -25,11 +25,11 @@ class FileHelper {
         return obj;
     }
 
-    getFilesFromDir(dataDir) {
+    getFilesFromDir(dataDir, fileType = '.json') {
         let set = new Set();
         fs.readdirSync(dataDir).forEach(fileName => {
             let filePath = path.join(dataDir, fileName);
-            if ('.json' === path.extname(filePath)) {
+            if (fileType === path.extname(filePath)) {
                 set.add(filePath);
             }
         })

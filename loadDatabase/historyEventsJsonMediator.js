@@ -1,7 +1,8 @@
-const HistoryEventsModel = require('../models/HistoryEventsModel');
-const dictEngRusProtocol = require('../socketProtocol/DictEngRusProtocol');
+const HistoryEventsModel = require('../models/historyEventsModel');
+const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol');
 const geoHelper = require('../helper/geoHelper');
 const inetHelper = require('../helper/inetHelper');
+const SuperJsonMediator = require('./superJsonMediator');
 const moment = require('moment');
 
 class HistoryEventsJsonMediator extends SuperJsonMediator {

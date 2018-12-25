@@ -5,6 +5,8 @@ Thubms.db
 *.class
 *.py[co]
 
+secret*
+
 *.class
 
 package-lock.json

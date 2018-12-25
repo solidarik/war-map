@@ -1,18 +1,19 @@
 
 const passport = require('koa-passport');
 
-exports.post = passport.authenticate('local', {
+exports.post = passport.authenticate(
+  'local',
+  {
     successRedirect: '/',
     failureRedirect: '/',
-    //failureMessage: true // запишет сообщение об ошибке в session.messages[]
     failureFlash: true // req.flash, better
-
     // assignProperty: 'something' присвоить юзера в свойство req.something
     //   - нужно для привязывания акков соц. сетей
     // если не стоит, то залогинит его вызовом req.login(user),
     //   - это поместит user.id в session.passport.user (если не стоит опция session:false)
     //   - также присвоит его в req.user
-});
+  }
+);
 
 
 /* FOR AJAX:

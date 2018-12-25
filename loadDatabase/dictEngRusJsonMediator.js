@@ -1,4 +1,4 @@
-const SuperJsonMediator = require('superJsonMediator');
+const SuperJsonMediator = require('./superJsonMediator');
 const dictEngRusModel = require('../models/dictEngRusModel');
 
 class DictEngRusJsonMediator extends SuperJsonMediator {

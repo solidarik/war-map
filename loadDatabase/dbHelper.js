@@ -17,10 +17,13 @@ class DbHelper {
     }
 
     clearDb() {
-        const modelFiles = fs.readdirSync(path.join(__dirname, 'models')).sort();
-        modelFiles.forEach(handler => {
-            let modelFile = require('./models/' + handler);
-            console.log(modelFile);
+        const modelDirectory = fileHelper.composePath('../models/');
+        let modelFiles = fileHelper.getFilesFromDir(modelDirectory, '.js');
+        modelFiles.forEach(modelFilePath => {
+             let model = require(modelFilePath);
+             model.deleteMany({}, err => {
+                 console.log(`Removed collection: ${modelFilePath}`);
+             });
         });
     }
 

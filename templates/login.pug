@@ -1,15 +1,18 @@
 extends layout
 
 block content
+    each messages, type in flash
+        - if (type == 'error') type = 'danger' // bootstrap class
+        each message in messages
+            div(class="alert alert-" + type)!= message
+    .modal-body
+        form(class="form-control-lg" action="/login" method="post")
+            input(type="hidden" name="_csrf" value=csrf())
+            .form-group
+                label(for="email") Имя пользователя
+                input.form-control(type="email" id="email" name="email" placeholder="my@mail.com" required autofocus)
+            .form-group
+                label(for="password") Пароль
+                input.form-control(type="password" id="password" name="password" required)
 
-  form(action="/login" method="post")
-    h1 Please sign in
-    input(type="hidden" name="_csrf" value=csrf)
-    .form-group
-      label(for="email") Email
-      input.form-control(type="email" id="email" name="email" placeholder="my@mail.com" required autofocus)
-    .form-group
-      label(for="password") Password
-      input.form-control(type="password" id="password" name="password" required)
-
-    button.btn.btn-lg.btn-primary.btn-block(type="submit") Login
+            button.btn.btn-primary(type="submit") Войти
