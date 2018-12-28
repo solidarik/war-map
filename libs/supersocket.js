@@ -2,7 +2,7 @@ let Cookies = require('cookies');
 let config = require('config');
 let mongoose = require('mongoose');
 let co = require('co');
-let User = require('../models/user');
+let User = require('../models/usersModel');
 
 let socketIO = require('socket.io');
 

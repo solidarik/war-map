@@ -1,4 +1,4 @@
-const User = require('../../models/user');
+const User = require('../../models/usersModel');
 const passport = require('koa-passport');
 
 // паспорт напрямую с базой не работает

@@ -69,16 +69,25 @@ class DbHelper {
                             })
                             .then(isExistObject => {
 
-                                if (!isExistObject)
-                                    countObjects += 1;
-                                    return mediator.addObjectToBase(newJsonItem);
+                                if (isExistObject)
+                                    return true;
+
+                                return mediator.addObjectToBase(newJsonItem);
                             })
                             .then(
-                                res => resolve(res)
+                                res => {
+                                    countObjects += 1;
+                                    resolve(true);
+                                },
+                                err => {
+                                    let msg = `Ошибка при обработке файла ${fileHelper.getFileNameFromPath(filePath)} элемент ${JSON.stringify(jsonItem)}: ${err}`;
+                                    log.error(msg);
+                                    resolve(false);
+                                }
                             )
                             .catch(err => {
-                                log.error(`Ошибка при обработке файла ${fileHelper.getFileNameFromPath(filePath)} элемент {${jsonItem}}: ${err}`);
-                                reject();
+                                let msg = `Системная ошибка ${err}`;
+                                reject(msg);
                             });
                         })
                     );
@@ -87,16 +96,17 @@ class DbHelper {
             log.info(`Количество промисов: ${promises.length}`);
             Promise.all(promises).then(
                 res => {
-                    log.info(`Обработано ${countObjects} элементов`);
-                    resolve(true);
+                    log.info(res.length);
+                    log.info(`Количество успешно обработанных элементов: ${countObjects}`);
+                    resolve(res);
                 },
                 err => {
-                    error.info(`Ошибка при обработке файлов`);
+                    log.error(`Ошибка при обработке файлов`);
                     reject(false);
                 }
             )
             .catch(
-                err => { reject(false); throw err; }
+                err => { reject(false) }
             );
         });
     }
@@ -113,8 +123,8 @@ class DbHelper {
                     region: item['REGION'],
                     subregion: item['SUBREGION']
                 };
-                info('iso: ' + item['ISO3']);
-                info(JSON.stringify(item));
+                log.info('iso: ' + item['ISO3']);
+                log.info(JSON.stringify(item));
             }
         });
         info(obj.length);

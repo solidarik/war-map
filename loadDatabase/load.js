@@ -2,12 +2,26 @@ require('../helper/logHelper');
 const DbHelper = require('../loadDatabase/dbHelper');
 const inetHelper = require('../helper/inetHelper');
 const historyEventsJsonMediator = require('../loadDatabase/historyEventsJsonMediator');
+const usersJsonMediator = require('../loadDatabase/usersJsonMediator');
 const dictEngRusJsonMediator = require('../loadDatabase/dictEngRusJsonMediator');
 
 
 dbHelper = new DbHelper();
 dbHelper.clearDb();
-dbHelper.free();
+dbHelper.saveFilesFromDir({
+    source: 'data_sources/secretUsers.json',
+    mediator: usersJsonMediator
+})
+.then( res => {
+    dbHelper.free();
+})
+.catch(
+    err => {
+        dbHelper.free();
+        error(err);
+    }
+);
+
 return;
 
 

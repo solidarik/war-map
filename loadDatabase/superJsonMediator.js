@@ -7,15 +7,21 @@ class SuperJsonMediator {
             obj.save()
             .then(
                 res => resolve(obj['_id'.toString()]),
-                err => { throw err; }
-            );
+                err => reject(err)
+             )
+            .catch( err => { reject(err); } );
         });
     }
 
     processJson(json) {
         return new Promise( (resolve, reject) => {
             let newJson = json
-            resolve(newJson);
+            try {
+                resolve(newJson);
+            }
+            catch(err) {
+                reject(err);
+            }
         });
     }
 
@@ -29,10 +35,11 @@ class SuperJsonMediator {
             this.model.findOne(findJson, (err, res) => {
 
                 if (err) {
+                    console.log(err);
                     reject(`Ошибка в isExistObject: не удалось найти объект ${err}`);
                 }
 
-                resolve(res);
+                res ? resolve(res) : resolve(false);
             });
         });
     }

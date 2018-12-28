@@ -1,6 +1,6 @@
 let config = require('config');
 let mongoose = require('mongoose');
-let User = require('../models/user');
+let User = require('../models/usersModel');
 let MapObject = require('../models/mapObjectsModel');
 let socketIO = require('socket.io');
 

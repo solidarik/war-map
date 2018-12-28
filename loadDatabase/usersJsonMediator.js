@@ -1,11 +1,11 @@
 const SuperJsonMediator = require('./superJsonMediator');
-const usersModel = require('../models/user');
+const usersModel = require('../models/usersModel');
 
 class UserJsonMediator extends SuperJsonMediator {
 
     constructor() {
         super();
-        this.equilFields = ['email'];
+        this.equilFields = ['login', 'email'];
         this.model = usersModel;
     }
 

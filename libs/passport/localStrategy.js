@@ -1,6 +1,6 @@
 let passport = require('koa-passport');
 let LocalStrategy = require('passport-local');
-let User = require('../../models/user');
+let User = require('../../models/usersModel');
 
 // Стратегия берёт поля из req.body
 // Вызывает для них функцию

@@ -8,16 +8,19 @@ const userSchema = new mongoose.Schema({
     type:     String,
     required: "Имя пользователя отсутствует."
   },
+  login: {
+    type: String,
+    unique: true
+  },
   email:         {
     type:     String,
     unique:   true,
-    required: "E-mail пользователя не должен быть пустым.",
     validate: [
       {
         validator: function checkEmail(value) {
           return this.deleted ? true : /^[-.\w]+@([\w-]+\.)+[\w-]{2,12}$/.test(value);
         },
-        msg:       'Укажите, пожалуйста, корректный email.'
+        msg: 'Укажите, пожалуйста, корректный email.'
       }
     ]
   },
