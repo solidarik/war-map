@@ -69,8 +69,6 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
 
                 dictEngRusProtocol.getEngRusObject(json.name)
                 .then( obj => { return inetHelper.getWikiPageId([obj.eng, obj.rus])}),
-
-                this.getPlacesFromJson(json.places),
                 this.getAlliesFromJson(json.allies),
                 this.getAlliesFromJson(json.enemies),
             ];

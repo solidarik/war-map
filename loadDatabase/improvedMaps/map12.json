@@ -1,0 +1,12 @@
+[{
+    "startDate": "30.10.1941",
+    "endDate": "04.07.1942",
+    "kind": "battle",
+    "name": "Оборона Севастополя (1941—1942)",
+    "allies": [
+        {"name": "СССР", "troops": 118890, "losses": 18000, "prisoners": 95000, "woundeds": 5000}],
+    "enemies": [
+        {"name": "Германия", "troops": 203800, "losses": 60000, "woundeds": 240000, "winner": true}],
+    "featuresFiles": ["12-1.geojson", "12-2.geojson", "12-3.geojson"],
+    "imgUrl": "http://map-site.narod.ru/oboronasevastopol-1.jpg"
+}]

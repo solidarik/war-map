@@ -10,7 +10,6 @@ var historyEventsSchema = new mongoose.Schema({
   _name: mongoose.Schema.ObjectId,
   pageId: Number,
   imgUrl: String,
-  places: [],
   enemies: [],
   allies: [],
   features: [],

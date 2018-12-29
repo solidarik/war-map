@@ -4,12 +4,9 @@
     "kind": "battle",
     "name": "Третья битва за Харьков",
     "imgUrl": "http://map-site.narod.ru/harkovno-1.jpg",
-    "places": [{
-        "lonlat_coordinates": [50.0000, 36.1345],
-        "name": "Харьков"}],
     "allies": [
         {"name": "СССР", "troops": 200000, "losses": 100000, "winner": true}],
     "enemies": [
         {"name": "Германия", "troops": 150000, "losses": 45000}],
-    "featuresFile": "03.geojson"
+    "featuresFile": ["03.geojson"]
 }]

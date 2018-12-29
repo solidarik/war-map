@@ -1,0 +1,12 @@
+[{
+    "startDate": "30.09.1941",
+    "endDate": "20.04.1942",
+    "kind": "battle",
+    "name": "Битва за Москву 1941—1942",
+    "imgUrl": "https://a.d-cd.net/6b88deu-960.jpg",
+    "allies": [
+        {"name": "СССР", "troops": 1250000, "losses": 626500, "winner": true}],
+    "enemies": [
+        {"name": "Германия", "troops": 1929406, "losses": 457000}],
+    "featuresFiles": ["07-1.geojson", "07-2.geojson"]
+}]

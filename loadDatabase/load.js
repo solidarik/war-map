@@ -5,6 +5,15 @@ const historyEventsJsonMediator = require('../loadDatabase/historyEventsJsonMedi
 const usersJsonMediator = require('../loadDatabase/usersJsonMediator');
 const dictEngRusJsonMediator = require('../loadDatabase/dictEngRusJsonMediator');
 
+inetHelper.getEngNameFromWiki('Битва за Москву 1941—1942')
+.then(
+    res => boom(res)
+)
+.catch( err => error(`Поймали ошибку ${err}`)
+);
+
+return;
+
 dbHelper = new DbHelper();
 dbHelper.clearDb();
 dbHelper.saveFilesFromDir({
