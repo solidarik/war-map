@@ -148,6 +148,10 @@ html, body {height:100%;}
   width: 100%;
 }
 
+#welcome-user {
+  height: 24px;
+}
+
 #panel-info {
   /*position: absolute;
   top: 44px;

@@ -25,12 +25,23 @@ class Log {
         this.log.log('info', text);
     }
 
-    error(text) {
-        this.log.log('error', text);
+    error(text, err) {
+        if (err)
+            this.log.log('error', [chalk.red(text), err].join(', '));
+        else
+            this.log.log('error', chalk.red(text));
     }
 
     warn(text) {
         this.log.log('warn', text);
+    }
+
+    success(text) {
+        log.info(chalk.blue(text));
+    }
+
+    boom(text) {
+        log.info(chalk.magenta(text));
     }
 }
 
@@ -38,8 +49,9 @@ let log = new Log();
 
 warn = (text) => { log.warn(text); }
 info = (text) => { log.info(text); }
-error  = (text, err) => { err ? log.error([chalk.red(text), err].join(', ')) : log.error(chalk.red(text)); }
+error  = (text, err) => { log.error(text, err) }
 warn = (text) => { log.warn(text); }
-success = (text) => { log.info(chalk.blue(text)); }
+success = (text) => { log.success(text); }
+boom = (text) => { log.boom(text); }
 
 module.exports = log;

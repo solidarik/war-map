@@ -10,7 +10,7 @@ block content
             input(type="hidden" name="_csrf" value=csrf())
             .form-group
                 label(for="email") Имя пользователя
-                input.form-control(type="email" id="email" name="email" placeholder="my@mail.com" required autofocus)
+                input.form-control(id="email" name="email" placeholder="логин или почта" required autofocus)
             .form-group
                 label(for="password") Пароль
                 input.form-control(type="password" id="password" name="password" required)

@@ -5,7 +5,6 @@ const historyEventsJsonMediator = require('../loadDatabase/historyEventsJsonMedi
 const usersJsonMediator = require('../loadDatabase/usersJsonMediator');
 const dictEngRusJsonMediator = require('../loadDatabase/dictEngRusJsonMediator');
 
-
 dbHelper = new DbHelper();
 dbHelper.clearDb();
 dbHelper.saveFilesFromDir({
@@ -17,6 +16,7 @@ dbHelper.saveFilesFromDir({
 })
 .catch(
     err => {
+        error(`Поймали catch`);
         dbHelper.free();
         error(err);
     }

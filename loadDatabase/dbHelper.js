@@ -93,11 +93,10 @@ class DbHelper {
                     );
                 });
             });
-            log.info(`Количество промисов: ${promises.length}`);
+            log.info(`Количество входящих элементов, промисов: ${promises.length}`);
             Promise.all(promises).then(
                 res => {
-                    log.info(res.length);
-                    log.info(`Количество успешно обработанных элементов: ${countObjects}`);
+                    log.info(`Количество успешно обработанных элементов: ${countObjects} из ${res.length}`);
                     resolve(res);
                 },
                 err => {

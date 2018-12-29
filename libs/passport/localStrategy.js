@@ -19,8 +19,10 @@ passport.use('local', new LocalStrategy({
   //   strategy.error(err)
   function(req, email, password, done) {
 
-    console.log(`email ${email}`);
-    User.findOne({ email: email }, function(err, user) {
+    const isEmail = /^[-.\w]+@([\w-]+\.)+[\w-]{2,12}$/.test(email);
+    const findObj = isEmail ? { email: email } : { login: email };
+
+    User.findOne(findObj, function(err, user) {
 
       if (err) {
         return done(err);

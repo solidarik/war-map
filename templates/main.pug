@@ -2,7 +2,9 @@ extends layout
 
 block content
 
-  h1 Welcome, #{user.displayName}
+  nav(class='navbar navbar-expand-sm navbar-light' id='welcome-user')
+    span(class='navbar-text')
+      | Welcome, #{user.displayName}
 
   //div.modal(class='fade' id='regModal' role='dialog' )
     div.modal-dialog
