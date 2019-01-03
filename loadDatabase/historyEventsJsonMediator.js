@@ -2,8 +2,10 @@ const HistoryEventsModel = require('../models/historyEventsModel');
 const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol');
 const geoHelper = require('../helper/geoHelper');
 const inetHelper = require('../helper/inetHelper');
+const fileHelper = require('../helper/fileHelper');
 const SuperJsonMediator = require('./superJsonMediator');
 const moment = require('moment');
+const log = require('../helper/logHelper');
 
 class HistoryEventsJsonMediator extends SuperJsonMediator {
 
@@ -30,8 +32,10 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
                         places.push(place);
                     };
                     resolve(places);
-                },
-                err => { reject (`Ошибка в getPlacesFromJson: ${err}`)}
+                }
+            )
+            .catch(
+                err => reject (`Ошибка в getPlacesFromJson: ${err}`)
             );
         });
     }
@@ -41,9 +45,11 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
             let allies = [];
             let promicesName = json.map( item => dictEngRusProtocol.getEngRusObjectId(item.name) );
 
-            Promise.all(promicesName).then(
+            Promise.all(promicesName)
+            .then(
                 allyNames => { return allyNames; }
-            ).then(
+            )
+            .then(
                 allyNames => {
                     for(let i = 0; i < json.length; i++) {
                         let ally = {};
@@ -51,50 +57,60 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
                         ally.name = allyNames[i];
                         ally.troops = obj.troops;
                         ally.losses = obj.losses;
+                        ally.woundeds = obj.woundeds;
+                        ally.prisoners = obj.prisoners;
                         ally.winner = obj.hasOwnProperty('winner') ? true : false;
                         allies.push(ally);
                     };
                     resolve(allies);
-                },
-                err => { reject(`Ошибка в getAlliesFromJson: ${err}`);
-            });
+                }
+            )
+            .catch(
+                err => reject(`Ошибка в getAlliesFromJson: ${err}`)
+            );
         });
     }
 
     processJson(json) {
+
         return new Promise( (resolve, reject) => {
 
             let promises = [
-                dictEngRusProtocol.getEngRusObjectId(json.name),
-
-                dictEngRusProtocol.getEngRusObject(json.name)
-                .then( obj => { return inetHelper.getWikiPageId([obj.eng, obj.rus])}),
-                this.getAlliesFromJson(json.allies),
-                this.getAlliesFromJson(json.enemies),
+                dictEngRusProtocol.getEngRusObjectId(json.name), //name_id
+                this.getAlliesFromJson(json.allies), //allies
+                this.getAlliesFromJson(json.enemies), //enemies
             ];
+
+            var maps = [];
+            if (!Array.isArray(json.features))
+                json.features = [json.features];
+
+            json.features.forEach( featureFile => {
+                let featurePath = fileHelper.composePath('новые карты', featureFile);
+                maps.push(fileHelper.getJsonFromFile(featurePath));
+            });
+
 
             Promise.all(promises)
             .then(
                 res => {
-                    let [name_id, page_id, places, allies, enemies] = res;
+
+                    let [name_id, allies, enemies] = res;
 
                     const newJson = {
                         _name: name_id,
                         startDate: moment(json.startDate, 'DD.MM.YYYY'),
                         endDate: moment(json.endDate, 'DD.MM.YYYY'),
-                        kind: json.kind,
-                        page_id: pageId,
-                        img_url: json.imgUrl,
-                        places: places,
+                        kind: json.kind ? json.kind : 'battle',
+                        imgUrl: json.imgUrl,
                         allies: allies,
                         enemies: enemies,
-                        features: json.features,
+                        maps: maps,
                     };
                     resolve(newJson);
-                },
-                err => { reject(`Ошибка в processJson: ${err}`);
-            })
-            .catch( err => { throw err; } );
+                }
+            )
+            .catch( err => reject(`Ошибка в processJson: ${err}`) );
         });
     }
 }

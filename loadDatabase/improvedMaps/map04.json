@@ -1,12 +1,11 @@
 [{
+    "name": "Белгородско-Харьковская стратегическая наступательная операция (1943)",
     "startDate": "03.08.1943",
     "endDate": "23.08.1943",
-    "kind": "battle",
-    "name": "Белгородско-Харьковская стратегическая наступательная операция (1943)",
     "imgUrl": "http://900igr.net/up/datai/205114/0005-004-.png",
     "allies": [
         {"name": "СССР", "troops": 980000, "losses": 71600, "winner": true}],
     "enemies": [
         {"name": "Германия", "troops": 300000, "losses": 133000}],
-    "featuresFile": ["04.geojson"]
+    "features": ["04.geojson"]
 }]

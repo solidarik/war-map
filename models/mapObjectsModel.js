@@ -35,4 +35,4 @@ var mapObjectSchema = new mongoose.Schema({
 });
 
 
-module.exports = mongoose.model('map_objects', mapObjectSchema);
+module.exports = mongoose.model('mapObjects', mapObjectSchema, 'mapObjects');

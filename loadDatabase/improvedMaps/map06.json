@@ -1,12 +1,11 @@
 [{
+    "name": "Киевская стратегическая оборонительная операция",
     "startDate": "07.07.1941",
     "endDate": "26.09.1941",
-    "kind": "battle",
-    "name": "Киевская стратегическая оборонительная операция",
     "imgUrl": "http://dp60.narod.ru/image/maps/333_a.jpg",
     "allies": [
         {"name": "СССР", "troops": 627000, "losses": 617000}],
     "enemies": [
         {"name": "Германия", "losses": 26856, "prisoners": 5018, "winner": true}],
-    "featuresFile": ["06.geojson"]
+    "features": ["06.geojson"]
 }]

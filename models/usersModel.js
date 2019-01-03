@@ -41,7 +41,7 @@ userSchema.virtual('password')
   .set(function(password) {
 
     if (password !== undefined) {
-      if (password.length < 4) {
+      if (password.length < 3) {
         this.invalidate('password', 'Пароль должен быть минимум 4 символа.');
       }
     }
@@ -68,4 +68,4 @@ userSchema.methods.checkPassword = function(password) {
   return crypto.pbkdf2Sync(password, this.salt, config.crypto.hash.iterations, config.crypto.hash.length, 'sha1') == this.passwordHash;
 };
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('users', userSchema, 'users');

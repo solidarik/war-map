@@ -1,54 +1,36 @@
-require('../helper/logHelper');
+const log = require('../helper/logHelper');
 const DbHelper = require('../loadDatabase/dbHelper');
 const inetHelper = require('../helper/inetHelper');
 const historyEventsJsonMediator = require('../loadDatabase/historyEventsJsonMediator');
 const usersJsonMediator = require('../loadDatabase/usersJsonMediator');
 const dictEngRusJsonMediator = require('../loadDatabase/dictEngRusJsonMediator');
 
-inetHelper.getEngNameFromWiki('Битва за Москву 1941—1942')
-.then(
-    res => boom(res)
-)
-.catch( err => error(`Поймали ошибку ${err}`)
-);
-
-return;
-
 dbHelper = new DbHelper();
-dbHelper.clearDb();
-dbHelper.saveFilesFromDir({
-    source: 'data_sources/secretUsers.json',
-    mediator: usersJsonMediator
-})
-.then( res => {
-    dbHelper.free();
-})
-.catch(
-    err => {
-        error(`Поймали catch`);
-        dbHelper.free();
-        error(err);
-    }
-);
 
-return;
-
-
-dbHelper.saveFilesFromDir({
-    source: 'data_sources/engRus.json',
-    mediator: dictEngRusJsonMediator
+Promise.resolve(true)
+.then( () => { return dbHelper.clearDb(); })
+.then( () => {
+    return dbHelper.saveFilesFromDir({
+        source: 'data_sources/secretUsers.json',
+        mediator: usersJsonMediator
+    });
 })
-.then( res => {
+.then( () => {
+    return dbHelper.saveFilesFromDir({
+        source: 'data_sources/engRus.json',
+        mediator: dictEngRusJsonMediator
+    });
+})
+.then( () => {
     return dbHelper.saveFilesFromDir({
         source: 'improvedMaps',
         mediator: historyEventsJsonMediator
-    })
+    });
 })
 .then(
-    () => { success(`Успешная загрузка`); dbHelper.free(); },
-    (err) => { throw err; }
+    () => { log.success(`Успешная загрузка`); dbHelper.free(); }
 )
 .catch(err => {
     dbHelper.free();
-    error(`Ошибка загрузи данных: ${err}`);
+    log.error(`Ошибка загрузки данных: ${err}`);
 });

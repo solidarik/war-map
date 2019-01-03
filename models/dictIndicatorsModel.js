@@ -11,8 +11,8 @@ var dictIndicatorsSchema = new mongoose.Schema({
   timestamps: true
 });
 
-dictIndicatorsSchema.virtual('full_name_rus').get( () => {
+dictIndicatorsSchema.virtual('fullNameRus').get( () => {
     return this.short_name_eng;
 });
 
-module.exports = mongoose.model('dict_indicators', dictIndicatorsSchema);
+module.exports = mongoose.model('dictIndicators', dictIndicatorsSchema, 'dictIndicators');

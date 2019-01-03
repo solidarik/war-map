@@ -1,12 +1,11 @@
 [{
+    "name": "Люблин-Бресткая операция",
     "startDate": "18.07.1944",
     "endDate": "02.08.1944",
-    "kind": "battle",
-    "name": "Люблин-Бресткая операция",
     "imgUrl": "http://map-site.narod.ru/lublinbrestno.html",
     "allies": [
         {"name": "СССР"}],
     "enemies": [
         {"name": "Германия"}],
-    "featuresFile": ["05.geojson"]
+    "features": ["05.geojson"]
 }]

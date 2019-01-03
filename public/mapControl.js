@@ -436,44 +436,47 @@ class MapControl {
 
     _showEventsOnMap(events) {
         events.forEach((event) => {
-            let features = event.features;
-            for (let i = 0; i < features.length; i++) {
-                let geom = features[i].geometry;
-                let style_prop = features[i].properties;
-                let style = {};
-                if (style_prop.fill) {
-                    style.fill = new ol.style.Fill({
-                        color: this._hexToRgbA(style_prop.fill, style_prop['fill-opacity'])
-                    });
-                }
-                if (style_prop.stroke) {
-                    style.stroke = new ol.style.Stroke({
-                        color: this._hexToRgbA(style_prop.stroke, style_prop['stroke-opacity']),
-                        width: style_prop['stroke-width']
-                    });
+            let maps = event.maps;
+            maps.forEach( map => {
+                let features = map.features;
+                for (let i = 0; i < features.length; i++) {
+                    let geom = features[i].geometry;
+                    let style_prop = features[i].properties;
+                    let style = {};
+                    if (style_prop.fill) {
+                        style.fill = new ol.style.Fill({
+                            color: this._hexToRgbA(style_prop.fill, style_prop['fill-opacity'])
+                        });
+                    }
+                    if (style_prop.stroke) {
+                        style.stroke = new ol.style.Stroke({
+                            color: this._hexToRgbA(style_prop.stroke, style_prop['stroke-opacity']),
+                            width: style_prop['stroke-width']
+                        });
+                    };
+                    var coords = [];
+                    if ('Point' === geom.type) {
+                        coords = new ol.proj.fromLonLat(geom.coordinates);
+                    } else {
+                        let srcCoords = ('Polygon' === geom.type) ? geom.coordinates[0] : geom.coordinates;
+                        for (let j = 0; j < srcCoords.length; j++) {
+                            let point = new ol.proj.fromLonLat(srcCoords[j]);
+                            coords.push(point);
+                        }
+                        if ('Polygon' === geom.type) {
+                            coords = [coords];
+                        }
+                    }
+                    let ft = new ol.Feature({
+                        uid: 100,
+                        name: 'test',
+                        geometry: this._createGeom({kind: geom.type, coords: coords}
+                    )});
+                    console.log(JSON.stringify(style));
+                    ft.setStyle(new ol.style.Style(style));
+                    this.eventsSource.addFeature(ft);
                 };
-                var coords = [];
-                if ('Point' === geom.type) {
-                    coords = new ol.proj.fromLonLat(geom.coordinates);
-                } else {
-                    let srcCoords = ('Polygon' === geom.type) ? geom.coordinates[0] : geom.coordinates;
-                    for (let j = 0; j < srcCoords.length; j++) {
-                        let point = new ol.proj.fromLonLat(srcCoords[j]);
-                        coords.push(point);
-                    }
-                    if ('Polygon' === geom.type) {
-                        coords = [coords];
-                    }
-                }
-                let ft = new ol.Feature({
-                    uid: 100,
-                    name: 'test',
-                    geometry: this._createGeom({kind: geom.type, coords: coords}
-                )});
-                console.log(JSON.stringify(style));
-                ft.setStyle(new ol.style.Style(style));
-                this.eventsSource.addFeature(ft);
-            };
+            });
         });
     }
 
@@ -498,8 +501,8 @@ class MapControl {
         if (!data || !data.hasOwnProperty('events')) return;
 
         let events = data.events;
-        this._showEventsOnMap(events);
-        this._showEventsOnPanel(events);
+        setTimeout(this._showEventsOnMap(events), 10);
+        setTimeout(this._showEventsOnPanel(events), 10);
     }
 
     _addButtons() {

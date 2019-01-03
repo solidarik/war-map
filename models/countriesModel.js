@@ -29,4 +29,4 @@ var countriesModel = new mongoose.Schema({
     timestamps: false
 });
 
-module.exports = mongoose.model('dict_countries', countriesModel);
+module.exports = mongoose.model('dictCountries', countriesModel, 'dictCountries');

@@ -17,13 +17,30 @@ class DbHelper {
     }
 
     clearDb() {
-        const modelDirectory = fileHelper.composePath('../models/');
-        let modelFiles = fileHelper.getFilesFromDir(modelDirectory, '.js');
-        modelFiles.forEach(modelFilePath => {
-             let model = require(modelFilePath);
-             model.deleteMany({}, err => {
-                 console.log(`Removed collection: ${modelFilePath}`);
-             });
+        return new Promise( (resolve, reject) => {
+            const modelDirectory = fileHelper.composePath('../models/');
+            let modelFiles = fileHelper.getFilesFromDir(modelDirectory, '.js');
+            let promises = [];
+            modelFiles.forEach(modelFilePath => {
+                promises.push(new Promise( (resolve, reject) => {
+                    let model = require(modelFilePath);
+                    model.deleteMany({}, err => {
+
+                        if (err)
+                            reject(err);
+
+                        resolve(true);
+                        info(`Removed collection: ${modelFilePath}`);
+
+                    });
+                }));
+            });
+
+            Promise.all(promises)
+            .then( res => resolve(true))
+            .catch(
+                err => reject(err)
+            )
         });
     }
 
@@ -46,11 +63,15 @@ class DbHelper {
 
             let source = fileHelper.composePath(input.source);
 
+            let dataTypeStr = 'файл';
             if (fileHelper.isDirectory(source)) {
+                dataTypeStr = 'директорию';
                 files = fileHelper.getFilesFromDir(source);
             } else {
                 files.push(source);
             }
+
+            info(`Начинаем обрабатывать ${dataTypeStr} ${chalk.blue(input.source)}`);
 
             let promises = [];
             let countObjects = 0;
@@ -78,17 +99,15 @@ class DbHelper {
                                 res => {
                                     countObjects += 1;
                                     resolve(true);
-                                },
+                                }
+                            )
+                            .catch(
                                 err => {
                                     let msg = `Ошибка при обработке файла ${fileHelper.getFileNameFromPath(filePath)} элемент ${JSON.stringify(jsonItem)}: ${err}`;
                                     log.error(msg);
-                                    resolve(false);
+                                    reject(msg);
                                 }
-                            )
-                            .catch(err => {
-                                let msg = `Системная ошибка ${err}`;
-                                reject(msg);
-                            });
+                            );
                         })
                     );
                 });
@@ -98,14 +117,14 @@ class DbHelper {
                 res => {
                     log.info(`Количество успешно обработанных элементов: ${countObjects} из ${res.length}`);
                     resolve(res);
-                },
-                err => {
-                    log.error(`Ошибка при обработке файлов`);
-                    reject(false);
                 }
             )
             .catch(
-                err => { reject(false) }
+                err => {
+                    let msg = `Ошибка в процессе обработки ${err}`;
+                    log.error(msg);
+                    reject(msg);
+                }
             );
         });
     }

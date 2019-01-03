@@ -1,12 +1,11 @@
 [{
     "startDate": "29.06.1944",
     "endDate": "04.07.1944",
-    "kind": "battle",
     "name": "Минская операция",
     "allies": [
         {"name": "СССР", "winner": true}],
     "enemies": [
         {"name": "Германия", "losses": 70000, "prisoners": 35000}],
-    "featuresFiles": ["11.geojson"],
+    "features": ["11.geojson"],
     "imgUrl": "http://mil.ru/files/morf/minsk2kartaf.jpg"
 }]

@@ -1,22 +1,22 @@
 const mongoose = require('mongoose');
 
 var historyEventsSchema = new mongoose.Schema({
+  _name: mongoose.Schema.ObjectId,
   startDate: {
     type: Date,
     required: "Не задана начальная дата события",
   },
   endDate: Date,
   kind: String,
-  _name: mongoose.Schema.ObjectId,
   pageId: Number,
   imgUrl: String,
   enemies: [],
   allies: [],
-  features: [],
+  maps: [],
 }, {
   timestamps: false
 });
 
 historyEventsSchema.statics.publicFields = ["startDate", "endDate"]
 
-module.exports = mongoose.model('history_events', historyEventsSchema);
+module.exports = mongoose.model('historyEvents', historyEventsSchema, 'historyEvents');

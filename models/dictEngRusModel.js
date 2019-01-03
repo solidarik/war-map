@@ -13,4 +13,4 @@ var dictEngRusSchema = new mongoose.Schema({
 }, {
   timestamps: false
 });
-module.exports = mongoose.model('dict_eng_rus', dictEngRusSchema);
+module.exports = mongoose.model('dictEngRus', dictEngRusSchema, 'dictEngRus');

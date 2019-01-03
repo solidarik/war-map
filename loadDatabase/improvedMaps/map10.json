@@ -1,12 +1,11 @@
 [{
     "startDate": "22.06.1941",
     "endDate": "08.07.1941",
-    "kind": "battle",
     "name": "Белостокско-Минское сражение",
     "allies": [
         {"name": "СССР", "troops": 790000, "losses": 6535}],
     "enemies": [
         {"name": "Германия", "troops": 1450000, "winner": true}],
-    "featuresFiles": ["10.geojson"],
+    "features": ["10.geojson"],
     "imgUrl": "https://pbs.twimg.com/media/Cm44OsmWYAE3Ai7.jpg"
 }]

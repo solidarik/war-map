@@ -11,4 +11,4 @@ var dictSourcesSchema = new mongoose.Schema({
   timestamps: false
 });
 
-module.exports = mongoose.model('dict_sources', dictSourcesSchema);
+module.exports = mongoose.model('dictSources', dictSourcesSchema, 'dictSources');
