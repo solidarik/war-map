@@ -22,21 +22,15 @@ passport.use('local', new LocalStrategy({
     const isEmail = /^[-.\w]+@([\w-]+\.)+[\w-]{2,12}$/.test(email);
     const findObj = isEmail ? { email: email } : { login: email };
 
-    console.log('findObj: ' + JSON.stringify(findObj));
     User.findOne(findObj, function(err, user) {
 
       if (err) {
         return done(err);
       }
 
-      console.log('foundObj: ' + JSON.stringify(user));
-
       if (!user || !user.checkPassword(password)) {
-        console.log('Нет такого пользователя или пароль неверен.');
         return done(null, false, 'Нет такого пользователя или пароль неверен.');
       }
-
-      console.log('Successful found user: ' + JSON.stringify(user));
 
       return done(null, user);
     });
