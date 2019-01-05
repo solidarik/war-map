@@ -29,8 +29,11 @@ passport.use('local', new LocalStrategy({
       }
 
       if (!user || !user.checkPassword(password)) {
+        console.log('Нет такого пользователя или пароль неверен.');
         return done(null, false, 'Нет такого пользователя или пароль неверен.');
       }
+
+      console.log('Successful found user: ' + JSON.stringify(user));
 
       return done(null, user);
     });
