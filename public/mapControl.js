@@ -472,14 +472,14 @@ class YearControl extends SuperCustomControl {
         yearLeftButton.title = 'Предыдущий год';
         yearLeftButton.setAttribute('id', 'year-left-button');
         yearLeftButton.addEventListener('click', () => { this._leftButtonClick(); }, false);
-        yearLeftButton.addEventListener('touchstart', () => { this._leftButtonClick(); }, false);
+        //yearLeftButton.addEventListener('touchstart', () => { this._leftButtonClick(); }, false);
 
         let yearRightButton = document.createElement('button');
         yearRightButton.innerHTML = this.getBSIconHTML('mdi mdi-step-forward-2');
         yearRightButton.title = 'Следующий год';
         yearRightButton.setAttribute('id', 'year-right-button');
         yearRightButton.addEventListener('click', () => { this._rightButtonClick(); }, false);
-        yearRightButton.addEventListener('touchstart', () => { this._rightButtonClick(); }, false);
+        //yearRightButton.addEventListener('touchstart', () => { this._rightButtonClick(); }, false);
 
         let parentDiv = document.createElement('div');
         parentDiv.className = 'ol-control';

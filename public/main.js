@@ -14,8 +14,22 @@ function fixMapHeight(){
         window.map.fixMapHeight();
 }
 
+function fixMiniMapVisible(isHide) {
+
+    let elem = $('#event-image-div');
+    if (isHide) {
+        $('#event-image-div')[0].innerHTML = '';
+        elem.hide();
+        return;
+    }
+
+    var viewWidth = $(window).width();
+    (350 < viewWidth) ? elem.show() : elem.hide();
+}
+
 function changeWindowSize() {
     fixMapHeight();
+    fixMiniMapVisible();
 }
 
 window.onresize = changeWindowSize;
@@ -26,6 +40,7 @@ function startApp() {
 
     let mapControl = MapControl.create();
     mapControl.subscribe('changeYear', (year) => {
+        fixMiniMapVisible(true);
         protocol.getHistoryEventsByYear(year);
     });
 
@@ -49,6 +64,7 @@ function startApp() {
 
     historyEventsControl.subscribe('activatedEvent', (data) => {
         mapControl.showEventOnMap(data.map);
+        fixMiniMapVisible();
     });
 
     window.map = mapControl;

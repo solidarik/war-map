@@ -43,6 +43,7 @@ class HistoryEventsControl extends EventEmitter {
 
             let imgHeight = this.height;
             let fixHeight = Math.round( imgHeight / aspectRatio );
+            console.log('fixHeight: ' + fixHeight);
 
             canvas.width = fixWidth;
             canvas.height = fixHeight;
@@ -65,7 +66,7 @@ class HistoryEventsControl extends EventEmitter {
         if (!event.imgUrl)
             return;
 
-        this._resizeImage(event.imgUrl, 300, (canvas) => {
+        this._resizeImage(event.imgUrl, 200, (canvas) => {
             this.imgDiv.appendChild(canvas);
         });
     }
