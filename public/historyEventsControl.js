@@ -66,7 +66,7 @@ class HistoryEventsControl extends EventEmitter {
         if (!event.imgUrl)
             return;
 
-        this._resizeImage(event.imgUrl, 200, (canvas) => {
+        this._resizeImage(event.imgUrl, 300, (canvas) => {
             this.imgDiv.appendChild(canvas);
         });
     }
