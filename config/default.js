@@ -20,7 +20,7 @@ module.exports = {
     hash: {
       length:     128,
       // may be slow(!): iterations = 12000 take ~60ms to generate strong password
-      iterations: process.env.NODE_ENV == 'production' ? 12000 : 1
+      iterations: process.env.NODE_ENV == 'production' ? 12000 : 12000
     }
   },
   template: {

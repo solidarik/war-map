@@ -11,45 +11,13 @@ html, body {height:100%;}
   min-height:100%;
 }
 
-.navbar {
-  margin: 6px 0;
-  border-radius: 4px;
-}
-
-.navbar-nav {
-  margin: 0;
-  width: 100%;
-  flex-direction: row;
-}
-
 .container-fluid {
   padding-left: 0px;
   padding-right: 0px;
 }
 
-.navbar > .container-fluid {
-  padding: 0;
-}
-
-.navbar-nav li {
-  float: left;
-  margin-right: 10px;
-}
-
-.navbar-nav > li > a, .navbar-brand {
-  padding-top:2px !important;
-  padding-bottom:0 !important;
-  height: 26px;
-}
-
-.navbar {min-height:26px !important;}
-
-.navbar-toggle .icon-bar {
-  display: block;
-  width: 22px;
-  height: 2px;
-  background-color: #cccccc;
-  border-radius: 1px;
+.navbar {
+  min-height: 36px;
 }
 
 .glow-button {
@@ -57,21 +25,6 @@ html, body {height:100%;}
   outline: 4px auto  rgba(255, 0, 0, .4) !important;
 }
 
-.ol-control button, #year-input {
-  background-color: rgba(40, 40, 40, 0.75) !important;
-  cursor: pointer;
-  font-size: 14px !important;
-  touch-action: manipulation;
-}
-
-.eventList > span {
-  font-weight: bold;
-  font-size: 16px;
-}
-
-.eventList {
-  margin-left: 20px;
-}
 
 /* .ol-zoom {
   top: 50px;
@@ -105,24 +58,29 @@ html, body {height:100%;}
   transform: translate(-50%, 0);
   display: inline-block;
   padding: 0px;
-  color: yellow;
 }
 
 #year-control > * {
   float: left;
   border: none !important;
-  height: 22px !important;
-  line-height: 22px !important;
+  height: 26px !important;
+  line-height: 26px !important;
+}
+
+.ol-control button, #year-input {
+  background-color: rgba(40, 40, 40, 0.60) !important;
+  cursor: pointer;
+  touch-action: manipulation;
 }
 
 #year-control > button {
-  width: 22px;
+  width: 30px;
 }
 
 #year-input {
-  width: 60px;
+  width: 64px;
   border-radius: 3px;
-  font-size: 14px;
+  font-size: 18px;
   color: white;
   border: 1px solid #ccc;
   text-align: center;
@@ -142,7 +100,7 @@ html, body {height:100%;}
 }
 
 #map {
-  border: 1px solid #aaa;
+  border-top: 1px solid #aaa;
   /* border-radius: 5px; */
   overflow: hidden;
   width: 100%;
@@ -150,6 +108,64 @@ html, body {height:100%;}
 
 #welcome-user {
   height: 24px;
+}
+
+
+#event-list-div {
+  background-color: yellow;
+  width: 70%;
+  height: 300px;
+  overflow-y: scroll;
+}
+
+.hand-cursor {
+  cursor: pointer;
+}
+
+.event-active-row {
+  background-color: hsl(348, 100%, 61%);
+}
+
+.event-feature-color {
+  color:hsl(48, 100%, 67%) ;
+}
+
+.event-feature-color:hover {
+  color: hsl(171, 100%, 41%);
+}
+
+.event-feature-active-color {
+  color: hsl(171, 100%, 41%);
+}
+
+#event-image-div {
+  width: 300px;
+  right: 0px;
+  top: 36px;
+  position: fixed;
+  border: 1px solid #aaa;
+  height: auto;
+  /* visibility: hidden; */
+}
+
+#events-control {
+  position: fixed;
+  height: auto;
+  width: 100%;
+  max-height: 30%;
+  background-color: rgba(40, 40, 40, 0.50) !important;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  color: white;
+  text-align: justify;
+  border-radius: 0px;
+  overflow-y: scroll;
+}
+
+.child-div {
+  width: 20px;
+  height: 20px;
 }
 
 #panel-info {
@@ -173,10 +189,6 @@ html, body {height:100%;}
 .slider-horizontal {
   width: 96% !important;
   margin: 20px 15px !important;
-}
-
-#dateSlider {
-  width: 100%;
 }
 
 .mb-3 {
@@ -286,6 +298,6 @@ input.form-control {
   line-height: 26px;
 }
 
-#dataCounter {
+#data-counter {
   font-weight: bold;
 }

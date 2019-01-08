@@ -9,13 +9,6 @@ html
     script(src="/libs/jquery.min.js")
     script(src="/libs/bootstrap.min.js")
 
-    //timeline
-    //--временно отключил
-    //- link(rel="stylesheet" href="/libs/jquerysctipttop.css")
-    //- link(rel="stylesheet" href="/libs/eventline.css")
-    //- script(src="/libs/eventline.js")
-    //- script(src="/libs/moment.min.js")
-
     //icons
     ////link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
     ////link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
@@ -31,16 +24,6 @@ html
     //script(src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL")
     script(src="/libs/ol.js")
 
-
-    //handsontable
-    //- script(src="/libs/handsontable.min.js")
-    //- link(rel="stylesheet" href="/libs/handsontable.min.css")
-    //- script(src="/libs/ru-RU.js")
-
-    //widgets
-    //script(src="/libs/datepicker.min.js")
-    //link(rel="stylesheet" href="/libs/datepicker.min.css")
-
     //favicon
     link(rel="icon" type="image/png" href="/favicon/favicon-32x32.png" sizes="32x32")
     link(rel="icon" type="image/png" href="/favicon/favicon-16x16.png" sizes="16x16")
@@ -52,14 +35,13 @@ html
 
     //local
     link(rel="stylesheet" href="/style.css")
+    script(src="/socket.io/socket.io.js")
     script(src="/hooks.js")
+    script(src='/eventEmitter.js')
     script(src="/clientProtocol.js")
     script(src="/mapControl.js")
-    script(src="/mapInfo.js")
-    script(src="/objControl.js")
-    script(src="/dataControl.js")
+    script(src="/historyEventsControl.js")
     script(src="/main.js")
-    script(src="/socket.io/socket.io.js")
 
     title Хроника военных действий
     block head

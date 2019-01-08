@@ -17,7 +17,7 @@
             , fingers = e.originalEvent.touches.length;
           $(this).data('lastTouch', t2);
           if (!dt || dt > 500 || fingers > 1) return; // not double-tap
-  
+
           e.preventDefault(); // double tap - prevent the zoom
           // also synthesize click events we just swallowed up
           $(this).trigger('click').trigger('click');
@@ -41,7 +41,7 @@ Array.prototype.equals = function (array) {
     if (!array)
         return false;
 
-    // compare lengths - can save a lot of time 
+    // compare lengths - can save a lot of time
     if (this.length != array.length)
         return false;
 
@@ -50,13 +50,13 @@ Array.prototype.equals = function (array) {
         if (this[i] instanceof Array && array[i] instanceof Array) {
             // recurse into the nested arrays
             if (!this[i].equals(array[i]))
-                return false;       
-        }           
-        else if (this[i] != array[i]) { 
+                return false;
+        }
+        else if (this[i] != array[i]) {
             // Warning - two different object instances will never be equal: {x:20} != {x:20}
-            return false;   
-        }           
-    }       
+            return false;
+        }
+    }
     return true;
 }
 // Hide method from for-in loops
@@ -87,3 +87,64 @@ function checkDate(d) {
         return false;
     }
 }
+
+function retrieveImageFromClipboardAsBlob(pasteEvent, callback){
+
+	if(pasteEvent.clipboardData == false){
+        if(typeof(callback) == "function"){
+            callback(undefined);
+        }
+    };
+
+    var items = pasteEvent.clipboardData.items;
+
+    if(items == undefined){
+        if(typeof(callback) == "function"){
+            callback(undefined);
+        }
+    };
+
+    for (var i = 0; i < items.length; i++) {
+
+        // Skip content if not image
+        if (items[i].type.indexOf("image") == -1) continue;
+        // Retrieve image on clipboard as blob
+        var blob = items[i].getAsFile();
+
+        if(typeof(callback) == "function"){
+            callback(blob);
+        }
+    }
+}
+
+window.addEventListener("paste", function(e){
+
+    // Handle the event
+    retrieveImageFromClipboardAsBlob(e, function(imageBlob){
+        // If there's an image, display it in the canvas
+        if(imageBlob){
+            var canvas = document.getElementById("mycanvas");
+            var ctx = canvas.getContext('2d');
+
+            // Create an image to render the blob on the canvas
+            var img = new Image();
+
+            // Once the image loads, render the img on the canvas
+            img.onload = function(){
+                // Update dimensions of the canvas with the dimensions of the image
+                canvas.width = this.width;
+                canvas.height = this.height;
+
+                // Draw the image
+                ctx.drawImage(img, 0, 0);
+            };
+
+            // Crossbrowser support for URL
+            var URLObj = window.URL || window.webkitURL;
+
+            // Creates a DOMString containing a URL representing the object given in the parameter
+            // namely the original Blob
+            img.src = URLObj.createObjectURL(imageBlob);
+        }
+    });
+}, false);

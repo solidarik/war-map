@@ -2,7 +2,7 @@ extends layout
 
 block content
 
-  nav(class='navbar navbar-expand-sm navbar-light' id='welcome-user')
+  nav(class='navbar navbar-expand-sm navbar-light' id='welcome-user' data-role='navbar')
     span(class='navbar-text')
       | Welcome, #{user.displayName}
 
@@ -64,105 +64,8 @@ block content
             |  Вход
 
   div.content(role="content" id='content' dragable='true')
-    //canvas(style='border: 1px solid grey;' id='mycanvas')
-
-    //- div(class="form-group row")
-    //-   div(class="col")
-    //-     div.timeline-container(id="timelineContainer")
-    //-       div(class="timeline-nav nav-past" id="navPast")
-    //-         span(class='mdi mdi-arrow-left')
-    //-       div(id="timelineWrapper")
-    //-         div(id="timeline")
-    //-           ol(id ="ticks")
-    //-           ol(id="eventList")
-    //-       div(class="timeline-nav nav-future" id="navFuture")
-    //-         span(class='mdi mdi-arrow-right')
-    //-       //div(id="eventDetailContainer" class="event-detail-container")
-    //-           div.selected-event
-    //-             div.event-title
-    //-             //div.event-date-range
-    //-               div.event-start-date
-    //-               div.event-separator
-    //-                 | &nbsp;-&nbsp;
-    //-               div.event-end-date
-    //-             //div.event-notes
-
     input(id='fileImport' accept='application/kml' type='file' style='display:none;')
-    div.map(class='fill panel panel-default' id='map' role='map')
-    div(id='eventPanel' class='eventPanel')
-      div(class="card-body")
-        div.form-group(class='row')
-          div(id='eventList' class='eventList')
-
-    //div(class='card border-secondary mb-3' id='panel-info')
-      div(class="card-header")
-        | Объект
-        div(class="card-counter" id="objectCounter")
-        div(class="btn-super-nav-group btn-super-nav-group-object")
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" id="btnPrevObject" class="btn btn-secondary mdi mdi-chevron-left" title="Предыдущий объект")
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" id="btnNextObject" class="btn btn-secondary mdi mdi-chevron-right" title="Следующий объект")
-        div(class="btn-super-group")
-          //div(class="btn-group btn-group-sm" role="group")
-            button(type="button" id="btnChangeObject" class="btn btn-secondary mdi mdi-check btn-apply" title="Изменить объект")
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" id="btnDataObject" class="btn btn-secondary mdi mdi-table-large btn-data" title="Привязать данные")
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" id="btnDeleteObject" class="btn btn-secondary mdi mdi-delete-variant btn-delete" title="Удалить объект")
-      div(class="card-body")
-        div.form-group(class='row')
-          div(class='col-sm-8')
-            input.form-control(id='objectName' type="text" placeholder="Имя объекта")
-          div(class='col-sm-4')
-            select.form-control(id="objectCountry")
-              option(selected value='russia')
-                | Россия
-              option(value='germany')
-                | Германия
-        //div.form-group(class="row")
-          div(class='col')
-            label(for='coords')
-              | Доп. информация
-            textarea.form-control(rows='4', id='objectInnerInfo')
-    //div(class='card border-secondary mb-3' id='panel-data')
-      div(class='card-header')
-        | Данные
-        div(class="card-counter" id="dataCounter")
-        div(class="btn-super-group")
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" id="btnChangeData" class="btn btn-secondary mdi mdi-check btn-apply" title="Сохранить данные")
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" id="btnDeleteData" class="btn btn-secondary mdi mdi-delete-variant btn-delete" title="Удалить данные")
-      div(class='card-body')
-        div(class='form-group row')
-          div(class='col')
-            input.form-control(id='dataHeader' type="text" placeholder="Названия колонок через ;")
-        div(class='form-group row')
-          div(class='col')
-            div(class='dataTable' id='dataTable')
-    //div(class='card border-secondary mb-3' id='panel-date')
-      div(class="card-header")
-        | Событие
-        div(class="card-counter" id="eventCounter")
-        div(class="btn-super-nav-group")
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" class="btn btn-secondary mdi mdi-skip-previous" title="Предыдущее событие")
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" class="btn btn-secondary mdi mdi-play" title="Воспроизвести")
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" class="btn btn-secondary mdi mdi-skip-next" title="Следующее событие")
-        div(class="btn-super-group")
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" class="btn btn-secondary mdi mdi-plus btn-add" title="Добавить новую дату")
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" class="btn btn-secondary mdi mdi-check btn-apply" title="Изменить текущую дату")
-          div(class="btn-group btn-group-sm" role="group")
-            button(type="button" class="btn btn-secondary mdi mdi-delete-variant btn-delete" title="Удалить текущую дату")
-      div(class="card-body")
-        div(class="form-group row")
-          div(class='col-sm-8')
-            input.form-control(id='dateCaption' type="text" placeholder="Название события")
-          div(class="col-sm-4")
-            input.form-control(id='dateValue' type="date" style="display: none" onBlur="CheckDate(this, dateValuePlaceHolder)")
-            input.form-control(id="dateValuePlaceHolder" type="text" placeholder="Дата события" onClick="ChangeVisible(dateValue, this)")
+    div.map(class='fill panel panel-default' id='map' data-role='map')
+    div(id='event-image-div')
+    div(id='events-control')
+      div(id='event-list' class='table-responsive')

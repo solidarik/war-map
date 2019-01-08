@@ -10,20 +10,29 @@ class HistoryEventsProtocol extends ServerProtocol {
 
     getEventsByYear(socket, msg, cb) {
 
-        let data = JSON.parse(msg);
-        let startDate = (new Date(data.year, 0, 1)).toISOString();
-        let endDate = (new Date(data.year, 11, 31)).toISOString();
-        HistoryEventsModel.find({
-            startDate: {
-                $gte: startDate,
-                $lt: endDate
-            }
-        }, (err, events) => {
-            let msg = {};
-            msg.err = err;
-            msg.events = events;
-            cb(JSON.stringify(msg));
-        });
+        let res = {};
+
+        try {
+            let data = JSON.parse(msg);
+            let startDate = (new Date(data.year, 0, 1)).toISOString();
+            let endDate = (new Date(data.year, 11, 31)).toISOString();
+
+            HistoryEventsModel.find({
+                startDate: {
+                    $gte: startDate,
+                    $lt: endDate
+                }
+            }, (err, events) => {
+                res.err = err;
+                res.events = events;
+                cb(JSON.stringify(res));
+            });
+
+        } catch(err) {
+            res.err = 'Ошибка парсинга даты: ' + err;
+            res.events = '';
+            cb(JSON.stringify(res));
+        }
     }
 }
 

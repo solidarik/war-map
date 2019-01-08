@@ -1,33 +1,10 @@
 const kremlinLocation = new ol.proj.fromLonLat([37.617499, 55.752023]); //moscow kremlin
 
-class MapControl {
+class MapControl extends EventEmitter {
 
-    _getYearLayerUrl (tileCoord, pixelRatio, projection) {
+    constructor() {
 
-        let ano = this.currentYearForMap;
-        var anow = "" + ano;
-        anow = anow.replace("-", "B");
-
-        let z = tileCoord[0];
-        let x = tileCoord[1];
-        let y = -tileCoord[2] - 1;
-
-        if (0 == z || z > 6)
-            return;
-
-        let url = "http://cdn.geacron.com" + "/tiles/area/" + anow + "/Z" + z + "/" + y + "/" + x + ".png";
-        return url;
-    }
-
-    constructor(protocol) {
-
-        this.protocol = protocol;
-        this.socket = protocol.getSocket();
-
-        let fileImportElem = document.getElementById('fileImport');
-        fileImportElem.onchange = (filePath) => {
-            this._importFile(fileImportElem.files[0]);
-        };
+        super();
 
         let rasterLayer = new ol.layer.Tile({
             opacity: 1,
@@ -35,32 +12,8 @@ class MapControl {
             source: new ol.source.OSM()
         });
 
-        let vectorSource = new ol.source.Vector();
-        let vectorLayer = new ol.layer.Vector({
-            source: vectorSource,
-            zIndex: 2,
-            style: (feature, resolution) => {
-                return this._getStyleFunction.call(this, feature, resolution);
-            },
-            updateWhileAnimating: true,
-            updateWhileInteracting: true,
-        });
-
-        let vectorSource2 = new ol.source.Vector();
-        let vectorLayer2 = new ol.layer.Vector({
-            source: vectorSource2,
-            zIndex: 3,
-            style: (feature, resolution) => {
-                return this._getStyleFunction.call(this, feature, resolution);
-            },
-            updateWhileAnimating: true,
-            updateWhileInteracting: true,
-        });
-
-
         let view = new ol.View({
             center: new ol.proj.fromLonLat([56.004 , 54.6950]), //ufa place
-            //zoom: 18
             //center: kremlinLocation,
             zoom: 3,
             //projection: 'EPSG:4326'
@@ -68,9 +21,9 @@ class MapControl {
 
         const map = new ol.Map({
             controls: ol.control.defaults({ attribution: false, zoom: false }).extend([
-                new ol.control.FullScreen()
+                //new ol.control.FullScreen()
             ]),
-            layers: [rasterLayer, vectorLayer, vectorLayer2],
+            layers: [rasterLayer],
             target: 'map',
             view: view
         });
@@ -82,24 +35,13 @@ class MapControl {
         });
 
         this.map = map;
-        this.vectorSource = vectorSource;
-        this.vectorSource2 = vectorSource2;
-        this.firstFeature = undefined;
-
-        this.eventComponent = $("#eventList")[0];
-
-        this.currentYear = this.currentYearForMap = 1939;
 
         this.view = view;
         this.draw = undefined;
         this.snap = undefined;
         this.dragBox = {};
         this.addFeatureEnabled = true;
-        this.clearDbFn = () => {};
-        this.changeFeaturesFn = () => {};
-        this.selectFn = () => {};
-        this.changeYearFn = () => {};
-        this.getCurrentCountryFn = () => {};
+
         this.activeButton = undefined;
 
         this.maxExtent = {left: -20037508.3, top: -20037508.3, right: 20037508.3, bottom: 20037508.3};
@@ -107,55 +49,17 @@ class MapControl {
         this.tileSize = {w: 256, h: 256};
 
         setTimeout(() => {
-            this._addSelectInteraction();
+            //this._addSelectInteraction();
             this._addYearLayer();
-            this._addEventsLayer();
-            this._addButtons();
+            this._addHistoryEventsLayer();
+            this._changeYear(1939);
             this._addYearControl();
-            this._initSocket();
+            // this._addButtons();
         }, 10);
     }
 
-    static create(protocol) {
-        return new MapControl(protocol);
-    }
-
-    on(event, cb) {
-        switch(event) {
-            case("addFeature"):
-                this.vectorSource.on('addfeature', (event) => {
-
-                    if (!this.addFeatureEnabled)
-                        return;
-
-                    let mo = this._createMapObjectByFeature(event.feature);
-                    event.feature.setId(mo.uid);
-                    event.feature.set("country", mo.country);
-                    cb( mo );
-                });
-            break;
-            case("selectFeature"):
-                this.selectFn = cb;
-            break;
-            case("changeYear"):
-                this.changeYearFn = cb;
-            break;
-            case("clearMap"):
-                this.clearDbFn = cb;
-            break;
-            case("changeFeatures"):
-                this.changeFeaturesFn = cb;
-            break;
-            case("getCurrentCountry"):
-                this.getCurrentCountryFn = cb;
-            break;
-        }
-    }
-
-    _initSocket() {
-        this.socket.on('srvAsnwerEvents', (msg) => {
-            console.log(msg);
-        });
+    static create() {
+        return new MapControl();
     }
 
     _addYearLayer() {
@@ -172,178 +76,20 @@ class MapControl {
         this.map.addLayer(yearLayer);
     }
 
-    _addEventsLayer() {
-        let eventsSource = new ol.source.Vector();
-        let eventsLayer = new ol.layer.Vector({
-            source: eventsSource,
+    _addHistoryEventsLayer() {
+        let historyEventsSource = new ol.source.Vector();
+        let historyEventsLayer = new ol.layer.Vector({
+            source: historyEventsSource,
             zIndex: 5,
             updateWhileAnimating: true,
             updateWhileInteracting: true,
         });
-        this.eventsSource = eventsSource;
-        this.map.addLayer(eventsLayer);
+        this.historyEventsSource = historyEventsSource;
+        this.map.addLayer(historyEventsLayer);
     }
 
-    _getMapObjectFromFeature(ft) {
-        return {
-            "kind": ft.getGeometry().getType(),
-            "coords": ft.getGeometry().getCoordinates(),
-            "uid": ft.getId(),
-            "name": ft.get("name"),
-            "country": ft.get("country")
-        };
-    }
-
-    _createMapObjectByFeature(ft) {
-        return {
-            "kind": ft.getGeometry().getType(),
-            "coords": ft.getGeometry().getCoordinates(),
-            "uid": this._createUid(),
-            "country": this.getCurrentCountryFn()
-        };
-    }
-
-    _createUid() {
-        function s4() {
-            return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
-        }
-        return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-    }
-
-    _importFile(filePath) {
-        let reader = new FileReader();
-        reader.onload = (e) => {
-            let contents = reader.result;
-            let lines = contents.split('\n');
-            let jsonFromFile = JSON.parse(lines);
-
-            // let vectorLayer = new ol.layer.Vector({
-            //     source: new ol.source.Vector({
-            //       url: contents,
-            //       format: new ol.format.KML()
-            //     })
-            // });
-
-            for (let i = 0; i < jsonFromFile.features.length; i++) {
-                let fj = jsonFromFile.features[i].geometry;
-                var coords = [];
-                if ('Point' === fj.type) {
-                    coords = new ol.proj.fromLonLat(fj.coordinates);
-                } else {
-                    let srcCoords = ('Polygon' === fj.typ) ? fj.coordinates[0] : fj.coordinates;
-                    for (let j = 0; j < srcCoords.length; j++) {
-                        let point = new ol.proj.fromLonLat(srcCoords[j]);
-                        coords.push(point);
-                    }
-                }
-                let ft = new ol.Feature({uid: 100, name: 'test', geometry: this._createGeom({kind: fj.type, coords: coords})});
-                this.vectorSource2.addFeature(ft);
-            };
-        }
-        reader.readAsText(filePath);
-
-        console.log(filePath);
-    }
-
-    selectObject(obj) {
-        this.addFeatureEnabled = false;
-        let features = this.vectorSource.getFeatures();
-        for (let i = 0; i < features.length; i++) {
-            let ft = features[i];
-            if (obj.uid == ft.getId()) {
-                this.select.getFeatures().clear();
-                this.select.getFeatures().push(ft);
-                //this._doCenterView(ft);
-                break;
-            }
-        };
-        this.addFeatureEnabled = true;
-    }
-
-    changeObjectInMap(mo) {
-        this.addFeatureEnabled = false;
-        let features = this.vectorSource.getFeatures();
-        for (let i = 0; i < features.length; i++) {
-            let ft = features[i];
-            if (mo.uid == ft.getId()) {
-                ft.setGeometry(this._createGeom(mo));
-                ft.set("name", mo.name);
-                ft.set("country", mo.country);
-                break;
-            }
-        };
-        this.addFeatureEnabled = true;
-    }
-
-    deletePointsFromVS2(evt) {
-        console.log('deletePointsFromVS2');
-        this.vectorSource2.clear();
-        this._addPointToVS2(this.firstFeature)
-    }
-
-    deleteObjectInMap(uid) {
-
-        let ft = this.vectorSource.getFeatureById(uid);
-        this.vectorSource.removeFeature(ft);
-        this.select.getFeatures().remove(ft);
-        // return;
-        // let features = this.vectorSource.getFeatures();
-        // for (let i = 0; i < features.length; i++) {
-        //     let ft = features[i];
-        //     if (mo.uid == ft.getId()) {
-        //         this.vectorSource.removeFeatures()
-        //         break;
-        //     }
-        // };
-    }
-
-    addObjectToMap(mo) {
-        this.addFeatureEnabled = false;
-        for (let i = 0; i < mo.length; i++) {
-            let ft = new ol.Feature({id: mo[i].uid, geometry: this._createGeom(mo[i]), name: mo[i].name, country: mo[i].country});
-            ft.setId(mo[i].uid); //засунул передачу всех свойств в верхнюю строку, в метод ol.Feature
-
-            this.vectorSource.addFeature(ft);
-        };
-        this.addFeatureEnabled = true;
-    }
-
-    _addDragBoxToMap(obj) {
-
-        let p1 = [obj.start.x, obj.start.y];
-        let p2 = [obj.end.x, obj.start.y];
-        let p3 = [obj.end.x, obj.end.y];
-        let p4 = [obj.start.x, obj.end.y];
-
-        this._addPointToVS2( p1 );
-        this._addPointToVS2( p2 );
-        this._addPointToVS2( p3 );
-        this._addPointToVS2( p4 );
-
-        this._addLineToVS2( [p1, p2, p3, p4, p1] );
-    }
-
-    _addPointToVS2(p) {
-        return this.vectorSource2.addFeature( new ol.Feature({geometry: this._createGeom({kind: "Point", coords: p})}) );
-    }
-
-    _addLineToVS2(p) {
-        console.log('addPolygon to VS2: ' + p )
-        this.vectorSource2.addFeature( new ol.Feature({geometry: this._createGeom({kind: "Polygon", coords: [p]})}) );
-    }
-
-
-    clearMap() {
-        this.vectorSource.clear();
-    }
-
-    _doCenterView(ft) {
-        this.map.getView().animate({
-            center: this._getCenterCoord(ft),
-            duration: 300
-        });
+    fixMapHeight() {
+        this.map.updateSize();
     }
 
     _getCenterCoord(ft) {
@@ -383,6 +129,57 @@ class MapControl {
             return (values[half-1] + values[half]) / 2.0;
     }
 
+    _getYearLayerUrl (tileCoord, pixelRatio, projection) {
+
+        if (!this.currentYearForMap)
+            return;
+
+        let ano = this.currentYearForMap;
+        var anow = "" + ano;
+        anow = anow.replace("-", "B");
+
+        let z = tileCoord[0];
+        let x = tileCoord[1];
+        let y = -tileCoord[2] - 1;
+
+        if (0 == z || z > 6)
+            return;
+
+        let url = "http://cdn.geacron.com" + "/tiles/area/" + anow + "/Z" + z + "/" + y + "/" + x + ".png";
+        return url;
+    }
+
+    _addYearControl() {
+        this.map.addControl(new YearControl({
+            caption: "Выбрать год событий",
+            year: this.currentYear,
+            handler: (year) => {
+                this._changeYear(year);
+            },
+        }));
+    }
+
+    _changeYear(year) {
+        this.historyEventsSource.clear();
+        this.currentYear = year;
+        this.currentYearForMap = (this.currentYear == 1951) ? 1950 : this.currentYear;
+        this.yearLayer.getSource().refresh();
+        this.emit('changeYear', year);
+    }
+
+    _hexToRgbA(hex, opacity){
+        var c;
+        if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+            c= hex.substring(1).split('');
+            if(c.length== 3){
+                c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+            }
+            c= '0x'+c.join('');
+            return [(c>>16)&255, (c>>8)&255, c&255, opacity ? opacity : 0];
+        }
+        throw new Error(`Bad Hex ${hex}`);
+    }
+
     _createGeom(mo) {
         let geom;
         switch(mo.kind) {
@@ -399,110 +196,46 @@ class MapControl {
         return geom;
     }
 
-    _addYearControl() {
-        this.map.addControl(new YearControl({
-            caption: "Выбрать год событий",
-            year: this.currentYear,
-            handler: (year) => {
-                this._changeYear(year);
-            },
-        }));
-    }
+    showEventOnMap(map) {
+        this.historyEventsSource.clear();
 
-    _changeYear(year) {
-        this.currentYear = year;
-        this.currentYearForMap = (this.currentYear == 1951) ? 1950 : this.currentYear;
-        this.yearLayer.getSource().refresh();
-
-        this.socket.emit('clQueryEvents', JSON.stringify({year: this.currentYear}), (msg) => {
-            let data = JSON.parse(msg);
-            console.log(JSON.stringify(data));
-            this._showCurrentEvents(data);
-        });
-    }
-
-    _hexToRgbA(hex, opacity){
-        var c;
-        if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
-            c= hex.substring(1).split('');
-            if(c.length== 3){
-                c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+        let features = map.features;
+        for (let i = 0; i < features.length; i++) {
+            let geom = features[i].geometry;
+            let style_prop = features[i].properties;
+            let style = {};
+            if (style_prop.fill) {
+                style.fill = new ol.style.Fill({
+                    color: this._hexToRgbA(style_prop.fill, style_prop['fill-opacity'])
+                });
             }
-            c= '0x'+c.join('');
-            return [(c>>16)&255, (c>>8)&255, c&255, opacity ? opacity : 0];
-        }
-        throw new Error(`Bad Hex ${hex}`);
-    }
-
-    _showEventsOnMap(events) {
-        events.forEach((event) => {
-            let maps = event.maps;
-            maps.forEach( map => {
-                let features = map.features;
-                for (let i = 0; i < features.length; i++) {
-                    let geom = features[i].geometry;
-                    let style_prop = features[i].properties;
-                    let style = {};
-                    if (style_prop.fill) {
-                        style.fill = new ol.style.Fill({
-                            color: this._hexToRgbA(style_prop.fill, style_prop['fill-opacity'])
-                        });
-                    }
-                    if (style_prop.stroke) {
-                        style.stroke = new ol.style.Stroke({
-                            color: this._hexToRgbA(style_prop.stroke, style_prop['stroke-opacity']),
-                            width: style_prop['stroke-width']
-                        });
-                    };
-                    var coords = [];
-                    if ('Point' === geom.type) {
-                        coords = new ol.proj.fromLonLat(geom.coordinates);
-                    } else {
-                        let srcCoords = ('Polygon' === geom.type) ? geom.coordinates[0] : geom.coordinates;
-                        for (let j = 0; j < srcCoords.length; j++) {
-                            let point = new ol.proj.fromLonLat(srcCoords[j]);
-                            coords.push(point);
-                        }
-                        if ('Polygon' === geom.type) {
-                            coords = [coords];
-                        }
-                    }
-                    let ft = new ol.Feature({
-                        uid: 100,
-                        name: 'test',
-                        geometry: this._createGeom({kind: geom.type, coords: coords}
-                    )});
-                    console.log(JSON.stringify(style));
-                    ft.setStyle(new ol.style.Style(style));
-                    this.eventsSource.addFeature(ft);
-                };
-            });
-        });
-    }
-
-    _showEventsOnPanel(events, listComponent) {
-        let html = '';
-        events.forEach(event => {
-            let date = new Date(event.startDate);
-            date = ('0' + date.getDate()).slice(-2) + '.'
-             + ('0' + (date.getMonth()+1)).slice(-2) + '.'
-             + date.getFullYear();
-            html += `<span>${date}</span> ${this.protocol.getDictName(event._name)}<br>`;
-        });
-        if ('' != html) {
-            this.eventComponent.innerHTML = html;
-        }
-    }
-
-    _showCurrentEvents(data) {
-        this.eventsSource.clear();
-        this.eventComponent.innerHTML = '';
-
-        if (!data || !data.hasOwnProperty('events')) return;
-
-        let events = data.events;
-        setTimeout(this._showEventsOnMap(events), 10);
-        setTimeout(this._showEventsOnPanel(events), 10);
+            if (style_prop.stroke) {
+                style.stroke = new ol.style.Stroke({
+                    color: this._hexToRgbA(style_prop.stroke, style_prop['stroke-opacity']),
+                    width: style_prop['stroke-width']
+                });
+            };
+            var coords = [];
+            if ('Point' === geom.type) {
+                coords = new ol.proj.fromLonLat(geom.coordinates);
+            } else {
+                let srcCoords = ('Polygon' === geom.type) ? geom.coordinates[0] : geom.coordinates;
+                for (let j = 0; j < srcCoords.length; j++) {
+                    let point = new ol.proj.fromLonLat(srcCoords[j]);
+                    coords.push(point);
+                }
+                if ('Polygon' === geom.type) {
+                    coords = [coords];
+                }
+            }
+            let ft = new ol.Feature({
+                uid: 100,
+                name: 'test',
+                geometry: this._createGeom({kind: geom.type, coords: coords}
+            )});
+            ft.setStyle(new ol.style.Style(style));
+            this.historyEventsSource.addFeature(ft);
+        };
     }
 
     _addButtons() {
@@ -518,66 +251,6 @@ class MapControl {
             }
         }));
 
-        return; //soli
-        this.map.addControl(new CustomControl({
-            caption: "Рисовать связанные отрезки",
-            class: "polyline-control",
-            icon: "mdi mdi-vector-polyline",
-            handler: (btn) => {
-                this._setActiveButton(btn);
-                this._addInteraction("LineString");
-            },
-        }));
-
-        // каждый объект имеет свою логику работы с vectorsource
-        // каждый объект сам настраивает события мыши
-        // каждый объект сам получает доступ к объектам карты и к окружению
-        // они используют глобальный объект, который сначала сбрасывают в состояние нуля?
-
-
-        this.map.addControl(new CustomControl({
-            caption: "Рисовать замкнутый контур",
-            class: "polygon-control",
-            icon: "mdi mdi-vector-polygon",
-            handler: (btn) => {
-                this._setActiveButton(btn);
-                this._addInteraction("Polygon");
-            },
-        }));
-
-        this.map.addControl(new CustomControl({
-            caption: "Добавить точку на карту",
-            class: "point-control",
-            icon: "mdi mdi-circle-outline",
-            handler: (btn) => {
-                this._setActiveButton(btn);
-                this._addInteraction("Point");
-            },
-        }));
-
-        /*
-        this.map.addControl(new CustomControl({
-            caption: "Изображение",
-            class: "image-control",
-            icon: "mdi mdi-image",
-            handler: (btn) => {
-                this._setActiveButton(btn);
-                this._addInteraction("Image");
-            },
-        }));
-        */
-
-        this.map.addControl(new CustomControl({
-            caption: "Выбрать элементы на карте",
-            class: "box-control",
-            icon: "mdi mdi-select",
-            handler: (btn) => {
-                console.log('click to handler\'s boxcontrol');
-                this._setActiveButton(btn);
-                this._addInteraction("BoxControl");
-            }
-        }));
-
         this.map.addControl(new CustomControl({
             caption: "Импортировать объекты из geojson-файла",
             class: "box-control",
@@ -590,27 +263,6 @@ class MapControl {
         }));
     }
 
-    _addModify() {
-        let modify = new ol.interaction.Modify({ source: vectorSource });
-        map.addInteraction(modify);
-
-        modify.on('modifyend',  function(e) {
-            if (!this.changeFeaturesFn || (0 == e.features.getArray().length)) {
-                return;
-            }
-
-            let mapObjects = [];
-            for(let i = 0; i < e.features.getArray().length; i++) {
-                let ft = e.features.getArray()[i];
-                mapObjects.push(this._getMapObjectFromFeature(ft));
-            };
-
-            this.changeFeaturesFn(mapObjects);
-        }, this);
-
-        this.map.modify = modify;
-    }
-
     _setActiveButton(btn) {
         if (this.activeButton) {
             $(this.activeButton).removeClass('glow-button');
@@ -618,102 +270,6 @@ class MapControl {
 
         this.activeButton = btn;
         $(btn).addClass('glow-button');
-    }
-
-    _addInteraction(type) {
-        this.map.removeInteraction(this.draw);
-        this.map.removeInteraction(this.snap);
-
-        if ("Image" == type) {
-
-            this.draw = new ol.interaction.DragBox({
-                source: this.vectorSource2
-            });
-
-            this.draw.on('boxstart', (ev) => {
-                console.log('boxstart: ' + ev.coordinate);
-                this.firstFeature = ev.coordinate;
-
-                this.dragBox = {};
-                this.dragBox["start"] = {"x": ev.coordinate[0], "y": ev.coordinate[1]};
-            });
-
-            this.draw.on('boxend', (ev) => {
-                this.dragBox["end"] = {"x": ev.coordinate[0], "y": ev.coordinate[1]};
-                this._addDragBoxToMap(this.dragBox);
-            });
-
-            this.map.addInteraction(this.draw);
-            this.snap = new ol.interaction.Snap({ source: this.vectorSource2 });
-            this.map.addInteraction(this.snap);
-            return;
-        }
-        else if ("BoxControl" == type) {
-
-            this.draw = new ol.interaction.Draw({
-                source: this.vectorSource2,
-                type: 'Circle',
-                geometryFunction: ol.interaction.Draw.createBox()
-            });
-
-            this.draw.on('change', (ev) => {
-                console.log('change event');
-            });
-
-            this.map.addInteraction(this.draw);
-            this.snap = new ol.interaction.Snap({ source: this.vectorSource2 });
-            this.map.addInteraction(this.snap);
-            return;
-
-        } else {
-
-            this.draw = new ol.interaction.Draw({
-                source: this.vectorSource,
-                type: type,
-                //freehand: true
-            });
-
-            this.draw.on ('drawstart', (e) => {
-                this.select.setActive(false);
-            });
-
-            this.draw.on('drawend', (e) => {
-                e.preventDefault();
-                setTimeout(() => {
-                    this.select.setActive(true);
-                }, 300);
-            });
-
-        }
-
-        this.map.addInteraction(this.draw);
-
-        this.snap = new ol.interaction.Snap({ source: this.vectorSource });
-        this.map.addInteraction(this.snap);
-    }
-
-    _addSelectInteraction() {
-        let select = new ol.interaction.Select( {
-            style: (feature, resolution) => {
-                return this._getSelectStyleFunction.call(this, feature, resolution);
-            }
-        });
-        this.select = select;
-        this.map.addInteraction(select);
-
-        select.on('select', (e) => {
-            if (!this.selectFn || (0 == e.selected.length)) {
-                return;
-            }
-
-            let mapObjects = [];
-            for(let i = 0; i < e.selected.length; i++) {
-                let ft = e.selected[i];
-                mapObjects.push(this._getMapObjectFromFeature(ft));
-            };
-
-            this.selectFn(mapObjects);
-        });
     }
 
     _getStyleFunction(feature, resolution) {
@@ -784,40 +340,6 @@ class MapControl {
         });
     }
 
-    _getSelectStyleFunction(feature, resolution) {
-        return new ol.style.Style({
-            stroke: new ol.style.Stroke({
-                color: 'blue',
-                width: 3
-            }),
-            image: new ol.style.Circle({
-                 radius: 5,
-                 fill: new ol.style.Fill({
-                     color: 'blue'
-                 }),
-                 stroke: new ol.style.Stroke({
-                     color: 'blue',
-                     width: 1
-                 })
-            }),
-            text: this._createTextStyle.call(this, feature, resolution, {
-                align: 'center',
-                baseline: 'middle',
-                size: '14px',
-                offsetX: 0,
-                offsetY: 15,
-                weight: 'bold',
-                overflow: 'true',
-                rotation: 0,
-                font: 'Arial',
-                color: 'blue',
-                outline: 'yellow',
-                outlineWidth: 0,
-                maxreso: 20000,
-            })
-        });
-    }
-
     _createTextStyle(feature, resolution, dom) {
         let align = dom.align;
         let baseline = dom.baseline;
@@ -829,13 +351,7 @@ class MapControl {
         let maxAngle = dom.maxangle ? parseFloat(dom.maxangle) : undefined;
         let overflow = dom.overflow ? (dom.overflow == 'true') : undefined;
         let rotation = parseFloat(dom.rotation);
-        // if (dom.font == '\'Open Sans\'' && !openSansAdded) {
-        //   let openSans = document.createElement('link');
-        //   openSans.href = 'https://fonts.googleapis.com/css?family=Open+Sans';
-        //   openSans.rel = 'stylesheet';
-        //   document.getElementsByTagName('head')[0].appendChild(openSans);
-        //   openSansAdded = true;
-        // }
+
         let font = weight + ' ' + size + ' ' + dom.font;
         let fillColor = dom.color;
         let outlineColor = dom.outline;
@@ -990,8 +506,6 @@ class YearControl extends SuperCustomControl {
 
         this.year = parseInt(this.year) - 1;
         this._setNewYear(this.year);
-
-        this.handler(this.year);
     }
 
     _rightButtonClick() {
@@ -1000,8 +514,6 @@ class YearControl extends SuperCustomControl {
 
         this.year = parseInt(this.year) + 1;
         this._setNewYear(this.year);
-
-        this.handler(this.year);
     }
 
     _inputKeyUp() {
@@ -1015,8 +527,6 @@ class YearControl extends SuperCustomControl {
 
         this.year = parseInt(year);
         this._setNewYear(this.year);
-
-        this.handler(this.year);
     }
 
     _checkYear(year, incr, oldValue = undefined) {
@@ -1039,5 +549,6 @@ class YearControl extends SuperCustomControl {
 
     _setNewYear(year) {
         this.yearInput.value = this.year;
+        this.handler(this.year);
     }
 }
