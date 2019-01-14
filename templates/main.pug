@@ -2,9 +2,17 @@ extends layout
 
 block content
 
-  nav(class='navbar navbar-expand-sm navbar-light' id='welcome-user' data-role='navbar')
-    span(class='navbar-text')
-      | Welcome, #{user.displayName}
+  nav(class='navbar navbar-expand-md navbar-dark bg-dark navbar-fixed-top' data-role='navbar')
+    div(class='container-fluid')
+      ul(class='nav navbar-nav')
+        li(class='nav-item active')
+          a(class='nav-link' href='#events')
+            | События
+        li(class='nav-item')
+          a(class='nav-link' href='#info')
+            | Инфографика
+      span(class='navbar-text pull-right')
+        | #{user.displayName}
 
   //div.modal(class='fade' id='regModal' role='dialog' )
     div.modal-dialog
