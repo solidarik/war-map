@@ -35,9 +35,13 @@ const Router = require('koa-router');
 
 const router = new Router();
 
-router.get('/', require('./routes/frontpage').get);
+router.get('/', require('./routes/page-events').get);
+router.get('/info', require('./routes/page-info').get);
+router.get('/events', require('./routes/page-events').get);
+
 router.post('/login', require('./routes/login').post);
 router.get('/logout', require('./routes/logout').get);
+
 router.get('/cleardb', require('./routes/cleardb').get);
 
 app.use(router.routes());

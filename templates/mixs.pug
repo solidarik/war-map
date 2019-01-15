@@ -1,0 +1,20 @@
+mixin li(activeElem, href, name)
+    if activeElem == href
+        li(class='nav-item active')
+            a(class='nav-link' href='#{href}')
+                | #{name}
+    else
+        li(class='nav-item')
+            a(class='nav-link' href='/#{href}')
+                | #{name}
+
+
+
+mixin header(activeElem)
+    nav(class='navbar navbar-expand-md navbar-dark bg-dark navbar-fixed-top' data-role='navbar')
+        div(class='container-fluid')
+            ul(class='nav navbar-nav')
+                +li(activeElem, 'events', 'События')
+                +li(activeElem, 'info', 'Инфографика')
+            span(class='navbar-text pull-right')
+                | #{user.displayName}

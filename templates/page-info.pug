@@ -1,0 +1,23 @@
+extends layout
+
+block head
+  link(rel="stylesheet" href="/libs/materialdesignicons.min.css")
+  link(rel="stylesheet" href="/libs/ol.css")
+  script(src="/libs/ol.js")
+
+  script(src="/hooks.js")
+  script(src='/eventEmitter.js')
+  script(src="/clientProtocol.js")
+  script(src="/mapControl.js")
+  script(src="/historyEventsControl.js")
+  script(src="/main.js")
+
+block content
+  +header2('info')
+
+  div.content(role="content" id='content' dragable='true')
+    input(id='fileImport' accept='application/kml' type='file' style='display:none;')
+    div.map(class='fill panel panel-default' id='map' data-role='map')
+    div(id='events-control')
+      div(id='event-list' class='table-responsive')
+      div(id='event-image-div')
