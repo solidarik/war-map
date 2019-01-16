@@ -217,6 +217,7 @@ function filterByYear(data, yearFilter) {
 }
 
 function getMaxMinYear(data) {
+    console.log('temprorary modified')
     return [1, 2003];
     let maxMinYear = [];
     let curElemnt = data[1].dataCountries;
