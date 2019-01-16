@@ -1,13 +1,9 @@
-mixin li(activeElem, href, name)
-    if activeElem == href
-        li(class='nav-item active')
-            a(class='nav-link' href='#{href}')
-                | #{name}
-    else
-        li(class='nav-item')
-            a(class='nav-link' href='/#{href}')
-                | #{name}
-
+mixin li(activeElem, link, name)
+    - var isActive = (activeElem == link)
+    - var link = isActive ? ( '/' + link ) : ('/' + link)
+    li(class=isActive ? 'nav-item active' : 'nav-item')
+        a(class='nav-link' href=link)
+            | #{name}
 
 
 mixin header(activeElem)
