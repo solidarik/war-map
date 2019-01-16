@@ -7,7 +7,7 @@ mixin li(activeElem, link, name)
 
 
 mixin header(activeElem)
-    nav(class='navbar navbar-expand-md navbar-dark bg-dark navbar-fixed-top' data-role='navbar')
+    nav(id='head-navbar' class='navbar navbar-dark bg-dark' data-role='navbar')
         div(class='container-fluid')
             ul(class='nav navbar-nav')
                 +li(activeElem, 'events', 'События')

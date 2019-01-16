@@ -1,13 +1,20 @@
 extends layout
 
 block head
+  script(src="/libs/d3.min.js")
   script(src="/hooks.js")
   script(src='/eventEmitter.js')
   script(src="/clientProtocol.js")
-  script(src="/main.js")
+
+  script(src="/addImageInPage.js")
+  script(src="/flagCircleInMap.js")
+  script(src="/main-info.js")
+
 
 block content
   +header('info')
 
   div.content(role="content" id='content' dragable='true')
-    h2 hello
+    div(id='graph-control')
+      div(id='mapContainer' class="row")
+      div(id='vis' class="row")

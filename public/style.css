@@ -16,9 +16,35 @@ html, body {height:100%;}
   padding-right: 0px;
 }
 
-.navbar {
+#head-navbar {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
   height: 40px;
-  padding: 10px;
+  padding: 0 5px;
+}
+
+.nav>li {
+  display: inline-block;
+  width: initial;
+  float: left;
+  margin-right: 10px;
+  white-space: nowrap;
+}
+
+.nav {
+  display: inline-block;
+}
+
+.nav-link {
+  padding: 0px;
+}
+
+@media screen and (max-width:768px)
+{
+  .nav {
+    display: inline-block;
+  }
 }
 
 .navbar-dark .navbar-nav .active .nav-link {
@@ -164,6 +190,12 @@ html, body {height:100%;}
   overflow-y: scroll;
 }
 
+#graph-control {
+  width: 100%;
+  color: white;
+  text-align: justify;
+}
+
 .child-div {
   width: 20px;
   height: 20px;
@@ -301,4 +333,102 @@ input.form-control {
 
 #data-counter {
   font-weight: bold;
+}
+
+
+
+/* kk */
+div#mapContainer{
+  width:calc(100%);
+  height:calc(100%);
+}
+
+path {
+  fill: #ccc;
+  stroke: #fff;
+  stroke-width: .5px;
+}
+
+path.active {
+  fill: green;
+}
+
+circle {
+  /* fill: #fff;
+  fill-opacity: 0.9;
+  fill: auto;*/
+  stroke: #111;
+}
+
+circle.active {
+  stroke: #0A98F5;
+  stroke-width: 5px;
+}
+
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: auto;
+    height: 28px;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: burlywood;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+#play-button {
+  position: relative;
+  top: 0px;
+  left: 0px;
+  background: #f08080;
+  padding-right: 26px;
+  border-radius: 3px;
+  border: none;
+  color: white;
+  margin: 0;
+  padding: 0 12px;
+  width: 60px;
+  cursor: pointer;
+  height: 30px;
+}
+
+#play-button:hover {
+  background-color: #696969;
+}
+
+.ticks {
+  font-size: 10px;
+}
+
+.track,
+.track-inset,
+.track-overlay {
+  stroke-linecap: round;
+}
+
+.track {
+  stroke: #000;
+  stroke-opacity: 0.3;
+  stroke-width: 10px;
+}
+
+.track-inset {
+  stroke: #dcdcdc;
+  stroke-width: 8px;
+}
+
+.track-overlay {
+  pointer-events: stroke;
+  stroke-width: 50px;
+  stroke: transparent;
+  cursor: pointer;
+}
+
+.handle {
+  fill: #fff;
+  stroke: #000;
+  stroke-opacity: 0.5;
+  stroke-width: 1.25px;
 }
