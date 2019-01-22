@@ -3,227 +3,214 @@
 window.app = {};
 var app = window.app;
 
+const loadedData = [{}];
+loadedData.push({ "id": "1", "EngName": "Agriculture, forestry, and fishing, value added (current US$)", "RusName": "Сельское, лесное и рыбное хозяйство, добавленная стоимость (в текущих ценах)", "url": "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json", "jsonType": "UFA" });
+loadedData.push({ "id": "2", "EngName": "Cereal production (metric tons)", "RusName": "Производство зерновых (в метрических тоннах)", "url": "data/DTO/Cereal production (metric tons).json", "jsonType": "UFA" });
+loadedData.push({ "id": "3", "EngName": "GDP (Merged data)", "RusName": "ВВП (объединенные данные)", "url": "data/DTO/GDP (Merged data).json", "jsonType": "UFA" });
+loadedData.push({ "id": "4", "EngName": "Industry (including construction), value added (current US$)", "RusName": "Промышленность (включая строительство), добавленная стоимость (в текущих ценах)", "url": "data/DTO/Industry (including construction), value added (current US$).json", "jsonType": "UFA" });
+loadedData.push({ "id": "5", "EngName": "Manufacturing, value added (current US$)", "RusName": "Производство, добавленная стоимость (в текущих ценах)", "url": "data/DTO/Manufacturing, value added (current US$).json", "jsonType": "UFA" });
+loadedData.push({ "id": "6", "EngName": "PerCapita GDP", "RusName": "ВВП на душу населения", "url": "data/DTO/PerCapita GDP.json", "jsonType": "UFA" });
+loadedData.push({ "id": "7", "EngName": "Population (Merged data)", "RusName": "Население (объединенные данные)", "url": "data/DTO/Population (Merged data).json", "jsonType": "UFA" });
+loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "RusName": "Услуги, добавленная стоимость (в текущих ценах)", "url": "data/DTO/Services, value added (current US$).json", "jsonType": "UFA" });
+loadedData.push({ "id": "9", "EngName": "GDP", "RusName": "ВВП", "url": "data/data_new.json", "jsonType": "SAMARA" });
+
+var svg;
+var projection;
+var width;
+var height;
+
+var onClickDropDown = function (d) {
+	console.log(d);
+	buildBubble(d,svg,projection,width);
+};
+
+
+$( document ).ready(function() {
+    addComboBoxFromJson.addBootstrapDropDown(loadedData, "dropDownList", "id", "RusName", onClickDropDown);
+});
+
+
+function buildBubble(ldata,svg,projection,width) {
+	document.getElementById("nameContainer").innerHTML = "";
+	document.getElementById("nameContainer").innerHTML = "<h4>"+ldata.RusName+"</h4>";
+	if (typeof (ldata.listYear) === "undefined") {
+		d3.json(ldata.url, function (error, dataFromFile) {
+			if (error) console.log(error);
+			ldata.dataFromFile = dataFromFile;
+			let listYear;
+			if (ldata.jsonType == "UFA") {
+				listYear = addSlider.getListYearNew(ldata.dataFromFile);
+			} else if (ldata.jsonType == "SAMARA") {
+				listYear = addSlider.getListYear(ldata.dataFromFile);
+			}
+			ldata.listYear = listYear;
+			let curDataYearFilter;
+			if (ldata.jsonType == "UFA") {
+				curDataYearFilter = addSlider.filterByYearNew(ldata.dataFromFile, ldata.listYear[0]);
+			} else if (ldata.jsonType == "SAMARA") {
+				curDataYearFilter = addSlider.filterByYear(ldata.dataFromFile, ldata.listYear[0]);
+			}
+			let mxval;
+			if (ldata.jsonType == "UFA") {
+				mxval = flagCircleInMap.getMaxValueNew(ldata.dataFromFile);
+			} else if (ldata.jsonType == "SAMARA") {
+				mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
+			}
+			
+			let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",mxval);
+			if (ldata.jsonType == "UFA") {
+				flagCircleInMapLoc.addFlagCircleInMapNew();
+			} else if (ldata.jsonType == "SAMARA") {
+				flagCircleInMapLOc.addFlagCircleInMap();
+			}
+			let updateFunction;
+			if (ldata.jsonType == "UFA") {
+				updateFunction = function (h, handle, label, xScale) {
+					// update position and text of label according to slider scale
+					let h2 = Number((h).toFixed(0));
+					handle.attr("cx", xScale(h));
+
+					label.attr("x", xScale(h)).text(listYear[h2]);
+
+					let curDataYearFilter = addSlider.filterByYearNew(ldata.dataFromFile, listYear[h2]);
+					let mxval;
+					if (ldata.jsonType == "UFA") {
+						mxval = flagCircleInMap.getMaxValueNew(ldata.dataFromFile);
+					} else if (ldata.jsonType == "SAMARA") {
+						mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
+					}
+					let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",mxval);
+					flagCircleInMapLoc.addFlagCircleInMapNew();
+				}
+			} else if (ldata.jsonType == "SAMARA") {
+				updateFunction = function (h, handle, label, xScale) {
+					// update position and text of label according to slider scale
+					let h2 = Number((h).toFixed(0));
+					handle.attr("cx", xScale(h));
+
+					label.attr("x", xScale(h)).text(listYear[h2]);
+					let mxval;
+					if (ldata.jsonType == "UFA") {
+						mxval = flagCircleInMap.getMaxValueNew(ldata.dataFromFile);
+					} else if (ldata.jsonType == "SAMARA") {
+						mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
+					}
+					let curDataYearFilter = addSlider.filterByYear(ldata.dataFromFile, listYear[h2]);
+					let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",mxval);
+					flagCircleInMapLoc.addFlagCircleInMap();
+				}
+			}
+			addSlider.addSlider("vis", width, listYear, updateFunction);
+		});
+	} else {
+		let curDataYearFilter;
+		if (ldata.jsonType == "UFA") {
+			curDataYearFilter = addSlider.filterByYearNew(ldata.dataFromFile, ldata.listYear[0]);
+		} else if (ldata.jsonType == "SAMARA") {
+			curDataYearFilter = addSlider.filterByYear(ldata.dataFromFile, ldata.listYear[0]);
+		}
+		let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_");
+		if (ldata.jsonType == "UFA") {
+			flagCircleInMapLoc.addFlagCircleInMapNew();
+		} else if (ldata.jsonType == "SAMARA") {
+			flagCircleInMapLoc.addFlagCircleInMap();
+		}
+		let updateFunction;
+		if (ldata.jsonType == "UFA") {
+			updateFunction = function (h, handle, label, xScale) {
+				// update position and text of label according to slider scale
+				let h2 = Number((h).toFixed(0));
+				handle.attr("cx", xScale(h));
+
+				label.attr("x", xScale(h)).text(ldata.listYear[h2]);
+
+				let curDataYearFilter = addSlider.filterByYearNew(ldata.dataFromFile, ldata.listYear[h2]);
+				let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_");
+				flagCircleInMapLoc.addFlagCircleInMapNew();
+			}
+		} else if (ldata.jsonType == "SAMARA") {
+			updateFunction = function (h, handle, label, xScale) {
+				// update position and text of label according to slider scale
+				let h2 = Number((h).toFixed(0));
+				handle.attr("cx", xScale(h));
+
+				label.attr("x", xScale(h)).text(ldata.listYear[h2]);
+
+				let curDataYearFilter = addSlider.filterByYear(ldata.dataFromFile, ldata.listYear[h2]);
+				let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_");
+				flagCircleInMapLoc.addFlagCircleInMap();
+			}
+		}
+		addSlider.addSlider("vis", width, ldata.listYear, updateFunction);
+	}
+}
+
+var url = "data/countries.json";
+var url2 = "data/data_new.json";
+
 function startApp() {
-
-    let protocol = ClientProtocol.create();
-
-    ////////////////
-    console.log("1");
-    let url = "data/countries.json";
-    let url2 = "data/data_new.json";//"data/data.json";//"data/word-country-data.json";//"data/word-country-centroids.json";
     d3.json(url, function (error, countries) {
         if (error) console.log(error);
-        console.log("2");
         d3.json(url2, function (error, places) {
             if (error) console.log(error);
-            console.log("3");
-            //console.log("geojson", countries, places);
-
-            console.log(d3.select("#mapContainer").style("width"));
-
-            let width = $(window).width();//$('#mapContainer').width();//parseInt(d3.select("#mapContainer").style("width")),// '960',//'100%',
-            let height =  Math.trunc(width * 5 / 12);//parseInt(d3.select("#mapContainer").style("height"));//'500';//'100%';
-
-            console.log(width);
-            console.log(height);
-
-            let projection = d3.geoEquirectangular()
-                .scale([width / (2 * Math.PI)]) // scale to fit group width;
-                .translate([width / 2, height / 2])// ensure centred in group
+    
+    
+            width = parseInt(d3.select("#mapContainer").style("width")),
+                height =  Math.trunc(width * 5 / 12);//parseInt(d3.select("#mapContainer").style("height"));
+            let scale0 = (width - 1) / 2 / Math.PI;
+            projection = d3.geoEquirectangular()
+                .scale([scale0]) // scale to fit group width;
+                .translate([width / 2, height / 2 + 50])// ensure centred in group
                 //.translate([0,0])// ensure centred in group
                 ;
-            console.log("1");
-
-            let path = d3.geoPath()
-                .projection(projection)
-
-            let svg = d3.select("div#mapContainer").append("svg")
+    
+    
+            svg = d3.select("div#mapContainer").append("svg")
                 .attr("width", width)
                 .attr("height", height)
-                .call(d3.zoom().on("zoom", function () {
-                    svg.attr("transform", d3.event.transform)
-                }));
-
-            svg.selectAll("path")
-                .data(countries.features)
-                .enter().append("path")
-                .attr("d", path)
-                // .on("mouseover",function(d) {
-                // 	//console.log("just had a mouseover", d3.select(d));
-                // 	d3.select(this)
-                //   	.classed("active",true)
-                // })
-                // .on("mouseout",function(d){
-                // 	d3.select(this)
-                //   	.classed("active",false)
-                // })
+                // .call(d3.zoom().on("zoom", function () {
+                // 	svg.attr("transform", d3.event.transform)
+                // }))
                 ;
-            console.log("2");
-            let maxMinYear = getMaxMinYear(places);
-            console.log("maxMinYear[0]=" + maxMinYear[0]);
-            console.log("maxMinYear[1]=" + maxMinYear[1]);
-            let mxdt = '' + maxMinYear[0];
-            while (mxdt.length < 4) {
-                mxdt = '0' + mxdt;
-            }
-            let startDate = new Date(mxdt + "-01-01T00:00:00"),//new Date(maxMinYear[0], 0, 1),
-                endDate = new Date(maxMinYear[1], 0, 1);
-            console.log("startDate=" + startDate);
-            console.log("endDate=" + endDate);
-
-            let margin = { top: 75, right: 50, bottom: 0, left: 50 };
-            let widthSlider = width - margin.left - margin.right,
-                heightSlider = 150;
-            let formatDateIntoYear = d3.timeFormat("%Y");
-            let formatDate = d3.timeFormat("%Y");
-
-            let moving = false;
-            let currentValue = 0;
-            let targetValue = widthSlider;
-
-            let x = d3.scaleTime()
-                .domain([startDate, endDate])
-                .range([0, targetValue])
-                //.nice()
-                .clamp(true);
-            console.log("3");
-            let svg_sl = d3.select("#vis")
-                .append("svg")
-                .attr("width", widthSlider + margin.left + margin.right)//
-                .attr("height", heightSlider);//+ margin.top + margin.bottom
-
-            let slider = svg_sl.append("g")
-                .attr("class", "slider")
-                .attr("transform", "translate(" + margin.left + "," + heightSlider / 4 + ")");
-
-            console.log("4");
-
-            slider.append("line")
-                .attr("class", "track")
-                .attr("x1", function () { return x.range()[0]; })
-                .attr("x2", function () { return x.range()[1]; })
-                .select(function () { return this.parentNode.appendChild(this.cloneNode(true)); })
-                .attr("class", "track-inset")
-                .select(function () { return this.parentNode.appendChild(this.cloneNode(true)); })
-                .attr("class", "track-overlay")
-                .call(d3.drag()
-                    .on("start.interrupt", function () { slider.interrupt(); })
-                    .on("start drag", function () {
-                        currentValue = d3.event.x;
-                        update(x.invert(currentValue));
-                    })
-                );
-
-            let yearCount = endDate.getFullYear() - startDate.getFullYear();
-            //yearCount = Math.abs(yearCount/1000/60/60/24/12);
-
-            if (yearCount > Math.abs(widthSlider / 30)) {
-                yearCount = Math.abs(widthSlider / 30);
-            }
-
-            slider.insert("g", ".track-overlay")
-                .attr("class", "ticks")
-                .attr("transform", "translate(0," + 18 + ")")
-                .selectAll("text")
-                .data(x.ticks(yearCount))
-                .enter()
-                .append("text")
-                .attr("x", x)
-                .attr("y", 10)
-                .attr("text-anchor", "middle")
-                .text(function (d) { return formatDateIntoYear(d); });
-
-            console.log("5");
-
-            let handle = slider.insert("circle", ".track-overlay")
-                .attr("class", "handle")
-                .attr("r", 9);
-
-            let label = slider.append("text")
-                .attr("class", "label")
-                .attr("text-anchor", "middle")
-                .text(formatDate(startDate))
-                .attr("transform", "translate(0," + (-25) + ")")
-
-            console.log("6");
-
-            function update(h) {
-                // update position and text of label according to slider scale
-                console.log(h);
-                console.log(h.getFullYear());
-                let mxdt = '' + h.getFullYear();
-                while (mxdt.length < 4) {
-                    mxdt = '0' + mxdt;
-                }
-                let h1 = new Date(mxdt + "-01-01T00:00:00");
-                console.log(h1);
-                console.log(x.invert(h1));
-                console.log(x(h));
-                console.log(x.invert(h));
-                handle.attr("cx", x(h1));
-
-                label.attr("x", x(h1)).text(formatDate(h1));
-
-                // filter data set and redraw plot
-                //var newData = dataset.filter(function (d) {
-                //	return d.date < h;
-                //})
-                //drawPlot(newData);
-                let curDataYearFilter = filterByYear(places, h.getFullYear());
-                let flagCircleInMap = new FlagCircleInMap(curDataYearFilter, svg, projection, "img_");
-                flagCircleInMap.addFlagCircleInMap();
-            }
-            console.log("7");
+    
+            addCountries.addContries(countries.features, svg, projection);
+    
             let addImageInPage = new AddImageInPage(svg, places, "iso2", "img_", "img/flags/", ".png");
             addImageInPage.addImageInPage();
-            console.log("8");
-            let curDataYearFilter = filterByYear(places, maxMinYear[0]);
-            console.log("9");
-            let flagCircleInMap = new FlagCircleInMap(curDataYearFilter, svg, projection, "img_");
-            console.log("10");
-            flagCircleInMap.addFlagCircleInMap();
-            console.log("11");
-
-            let playButton = d3.select("#play-button");
-            playButton.on("click", function () {
-
-            });
-
+    
+            let ldata = loadedData[7];
+    
+            buildBubble(ldata,svg,projection,width);
+    
+    
+            // let listYear = addSlider.getListYear(places);
+    
+            // let curDataYearFilter = addSlider.filterByYear(places, listYear[0]);
+            // let flagCircleInMap = new flCInMap.flagCircleInMap(curDataYearFilter, svg, projection, "img_");
+            // flagCircleInMap.addFlagCircleInMap();
+    
+            // let updateFunction = function (h, handle, label, xScale) {
+            // 	// update position and text of label according to slider scale
+            // 	let h2 = Number((h).toFixed(0));
+            // 	handle.attr("cx", xScale(h));
+    
+            // 	label.attr("x", xScale(h)).text(listYear[h2]);
+    
+            // 	let curDataYearFilter = addSlider.filterByYear(places, listYear[h2]);
+            // 	let flagCircleInMap = new flCInMap.flagCircleInMap(curDataYearFilter, svg, projection, "img_");
+            // 	flagCircleInMap.addFlagCircleInMap();
+            // }
+    
+            // addSlider.addSlider("vis", width, listYear, updateFunction);
+    
+    
+            // let playButton = d3.select("#play-button");
+            // playButton.on("click", function () {
+    
+            // });
         })
-
+    
     });
-
-    ///////////////
+ 
 }
 
-function filterByYear(data, yearFilter) {
-    let dataYearFilter = [];
-    data.forEach(function (d) {
-        let curElemnt = {};
-        curElemnt.id = d.id;
-        curElemnt.name = d.name;
-        curElemnt.name_ru = d.name_ru;
-        curElemnt.fips = d.fips;
-        curElemnt.iso2 = d.iso2;
-        curElemnt.iso3 = d.iso3;
-        curElemnt.centroid = d.centroid;
-        curElemnt.dataCountries = d.dataCountries.filter(function (object) {
-            var year = object.year;
-            return year == yearFilter;
-        });
-        dataYearFilter.push(curElemnt);
-    });
-    return dataYearFilter;
-}
-
-function getMaxMinYear(data) {
-    console.log('temprorary modified')
-    return [1, 2003];
-    let maxMinYear = [];
-    let curElemnt = data[1].dataCountries;
-    let maxYear = curElemnt[0].year;
-    let minYear = curElemnt[curElemnt.length - 1].year;
-    maxMinYear.push(maxYear);
-    maxMinYear.push(minYear);
-    return maxMinYear;
-}
