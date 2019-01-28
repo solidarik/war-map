@@ -1,0 +1,23 @@
+[{
+    "name": "Одесская оборона (1941)",
+    "startDate": "05.08.1941",
+    "endDate": "16.10.1941",
+    "allies": [
+        {
+            "name": "СССР",
+            "troops": 86000,
+            "losses": 40268
+        }
+    ],
+    "enemies": [
+        {
+            "name": "Германия",
+            "troops": 340000,
+            "losses": 17729,
+            "woundeds": 63345,
+            "winner": true
+        }
+    ],
+    "imgUrl": "http://kraeved.od.ua/history/img/vov01/1.jpg",
+    "features": ["16.geojson"]
+}]

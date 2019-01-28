@@ -1,0 +1,23 @@
+[{
+    "name": "Крымская наступательная операция",
+    "startDate": "08.04.1944",
+    "endDate": "12.05.1944",
+    "allies": [
+        {
+            "name": "СССР",
+            "troops": 462400,
+            "losses": 17754,
+            "woundeds": 67065,
+            "winner": true
+        }
+    ],
+    "enemies": [
+        {
+            "name": "Германия",
+            "troops": 195000,
+            "losses": 140000
+        }
+    ],
+    "imgUrl": "http://wiki.gcdn.co/images/thumb/2/2c/Карта_боевых_действий_в_Крыму.jpeg/1570px-Карта_боевых_действий_в_Крыму.jpeg",
+    "features": ["13.geojson"]
+}]

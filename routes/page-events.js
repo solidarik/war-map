@@ -1,8 +1,4 @@
-exports.get = async function(ctx, next) {
-  if (ctx.isAuthenticated()) {
+module.exports = async function(ctx, next) {
+    console.log('render page events');
     ctx.body = ctx.render('page-events');
-  } else {
-    ctx.body = ctx.render('login');
- }
-
 };

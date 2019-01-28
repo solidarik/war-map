@@ -3,7 +3,6 @@ const passport = require('koa-passport');
 
 // паспорт напрямую с базой не работает
 passport.serializeUser(function(user, done) {
-  console.log('serializeUser');
   done(null, user._id);
 });
 
