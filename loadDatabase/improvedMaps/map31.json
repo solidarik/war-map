@@ -1,0 +1,22 @@
+[{
+    "name": "Восточно-Прусская операция (1945)",
+    "startDate": "13.01.1945",
+    "endDate": "25.04.1945",
+    "allies": [
+        {
+            "name": "СССР",
+            "troops": 1670000,
+            "losses": 584778,
+            "winner": true
+        }
+    ],
+    "enemies": [
+        {
+            "name": "Германия",
+            "troops": 780000,
+            "losses": 487315
+        }
+    ],
+    "imgUrl": "http://2.bp.blogspot.com/-yQl1P1Bxiqk/VIH1T1X3GuI/AAAAAAAAH0Q/dITe9CZbXJo/s1600/45%2Bსაბჭოელები%2Bაღმ%2Bპრუსიაში.jpg",
+    "features": ["31 операция восточно-прусская 13.01.1945 - 25.04.1945.geojson"]
+}]

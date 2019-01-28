@@ -1,0 +1,24 @@
+[{
+    "name": "Выборгско-Петрозаводская операция",
+    "startDate": "10.06.1944",
+    "endDate": "09.08.1944",
+    "allies": [
+        {
+            "name": "СССР",
+            "troops": 450000,
+            "losses": 23674,
+            "woundeds": 72701,
+            "winner": true
+        }
+    ],
+    "enemies": [
+        {
+            "name": "Германия",
+            "troops": 268000,
+            "losses": 18000,
+            "woundeds": 45000
+        }
+    ],
+    "imgUrl": "http://knowledge.su/userfiles/editor/large/6986_113e3b4c48304f-203e41413839413a304f-4d3d46383a3b3e3f3534384f-223e3c-6-108.png",
+    "features": ["22 операция выборгско-петрозаводская 10.06.1944 - 09.08.1944.geojson"]
+}]

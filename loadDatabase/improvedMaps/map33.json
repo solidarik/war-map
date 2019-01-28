@@ -1,0 +1,24 @@
+[{
+    "name": "Будапештская операция",
+    "startDate": "29.10.1944",
+    "endDate": "13.02.1945",
+    "allies": [
+        {
+            "name": "СССР",
+            "troops": 719500,
+            "losses": 80026,
+            "woundeds": 240056,
+            "winner": true
+        }
+    ],
+    "enemies": [
+        {
+            "name": "Германия",
+            "troops": 250000,
+            "losses": 50000,
+            "prisoners": 138000
+        }
+    ],
+    "imgUrl": "https://multiurok.ru/img/312085/image_5a8247c3e9c4d.jpg",
+    "features": ["33 операция будапештская 29.10.1944 - 13.02.1945.geojson"]
+}]
