@@ -56,6 +56,25 @@ class addSlider {
 		return listYear;
 	}
 
+	static getListYearNewArray(data) {
+		let listYear = [];
+		data.forEach(function (d) {
+			d.forEach(function (d1) {
+				let elem = d1.date;
+				while (elem.length < 4) {
+					elem = '0' + elem;
+				}
+				if (!listYear.includes(elem)) {
+					listYear.push(elem);
+				}
+			});
+		});
+
+		listYear.sort();
+
+		return listYear;
+	}
+
 	static filterByYear(data, yearFilter) {
 		let dataYearFilter = [];
 		data.forEach(function (d) {
