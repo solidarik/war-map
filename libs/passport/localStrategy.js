@@ -4,7 +4,9 @@ let User = require('../../models/usersModel');
 
 // Стратегия берёт поля из req.body
 // Вызывает для них функцию
-passport.use('local', new LocalStrategy({
+passport.use('local',
+
+  new LocalStrategy({
     usernameField: 'email', // 'username' by default
     passwordField: 'password',
     passReqToCallback: true, // req for more complex cases

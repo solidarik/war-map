@@ -1,0 +1,24 @@
+[{
+    "name": "Висло-Одерская операция",
+    "startDate": "12.01.1945",
+    "endDate": "03.02.1945",
+    "allies": [
+        {
+            "name": "СССР",
+            "troops": 2112700,
+            "losses": 43251,
+            "woundeds": 149874,
+            "winner": true
+        }
+    ],
+    "enemies": [
+        {
+            "name": "Германия",
+            "troops": 800000,
+            "losses": 479000,
+            "prisoners": 150000
+        }
+    ],
+    "imgUrl": "http://history.niv.ru/images/enc-vov/00179.jpg",
+    "features": ["32 операция висло-одерская 12.01.1945 - 03.02.1945.geojson"]
+}]

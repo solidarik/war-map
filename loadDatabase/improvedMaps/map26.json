@@ -1,0 +1,23 @@
+[{
+    "name": "Восточно-Карпатская операция",
+    "startDate": "08.09.1944",
+    "endDate": "28.10.1944",
+    "allies": [
+        {
+            "name": "СССР",
+            "troops": 378000,
+            "losses": 26843,
+            "woundeds": 105067,
+            "winner": true
+        }
+    ],
+    "enemies": [
+        {
+            "name": "Германия",
+            "troops": 300000,
+            "losses": 70000
+        }
+    ],
+    "imgUrl": "http://knowledge.su/userfiles/editor/large/6779_113e3b4c48304f-203e41413839413a304f-4d3d46383a3b3e3f3534384f-223e3c-5-1010.png",
+    "features": ["26 операция восточно-карпатская 08.09.1944 - 28.10.1944.geojson"]
+}]
