@@ -76,10 +76,10 @@ function updateDasboardFunction(h, handle, label, xScale) {
     handle.attr("cx", xScale(h));
 
     label.attr("x", xScale(h)).text(listYearDasboard[h2]);
-    console.log("updateDasboardFunction");
+    //console.log("updateDasboardFunction");
 
     let fIndicatorData = filterIndicatorData(listYearDasboard[h2]);
-    console.log("fIndicatorData = " + JSON.stringify(fIndicatorData));
+    //console.log("fIndicatorData = " + JSON.stringify(fIndicatorData));
     dashboard('#dashboard', fIndicatorData);//indicatorsData);
     //let curDataYearFilter = addSlider.filterByYearNew(ldata.dataFromFile, ldata.listYear[h2]);
     //let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_");
@@ -96,19 +96,19 @@ function filterIndicatorData(year) {
         d.forEach(function (d1) {
             let obj = {};
             let indObj = {};
-            console.log(year+" "+d1.iso3);
+            //console.log(year+" "+d1.iso3);
             let fdataAgricultur = dataAgriculture.filter(function (n) {
                 return (n.iso3 === d1.iso3)&(n.date === year);
             });
-            console.log(JSON.stringify(fdataAgricultur));
+            //console.log(JSON.stringify(fdataAgricultur));
             let fdataIndustry = dataIndustry.filter(function (n) {
                 return (n.date === year)&(n.iso3 === d1.iso3);
             });
             let fdataServices = dataServices.filter(function (n) {
                 return (n.date === year)&(n.iso3 === d1.iso3);
             });  
-            console.log(fdataAgricultur[0]);
-            console.log(typeof fdataAgricultur[0]);
+            //console.log(fdataAgricultur[0]);
+            //console.log(typeof fdataAgricultur[0]);
 
             if(typeof fdataAgricultur[0] !=='undefined'){
                 indObj.agriculture=Math.trunc((fdataAgricultur[0].value || 0)/1000000000);
@@ -146,19 +146,19 @@ function filterIndicatorData(year) {
 $(document).ready(function () {
     d3.json(urlGDPTOP10, function (error, dGDPTOP10) {
         if (error) console.log(error);
-        console.log(urlGDPTOP10);
+        //console.log(urlGDPTOP10);
         dataGDPTOP10 = dGDPTOP10;
         d3.json(urlAgriculture, function (error, dAgriculture) {
             if (error) console.log(error);
-            console.log(urlAgriculture);
+            //console.log(urlAgriculture);
             dataAgriculture = dAgriculture;
             d3.json(urlIndustry, function (error, dIndustry) {
                 if (error) console.log(error);
-                console.log(urlIndustry);
+                //console.log(urlIndustry);
                 dataIndustry = dIndustry;
                 d3.json(urlServices, function (error, dServices) {
                     if (error) console.log(error);
-                    console.log(urlServices);
+                    //console.log(urlServices);
                     dataServices = dServices;
                     listYearDasboard = addSlider.getListYearNewArray(dataGDPTOP10);
 
@@ -166,7 +166,7 @@ $(document).ready(function () {
 
                     let fIndicatorData = filterIndicatorData(listYearDasboard[0].toString());
 
-                    console.log("fIndicatorData = " + JSON.stringify(fIndicatorData));
+                    //console.log("fIndicatorData = " + JSON.stringify(fIndicatorData));
 
                     dashboard('#dashboard', fIndicatorData);//indicatorsData);
                 });

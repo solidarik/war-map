@@ -1,11 +1,12 @@
  class flagCircleInMap {
 
-    constructor(data, svg, projection, imageName,mxval) {
+    constructor(data, svg, projection, imageName,mxval,width) {
         this.data = data;
         this.svg = svg;
         this.projection = projection;
         this.imageName = imageName;
         this.mxval = mxval;
+        this.width = width;
     }
 
     sortIfDataCountries(x, y) {
@@ -44,7 +45,7 @@
         let maxValue = this.data[0].dataCountries[0].value;//this.mxval;//this.getMaxValue(this.data);//
         console.log("maxValue="+maxValue);
 
-        let sizeScale = d3.scaleSqrt().domain([0, maxValue]).range([0, 70]);
+        let sizeScale = d3.scaleSqrt().domain([0, maxValue]).range([0, Math.trunc(0.037*this.width)]);//70
         // Define the div for the tooltip
         let div;
         if (document.getElementById("tooltip") !== null) {
@@ -151,7 +152,7 @@
         let maxValue = this.data[0].value;//this.mxval;//this.getMaxValueNew(this.data);//
         console.log("maxValue="+maxValue);
 
-        let sizeScale = d3.scaleSqrt().domain([0, maxValue]).range([0, 70]);
+        let sizeScale = d3.scaleSqrt().domain([0, maxValue]).range([0, Math.trunc(0.037*this.width)]);//70
         // Define the div for the tooltip
         let div;
         if (document.getElementById("tooltip") !== null) {

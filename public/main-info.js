@@ -57,7 +57,7 @@ function buildBubble(ldata,svg,projection,width) {
 				mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
 			}
 			
-			let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",mxval);
+			let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",mxval,width);
 			if (ldata.jsonType == "UFA") {
 				flagCircleInMapLoc.addFlagCircleInMapNew();
 			} else if (ldata.jsonType == "SAMARA") {
@@ -79,7 +79,7 @@ function buildBubble(ldata,svg,projection,width) {
 					} else if (ldata.jsonType == "SAMARA") {
 						mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
 					}
-					let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",mxval);
+					let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",mxval,width);
 					flagCircleInMapLoc.addFlagCircleInMapNew();
 				}
 			} else if (ldata.jsonType == "SAMARA") {
@@ -96,7 +96,7 @@ function buildBubble(ldata,svg,projection,width) {
 						mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
 					}
 					let curDataYearFilter = addSlider.filterByYear(ldata.dataFromFile, listYear[h2]);
-					let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",mxval);
+					let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",mxval,width,width);
 					flagCircleInMapLoc.addFlagCircleInMap();
 				}
 			}
@@ -109,7 +109,7 @@ function buildBubble(ldata,svg,projection,width) {
 		} else if (ldata.jsonType == "SAMARA") {
 			curDataYearFilter = addSlider.filterByYear(ldata.dataFromFile, ldata.listYear[0]);
 		}
-		let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_");
+		let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",width);
 		if (ldata.jsonType == "UFA") {
 			flagCircleInMapLoc.addFlagCircleInMapNew();
 		} else if (ldata.jsonType == "SAMARA") {
@@ -125,7 +125,7 @@ function buildBubble(ldata,svg,projection,width) {
 				label.attr("x", xScale(h)).text(ldata.listYear[h2]);
 
 				let curDataYearFilter = addSlider.filterByYearNew(ldata.dataFromFile, ldata.listYear[h2]);
-				let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_");
+				let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",width);
 				flagCircleInMapLoc.addFlagCircleInMapNew();
 			}
 		} else if (ldata.jsonType == "SAMARA") {
@@ -137,7 +137,7 @@ function buildBubble(ldata,svg,projection,width) {
 				label.attr("x", xScale(h)).text(ldata.listYear[h2]);
 
 				let curDataYearFilter = addSlider.filterByYear(ldata.dataFromFile, ldata.listYear[h2]);
-				let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_");
+				let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",width);
 				flagCircleInMapLoc.addFlagCircleInMap();
 			}
 		}
