@@ -4,22 +4,19 @@ const router = new Router();
 ensureAuthenticated = async function  (ctx, next) {
 
     if (ctx.isAuthenticated()) {
-        return next();
+        return next()
     }
 
-    ctx.session.returnTo = ctx.request.url;
-    ctx.body = ctx.render('login');
+    ctx.session.returnTo = ctx.request.url
+    ctx.body = ctx.render('login')
 }
 
-router
+router.get('/login', require('./login').get)
+router.post('/login', require('./login').post)
+router.get('/info', ensureAuthenticated, require('./page-info'))
+router.get('/', ensureAuthenticated, require('./page-events'))
+router.get('/events', ensureAuthenticated, require('./page-events'))
+router.get('/logout', require('./logout').get)
 
-    .get('/login', require('./login').get)
-    .post('/login', require('./login').post)
 
-    .get('/logout', require('./logout').get)
-
-    .get('/info', ensureAuthenticated, require('./page-info'))
-    .get('/', ensureAuthenticated, require('./page-events'))
-    .get('/events', ensureAuthenticated, require('./page-events'));
-
-module.exports = router.routes();
+module.exports = router.routes()
