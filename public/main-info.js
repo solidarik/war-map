@@ -20,7 +20,6 @@ var width;
 var height;
 
 var onClickDropDown = function (d) {
-	console.log(d);
 	buildBubble(d,svg,projection,width);
 };
 
@@ -56,7 +55,6 @@ function buildBubble(ldata,svg,projection,width) {
 			} else if (ldata.jsonType == "SAMARA") {
 				mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
 			}
-			
 			let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",mxval,width);
 			if (ldata.jsonType == "UFA") {
 				flagCircleInMapLoc.addFlagCircleInMapNew();
@@ -156,7 +154,7 @@ function startApp() {
     
     
             width = parseInt(d3.select("#mapContainer").style("width")),
-                height =  Math.trunc(width * 5 / 12);//parseInt(d3.select("#mapContainer").style("height"));
+                height =  Math.round(width * 5 / 12);//parseInt(d3.select("#mapContainer").style("height"));
             let scale0 = (width - 1) / 2 / Math.PI;
             projection = d3.geoEquirectangular()
                 .scale([scale0]) // scale to fit group width;
