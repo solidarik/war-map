@@ -12,27 +12,27 @@ var indicatorsData = [
     , { "iso2": "OW", iso3: 'OWD', gdp: 16000, indicators: { agriculture: 969, industry: 5111, services: 10562 } }
 ];
 
-let dataGDPTOP10;
-const urlGDPTOP10 = "data/TOP10/TOP10_GDP (current US$).json";
-let dataAgriculture;
-const urlAgriculture = "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json";
-let dataIndustry;
-const urlIndustry = "data/DTO/Industry (including construction), value added (current US$).json";
-let dataServices;
-const urlServices = "data/DTO/Services, value added (current US$).json";
+var dataGDPTOP10;
+var urlGDPTOP10 = "data/TOP10/TOP10_GDP (current US$).json";
+var dataAgriculture;
+var urlAgriculture = "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json";
+var dataIndustry;
+var urlIndustry = "data/DTO/Industry (including construction), value added (current US$).json";
+var dataServices;
+var urlServices = "data/DTO/Services, value added (current US$).json";
 
-let listYearDasboard;
+var listYearDasboard;
 
-let indicatorsDataDasboard = [];
+var indicatorsDataDasboard = [];
 
-let svgDiagramm = d3.select("#dashboard").append("svg").attr("width", 0).attr("height", 0);
+var svgDiagramm = d3.select("#dashboard").append("svg").attr("width", 0).attr("height", 0);
 
 
 
-// let url2 = "data/word-country-data.json";//"data/word-country-centroids.json";
+// var url2 = "data/word-country-data.json";//"data/word-country-centroids.json";
 // d3.json(url2, function(error, places) {
 //     var defs = svg.append("defs");
-//     let imgPattern = defs.selectAll("pattern").data(places)
+//     var imgPattern = defs.selectAll("pattern").data(places)
 //         .enter()
 //         .append("pattern")
 //             .attr("id", function(d){return "img_"+d.iso2;})
@@ -48,7 +48,7 @@ let svgDiagramm = d3.select("#dashboard").append("svg").attr("width", 0).attr("h
 //     ;
 
 
-// 	// let imgPattern1 = defs.selectAll("pattern").data([1,2])
+// 	// var imgPattern1 = defs.selectAll("pattern").data([1,2])
 //     // .enter()
 //     //     .append("pattern")
 //     //         .attr("id", "img_OW")
@@ -72,39 +72,39 @@ function updateDasboardFunction() {
 
 function updateDasboardFunction(h, handle, label, xScale) {
     // update position and text of label according to slider scale
-    let h2 = Number((h).toFixed(0));
+    var h2 = Number((h).toFixed(0));
     handle.attr("cx", xScale(h));
 
     label.attr("x", xScale(h)).text(listYearDasboard[h2]);
     //console.log("updateDasboardFunction");
 
-    let fIndicatorData = filterIndicatorData(listYearDasboard[h2]);
+    var fIndicatorData = filterIndicatorData(listYearDasboard[h2]);
     //console.log("fIndicatorData = " + JSON.stringify(fIndicatorData));
     dashboard('#dashboard', fIndicatorData);//indicatorsData);
-    //let curDataYearFilter = addSlider.filterByYearNew(ldata.dataFromFile, ldata.listYear[h2]);
-    //let flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_");
+    //var curDataYearFilter = addSlider.filterByYearNew(ldata.dataFromFile, ldata.listYear[h2]);
+    //var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_");
     //flagCircleInMapLoc.addFlagCircleInMapNew();
 }
 
 function filterIndicatorData(year) {
-    let fdataGDPTOP10 = dataGDPTOP10.filter(
+    var fdataGDPTOP10 = dataGDPTOP10.filter(
         function (n) {
             return n[0].date === year;
         });
     indicatorsDataDasboard=[];
     fdataGDPTOP10.forEach(function (d) {
         d.forEach(function (d1) {
-            let obj = {};
-            let indObj = {};
+            var obj = {};
+            var indObj = {};
             //console.log(year+" "+d1.iso3);
-            let fdataAgricultur = dataAgriculture.filter(function (n) {
+            var fdataAgricultur = dataAgriculture.filter(function (n) {
                 return (n.iso3 === d1.iso3)&(n.date === year);
             });
             //console.log(JSON.stringify(fdataAgricultur));
-            let fdataIndustry = dataIndustry.filter(function (n) {
+            var fdataIndustry = dataIndustry.filter(function (n) {
                 return (n.date === year)&(n.iso3 === d1.iso3);
             });
-            let fdataServices = dataServices.filter(function (n) {
+            var fdataServices = dataServices.filter(function (n) {
                 return (n.date === year)&(n.iso3 === d1.iso3);
             });  
             //console.log(fdataAgricultur[0]);
@@ -164,7 +164,7 @@ $(document).ready(function () {
 
                     addSlider.addSlider("visDashboard", width, listYearDasboard, updateDasboardFunction);
 
-                    let fIndicatorData = filterIndicatorData(listYearDasboard[0].toString());
+                    var fIndicatorData = filterIndicatorData(listYearDasboard[0].toString());
 
                     //console.log("fIndicatorData = " + JSON.stringify(fIndicatorData));
 
