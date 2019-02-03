@@ -48,41 +48,31 @@ function buildBubble(ldata, svg, projection, width) {
 	document.getElementById("nameContainer").innerHTML = "<h4>" + ldata.RusName + "</h4>";
 	if (typeof (ldata.listYear) === "undefined") {
 
-		console.time("fast load oboe data " + ldata.RusName);
+		// console.time("fast load oboe data " + ldata.RusName);
 
-		// oboe('/myapp/things.json')
-		// 	.done(function (things) {
-
-		// 		// we got it
-		// 	})
-		// 	.fail(function () {
-
-		// 		// we don't got it
-		// 	});
-
-		oboe({
-			'url': ldata.url,
-			'method': 'GET',   //optional
-			//'body': data    //no need to encode, the library will JSON stringify it automatically
-		}).on('done', function (things) {
-			var oboe_actual_JSON = things;
-			console.timeEnd("fast load oboe data " + ldata.RusName);
-		});
+		// oboe({
+		// 	'url': ldata.url,
+		// 	'method': 'GET',   //optional
+		// 	//'body': data    //no need to encode, the library will JSON stringify it automatically
+		// }).on('done', function (things) {
+		// 	var oboe_actual_JSON = things;
+		// 	console.timeEnd("fast load oboe data " + ldata.RusName);
+		// });
 
 
-		console.time("fast load jqery data " + ldata.RusName);
-		$.getJSON(ldata.url, function (data) {
-			var jqery_actual_JSON = data;
-			console.timeEnd("fast load jqery data " + ldata.RusName);
-		});
+		// console.time("fast load jqery data " + ldata.RusName);
+		// $.getJSON(ldata.url, function (data) {
+		// 	var jqery_actual_JSON = data;
+		// 	console.timeEnd("fast load jqery data " + ldata.RusName);
+		// });
 
-		console.time("fast load data " + ldata.RusName);
-		loadJSON(ldata.url, function (response) {
-			// Parse JSON string into object
-			var actual_JSON = JSON.parse(response);
-			console.timeEnd("fast load data " + ldata.RusName);
-		});
-		console.time("load data " + ldata.RusName);
+		// console.time("fast load data " + ldata.RusName);
+		// loadJSON(ldata.url, function (response) {
+		// 	// Parse JSON string into object
+		// 	var actual_JSON = JSON.parse(response);
+		// 	console.timeEnd("fast load data " + ldata.RusName);
+		// });
+		// console.time("load data " + ldata.RusName);
 
 
 		d3.json(ldata.url, function (error, dataFromFile) {
