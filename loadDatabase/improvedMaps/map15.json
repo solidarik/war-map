@@ -1,0 +1,24 @@
+[{
+    "name": "Берлинская наступательная операция",
+    "startDate": "18.04.1945",
+    "endDate": "08.05.1945",
+    "allies": [
+        {
+            "name": "СССР",
+            "troops": 2350000,
+            "losses": 78291,
+            "prisoners": 274184,
+            "winner": true
+        }
+    ],
+    "enemies": [
+        {
+            "name": "Германия",
+            "troops": 1000000,
+            "losses": 400000,
+            "prisoners": 380000
+        }
+    ],
+    "imgUrl": "http://chert-poberi.ru/wp-content/uploads/proga/111/images1/201704/igor9-17041721065106_1174.jpg",
+    "features": ["15.geojson"]
+}]

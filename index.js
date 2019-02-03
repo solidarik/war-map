@@ -1,7 +1,3 @@
-// A "closer to real-life" app example
-// using 3rd party middleware modules
-// P.S. MWs calls be refactored in many files
-
 // long stack trace (+clarify from co) if needed
 if (process.env.TRACE) {
   require('./libs/trace');
@@ -28,19 +24,7 @@ middlewares.forEach(function(middleware) {
   app.use(require('./middlewares/' + middleware));
 });*/
 
-// ---------------------------------------
-
-// can be split into files too
-const Router = require('koa-router');
-
-const router = new Router();
-
-router.get('/', require('./routes/frontpage').get);
-router.post('/login', require('./routes/login').post);
-router.get('/logout', require('./routes/logout').get);
-router.get('/cleardb', require('./routes/cleardb').get);
-
-app.use(router.routes());
+app.use(require('./routes/routes.js'));
 
 const serverSocket = require('./libs/serverSocket');
 const server = app.listen(config.port);

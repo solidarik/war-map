@@ -1,0 +1,24 @@
+[{
+    "name": "Львовско-Сандомирская операция",
+    "startDate": "13.07.1944",
+    "endDate": "29.08.1944",
+    "allies": [
+        {
+            "name": "СССР",
+            "troops": 1200000,
+            "losses": 65001,
+            "woundeds": 224295,
+            "winner": true
+        }
+    ],
+    "enemies": [
+        {
+            "name": "Германия",
+            "troops": 900000,
+            "losses": 54167,
+            "prisoners": 32360
+        }
+    ],
+    "imgUrl": "https://topwar.ru/uploads/posts/2014-07/thumbs/1405114433_lvov-sandomir.jpg",
+    "features": ["24 операция львовско-сандомирская 13.07.1944 - 29.08.1944.geojson"]
+}]

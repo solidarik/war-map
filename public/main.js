@@ -4,11 +4,12 @@ window.app = {};
 var app = window.app;
 
 function fixMapHeight(){
-    var viewHeight = $(window).height();
-    //var header = $("div[data-role='header']:visible:visible");
+    var mapHeight = $(window).height() - 1;
     var navbar = $("nav[data-role='navbar']:visible:visible");
     var mapDiv = $("div[data-role='map']:visible:visible");
-    var mapHeight = viewHeight - navbar.outerHeight() - 1; // - header.outerHeight();
+    if (navbar.outerHeight())
+        mapHeight = mapHeight - navbar.outerHeight();
+
     mapDiv.height(mapHeight);
     if (window.map)
         window.map.fixMapHeight();

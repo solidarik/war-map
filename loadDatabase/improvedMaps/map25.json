@@ -1,0 +1,23 @@
+[{
+    "name": "Прибалтийская операция (1944)",
+    "startDate": "14.09.1944",
+    "endDate": "24.11.1944",
+    "allies": [
+        {
+            "name": "СССР",
+            "troops": 1546400,
+            "losses": 61648,
+            "woundeds": 218622,
+            "winner": true
+        }
+    ],
+    "enemies": [
+        {
+            "name": "Германия",
+            "troops": 571579,
+            "prisoners": 33500
+        }
+    ],
+    "imgUrl": "http://победа.екатеринбург.рф/media/gallery/4/a/4ae58f9c9fd26415849ff0779337a0fe_900x_.jpg",
+    "features": ["25 операция прибалтийская 14.09.1944 - 24.11.1944.geojson"]
+}]

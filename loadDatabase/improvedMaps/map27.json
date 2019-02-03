@@ -1,0 +1,23 @@
+[{
+    "name": "Петсамо-Киркенесская операция",
+    "startDate": "07.10.1944",
+    "endDate": "29.10.1944",
+    "allies": [
+        {
+            "name": "СССР",
+            "troops": 133500,
+            "losses": 6084,
+            "woundeds": 15149,
+            "winner": true
+        }
+    ],
+    "enemies": [
+        {
+            "name": "Германия",
+            "troops": 56000,
+            "losses": 30000
+        }
+    ],
+    "imgUrl": "http://lexicon.dobrohot.org/images/9/9b/00025579.jpg",
+    "features": ["27 операция петсамско-киркенесская 07.10.1944 - 29.10.1944.geojson"]
+}]

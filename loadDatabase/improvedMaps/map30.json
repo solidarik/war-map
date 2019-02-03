@@ -1,0 +1,22 @@
+[{
+    "name": "Восточно-Померанская операция",
+    "startDate": "10.02.1945",
+    "endDate": "04.04.1945",
+    "allies": [
+        {
+            "name": "СССР",
+            "troops": 920500,
+            "losses": 52740,
+            "winner": true
+        }
+    ],
+    "enemies": [
+        {
+            "name": "Германия",
+            "losses": 90000,
+            "prisoners": 100000
+        }
+    ],
+    "imgUrl": "http://map-site.narod.ru/vostpomeransksno-1.jpg",
+    "features": ["30 операция восточно-померанская 10.02.1945 - 04.04.1945.geojson"]
+}]

@@ -1,0 +1,44 @@
+extends layout
+
+block head
+
+  link(rel='stylesheet' href='/style-info.css')
+
+  script(src='/libs/d3.min.js')
+  script(src='/libs/jquery.min.js')
+  script(src='/hooks.js')
+  script(src='/eventEmitter.js')
+  script(src='/clientProtocol.js')
+
+  script(src='/addImageInPage.js')
+  script(src='/flagCircleInMap.js')
+  
+  script(src='/addComboBoxFromJson.js')
+  script(src='/addCountries.js')
+  script(src='/addSlider.js')
+  
+  script(src='/main-info.js')
+  script(src='/addDiagramm.js')
+
+
+block content
+  +header('info')
+
+  div.content(role='content' id='content' dragable='true')
+    div(id='graph-control')
+      div(id='cbdd' class='row')
+      .dropdown
+        button#dropdownMenuButton.btn.btn-secondary.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+          | Выберите параметр
+        .dropdown-menu(id='dropDownList' aria-labelledby='dropdownMenuButton')
+          a.dropdown-item(href='#') Action
+          a.dropdown-item(href='#') Another action
+          a.dropdown-item(href='#') Something else here
+
+      div(id='nameContainer' class='row text-dark')
+        h4
+          | Население (объединенные данные)
+      div(id='mapContainer' class='row')
+      div(id='vis' class='row')
+      div(id='dashboard' class='row text-dark')
+      div(id='visDashboard' class='row')

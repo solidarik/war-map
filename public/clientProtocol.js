@@ -52,6 +52,7 @@ class ClientProtocol extends EventEmitter {
     getHistoryEventsByYear(year) {
         this.socket.emit('clQueryEvents', JSON.stringify({year: year}), (msg) => {
             let data = JSON.parse(msg);
+            data.events.sort( (a, b) => { return a.startDate > b.startDate ? 1 : -1; });
             let events = data.events.map( (event) => {
                 return {
                     "id": event._id,

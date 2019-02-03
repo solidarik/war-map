@@ -1,0 +1,23 @@
+[{
+    "name": "Кёнигсбергская операция",
+    "startDate": "06.04.1945",
+    "endDate": "09.04.1945",
+    "allies": [
+        {
+            "name": "СССР",
+            "troops": 106000,
+            "losses": 3700,
+            "winner": true
+        }
+    ],
+    "enemies": [
+        {
+            "name": "Германия",
+            "troops": 100000,
+            "losses": 40000,
+            "prisoners": 70500
+        }
+    ],
+    "imgUrl": "https://pbs.twimg.com/media/C8-H8tuW0AEKpoK.jpg",
+    "features": ["14.geojson"]
+}]
