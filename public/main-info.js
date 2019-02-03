@@ -23,6 +23,20 @@ var onClickDropDown = function (d) {
 	buildBubble(d, svg, projection, width);
 };
 
+function loadJSON(url, callback) {
+
+	var xobj = new XMLHttpRequest();
+	xobj.overrideMimeType("application/json");
+	xobj.open('GET', url, true); // Replace 'my_data' with the path to your file
+	xobj.onreadystatechange = function () {
+		if (xobj.readyState == 4 && xobj.status == "200") {
+			// Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+			callback(xobj.responseText);
+		}
+	};
+	xobj.send(null);
+}
+
 
 $(document).ready(function () {
 	addComboBoxFromJson.addBootstrapDropDown(loadedData, "dropDownList", "id", "RusName", onClickDropDown);
@@ -33,9 +47,46 @@ function buildBubble(ldata, svg, projection, width) {
 	document.getElementById("nameContainer").innerHTML = "";
 	document.getElementById("nameContainer").innerHTML = "<h4>" + ldata.RusName + "</h4>";
 	if (typeof (ldata.listYear) === "undefined") {
-		console.time("load data "+ldata.RusName);
+
+		console.time("fast load oboe data " + ldata.RusName);
+
+		// oboe('/myapp/things.json')
+		// 	.done(function (things) {
+
+		// 		// we got it
+		// 	})
+		// 	.fail(function () {
+
+		// 		// we don't got it
+		// 	});
+
+		oboe({
+			'url': ldata.url,
+			'method': 'GET',   //optional
+			//'body': data    //no need to encode, the library will JSON stringify it automatically
+		}).on('done', function (things) {
+			var oboe_actual_JSON = things;
+			console.timeEnd("fast load oboe data " + ldata.RusName);
+		});
+
+
+		console.time("fast load jqery data " + ldata.RusName);
+		$.getJSON(ldata.url, function (data) {
+			var jqery_actual_JSON = data;
+			console.timeEnd("fast load jqery data " + ldata.RusName);
+		});
+
+		console.time("fast load data " + ldata.RusName);
+		loadJSON(ldata.url, function (response) {
+			// Parse JSON string into object
+			var actual_JSON = JSON.parse(response);
+			console.timeEnd("fast load data " + ldata.RusName);
+		});
+		console.time("load data " + ldata.RusName);
+
+
 		d3.json(ldata.url, function (error, dataFromFile) {
-			console.timeEnd("load data "+ldata.RusName);
+			console.timeEnd("load data " + ldata.RusName);
 			console.time("build list year");
 			if (error) console.log(error);
 			ldata.dataFromFile = dataFromFile;
@@ -122,7 +173,7 @@ function buildBubble(ldata, svg, projection, width) {
 		}
 		console.timeEnd("filte by year");
 		console.time("addFlagCircleInMap");
-		var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", 0,width);
+		var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", 0, width);
 		if (ldata.jsonType == "UFA") {
 			flagCircleInMapLoc.addFlagCircleInMapNew();
 		} else if (ldata.jsonType == "SAMARA") {
@@ -139,7 +190,7 @@ function buildBubble(ldata, svg, projection, width) {
 				label.attr("x", xScale(h)).text(ldata.listYear[h2]);
 
 				var curDataYearFilter = addSlider.filterByYearNew(ldata.dataFromFile, ldata.listYear[h2]);
-				var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",0, width);
+				var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", 0, width);
 				flagCircleInMapLoc.addFlagCircleInMapNew();
 			}
 		} else if (ldata.jsonType == "SAMARA") {
@@ -200,7 +251,7 @@ function startApp() {
 			console.time("add buuble");
 			buildBubble(ldata, svg, projection, width);
 			console.timeEnd("add buuble");
-			
+
 			console.time("add image");
 			var addImageInPage = new AddImageInPage(svg, places, "iso2", "img_", "img/flags/", ".png");
 			addImageInPage.addImageInPage();
