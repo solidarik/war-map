@@ -4,7 +4,14 @@ block content
 
   nav(class='navbar navbar-expand-sm navbar-light' id='welcome-user' data-role='navbar')
     span(class='navbar-text')
-      | Welcome, #{user.displayName}
+      | Welcome, #{user.displayName} &nbsp;
+    div(class="btn-group btn-group-toggle" data-toggle="buttons")
+      label(class="btn btn-secondary btn-sm active" id="show_event")
+        input(type="radio" name="options" autocomplete="off" checked)
+        |События
+      label(class="btn btn-secondary btn-sm" id="show_graph")
+        input(type="radio" name="options" autocomplete="off")
+        |Инфографика
 
   //div.modal(class='fade' id='regModal' role='dialog' )
     div.modal-dialog
@@ -69,3 +76,6 @@ block content
     div(id='events-control')
       div(id='event-list' class='table-responsive')
       div(id='event-image-div')
+    div(id='graph-control' class='d-none')
+      div(id='mapContainer' class="row")
+      div(id='vis' class="row")
