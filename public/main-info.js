@@ -33,7 +33,10 @@ function buildBubble(ldata, svg, projection, width) {
 	document.getElementById("nameContainer").innerHTML = "";
 	document.getElementById("nameContainer").innerHTML = "<h4>" + ldata.RusName + "</h4>";
 	if (typeof (ldata.listYear) === "undefined") {
+		console.time("load data "+ldata.RusName);
 		d3.json(ldata.url, function (error, dataFromFile) {
+			console.timeEnd("load data "+ldata.RusName);
+			console.time("build list year");
 			if (error) console.log(error);
 			ldata.dataFromFile = dataFromFile;
 			var listYear;
@@ -43,24 +46,31 @@ function buildBubble(ldata, svg, projection, width) {
 				listYear = addSlider.getListYear(ldata.dataFromFile);
 			}
 			ldata.listYear = listYear;
+			console.timeEnd("build list year");
+			console.time("filte by year");
 			var curDataYearFilter;
 			if (ldata.jsonType == "UFA") {
 				curDataYearFilter = addSlider.filterByYearNew(ldata.dataFromFile, ldata.listYear[0]);
 			} else if (ldata.jsonType == "SAMARA") {
 				curDataYearFilter = addSlider.filterByYear(ldata.dataFromFile, ldata.listYear[0]);
 			}
-			var mxval;
-			if (ldata.jsonType == "UFA") {
-				mxval = flagCircleInMap.getMaxValueNew(ldata.dataFromFile);
-			} else if (ldata.jsonType == "SAMARA") {
-				mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
-			}
+			console.timeEnd("filte by year");
+			console.time("max val");
+			var mxval = 0;
+			// if (ldata.jsonType == "UFA") {
+			// 	mxval = flagCircleInMap.getMaxValueNew(ldata.dataFromFile);
+			// } else if (ldata.jsonType == "SAMARA") {
+			// 	mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
+			// }
+			console.timeEnd("max val");
+			console.time("addFlagCircleInMap");
 			var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", mxval, width);
 			if (ldata.jsonType == "UFA") {
 				flagCircleInMapLoc.addFlagCircleInMapNew();
 			} else if (ldata.jsonType == "SAMARA") {
 				flagCircleInMapLOc.addFlagCircleInMap();
 			}
+			console.timeEnd("addFlagCircleInMap");
 			var updateFunction;
 			if (ldata.jsonType == "UFA") {
 				updateFunction = function (h, handle, label, xScale) {
@@ -71,12 +81,12 @@ function buildBubble(ldata, svg, projection, width) {
 					label.attr("x", xScale(h)).text(listYear[h2]);
 
 					var curDataYearFilter = addSlider.filterByYearNew(ldata.dataFromFile, listYear[h2]);
-					var mxval;
-					if (ldata.jsonType == "UFA") {
-						mxval = flagCircleInMap.getMaxValueNew(ldata.dataFromFile);
-					} else if (ldata.jsonType == "SAMARA") {
-						mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
-					}
+					var mxval = 0;
+					// if (ldata.jsonType == "UFA") {
+					// 	mxval = flagCircleInMap.getMaxValueNew(ldata.dataFromFile);
+					// } else if (ldata.jsonType == "SAMARA") {
+					// 	mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
+					// }
 					var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", mxval, width);
 					flagCircleInMapLoc.addFlagCircleInMapNew();
 				}
@@ -87,32 +97,38 @@ function buildBubble(ldata, svg, projection, width) {
 					handle.attr("cx", xScale(h));
 
 					label.attr("x", xScale(h)).text(listYear[h2]);
-					var mxval;
-					if (ldata.jsonType == "UFA") {
-						mxval = flagCircleInMap.getMaxValueNew(ldata.dataFromFile);
-					} else if (ldata.jsonType == "SAMARA") {
-						mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
-					}
+					var mxval = 0;
+					// if (ldata.jsonType == "UFA") {
+					// 	mxval = flagCircleInMap.getMaxValueNew(ldata.dataFromFile);
+					// } else if (ldata.jsonType == "SAMARA") {
+					// 	mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
+					// }
 					var curDataYearFilter = addSlider.filterByYear(ldata.dataFromFile, listYear[h2]);
-					var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", mxval, width, width);
+					var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", mxval, width);
 					flagCircleInMapLoc.addFlagCircleInMap();
 				}
 			}
+			console.time("addSlider");
 			addSlider.addSlider("vis", width, listYear, updateFunction);
+			console.timeEnd("addSlider");
 		});
 	} else {
+		console.time("filte by year");
 		var curDataYearFilter;
 		if (ldata.jsonType == "UFA") {
 			curDataYearFilter = addSlider.filterByYearNew(ldata.dataFromFile, ldata.listYear[0]);
 		} else if (ldata.jsonType == "SAMARA") {
 			curDataYearFilter = addSlider.filterByYear(ldata.dataFromFile, ldata.listYear[0]);
 		}
-		var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", width);
+		console.timeEnd("filte by year");
+		console.time("addFlagCircleInMap");
+		var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", 0,width);
 		if (ldata.jsonType == "UFA") {
 			flagCircleInMapLoc.addFlagCircleInMapNew();
 		} else if (ldata.jsonType == "SAMARA") {
 			flagCircleInMapLoc.addFlagCircleInMap();
 		}
+		console.timeEnd("addFlagCircleInMap");
 		var updateFunction;
 		if (ldata.jsonType == "UFA") {
 			updateFunction = function (h, handle, label, xScale) {
@@ -123,7 +139,7 @@ function buildBubble(ldata, svg, projection, width) {
 				label.attr("x", xScale(h)).text(ldata.listYear[h2]);
 
 				var curDataYearFilter = addSlider.filterByYearNew(ldata.dataFromFile, ldata.listYear[h2]);
-				var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", width);
+				var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_",0, width);
 				flagCircleInMapLoc.addFlagCircleInMapNew();
 			}
 		} else if (ldata.jsonType == "SAMARA") {
@@ -135,11 +151,13 @@ function buildBubble(ldata, svg, projection, width) {
 				label.attr("x", xScale(h)).text(ldata.listYear[h2]);
 
 				var curDataYearFilter = addSlider.filterByYear(ldata.dataFromFile, ldata.listYear[h2]);
-				var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", width);
+				var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", 0, width);
 				flagCircleInMapLoc.addFlagCircleInMap();
 			}
 		}
+		console.time("addSlider");
 		addSlider.addSlider("vis", width, ldata.listYear, updateFunction);
+		console.timeEnd("addSlider");
 	}
 }
 
