@@ -27,7 +27,7 @@ let indicatorsDataDasboard = [];
 
 let svgDiagramm = d3.select("#dashboard").append("svg").attr("width", 0).attr("height", 0);
 
-
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;//parseInt(d3.select("#mapContainer").style("width"));
 
 // let url2 = "data/word-country-data.json";//"data/word-country-centroids.json";
 // d3.json(url2, function(error, places) {

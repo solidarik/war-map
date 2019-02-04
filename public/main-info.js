@@ -3,7 +3,7 @@
 window.app = {};
 var app = window.app;
 
-var loadedData = [{}];
+var loadedData = [];
 loadedData.push({ "id": "1", "EngName": "Agriculture, forestry, and fishing, value added (current US$)", "RusName": "Агропромышленность", "url": "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json", "jsonType": "UFA" });
 loadedData.push({ "id": "2", "EngName": "Cereal production (metric tons)", "RusName": "Зерно", "url": "data/DTO/Cereal production (metric tons).json", "jsonType": "UFA" });
 loadedData.push({ "id": "3", "EngName": "GDP (Merged data)", "RusName": "ВВП объединенные", "url": "data/DTO/GDP (Merged data).json", "jsonType": "UFA" });
@@ -13,6 +13,46 @@ loadedData.push({ "id": "6", "EngName": "PerCapita GDP", "RusName": "ВВП на
 loadedData.push({ "id": "7", "EngName": "Population (Merged data)", "RusName": "Население", "url": "data/DTO/Population (Merged data).json", "jsonType": "UFA" });
 loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "RusName": "Услуги", "url": "data/DTO/Services, value added (current US$).json", "jsonType": "UFA" });
 loadedData.push({ "id": "9", "EngName": "GDP", "RusName": "ВВП", "url": "data/data_new.json", "jsonType": "SAMARA" });
+
+// function downloadObjectAsJson(exportObj, exportName) {
+// 	var dataStr = "data:text/json;charset:utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+// 	var downloadAnchorNode = document.createElement('a');
+// 	downloadAnchorNode.setAttribute("href", dataStr);
+// 	downloadAnchorNode.setAttribute("download", exportName + ".json");
+// 	document.body.appendChild(downloadAnchorNode); // required for firefox
+// 	downloadAnchorNode.click();
+// 	downloadAnchorNode.remove();
+// }
+
+// function download(content, fileName, contentType) {
+// 	var a = document.createElement("a");
+// 	var file = new Blob([content], { type: contentType });
+// 	a.href = URL.createObjectURL(file);
+// 	a.download = fileName;
+// 	a.click();
+// }
+
+// loadedData.forEach(element => {
+// 	d3.json(element.url, function (error, dataFromFile) {
+// 		if (error) console.log(error);
+// 		var changedData = dataFromFile;
+// 		changedData.forEach(element => {
+// 			delete element.engCountry;  // or delete person["age"]; 
+// 			delete element.rusCity;  // or delete person["age"]; 
+// 			delete element.engCity;  // or delete person["age"]; 
+// 			delete element.code;  // or delete person["age"]; 
+// 			delete element.rusIndicator;  // or delete person["age"]; 
+// 			delete element.engIndicator;  // or delete person["age"]; 
+// 			delete element.engUnit;  // or delete person["age"]; 
+// 			delete element.rusSource;  // or delete person["age"]; 
+// 			delete element.engSource;  // or delete person["age"]; 
+// 			delete element.sourceURL;  // or delete person["age"]; 
+// 			delete element.rusComment;  // or delete person["age"]; 
+// 			delete element.engComment;  // or delete person["age"]; 
+// 		});
+// 		download(JSON.stringify(changedData), element.url.substring(element.url.lastIndexOf('/')+1,element.url.lastIndexOf('.'))+'_small.json', 'text/json');
+// 	});
+// });
 
 var svg;
 var projection;
@@ -72,9 +112,9 @@ function buildBubble(ldata, svg, projection, width) {
 		// 	var actual_JSON = JSON.parse(response);
 		// 	console.timeEnd("fast load data " + ldata.RusName);
 		// });
-		// console.time("load data " + ldata.RusName);
 
 
+		console.time("load data " + ldata.RusName);
 		d3.json(ldata.url, function (error, dataFromFile) {
 			console.timeEnd("load data " + ldata.RusName);
 			console.time("build list year");
@@ -237,7 +277,7 @@ function startApp() {
 			console.timeEnd("load places");
 			if (error) console.log(error);
 
-			var ldata = loadedData[7];
+			var ldata = loadedData[6];
 			console.time("add buuble");
 			buildBubble(ldata, svg, projection, width);
 			console.timeEnd("add buuble");
