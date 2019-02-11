@@ -1,10 +1,10 @@
 class addSlider {
 
 	static getListYear(data) {
-		let listYear = [];
-		for (let d of data) {
+		var listYear = [];
+		for (var d of data) {
 			d.dataCountries.forEach(function (d1) {
-				let elem = d1.year;
+				var elem = d1.year;
 				while (elem.length < 4) {
 					elem = '0' + elem;
 				}
@@ -18,13 +18,13 @@ class addSlider {
 	}
 
 	static getListYearNew(data) {
-		let listYear = [];
+		var listYear = [];
 
-		// let fdata = data.filter(function (n) {
+		// var fdata = data.filter(function (n) {
 		// 	return n.iso3 === "RUS";
 		// });
 		// console.log("fdata=" + fdata);
-		// for (let index = 0; index < data.length; index++) {
+		// for (var index = 0; index < data.length; index++) {
 		// 	const element = data[index].date;
 		// 	if(element == "1945"){
 		// 		console.log("(element == 1945");
@@ -42,7 +42,7 @@ class addSlider {
 		// }
 
 		data.forEach(function (d) {
-			let elem = d.date;
+			var elem = d.date;
 			while (elem.length < 4) {
 				elem = '0' + elem;
 			}
@@ -58,10 +58,10 @@ class addSlider {
 	}
 
 	static getListYearNewArray(data) {
-		let listYear = [];
+		var listYear = [];
 		data.forEach(function (d) {
 			d.forEach(function (d1) {
-				let elem = d1.date;
+				var elem = d1.date;
 				while (elem.length < 4) {
 					elem = '0' + elem;
 				}
@@ -78,9 +78,9 @@ class addSlider {
 	}
 
 	static filterByYear(data, yearFilter) {
-		let dataYearFilter = [];
+		var dataYearFilter = [];
 		data.forEach(function (d) {
-			let curElemnt = {};
+			var curElemnt = {};
 			curElemnt.id = d.id;
 			curElemnt.name = d.name;
 			curElemnt.name_ru = d.name_ru;
@@ -98,7 +98,7 @@ class addSlider {
 	}
 
 	static filterByYearNew(data, yearFilter) {
-		let dataYearFilter = data.filter(function (object) {
+		var dataYearFilter = data.filter(function (object) {
 			var year = object.date;
 			return year == yearFilter;
 		});
@@ -106,24 +106,24 @@ class addSlider {
 	}
 
 	static addSlider(idElemForSvg, width, listYear, updateFunction) {
-		let margin = { top: 75, right: 50, bottom: 0, left: 50 };
-		let widthSlider = width - margin.left - margin.right,
+		var margin = { top: 75, right: 50, bottom: 0, left: 50 };
+		var widthSlider = width - margin.left - margin.right,
 			heightSlider = 150;
 
-		let xScale = d3.scaleLinear()
+		var xScale = d3.scaleLinear()
 			.domain([0, listYear.length - 1])
 			.range([0, widthSlider])
 			.clamp(true);
 
 		d3.select("#" + idElemForSvg).selectAll("svg").remove();
 
-		let svg = d3.select("#" + idElemForSvg)
+		var svg = d3.select("#" + idElemForSvg)
 			.append("svg")
 			.attr("width", widthSlider + margin.left + margin.right)
 			.attr("height", heightSlider);
 
 
-		let slider = svg.append("g")
+		var slider = svg.append("g")
 			.attr("class", "slider")
 			.attr("transform", "translate(" + margin.left + "," + heightSlider / 4 + ")");
 
@@ -142,7 +142,7 @@ class addSlider {
 				})
 			);
 
-		let yearCount = listYear.length;
+		var yearCount = listYear.length;
 		if (yearCount > Math.abs(widthSlider / 40)) {
 			yearCount = Math.abs(widthSlider / 40);
 		}
@@ -158,11 +158,11 @@ class addSlider {
 			.attr("text-anchor", "middle")
 			.text(function (d) { return listYear[d]; });
 
-		let handle = slider.insert("circle", ".track-overlay")
+		var handle = slider.insert("circle", ".track-overlay")
 			.attr("class", "handle")
 			.attr("r", 9);
 
-		let label = slider.append("text")
+		var label = slider.append("text")
 			.attr("class", "label")
 			.attr("text-anchor", "middle")
 			.text(listYear[0])

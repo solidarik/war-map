@@ -14,6 +14,14 @@ loadedData.push({ "id": "7", "EngName": "Population (Merged data)", "RusName": "
 loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "RusName": "Услуги", "url": "data/DTO/Services, value added (current US$).json", "jsonType": "UFA" });
 loadedData.push({ "id": "9", "EngName": "GDP", "RusName": "ВВП", "url": "data/data_new.json", "jsonType": "SAMARA" });
 
+loadedData.push({ "id": "9", "EngName": "Submarines", "RusName": "Подводные лодки", "url": "data/number_submarines.json", "jsonType": "UFA" });
+loadedData.push({ "id": "9", "EngName": "Ships", "RusName": "Корабли", "url": "data/number_ships.json", "jsonType": "UFA" });
+loadedData.push({ "id": "9", "EngName": "Aircraft", "RusName": "Самолеты", "": "data/number_military_aircraft.json", "jsonType": "UFA" });
+loadedData.push({ "id": "9", "EngName": "Large ships", "RusName": "Большие корабли", "url": "data/number_large_ships.json", "jsonType": "UFA" });
+loadedData.push({ "id": "9", "EngName": "Fighters", "RusName": "Истребители", "url": "data/number_fighters.json", "jsonType": "UFA" });
+loadedData.push({ "id": "9", "EngName": "Military", "RusName": "Войска", "url": "data/military_strength.json", "jsonType": "UFA" });
+loadedData.push({ "id": "9", "EngName": "Ground forses", "RusName": "Сухопутные войска", "url": "data/ground_forses.json", "jsonType": "UFA" });
+
 // function downloadObjectAsJson(exportObj, exportName) {
 // 	var dataStr = "data:text/json;charset:utf-8," + encodeURIComponent(JSON.stringify(exportObj));
 // 	var downloadAnchorNode = document.createElement('a');
@@ -124,6 +132,7 @@ function buildBubble(ldata, svg, projection, width) {
 			if (ldata.jsonType == "UFA") {
 				listYear = addSlider.getListYearNew(ldata.dataFromFile);
 			} else if (ldata.jsonType == "SAMARA") {
+				console.log("ldata.dataFromFile="+JSON.stringify(ldata.dataFromFile));
 				listYear = addSlider.getListYear(ldata.dataFromFile);
 			}
 			ldata.listYear = listYear;
