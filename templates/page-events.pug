@@ -5,12 +5,7 @@ block head
   link(rel="stylesheet" href="/libs/ol.css")
   script(src="/libs/ol.js")
 
-  script(src="/hooks.js")
-  script(src='/eventEmitter.js')
-  script(src="/clientProtocol.js")
-  script(src="/mapControl.js")
-  script(src="/historyEventsControl.js")
-  script(src="/main.js")
+  script(src="public-src.js" defer=defer)
 
 block content
   +header('events')

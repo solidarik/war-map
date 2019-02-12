@@ -45,18 +45,18 @@ loadedData.push({ "id": "9", "EngName": "Ground forses", "RusName": "Сухоп�
 // 		if (error) console.log(error);
 // 		var changedData = dataFromFile;
 // 		changedData.forEach(element => {
-// 			delete element.engCountry;  // or delete person["age"]; 
-// 			delete element.rusCity;  // or delete person["age"]; 
-// 			delete element.engCity;  // or delete person["age"]; 
-// 			delete element.code;  // or delete person["age"]; 
-// 			delete element.rusIndicator;  // or delete person["age"]; 
-// 			delete element.engIndicator;  // or delete person["age"]; 
-// 			delete element.engUnit;  // or delete person["age"]; 
-// 			delete element.rusSource;  // or delete person["age"]; 
-// 			delete element.engSource;  // or delete person["age"]; 
-// 			delete element.sourceURL;  // or delete person["age"]; 
-// 			delete element.rusComment;  // or delete person["age"]; 
-// 			delete element.engComment;  // or delete person["age"]; 
+// 			delete element.engCountry;  // or delete person["age"];
+// 			delete element.rusCity;  // or delete person["age"];
+// 			delete element.engCity;  // or delete person["age"];
+// 			delete element.code;  // or delete person["age"];
+// 			delete element.rusIndicator;  // or delete person["age"];
+// 			delete element.engIndicator;  // or delete person["age"];
+// 			delete element.engUnit;  // or delete person["age"];
+// 			delete element.rusSource;  // or delete person["age"];
+// 			delete element.engSource;  // or delete person["age"];
+// 			delete element.sourceURL;  // or delete person["age"];
+// 			delete element.rusComment;  // or delete person["age"];
+// 			delete element.engComment;  // or delete person["age"];
 // 		});
 // 		download(JSON.stringify(changedData), element.url.substring(element.url.lastIndexOf('/')+1,element.url.lastIndexOf('.'))+'_small.json', 'text/json');
 // 	});
@@ -353,3 +353,4 @@ function startApp() {
 
 }
 
+window.addEventListener('load', () => {startApp()})
