@@ -364,7 +364,7 @@ function startApp() {
 
 }
 
-window.addEventListener('load', () => {startApp()})
+//window.addEventListener('load', () => {startApp()})
 
 function addEvent(evnt, elem, func) {
 	if (elem.addEventListener)  // W3C DOM
