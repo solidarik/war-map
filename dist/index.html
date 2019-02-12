@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <title>Хроника военных действий</title>
+        <link rel="stylesheet" href="/ol.7a66d9a4.css">
+
+        <link rel="stylesheet" href="/bootstrap.min.bc87daab.css">
+        <script src="/jquery.min.7e36cf4c.js"></script>
+        <script src="/popper.min.003b26e9.js"></script>
+        <script src="/bootstrap.min.2e4d5823.js"></script>
+
+        <link rel="stylesheet" href="/style.e308ff8e.css">
+
+        <script src="/hooks.050d34c4.js"></script>
+        <script src="/eventEmitter.e5710184.js"></script>
+        <script src="/clientProtocol.00acf3dc.js"></script>
+        <script src="/mapControl.6ecc6916.js"></script>
+        <script src="/historyEventsControl.531866f3.js"></script>
+        <script src="/main.1f19ae8e.js"></script>
+        <script src="/public-src.e31bb0bc.js" defer="defer"></script>
+    <script src="/ol.7a66d9a4.js"></script><script src="/bootstrap.min.bc87daab.js"></script><script src="/style.e308ff8e.js"></script></head>
+    <body>
+        <div class="wrap">
+            <div class="container-fluid">
+                <nav class="navbar navbar-dark bg-dark" id="head-navbar" data-role="navbar">
+                    <div class="container-fluid">
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="/events">События</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/info">Инфографика</a>
+                            </li>
+                        </ul>
+                        <span class="navbar-text pull-right">Демотиватор</span>
+                    </div>
+                </nav>
+                <div class="content" role="content" id="content" dragable="true">
+                    <input id="fileImport" accept="application/kml" type="file" style="display:none;">
+                    <div class="map fill panel panel-default" id="map" data-role="map"></div>
+                    <div id="events-control">
+                        <div class="table-responsive" id="event-list"></div>
+                        <div id="event-image-div"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
