@@ -170,7 +170,7 @@ var flagCircleInMap = function () {
                         res = d.value;
                     }
                 }
-                var htmlData = d.rusCountry + "<br/>Значение:" + Math.round(res * 100) / 100 + "";
+                var htmlData = d.rusCountry + "<br/>Значение:" + Math.round(res * 100) / 100 + " "+d.rusUnit;
 
                 div.transition()
                 // .duration(200)		

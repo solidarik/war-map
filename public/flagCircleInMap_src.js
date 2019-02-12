@@ -205,7 +205,7 @@
                         res = (d.value);
                     }
                 }
-                const htmlData = d.rusCountry + "<br/>Значение:" + Math.round(res * 100) / 100 + "";
+                const htmlData = d.rusCountry + "<br/>Значение:" + Math.round(res * 100) / 100 + " "+d.rusUnit;
 
                 div.transition()
                     // .duration(200)		
