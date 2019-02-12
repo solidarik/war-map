@@ -1,12 +1,12 @@
 import {EventEmitter} from './eventEmitter'
-import $ from 'jquery'
+import jquery from 'jquery'
 
 export class HistoryEventsControl extends EventEmitter {
     constructor() {
         super();
 
-        this.listDiv = $("#event-list")[0];
-        this.imgDiv = $("#event-image-div")[0];
+        this.listDiv = jquery("#event-list")[0];
+        this.imgDiv = jquery("#event-image-div")[0];
         this.events = [];
         this.active_event = '';
         this.active_map = '';
@@ -96,9 +96,9 @@ export class HistoryEventsControl extends EventEmitter {
         let activeEvent = this.events.filter(event => event.id == id)[0];
         if (!isMapEventClick) {
             this.active_map = 0;
-            $('table tr td span').removeClass('event-feature-active-color');
+            jquery('table tr td span').removeClass('event-feature-active-color');
             if (1 < activeEvent.maps.length) {
-                let firstSpan = $(tr[0].childNodes[2]).children('span:first');
+                let firstSpan = jquery(tr[0].childNodes[2]).children('span:first');
                 firstSpan.addClass('event-feature-active-color');
             }
         }
@@ -108,7 +108,7 @@ export class HistoryEventsControl extends EventEmitter {
     mapEventClick(a) {
         this.active_map = a.attr('data-href');
 
-        $('table tr td span').removeClass('event-feature-active-color');
+        jquery('table tr td span').removeClass('event-feature-active-color');
         a.addClass('event-feature-active-color');
         let tr = a.parent().parent();
         this.rowEventClick(tr, true);

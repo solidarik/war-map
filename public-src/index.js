@@ -1,3 +1,4 @@
 import {startApp} from './main.js'
 
-startApp()
+window.addEventListener('load', () => {startApp()})
+
