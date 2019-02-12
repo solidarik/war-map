@@ -4,6 +4,14 @@ window.app = {};
 var app = window.app;
 
 var loadedData = [];
+loadedData.push({ "id": "10", "EngName": "Submarines", "RusName": "Подводные лодки", "url": "data/number_submarines.json", "jsonType": "UFA" });
+loadedData.push({ "id": "11", "EngName": "Ships", "RusName": "Корабли", "url": "data/number_ships.json", "jsonType": "UFA" });
+loadedData.push({ "id": "12", "EngName": "Aircraft", "RusName": "Самолеты", "": "data/number_military_aircraft.json", "jsonType": "UFA" });
+loadedData.push({ "id": "13", "EngName": "Large ships", "RusName": "Большие корабли", "url": "data/number_large_ships.json", "jsonType": "UFA" });
+loadedData.push({ "id": "14", "EngName": "Fighters", "RusName": "Истребители", "url": "data/number_fighters.json", "jsonType": "UFA" });
+loadedData.push({ "id": "15", "EngName": "Military", "RusName": "Войска", "url": "data/military_strength.json", "jsonType": "UFA" });
+loadedData.push({ "id": "16", "EngName": "Ground forses", "RusName": "Сухопутные войска", "url": "data/ground_forses.json", "jsonType": "UFA" });
+
 loadedData.push({ "id": "1", "EngName": "Agriculture, forestry, and fishing, value added (current US$)", "RusName": "Агропромышленность", "url": "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json", "jsonType": "UFA" });
 loadedData.push({ "id": "2", "EngName": "Cereal production (metric tons)", "RusName": "Зерно", "url": "data/DTO/Cereal production (metric tons).json", "jsonType": "UFA" });
 loadedData.push({ "id": "3", "EngName": "GDP (Merged data)", "RusName": "ВВП объединенные", "url": "data/DTO/GDP (Merged data).json", "jsonType": "UFA" });
@@ -14,13 +22,7 @@ loadedData.push({ "id": "7", "EngName": "Population (Merged data)", "RusName": "
 loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "RusName": "Услуги", "url": "data/DTO/Services, value added (current US$).json", "jsonType": "UFA" });
 loadedData.push({ "id": "9", "EngName": "GDP", "RusName": "ВВП", "url": "data/data_new.json", "jsonType": "SAMARA" });
 
-loadedData.push({ "id": "10", "EngName": "Submarines", "RusName": "Подводные лодки", "url": "data/number_submarines.json", "jsonType": "UFA" });
-loadedData.push({ "id": "11", "EngName": "Ships", "RusName": "Корабли", "url": "data/number_ships.json", "jsonType": "UFA" });
-loadedData.push({ "id": "12", "EngName": "Aircraft", "RusName": "Самолеты", "": "data/number_military_aircraft.json", "jsonType": "UFA" });
-loadedData.push({ "id": "13", "EngName": "Large ships", "RusName": "Большие корабли", "url": "data/number_large_ships.json", "jsonType": "UFA" });
-loadedData.push({ "id": "14", "EngName": "Fighters", "RusName": "Истребители", "url": "data/number_fighters.json", "jsonType": "UFA" });
-loadedData.push({ "id": "15", "EngName": "Military", "RusName": "Войска", "url": "data/military_strength.json", "jsonType": "UFA" });
-loadedData.push({ "id": "16", "EngName": "Ground forses", "RusName": "Сухопутные войска", "url": "data/ground_forses.json", "jsonType": "UFA" });
+
 
 // function downloadObjectAsJson(exportObj, exportName) {
 // 	var dataStr = "data:text/json;charset:utf-8," + encodeURIComponent(JSON.stringify(exportObj));
@@ -324,7 +326,7 @@ function startApp() {
 			console.timeEnd("load places");
 			if (error) console.log(error);
 
-			var ldata = loadedData[6];
+			var ldata = loadedData[5];
 			console.time("add buuble");
 			buildBubble(ldata, svg, projection, width);
 			console.timeEnd("add buuble");
