@@ -14,13 +14,13 @@ loadedData.push({ "id": "7", "EngName": "Population (Merged data)", "RusName": "
 loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "RusName": "Услуги", "url": "data/DTO/Services, value added (current US$).json", "jsonType": "UFA" });
 loadedData.push({ "id": "9", "EngName": "GDP", "RusName": "ВВП", "url": "data/data_new.json", "jsonType": "SAMARA" });
 
-loadedData.push({ "id": "9", "EngName": "Submarines", "RusName": "Подводные лодки", "url": "data/number_submarines.json", "jsonType": "UFA" });
-loadedData.push({ "id": "9", "EngName": "Ships", "RusName": "Корабли", "url": "data/number_ships.json", "jsonType": "UFA" });
-loadedData.push({ "id": "9", "EngName": "Aircraft", "RusName": "Самолеты", "": "data/number_military_aircraft.json", "jsonType": "UFA" });
-loadedData.push({ "id": "9", "EngName": "Large ships", "RusName": "Большие корабли", "url": "data/number_large_ships.json", "jsonType": "UFA" });
-loadedData.push({ "id": "9", "EngName": "Fighters", "RusName": "Истребители", "url": "data/number_fighters.json", "jsonType": "UFA" });
-loadedData.push({ "id": "9", "EngName": "Military", "RusName": "Войска", "url": "data/military_strength.json", "jsonType": "UFA" });
-loadedData.push({ "id": "9", "EngName": "Ground forses", "RusName": "Сухопутные войска", "url": "data/ground_forses.json", "jsonType": "UFA" });
+loadedData.push({ "id": "10", "EngName": "Submarines", "RusName": "Подводные лодки", "url": "data/number_submarines.json", "jsonType": "UFA" });
+loadedData.push({ "id": "11", "EngName": "Ships", "RusName": "Корабли", "url": "data/number_ships.json", "jsonType": "UFA" });
+loadedData.push({ "id": "12", "EngName": "Aircraft", "RusName": "Самолеты", "": "data/number_military_aircraft.json", "jsonType": "UFA" });
+loadedData.push({ "id": "13", "EngName": "Large ships", "RusName": "Большие корабли", "url": "data/number_large_ships.json", "jsonType": "UFA" });
+loadedData.push({ "id": "14", "EngName": "Fighters", "RusName": "Истребители", "url": "data/number_fighters.json", "jsonType": "UFA" });
+loadedData.push({ "id": "15", "EngName": "Military", "RusName": "Войска", "url": "data/military_strength.json", "jsonType": "UFA" });
+loadedData.push({ "id": "16", "EngName": "Ground forses", "RusName": "Сухопутные войска", "url": "data/ground_forses.json", "jsonType": "UFA" });
 
 // function downloadObjectAsJson(exportObj, exportName) {
 // 	var dataStr = "data:text/json;charset:utf-8," + encodeURIComponent(JSON.stringify(exportObj));
@@ -41,52 +41,63 @@ loadedData.push({ "id": "9", "EngName": "Ground forses", "RusName": "Сухоп�
 // }
 
 // loadedData.forEach(element => {
-// 	d3.json(element.url, function (error, dataFromFile) {
-// 		if (error) console.log(error);
-// 		var changedData = dataFromFile;
-// 		changedData.forEach(element => {
-// 			delete element.engCountry;  // or delete person["age"];
-// 			delete element.rusCity;  // or delete person["age"];
-// 			delete element.engCity;  // or delete person["age"];
-// 			delete element.code;  // or delete person["age"];
-// 			delete element.rusIndicator;  // or delete person["age"];
-// 			delete element.engIndicator;  // or delete person["age"];
-// 			delete element.engUnit;  // or delete person["age"];
-// 			delete element.rusSource;  // or delete person["age"];
-// 			delete element.engSource;  // or delete person["age"];
-// 			delete element.sourceURL;  // or delete person["age"];
-// 			delete element.rusComment;  // or delete person["age"];
-// 			delete element.engComment;  // or delete person["age"];
+// 	if (element.id < 9) {
+// 		var filteredYearData = [];
+// 		d3.json(element.url, function (error, dataFromFile) {
+// 			if (error) console.log(error);
+// 			var changedData = dataFromFile.filter(function (el) {
+// 				return parseInt(el.date) >= 1900;
+// 			  });
+// 			download(JSON.stringify(changedData), element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) + '_small_1900.json', 'text/json');
 // 		});
-// 		download(JSON.stringify(changedData), element.url.substring(element.url.lastIndexOf('/')+1,element.url.lastIndexOf('.'))+'_small.json', 'text/json');
-// 	});
+// 	}
+
+// 	// d3.json(element.url, function (error, dataFromFile) {
+// 	// 	if (error) console.log(error);
+// 	// 	var changedData = dataFromFile;
+// 	// 	changedData.forEach(element => {
+// 	// 		delete element.engCountry;  // or delete person["age"];
+// 	// 		delete element.rusCity;  // or delete person["age"];
+// 	// 		delete element.engCity;  // or delete person["age"];
+// 	// 		delete element.code;  // or delete person["age"];
+// 	// 		delete element.rusIndicator;  // or delete person["age"];
+// 	// 		delete element.engIndicator;  // or delete person["age"];
+// 	// 		delete element.engUnit;  // or delete person["age"];
+// 	// 		delete element.rusSource;  // or delete person["age"];
+// 	// 		delete element.engSource;  // or delete person["age"];
+// 	// 		delete element.sourceURL;  // or delete person["age"];
+// 	// 		delete element.rusComment;  // or delete person["age"];
+// 	// 		delete element.engComment;  // or delete person["age"];
+// 	// 	});
+// 	//	download(JSON.stringify(changedData), element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) + '_small.json', 'text/json');
+// 	//});
 // });
 
 // console.time implementation for IE
-if(window.console && typeof(window.console.time) == "undefined") {
-    console.time = function(name, reset){
-        if(!name) { return; }
-        var time = new Date().getTime();
-        if(!console.timeCounters) { console.timeCounters = {}; }
-        var key = "KEY" + name.toString();
-        if(!reset && console.timeCounters[key]) { return; }
-            console.timeCounters[key] = time;
-        };
+if (window.console && typeof (window.console.time) == "undefined") {
+	console.time = function (name, reset) {
+		if (!name) { return; }
+		var time = new Date().getTime();
+		if (!console.timeCounters) { console.timeCounters = {}; }
+		var key = "KEY" + name.toString();
+		if (!reset && console.timeCounters[key]) { return; }
+		console.timeCounters[key] = time;
+	};
 
-    console.timeEnd = function(name){
-        var time = new Date().getTime();
-        if(!console.timeCounters) { return; }
-        var key = "KEY" + name.toString();
-        var timeCounter = console.timeCounters[key];
-        var diff;
-        if(timeCounter) {
-            diff = time - timeCounter;
-            var label = name + ": " + diff + "ms";
-            console.info(label);
-            delete console.timeCounters[key];
-        }
-        return diff;
-    };
+	console.timeEnd = function (name) {
+		var time = new Date().getTime();
+		if (!console.timeCounters) { return; }
+		var key = "KEY" + name.toString();
+		var timeCounter = console.timeCounters[key];
+		var diff;
+		if (timeCounter) {
+			diff = time - timeCounter;
+			var label = name + ": " + diff + "ms";
+			console.info(label);
+			delete console.timeCounters[key];
+		}
+		return diff;
+	};
 }
 
 var svg;
@@ -159,7 +170,7 @@ function buildBubble(ldata, svg, projection, width) {
 			if (ldata.jsonType == "UFA") {
 				listYear = addSlider.getListYearNew(ldata.dataFromFile);
 			} else if (ldata.jsonType == "SAMARA") {
-				console.log("ldata.dataFromFile="+JSON.stringify(ldata.dataFromFile));
+				console.log("ldata.dataFromFile=" + JSON.stringify(ldata.dataFromFile));
 				listYear = addSlider.getListYear(ldata.dataFromFile);
 			}
 			ldata.listYear = listYear;
@@ -353,4 +364,4 @@ function startApp() {
 
 }
 
-window.addEventListener('load', () => {startApp()})
+window.addEventListener('load', () => { startApp() })
