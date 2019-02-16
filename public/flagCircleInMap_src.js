@@ -92,6 +92,8 @@
             .attr('cy', function (d) { return projection(d.centroid)[1] })
             .style("fill", function (d) { return "url(#" + imageName + d.iso2 + ")"; })
             .on("mouseover", function (d) {
+
+
                 d3.select(this).classed("active", true);
                 let res = 0;
                 if (typeof (d.dataCountries) != "undefined" && typeof (d.dataCountries[0]) != "undefined") {
@@ -110,10 +112,10 @@
 
             })
             .on("mouseout", function (d) {
-                d3.select(this).classed("active", false);
-                div.transition()
-                    // .duration(500)		
-                    .style("opacity", 0);
+                // d3.select(this).classed("active", false);
+                // div.transition()
+                //     // .duration(500)		
+                //     .style("opacity", 0);
             });
 
     }
@@ -205,7 +207,7 @@
                         res = (d.value);
                     }
                 }
-                const htmlData = d.rusCountry + "<br/>Значение:" + Math.round(res * 100) / 100 + " "+d.rusUnit;
+                const htmlData = d.rusCountry + "<br/>" + Math.round(res * 100) / 100 + " "+d.rusUnit+"<a href='"+d.rusSource+"'>*</a>";
 
                 div.transition()
                     // .duration(200)		
@@ -217,9 +219,9 @@
             })
             .on("mouseout", function (d) {
                 d3.select(this).classed("active", false);
-                div.transition()
-                    // .duration(500)		
-                    .style("opacity", 0);
+                // div.transition()
+                //     // .duration(500)		
+                //     .style("opacity", 0);
             });
 
     }
