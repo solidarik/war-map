@@ -97,12 +97,28 @@ class addSlider {
 		return dataYearFilter;
 	}
 
+	static filterByIso3(data, iso3Filter) {
+		var dataIso3Filter = data.filter(function (object) {
+			var iso3 = object.iso3;
+			return iso3 == iso3Filter;
+		});
+		return dataIso3Filter;
+	}
+
 	static filterByYearNew(data, yearFilter) {
 		var dataYearFilter = data.filter(function (object) {
 			var year = object.date;
 			return year == yearFilter;
 		});
 		return dataYearFilter;
+	}
+
+	static filterByIso3New(data, iso3Filter) {
+		var dataIso3Filter = data.filter(function (object) {
+			var iso3 = object.iso3;
+			return iso3 == iso3Filter;
+		});
+		return dataIso3Filter;
 	}
 
 	static addSlider(idElemForSvg, width, listYear, updateFunction) {
