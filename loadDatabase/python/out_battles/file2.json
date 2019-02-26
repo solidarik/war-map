@@ -1,0 +1,21 @@
+[{
+	"features": ["18.geojson"],
+	"name": "Югославская операция",
+	"startDate": "07.04.1945",
+	"endDate": "18.04.1945",
+	"allies": "Югославия",
+	"enemies": "Германия",
+	"ally_troops": "850000.0",
+	"ally_losses": "ок.349000",
+	"ally_deads": "ок. 5000",
+	"ally_prisoners": "344000.0",
+	"enem_troops": "700000.0",
+	"enem_losses": "4237.0",
+	"enem_deads": "3595.0",
+	"enem_woundeds": "615.0",
+	"enem_missing": "27.0",
+	"enem_airplans_lost": "54.0",
+	"winner": "Германия",
+	"source_url": "https://ru.wikipedia.org/wiki/Югославская_операция",
+	"imgUrl": "https://topwar.ru/uploads/posts/2016-04/thumbs/1461003025_033.jpg"
+}]

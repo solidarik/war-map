@@ -1,0 +1,23 @@
+[{
+	"features": ["36 операция моравско-остравская.geojson"],
+	"name": "Моравско-Остравская наступательная операция",
+	"startDate": "11.03.1949",
+	"endDate": "06.05.1949",
+	"allies": "СССР",
+	"enemies": "Германия",
+	"ally_troops": "ок. 255000",
+	"ally_tanks_cnt": "180.0",
+	"ally_airplans_cnt": "408.0",
+	"ally_losses": "112621.0",
+	"ally_deads": "23964.0",
+	"enem_troops": "150000.0",
+	"enem_tanks_cnt": "100.0",
+	"enem_airplans_cnt": "120.0",
+	"enem_losses": "свыше 250000",
+	"enem_prisoners": "150000.0",
+	"enem_tanks_lost": "1087.0",
+	"enem_airplans_lost": "737.0",
+	"winner": "СССР",
+	"source_url": "https://ru.wikipedia.org/wiki/Моравско-Остравская_наступательная_операция",
+	"imgUrl": "https://pbs.twimg.com/media/DX6gOv_X4AAtL5L.jpg"
+}]

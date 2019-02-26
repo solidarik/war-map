@@ -1,0 +1,18 @@
+[{
+	"features": ["16.geojson"],
+	"name": "Одесская оборона (1941)",
+	"startDate": "06.08.1945",
+	"endDate": "17.10.1945",
+	"allies": "СССР",
+	"enemies": "Германия",
+	"ally_troops": "86000.0",
+	"ally_losses": "40268.0",
+	"enem_troops": "340000.0",
+	"enem_losses": "92545.0",
+	"enem_deads": "17729.0",
+	"enem_woundeds": "63345.0",
+	"enem_missing": "11471.0",
+	"winner": "Германия",
+	"source_url": "https://ru.wikipedia.org/wiki/Одесская_оборона_(1941)",
+	"imgUrl": "http://kraeved.od.ua/history/img/vov01/1.jpg"
+}]
