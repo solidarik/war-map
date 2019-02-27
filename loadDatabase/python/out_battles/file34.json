@@ -1,8 +1,8 @@
 [{
 	"features": ["60 операция курская.geojson"],
 	"name": "Курская дуга",
-	"startDate": "06.07.1947",
-	"endDate": "24.08.1947",
+	"startDate": "05.07.1943",
+	"endDate": "23.08.1943",
 	"allies": "СССР",
 	"enemies": "Германия",
 	"ally_troops": "1392065.0",

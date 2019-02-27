@@ -1,8 +1,8 @@
 [{
 	"features": ["19.geojson"],
 	"name": "Белградская операция",
-	"startDate": "29.09.1948",
-	"endDate": "21.10.1948",
+	"startDate": "28.09.1944",
+	"endDate": "20.10.1944",
 	"allies": "СССР",
 	"enemies": "Германия",
 	"ally_troops": "447500.0",

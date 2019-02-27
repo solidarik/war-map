@@ -18,9 +18,9 @@ dbHelper = new DbHelper();
 // return;
 
 Promise.resolve(true)
-  // .then(() => {
-  //   return dbHelper.clearDb();
-  // })
+  .then(() => {
+    return dbHelper.clearDb("historyEvents");
+  })
   // .then(() => {
   //   return dbHelper.saveFilesFromDir({
   //     source: "data_sources/secretUsers.json",

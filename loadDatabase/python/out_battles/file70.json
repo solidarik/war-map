@@ -1,8 +1,8 @@
 [{
 	"features": ["15.geojson"],
 	"name": "Берлинская наступательная операция",
-	"startDate": "17.04.1949",
-	"endDate": "09.05.1949",
+	"startDate": "16.04.1945",
+	"endDate": "08.05.1945",
 	"allies": "СССР",
 	"enemies": "Германия",
 	"ally_troops": "2500000.0",

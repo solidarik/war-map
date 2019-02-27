@@ -1,8 +1,8 @@
 [{
 	"features": ["12-1.geojson", "12-2.geojson", "12-3.geojson"],
 	"name": "Оборона Севастополя (1941—1942)",
-	"startDate": "31.10.1945",
-	"endDate": "05.07.1946",
+	"startDate": "30.10.1941",
+	"endDate": "04.07.1942",
 	"allies": "СССР",
 	"enemies": "Германия",
 	"ally_troops": "118890.0",

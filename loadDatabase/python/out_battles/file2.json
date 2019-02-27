@@ -1,8 +1,8 @@
 [{
 	"features": ["18.geojson"],
 	"name": "Югославская операция",
-	"startDate": "07.04.1945",
-	"endDate": "18.04.1945",
+	"startDate": "06.04.1941",
+	"endDate": "17.04.1941",
 	"allies": "Югославия",
 	"enemies": "Германия",
 	"ally_troops": "850000.0",

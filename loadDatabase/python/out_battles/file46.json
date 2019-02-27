@@ -1,8 +1,8 @@
 [{
 	"features": ["17.geojson"],
 	"name": "Одесская наступательная операция",
-	"startDate": "27.03.1948",
-	"endDate": "15.04.1948",
+	"startDate": "26.03.1944",
+	"endDate": "14.04.1944",
 	"allies": "СССР",
 	"enemies": "Германия",
 	"ally_troops": "336900.0",

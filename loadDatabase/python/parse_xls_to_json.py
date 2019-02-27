@@ -36,7 +36,7 @@ def get_sheet_value(row, col):
 
 def get_sheet_value_date(row, col):
     date_excel = scheet.cell(row, col).value
-    y, m, d, _, _, _ = xlrd.xldate_as_tuple(date_excel, 1)
+    y, m, d, _, _, _ = xlrd.xldate_as_tuple(date_excel, 0)
     return '{:02d}.{:02d}.{}'.format(d, m, y)
 
 

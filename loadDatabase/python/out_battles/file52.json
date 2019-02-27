@@ -1,8 +1,8 @@
 [{
 	"features": ["05.geojson"],
 	"name": "Люблин-Бресткая операция",
-	"startDate": "19.07.1948",
-	"endDate": "03.08.1948",
+	"startDate": "18.07.1944",
+	"endDate": "02.08.1944",
 	"allies": "CCCP",
 	"enemies": "Германия",
 	"winner": "СССР",

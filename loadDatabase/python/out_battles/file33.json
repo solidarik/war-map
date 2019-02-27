@@ -1,8 +1,8 @@
 [{
 	"features": ["59 операция харьковская.geojson"],
 	"name": "Харьковская",
-	"startDate": "05.03.1947",
-	"endDate": "26.03.1947",
+	"startDate": "04.03.1943",
+	"endDate": "25.03.1943",
 	"allies": "СССР",
 	"enemies": "Германия",
 	"ally_troops": "172256.0",

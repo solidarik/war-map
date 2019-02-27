@@ -1,8 +1,8 @@
 [{
 	"features": ["11.geojson"],
 	"name": "Минская операция",
-	"startDate": "30.06.1948",
-	"endDate": "05.07.1948",
+	"startDate": "29.06.1944",
+	"endDate": "04.07.1944",
 	"allies": "СССР",
 	"enemies": "Германия",
 	"enem_losses": "70000.0",

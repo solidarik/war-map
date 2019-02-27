@@ -1,8 +1,8 @@
 [{
 	"features": ["08.geojson"],
 	"name": "Смоленская операция (1943)",
-	"startDate": "08.08.1947",
-	"endDate": "03.10.1947",
+	"startDate": "07.08.1943",
+	"endDate": "02.10.1943",
 	"allies": "СССР",
 	"enemies": "Германия",
 	"ally_troops": "1313989.0",

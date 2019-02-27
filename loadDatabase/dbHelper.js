@@ -15,23 +15,25 @@ class DbHelper {
     return mongoose;
   }
 
-  clearDb() {
+  clearDb(filter = "") {
     return new Promise((resolve, reject) => {
       const modelDirectory = fileHelper.composePath("../models/");
       let modelFiles = fileHelper.getFilesFromDir(modelDirectory, ".js");
       let promises = [];
       modelFiles.forEach(modelFilePath => {
-        promises.push(
-          new Promise((resolve, reject) => {
-            let model = require(modelFilePath);
-            model.deleteMany({}, err => {
-              if (err) reject(err);
+        if ("" == filter || modelFilePath.includes(filter)) {
+          promises.push(
+            new Promise((resolve, reject) => {
+              let model = require(modelFilePath);
+              model.deleteMany({}, err => {
+                if (err) reject(err);
 
-              resolve(true);
-              info(`Removed collection: ${modelFilePath}`);
-            });
-          })
-        );
+                resolve(true);
+                info(`Removed collection: ${modelFilePath}`);
+              });
+            })
+          );
+        }
       });
 
       Promise.all(promises)
