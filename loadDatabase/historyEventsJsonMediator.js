@@ -92,8 +92,8 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
 
           const newJson = {
             _name: name_id,
-            startDate: moment(json.startDate, "DD.MM.YYYY"),
-            endDate: moment(json.endDate, "DD.MM.YYYY"),
+            startDate: moment.utc(moment(json.startDate, "DD.MM.YYYY")).valueOf(),
+            endDate: moment.utc(moment(json.endDate, "DD.MM.YYYY")).valueOf(),
             kind: json.kind ? json.kind : "battle",
             imgUrl: json.imgUrl,
             allies: allies,
