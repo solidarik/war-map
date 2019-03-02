@@ -92,8 +92,8 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
 
           const newJson = {
             _name: name_id,
-            startDate: moment(json.startDate, "DD.MM.YYYY"),
-            endDate: moment(json.endDate, "DD.MM.YYYY"),
+            startDate: moment.utc(json.startDate, "DD.MM.YYYY"),
+            endDate: moment.utc(json.endDate, "DD.MM.YYYY"),
             kind: json.kind ? json.kind : "battle",
             imgUrl: json.imgUrl,
             allies: allies,
@@ -101,7 +101,7 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
             maps: maps
           };
 
-          console.log(json.name, json.startDate, json.endDate)
+          console.log(json.name, json.startDate, moment.utc(json.startDate, "DD.MM.YYYY"))
           resolve(newJson);
         })
         .catch(err => reject(`Ошибка в processJson: ${err}`));
