@@ -100,6 +100,8 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
             enemies: enemies,
             maps: maps
           };
+
+          console.log(json.name, json.startDate, json.endDate)
           resolve(newJson);
         })
         .catch(err => reject(`Ошибка в processJson: ${err}`));

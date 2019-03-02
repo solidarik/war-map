@@ -46,7 +46,7 @@ def get_sheet_value_arr(row, col, split_char = ';'):
         return []
     return val.split(split_char)
 
-filename = os.path.dirname(os.path.abspath(__file__)) + '\\Битвы 3-8.xlsx'
+filename = os.path.dirname(os.path.abspath(__file__)) + '/Битвы 3-8.xlsx'
 book = xlrd.open_workbook(filename, encoding_override="cp1251")
 scheet = book.sheet_by_index(0)
 START_ROW = 1

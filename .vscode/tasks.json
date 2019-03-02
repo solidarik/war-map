@@ -3,10 +3,32 @@
   "command": "node",
   "tasks": [
     {
-      "label": "running current file",
+      "label": "running node file",
       "type": "shell",
       "command": "node",
-      "args": ["${file}"],
+      "args": [
+        "${file}"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "running python file",
+      "type": "shell",
+      "command": "python3.7",
+      "args": [
+        "${file}"
+      ],
       "group": {
         "kind": "build",
         "isDefault": true

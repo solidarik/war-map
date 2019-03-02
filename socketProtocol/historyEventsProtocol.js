@@ -14,8 +14,8 @@ class HistoryEventsProtocol extends ServerProtocol {
 
         try {
             let data = JSON.parse(msg);
-            let startDate = (new Date(data.year, 0, 1)).toISOString();
-            let endDate = (new Date(data.year, 11, 31)).toISOString();
+            let startDate = (new Date(data.year, 0, 1)).toString();
+            let endDate = (new Date(data.year, 11, 31)).toString();
 
             HistoryEventsModel.find({
                 startDate: {
