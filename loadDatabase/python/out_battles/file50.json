@@ -1,0 +1,13 @@
+[{
+	"features": ["11.geojson"],
+	"name": "Минская операция",
+	"startDate": "29.06.1944",
+	"endDate": "04.07.1944",
+	"allies": "СССР",
+	"enemies": "Германия",
+	"enem_losses": "70000.0",
+	"enem_prisoners": "35000.0",
+	"winner": "СССР",
+	"source_url": "https://ru.wikipedia.org/wiki/Минская_операция",
+	"imgUrl": "http://mil.ru/files/morf/minsk2kartaf.jpg"
+}]

@@ -1,0 +1,11 @@
+[{
+	"features": ["05.geojson"],
+	"name": "Люблин-Бресткая операция",
+	"startDate": "18.07.1944",
+	"endDate": "02.08.1944",
+	"allies": "CCCP",
+	"enemies": "Германия",
+	"winner": "СССР",
+	"source_url": "http://mil.ru/winner_may/history/more.htm?id=11970232@cmsArticle",
+	"imgUrl": "http://map-site.narod.ru/lublinbrestno.html"
+}]
