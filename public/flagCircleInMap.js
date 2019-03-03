@@ -214,7 +214,7 @@ function () {
         }
       }
 
-      var htmlData = d.rusCountry + "<br/>" + Math.round(res * 100) / 100 + " " + d.rusUnit + "<a href='" + d.rusSource + "'>*</a>";
+      var htmlData = d.rusCountry + "<br/>" + Math.round(res * 100) / 100 + " " + d.rusUnit + "<a href='" + d.rusSource + "' target='_blank'>*</a>";
       div.transition() // .duration(200)		
       .style("opacity", .9);
       div.html(htmlData).style("left", d3.event.pageX + "px").style("top", d3.event.pageY - 28 + "px");

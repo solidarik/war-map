@@ -207,7 +207,7 @@
                         res = (d.value);
                     }
                 }
-                const htmlData = d.rusCountry + "<br/>" + Math.round(res * 100) / 100 + " "+d.rusUnit+"<a href='"+d.rusSource+"'>*</a>";
+                const htmlData = d.rusCountry + "<br/>" + Math.round(res * 100) / 100 + " "+d.rusUnit+"<a href='"+d.rusSource+"' target='_blank'>*</a>";
 
                 div.transition()
                     // .duration(200)		
