@@ -1,12 +1,13 @@
  class flagCircleInMap {
 
-    constructor(data, svg, projection, imageName,mxval,width) {
+    constructor(data, svg, projection, imageName,mxval,width,allData) {
         this.data = data;
         this.svg = svg;
         this.projection = projection;
         this.imageName = imageName;
         this.mxval = mxval;
         this.width = width;
+        this.allData = allData;
     }
 
     sortIfDataCountries(x, y) {
@@ -171,6 +172,7 @@
 
         let projection = this.projection;
         let imageName = this.imageName;
+        let allData = this.allData;
 
         this.svg.selectAll("circle").remove();
 
@@ -207,7 +209,7 @@
                         res = (d.value);
                     }
                 }
-                const htmlData = d.rusCountry + "<br/>" + Math.round(res * 100) / 100 + " "+d.rusUnit+"<a href='"+d.rusSource+"' target='_blank'>*</a>";
+                const htmlData = d.rusCountry + "<br/>" + Math.round(res * 100) / 100 + " "+d.rusUnit+"<a target='_blank' rel='noopener noreferrer' href='"+d.rusSource+"'>*</a>";
 
                 div.transition()
                     // .duration(200)		
@@ -215,6 +217,13 @@
                 div.html(htmlData)
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY - 28) + "px");
+
+
+                console.log("allData=" + JSON.stringify(allData));    
+                var dataForInfo = addSlider.filterByIso3New(allData, d.iso3);
+
+                var amid =  new AddMapInfoDiagramm("mapContainerInfo",dataForInfo,parseInt(d3.select("#mapContainerInfo").style("width")));
+                amid.addMapInfoDiagrammInDiv();
 
             })
             .on("mouseout", function (d) {

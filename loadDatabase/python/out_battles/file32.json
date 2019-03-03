@@ -1,0 +1,17 @@
+[{
+	"features": ["03.geojson"],
+	"name": "Третья битва за Харьков",
+	"startDate": "19.02.1943",
+	"endDate": "19.03.1943",
+	"allies": "CCCР",
+	"enemies": "Германия",
+	"ally_troops": "200000.0",
+	"ally_losses": "100000.0",
+	"ally_tanks_lost": "1130.0",
+	"enem_troops": "150000.0",
+	"enem_losses": "45000.0",
+	"enem_tanks_lost": "250.0",
+	"winner": "СССР",
+	"source_url": "https://ru.wikipedia.org/wiki/Третья_битва_за_Харьков",
+	"imgUrl": "http://map-site.narod.ru/harkovno-1.jpg"
+}]

@@ -6,7 +6,7 @@ var app = window.app;
 var loadedData = [];
 loadedData.push({ "id": "10", "EngName": "Submarines", "RusName": "Подводные лодки", "url": "data/number_submarines.json", "jsonType": "UFA" });
 loadedData.push({ "id": "11", "EngName": "Ships", "RusName": "Корабли", "url": "data/number_ships.json", "jsonType": "UFA" });
-loadedData.push({ "id": "12", "EngName": "Aircraft", "RusName": "Самолеты", "": "data/number_military_aircraft.json", "jsonType": "UFA" });
+loadedData.push({ "id": "12", "EngName": "Aircraft", "RusName": "Самолеты", "url": "data/number_military_aircraft.json", "jsonType": "UFA" });
 loadedData.push({ "id": "13", "EngName": "Large ships", "RusName": "Большие корабли", "url": "data/number_large_ships.json", "jsonType": "UFA" });
 loadedData.push({ "id": "14", "EngName": "Fighters", "RusName": "Истребители", "url": "data/number_fighters.json", "jsonType": "UFA" });
 loadedData.push({ "id": "15", "EngName": "Military", "RusName": "Войска", "url": "data/military_strength.json", "jsonType": "UFA" });
@@ -172,7 +172,7 @@ function buildBubble(ldata, svg, projection, width) {
 			if (ldata.jsonType == "UFA") {
 				listYear = addSlider.getListYearNew(ldata.dataFromFile);
 			} else if (ldata.jsonType == "SAMARA") {
-				console.log("ldata.dataFromFile=" + JSON.stringify(ldata.dataFromFile));
+				//console.log("ldata.dataFromFile=" + JSON.stringify(ldata.dataFromFile));
 				listYear = addSlider.getListYear(ldata.dataFromFile);
 			}
 			ldata.listYear = listYear;
@@ -194,7 +194,8 @@ function buildBubble(ldata, svg, projection, width) {
 			// }
 			console.timeEnd("max val");
 			console.time("addFlagCircleInMap");
-			var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", mxval, width);
+			//console.log("ldata.dataFromFile=" + JSON.stringify(ldata.dataFromFile));
+			var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", mxval, width,ldata.dataFromFile);
 			if (ldata.jsonType == "UFA") {
 				flagCircleInMapLoc.addFlagCircleInMapNew();
 			} else if (ldata.jsonType == "SAMARA") {
@@ -217,7 +218,8 @@ function buildBubble(ldata, svg, projection, width) {
 					// } else if (ldata.jsonType == "SAMARA") {
 					// 	mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
 					// }
-					var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", mxval, width);
+					//console.log("ldata.dataFromFile=" + JSON.stringify(ldata.dataFromFile));
+					var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", mxval, width,ldata.dataFromFile);
 					flagCircleInMapLoc.addFlagCircleInMapNew();
 				}
 			} else if (ldata.jsonType == "SAMARA") {
@@ -234,7 +236,8 @@ function buildBubble(ldata, svg, projection, width) {
 					// 	mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
 					// }
 					var curDataYearFilter = addSlider.filterByYear(ldata.dataFromFile, listYear[h2]);
-					var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", mxval, width);
+					//console.log("ldata.dataFromFile=" + JSON.stringify(ldata.dataFromFile));
+					var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", mxval, width,ldata.dataFromFile);
 					flagCircleInMapLoc.addFlagCircleInMap();
 				}
 			}
@@ -252,7 +255,8 @@ function buildBubble(ldata, svg, projection, width) {
 		}
 		console.timeEnd("filte by year");
 		console.time("addFlagCircleInMap");
-		var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", 0, width);
+		//console.log("ldata.dataFromFile=" + JSON.stringify(ldata.dataFromFile));
+		var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", 0, width,ldata.dataFromFile);
 		if (ldata.jsonType == "UFA") {
 			flagCircleInMapLoc.addFlagCircleInMapNew();
 		} else if (ldata.jsonType == "SAMARA") {
@@ -269,7 +273,8 @@ function buildBubble(ldata, svg, projection, width) {
 				label.attr("x", xScale(h)).text(ldata.listYear[h2]);
 
 				var curDataYearFilter = addSlider.filterByYearNew(ldata.dataFromFile, ldata.listYear[h2]);
-				var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", 0, width);
+				//console.log("ldata.dataFromFile=" + JSON.stringify(ldata.dataFromFile));
+				var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", 0, width,ldata.dataFromFile);
 				flagCircleInMapLoc.addFlagCircleInMapNew();
 			}
 		} else if (ldata.jsonType == "SAMARA") {
@@ -281,7 +286,8 @@ function buildBubble(ldata, svg, projection, width) {
 				label.attr("x", xScale(h)).text(ldata.listYear[h2]);
 
 				var curDataYearFilter = addSlider.filterByYear(ldata.dataFromFile, ldata.listYear[h2]);
-				var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", 0, width);
+				//console.log("ldata.dataFromFile=" + JSON.stringify(ldata.dataFromFile));
+				var flagCircleInMapLoc = new flagCircleInMap(curDataYearFilter, svg, projection, "img_", 0, width,ldata.dataFromFile);
 				flagCircleInMapLoc.addFlagCircleInMap();
 			}
 		}

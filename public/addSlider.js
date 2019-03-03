@@ -55,11 +55,11 @@ var addSlider = function () {
 		value: function getListYearNew(data) {
 			var listYear = [];
 
-			// let fdata = data.filter(function (n) {
+			// var fdata = data.filter(function (n) {
 			// 	return n.iso3 === "RUS";
 			// });
 			// console.log("fdata=" + fdata);
-			// for (let index = 0; index < data.length; index++) {
+			// for (var index = 0; index < data.length; index++) {
 			// 	const element = data[index].date;
 			// 	if(element == "1945"){
 			// 		console.log("(element == 1945");
@@ -134,6 +134,15 @@ var addSlider = function () {
 			return dataYearFilter;
 		}
 	}, {
+		key: 'filterByIso3',
+		value: function filterByIso3(data, iso3Filter) {
+			var dataIso3Filter = data.filter(function (object) {
+				var iso3 = object.iso3;
+				return iso3 == iso3Filter;
+			});
+			return dataIso3Filter;
+		}
+	}, {
 		key: 'filterByYearNew',
 		value: function filterByYearNew(data, yearFilter) {
 			var dataYearFilter = data.filter(function (object) {
@@ -141,6 +150,15 @@ var addSlider = function () {
 				return year == yearFilter;
 			});
 			return dataYearFilter;
+		}
+	}, {
+		key: 'filterByIso3New',
+		value: function filterByIso3New(data, iso3Filter) {
+			var dataIso3Filter = data.filter(function (object) {
+				var iso3 = object.iso3;
+				return iso3 == iso3Filter;
+			});
+			return dataIso3Filter;
 		}
 	}, {
 		key: 'addSlider',
