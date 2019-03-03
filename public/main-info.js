@@ -11,6 +11,15 @@ loadedData.push({ "id": "13", "EngName": "Large ships", "RusName": "Больши
 loadedData.push({ "id": "14", "EngName": "Fighters", "RusName": "Истребители", "url": "data/number_fighters.json", "jsonType": "UFA" });
 loadedData.push({ "id": "15", "EngName": "Military", "RusName": "Войска", "url": "data/military_strength.json", "jsonType": "UFA" });
 loadedData.push({ "id": "16", "EngName": "Ground forses", "RusName": "Сухопутные войска", "url": "data/ground_forses.json", "jsonType": "UFA" });
+loadedData.push({ "id": "17", "EngName": "Artillery", "RusName": "Артилерия", "url": "data/artillery.json", "jsonType": "UFA" });
+loadedData.push({ "id": "18", "EngName": "Heavy artillery", "RusName": "Тяжелая артилерия", "url": "data/heavy_artillery.json", "jsonType": "UFA" });
+loadedData.push({ "id": "19", "EngName": "Losses soldiers war 1", "RusName": "Военный потери 1 мировая", "url": "data/losses_soldiers_war_1.json", "jsonType": "UFA" });
+loadedData.push({ "id": "20", "EngName": "Losses soldiers war 2", "RusName": "Военный потери 2 мировая", "url": "data/losses_soldiers_war_2.json", "jsonType": "UFA" });
+loadedData.push({ "id": "21", "EngName": "Tanks", "RusName": "Танки", "url": "data/tanks.json", "jsonType": "UFA" });
+loadedData.push({ "id": "22", "EngName": "Total losses world war 1", "RusName": "Общие потери 1 мировая", "url": "data/total_losses_world_war_1.json", "jsonType": "UFA" });
+loadedData.push({ "id": "23", "EngName": "Total losses world war 2", "RusName": "Общие потери 2 мировая", "url": "data/total_losses_world_war_2.json", "jsonType": "UFA" });
+
+
 
 loadedData.push({ "id": "1", "EngName": "Agriculture, forestry, and fishing, value added (current US$)", "RusName": "Агропромышленность", "url": "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json", "jsonType": "UFA" });
 loadedData.push({ "id": "2", "EngName": "Cereal production (metric tons)", "RusName": "Зерно", "url": "data/DTO/Cereal production (metric tons).json", "jsonType": "UFA" });

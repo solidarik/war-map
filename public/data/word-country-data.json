@@ -22130,5 +22130,20 @@
     "dataCountries": [
 
     ]
+  },
+  {
+    "id": 247,
+    "name": "Czech Republic",
+    "name_ru": "Чехия",
+    "fips": "EZ",
+    "iso2": "CZ",
+    "iso3": "CSHH",
+    "centroid": [
+      15.338339993742268,
+      49.74303609673803
+    ],
+    "dataCountries": [
+
+    ]
   }
 ]
