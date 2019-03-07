@@ -455,10 +455,10 @@
   "engComment" : null,
   "centroid" : [ 25.23137480332843, 42.7613572923989 ]
 }, {
-  "iso3" : "",
-  "iso2" : "",
+  "iso3" : "MMR",
+  "iso2" : "MM",
   "rusCountry" : "Бирма",
-  "engCountry" : "",
+  "engCountry" : "Burma",
   "rusCity" : null,
   "engCity" : null,
   "rusIndicator" : "Общие потери во 2 мировой войне",
@@ -472,7 +472,7 @@
   "sourceURL" : null,
   "rusComment" : null,
   "engComment" : null,
-  "centroid" : null
+  "centroid" : [ 96.50868196895658, 21.140096449350562 ]
 }, {
   "iso3" : "ALB",
   "iso2" : "AL",
