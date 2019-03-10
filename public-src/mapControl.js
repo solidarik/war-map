@@ -1,5 +1,6 @@
 import ol from './libs/ol'
 import {EventEmitter} from './eventEmitter'
+import convexHull from 'monotone-convex-hull-2d'
 
 const kremlinLocation = new ol.proj.fromLonLat([37.617499, 55.752023]); //moscow kremlin
 
@@ -36,6 +37,11 @@ export class MapControl extends EventEmitter {
             let lonLatCoords = new ol.proj.toLonLat(coordinates);
             console.log('clicked on map with coordinates: ' + coordinates + '; WGS: ' + lonLatCoords);
         });
+
+        map.on('moveend', (evt) => {
+            var map = evt.map;
+            console.log(map.getView().getZoom())
+        })
 
         this.map = map;
 
@@ -199,10 +205,11 @@ export class MapControl extends EventEmitter {
         return geom;
     }
 
-    showEventOnMap(map) {
+    setCurrentEventMap(map) {
         this.historyEventsSource.clear();
 
         let features = map.features;
+        let all_coords = []
         for (let i = 0; i < features.length; i++) {
             let geom = features[i].geometry;
             let style_prop = features[i].properties;
@@ -220,15 +227,17 @@ export class MapControl extends EventEmitter {
             };
             var coords = [];
             if ('Point' === geom.type) {
-                coords = new ol.proj.fromLonLat(geom.coordinates);
+                coords = new ol.proj.fromLonLat(geom.coordinates)
+                all_coords.push(coords)
             } else {
-                let srcCoords = ('Polygon' === geom.type) ? geom.coordinates[0] : geom.coordinates;
+                let srcCoords = ('Polygon' === geom.type) ? geom.coordinates[0] : geom.coordinates
                 for (let j = 0; j < srcCoords.length; j++) {
-                    let point = new ol.proj.fromLonLat(srcCoords[j]);
-                    coords.push(point);
+                    let point = new ol.proj.fromLonLat(srcCoords[j])
+                    coords.push(point)
+                    all_coords.push(point)
                 }
                 if ('Polygon' === geom.type) {
-                    coords = [coords];
+                    coords = [coords]
                 }
             }
             let ft = new ol.Feature({
@@ -239,6 +248,28 @@ export class MapControl extends EventEmitter {
             ft.setStyle(new ol.style.Style(style));
             this.historyEventsSource.addFeature(ft);
         };
+        let hull_indexes = convexHull(all_coords)
+        let hull_coords = []
+        hull_indexes.forEach( (idx) => {
+            hull_coords.push(all_coords[idx])
+        })
+        let ft = new ol.Feature({
+            uid: 1000,
+            name: 'test2',
+            'geometry': this._createGeom({kind: 'Polygon', coords: [hull_coords]})
+        });
+        ft.setStyle(new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: 'maroon',
+                width: 5
+            }),
+            fill: new ol.style.Fill({
+                color: 'rgba(0, 0, 255, 0.1)'
+            })
+        }));
+        this.historyEventsSource.addFeature(ft);
+
+
     }
 
     _addButtons() {
