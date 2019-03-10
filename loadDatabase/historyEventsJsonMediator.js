@@ -6,6 +6,7 @@ const fileHelper = require("../helper/fileHelper");
 const SuperJsonMediator = require("./superJsonMediator");
 const moment = require("moment");
 const log = require("../helper/logHelper");
+const convexHull = require('monotone-convex-hull-2d')
 
 class HistoryEventsJsonMediator extends SuperJsonMediator {
   constructor() {
@@ -70,6 +71,10 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
     });
   }
 
+  getCorvexFromPath(path) {
+
+  }
+
   processJson(json) {
     return new Promise((resolve, reject) => {
       let promises = [
@@ -79,11 +84,13 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
       ];
 
       var maps = [];
+      var corvexes = []
       if (!Array.isArray(json.features)) json.features = [json.features];
 
       json.features.forEach(featureFile => {
         let featurePath = fileHelper.composePath("новые карты", featureFile);
-        maps.push(fileHelper.getJsonFromFile(featurePath));
+        corvexes.push(this.getCorvexFromPath(featurePath))
+        maps.push(fileHelper.getJsonFromFile(featurePath))
       });
 
       Promise.all(promises)
@@ -98,10 +105,10 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
             imgUrl: json.imgUrl,
             allies: allies,
             enemies: enemies,
-            maps: maps
+            maps: maps,
+            corvexes: corvexes
           };
 
-          console.log(json.name, json.startDate, moment.utc(json.startDate, "DD.MM.YYYY"))
           resolve(newJson);
         })
         .catch(err => reject(`Ошибка в processJson: ${err}`));
