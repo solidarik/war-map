@@ -11,6 +11,7 @@ secret*
 
 package-lock.json
 
+dist/
 .cache/
 node_modules/
 geacron/
