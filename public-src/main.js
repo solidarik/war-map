@@ -67,7 +67,7 @@ function startApp() {
     });
 
     historyEventsControl.subscribe('activatedEvent', (data) => {
-        mapControl.showEventOnMap(data.map);
+        mapControl.setCurrentEventMap(data.map);
         fixMiniMapVisible();
     });
 

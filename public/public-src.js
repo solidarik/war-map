@@ -43927,7 +43927,7 @@ function startApp() {
     });
   });
   historyEventsControl.subscribe('activatedEvent', function (data) {
-    mapControl.showEventOnMap(data.map);
+    mapControl.setCurrentEventMap(data.map);
     fixMiniMapVisible();
   });
   window.map = mapControl; // var something = document.getElementById('content');
