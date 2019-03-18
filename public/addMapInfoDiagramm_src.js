@@ -54,49 +54,34 @@ class AddMapInfoDiagramm {
                 .attr("y", function (d) { return y(d.value); })
                 .attr("height", function (d) { return height - y(d.value); });
 
+            var domainXaxis;    
+
+            if(x.domain().length<=10)    {
+                domainXaxis=x.domain();
+            }else{
+                if(x.domain().length<=50)    {
+                    domainXaxis = x.domain().filter(function (d, i) { return !(i % 5);});
+                }else{
+                    if(x.domain().length<=100)    {
+                        domainXaxis = x.domain().filter(function (d, i) { return !(i % 10);});
+                    }
+                }
+            }
+
             // add the x Axis
-            svg.append("g")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x));
+             svg.append("g")
+                 .attr("transform", "translate(0," + height + ")")
+                 .call(d3.axisBottom(x).tickValues(domainXaxis))
+                 .selectAll("text")	
+                    .style("text-anchor", "end")
+                    .attr("dx", "-.8em")
+                    .attr("dy", ".15em")
+                    .attr("transform", "rotate(-90)");
+                 
 
             // add the y Axis
             svg.append("g")
-                .call(d3.axisLeft(y));
-
-
-        // // get the data
-        // d3.csv("data/sales.csv", function (error, data) {
-        //     if (error) throw error;
-
-        //     // format the data
-        //     data.forEach(function (d) {
-        //         d.sales = +d.sales;
-        //     });
-
-        //     // Scale the range of the data in the domains
-        //     x.domain(data.map(function (d) { return d.salesperson; }));
-        //     y.domain([0, d3.max(data, function (d) { return d.sales; })]);
-
-        //     // append the rectangles for the bar chart
-        //     svg.selectAll(".bar")
-        //         .data(data)
-        //         .enter().append("rect")
-        //         .attr("class", "bar")
-        //         .attr("x", function (d) { return x(d.salesperson); })
-        //         .attr("width", x.bandwidth())
-        //         .attr("y", function (d) { return y(d.sales); })
-        //         .attr("height", function (d) { return height - y(d.sales); });
-
-        //     // add the x Axis
-        //     svg.append("g")
-        //         .attr("transform", "translate(0," + height + ")")
-        //         .call(d3.axisBottom(x));
-
-        //     // add the y Axis
-        //     svg.append("g")
-        //         .call(d3.axisLeft(y));
-
-        // });
+                .call(d3.axisLeft(y).ticks(5));
     }
 
 }

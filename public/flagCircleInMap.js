@@ -77,6 +77,7 @@ var flagCircleInMap = function () {
             }).attr('cx', function (d) {
                 console.log(d.id);
                 console.log(d.iso3);
+                console.log(d.centroid);
                 return projection(d.centroid)[0];
             }).attr('cy', function (d) {
                 return projection(d.centroid)[1];
@@ -164,6 +165,7 @@ var flagCircleInMap = function () {
             }).attr('cx', function (d) {
                 console.log(d.id);
                 console.log(d.iso3);
+                console.log(d.centroid);
                 return projection(d.centroid)[0];
             }).attr('cy', function (d) {
                 return projection(d.centroid)[1];

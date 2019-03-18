@@ -548,7 +548,7 @@
   "sourceURL" : null,
   "rusComment" : null,
   "engComment" : null,
-  "centroid" : null
+  "centroid" : [ 10.392329661732365, 51.1101539445883 ]
 }, {
   "iso3" : "POL",
   "iso2" : "PL",

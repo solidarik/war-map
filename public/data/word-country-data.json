@@ -22134,7 +22134,7 @@
   {
     "id": 247,
     "name": "Czech Republic",
-    "name_ru": "Чехия",
+    "name_ru": "Чехословакия",
     "fips": "EZ",
     "iso2": "CZ",
     "iso3": "CSHH",
@@ -22142,6 +22142,21 @@
       15.338339993742268,
       49.74303609673803
     ],
+    "dataCountries": [
+
+    ]
+  },
+  {
+    "id": 248,
+    "name": "GDR",
+    "name_ru": "ГДР",
+    "fips": "DD",
+    "iso2": "DD",
+    "iso3": "DDR",
+    "centroid": [
+		10.392329661732365,
+		51.1101539445883
+	],
     "dataCountries": [
 
     ]
