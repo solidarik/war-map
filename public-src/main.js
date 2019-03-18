@@ -33,7 +33,7 @@ function fixMiniMapVisible(isHide) {
 
 function changeWindowSize() {
     fixMapHeight();
-    fixMiniMapVisible();
+    //fixMiniMapVisible();
 }
 
 window.onresize = changeWindowSize;
@@ -51,6 +51,7 @@ function startApp() {
     let historyEventsControl = HistoryEventsControl.create();
 
     protocol.subscribe('refreshHistoryEvents', (events) => {
+        mapControl.setHistoryEvents(events)
         historyEventsControl.showEvents(events);
     });
 

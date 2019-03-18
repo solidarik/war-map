@@ -44,6 +44,7 @@ export class MapControl extends EventEmitter {
         })
 
         this.map = map;
+        this.historyEvents = []
 
         this.view = view;
         this.draw = undefined;
@@ -59,10 +60,10 @@ export class MapControl extends EventEmitter {
 
         setTimeout(() => {
             //this._addSelectInteraction();
-            this._addYearLayer();
-            this._addHistoryEventsLayer();
-            this._changeYear(1939);
-            this._addYearControl();
+            this.addYearLayer();
+            this.addHistoryEventsLayer();
+            this.changeYear(1939);
+            this.addYearControl();
             // this._addButtons();
         }, 10);
     }
@@ -71,13 +72,13 @@ export class MapControl extends EventEmitter {
         return new MapControl();
     }
 
-    _addYearLayer() {
+    addYearLayer() {
         var yearLayer = new ol.layer.Tile({
             preload: 5,
             opacity: 0.2,
             zIndex: 2,
             source:  new ol.source.XYZ({
-                tileUrlFunction: (tileCoord, pixelRatio, projection) => { return this._getYearLayerUrl.call(this, tileCoord, pixelRatio, projection) }
+                tileUrlFunction: (tileCoord, pixelRatio, projection) => { return this.getYearLayerUrl.call(this, tileCoord, pixelRatio, projection) }
             })
         });
 
@@ -85,7 +86,7 @@ export class MapControl extends EventEmitter {
         this.map.addLayer(yearLayer);
     }
 
-    _addHistoryEventsLayer() {
+    addHistoryEventsLayer() {
         let historyEventsSource = new ol.source.Vector();
         let historyEventsLayer = new ol.layer.Vector({
             source: historyEventsSource,
@@ -101,33 +102,33 @@ export class MapControl extends EventEmitter {
         this.map.updateSize();
     }
 
-    _getCenterCoord(ft) {
+    getCenterCoord(ft) {
         let geom = ft.getGeometry();
         switch(geom.getType()) {
             case 'Point':
                 return geom.getCoordinates();
                 break;
             case 'LineString':
-                return this._getMedianXY(geom.getCoordinates());
+                return this.getMedianXY(geom.getCoordinates());
                 break;
             case 'Polygon':
-                return this._getMedianXY(geom.getCoordinates()[0]);
+                return this.getMedianXY(geom.getCoordinates()[0]);
                 break;
         }
         return kremlinLocation;
     }
 
-    _getMedianXY(coords) {
+    getMedianXY(coords) {
         var valuesX = [];
         var valuesY = [];
         coords.forEach( (coord) => {
             valuesX.push(coord[0]);
             valuesY.push(coord[1]);
         });
-        return [this._getMedian(valuesX), this._getMedian(valuesY)];
+        return [this.getMedian(valuesX), this.getMedian(valuesY)];
     }
 
-    _getMedian(values) {
+    getMedian(values) {
         values.sort( function(a,b) {return a - b;} );
 
         var half = Math.floor(values.length/2);
@@ -138,7 +139,7 @@ export class MapControl extends EventEmitter {
             return (values[half-1] + values[half]) / 2.0;
     }
 
-    _getYearLayerUrl (tileCoord, pixelRatio, projection) {
+    getYearLayerUrl (tileCoord, pixelRatio, projection) {
 
         if (!this.currentYearForMap)
             return;
@@ -158,17 +159,17 @@ export class MapControl extends EventEmitter {
         return url;
     }
 
-    _addYearControl() {
+    addYearControl() {
         this.map.addControl(new YearControl({
             caption: "Выбрать год событий",
             year: this.currentYear,
             handler: (year) => {
-                this._changeYear(year);
+                this.changeYear(year);
             },
         }));
     }
 
-    _changeYear(year) {
+    changeYear(year) {
         this.historyEventsSource.clear();
         this.currentYear = year;
         this.currentYearForMap = (this.currentYear == 1951) ? 1950 : this.currentYear;
@@ -176,7 +177,7 @@ export class MapControl extends EventEmitter {
         this.emit('changeYear', year);
     }
 
-    _hexToRgbA(hex, opacity){
+    hexToRgbA(hex, opacity){
         var c;
         if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
             c= hex.substring(1).split('');
@@ -189,7 +190,7 @@ export class MapControl extends EventEmitter {
         throw new Error(`Bad Hex ${hex}`);
     }
 
-    _createGeom(mo) {
+    createGeom(mo) {
         let geom;
         switch(mo.kind) {
             case 'Point':
@@ -205,7 +206,55 @@ export class MapControl extends EventEmitter {
         return geom;
     }
 
+    setHistoryEvents(events) {
+        this.historyEvents = events
+        this.repaintHistoryEvents()
+    }
+
+    getAllCoordsFromMap(map) {
+        let all_coords = []
+
+        for (let i = 0; i < map.features.length; i++) {
+            let geom = map.features[i].geometry;
+            if ('Point' === geom.type) {
+                all_coords.push(new ol.proj.fromLonLat(geom.coordinates))
+            } else {
+                let srcCoords = ('Polygon' === geom.type) ? geom.coordinates[0] : geom.coordinates
+                for (let j = 0; j < srcCoords.length; j++) {
+                    all_coords.push(new ol.proj.fromLonLat(srcCoords[j]))
+                }
+            }
+        }
+        return all_coords
+    }
+
+    getCenterOfMap(map) {
+        if (!map.features) {
+            return null
+        }
+
+        const all_coords = this.getAllCoordsFromMap(map)
+        return this.getMedianXY(all_coords)
+    }
+
+    repaintHistoryEvents() {
+        this.historyEventsSource.clear();
+        this.historyEvents.forEach(event => {
+
+            let ft = new ol.Feature({
+                name: event.name,
+                geometry: new ol.geom.Circle(this.getCenterOfMap(event.maps[0]), 100000)
+            });
+
+
+            this.historyEventsSource.addFeature(ft);
+        })
+
+        // this.historyEventsSource.view.zoo
+    }
+
     setCurrentEventMap(map) {
+        return
         this.historyEventsSource.clear();
 
         let features = map.features;
@@ -216,12 +265,12 @@ export class MapControl extends EventEmitter {
             let style = {};
             if (style_prop.fill) {
                 style.fill = new ol.style.Fill({
-                    color: this._hexToRgbA(style_prop.fill, style_prop['fill-opacity'])
+                    color: this.hexToRgbA(style_prop.fill, style_prop['fill-opacity'])
                 });
             }
             if (style_prop.stroke) {
                 style.stroke = new ol.style.Stroke({
-                    color: this._hexToRgbA(style_prop.stroke, style_prop['stroke-opacity']),
+                    color: this.hexToRgbA(style_prop.stroke, style_prop['stroke-opacity']),
                     width: style_prop['stroke-width']
                 });
             };
@@ -243,7 +292,7 @@ export class MapControl extends EventEmitter {
             let ft = new ol.Feature({
                 uid: 100,
                 name: 'test',
-                geometry: this._createGeom({kind: geom.type, coords: coords}
+                geometry: this.createGeom({kind: geom.type, coords: coords}
             )});
             ft.setStyle(new ol.style.Style(style));
             this.historyEventsSource.addFeature(ft);
@@ -256,7 +305,7 @@ export class MapControl extends EventEmitter {
         let ft = new ol.Feature({
             uid: 1000,
             name: 'test2',
-            'geometry': this._createGeom({kind: 'Polygon', coords: [hull_coords]})
+            'geometry': this.createGeom({kind: 'Polygon', coords: [hull_coords]})
         });
         ft.setStyle(new ol.style.Style({
             stroke: new ol.style.Stroke({
