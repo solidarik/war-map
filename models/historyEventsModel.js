@@ -13,6 +13,7 @@ var historyEventsSchema = new mongoose.Schema({
   enemies: [],
   allies: [],
   maps: [],
+  corvexes: []
 }, {
   timestamps: false
 });
