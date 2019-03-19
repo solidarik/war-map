@@ -78,7 +78,7 @@ export class HistoryEventsControl extends EventEmitter {
             return;
 
         if (event != this.active_event) {
-            this._refreshEventImage(event);
+            //soli disable minimap this._refreshEventImage(event);
         }
 
         this.active_event = event;

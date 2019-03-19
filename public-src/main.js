@@ -1,84 +1,85 @@
-import {MapControl} from './mapControl'
-import {ClientProtocol} from './clientProtocol'
-import {HistoryEventsControl} from './historyEventsControl'
-import $ from 'jquery'
+import { MapControl } from "./mapControl";
+import { ClientProtocol } from "./clientProtocol";
+import { HistoryEventsControl } from "./historyEventsControl";
+import $ from "jquery";
 
 window.app = {};
 var app = window.app;
 
-function fixMapHeight(){
-    var mapHeight = $(window).height() - 1;
-    var navbar = $("nav[data-role='navbar']:visible:visible");
-    var mapDiv = $("div[data-role='map']:visible:visible");
-    if (navbar.outerHeight())
-        mapHeight = mapHeight - navbar.outerHeight();
+function fixMapHeight() {
+  var mapHeight = $(window).height() - 1;
+  var navbar = $("nav[data-role='navbar']:visible:visible");
+  var mapDiv = $("div[data-role='map']:visible:visible");
+  if (navbar.outerHeight()) mapHeight = mapHeight - navbar.outerHeight();
 
-    mapDiv.height(mapHeight);
-    if (window.map)
-        window.map.fixMapHeight();
+  mapDiv.height(mapHeight);
+  if (window.map) window.map.fixMapHeight();
 }
 
 function fixMiniMapVisible(isHide) {
+  let elem = $("#event-image-div");
+  if (isHide) {
+    $("#event-image-div")[0].innerHTML = "";
+    elem.hide();
+    return;
+  }
 
-    let elem = $('#event-image-div');
-    if (isHide) {
-        $('#event-image-div')[0].innerHTML = '';
-        elem.hide();
-        return;
-    }
-
-    var viewWidth = $(window).width();
-    (350 < viewWidth) ? elem.show() : elem.hide();
+  var viewWidth = $(window).width();
+  350 < viewWidth ? elem.show() : elem.hide();
 }
 
 function changeWindowSize() {
-    fixMapHeight();
-    fixMiniMapVisible();
+  fixMapHeight();
+  //fixMiniMapVisible();
 }
 
 window.onresize = changeWindowSize;
 
 function startApp() {
+  let protocol = ClientProtocol.create();
 
-    let protocol = ClientProtocol.create();
+  let mapControl = MapControl.create();
+  mapControl.subscribe("changeYear", year => {
+    fixMiniMapVisible(true);
+    protocol.getHistoryEventsByYear(year);
+  });
 
-    let mapControl = MapControl.create();
-    mapControl.subscribe('changeYear', (year) => {
-        fixMiniMapVisible(true);
-        protocol.getHistoryEventsByYear(year);
+  let historyEventsControl = HistoryEventsControl.create();
+
+  protocol.subscribe("refreshHistoryEvents", events => {
+    mapControl.setHistoryEvents(events);
+    historyEventsControl.showEvents(events);
+  });
+
+  historyEventsControl.subscribe("refreshedEventList", () => {
+    $("table tr").click(function() {
+      historyEventsControl.rowEventClick($(this));
+      return false;
     });
 
-    let historyEventsControl = HistoryEventsControl.create();
-
-    protocol.subscribe('refreshHistoryEvents', (events) => {
-        historyEventsControl.showEvents(events);
+    $("table tr td span").click(function() {
+      historyEventsControl.mapEventClick($(this));
+      return false;
     });
+  });
 
-    historyEventsControl.subscribe('refreshedEventList', () => {
-        $('table tr').click(function(){
-            historyEventsControl.rowEventClick( $(this) );
-            return false;
-        });
+  historyEventsControl.subscribe("activatedEvent", data => {
+    mapControl.setCurrentEventMap(data.map);
+    fixMiniMapVisible();
+  });
 
-        $('table tr td span').click(function(){
-            historyEventsControl.mapEventClick( $(this) );
-            return false;
-        });
-    });
+  window.map = mapControl;
 
-    historyEventsControl.subscribe('activatedEvent', (data) => {
-        mapControl.setCurrentEventMap(data.map);
-        fixMiniMapVisible();
-    });
+  // var something = document.getElementById('content');
+  // something.style.cursor = 'pointer';
 
-    window.map = mapControl;
+  $(
+    document.getElementsByClassName(
+      "ol-attribution ol-unselectable ol-control ol-collapsed"
+    )
+  ).remove();
 
-    // var something = document.getElementById('content');
-    // something.style.cursor = 'pointer';
-
-    $(document.getElementsByClassName('ol-attribution ol-unselectable ol-control ol-collapsed')).remove();
-
-    changeWindowSize();
+  changeWindowSize();
 }
 
-export { startApp }
+export { startApp };
