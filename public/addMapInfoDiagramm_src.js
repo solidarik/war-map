@@ -62,7 +62,7 @@ class AddMapInfoDiagramm {
                 if(x.domain().length<=50)    {
                     domainXaxis = x.domain().filter(function (d, i) { return !(i % 5);});
                 }else{
-                    if(x.domain().length<=100)    {
+                    if(x.domain().length<=200)    {
                         domainXaxis = x.domain().filter(function (d, i) { return !(i % 10);});
                     }
                 }

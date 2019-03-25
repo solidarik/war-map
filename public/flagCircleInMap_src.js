@@ -209,7 +209,14 @@
                         res = (d.value);
                     }
                 }
-                const htmlData = d.rusCountry + "<br/>" + Math.round(res * 100) / 100 + " "+d.rusUnit+"<a target='_blank' rel='noopener noreferrer' href='"+d.rusSource+"'>*</a>";
+                let htmlData;
+                if(typeof d.rusSource !== 'undefined'&&d.rusSource!=null&&d.rusSource.trim()!=""){
+                    htmlData = d.rusCountry + "<br/>" + Math.round(res * 100) / 100 + " "+d.rusUnit+"<a target='_blank' rel='noopener noreferrer' href='"+d.rusSource+"'>*</a>";
+                }
+                else{
+                    htmlData = d.rusCountry + "<br/><p style='font-weight: bold;color: red;'>" + Math.round(res * 100) / 100 + " "+d.rusUnit + " </p>";
+                }
+                
 
                 div.transition()
                     // .duration(200)		

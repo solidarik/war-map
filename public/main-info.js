@@ -43,45 +43,86 @@ loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "
 // 	downloadAnchorNode.remove();
 // }
 
-// function download(content, fileName, contentType) {
-// 	var a = document.createElement("a");
-// 	var file = new Blob([content], { type: contentType });
-// 	a.href = URL.createObjectURL(file);
-// 	a.download = fileName;
-// 	a.click();
-// }
+ function download(content, fileName, contentType) {
+ 	var a = document.createElement("a");
+ 	var file = new Blob([content], { type: contentType });
+ 	a.href = URL.createObjectURL(file);
+ 	a.download = fileName;
+ 	a.click();
+ }
 
-// loadedData.forEach(element => {
-// 	if (element.id < 9) {
-// 		var filteredYearData = [];
-// 		d3.json(element.url, function (error, dataFromFile) {
-// 			if (error) console.log(error);
-// 			var changedData = dataFromFile.filter(function (el) {
-// 				return parseInt(el.date) >= 1900;
-// 			  });
-// 			download(JSON.stringify(changedData), element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) + '_small_1900.json', 'text/json');
+ //проверка на пустоту
+//  loadedData.forEach(element => {
+//  		var filteredYearData = [];
+//  		d3.json(element.url, function (error, dataFromFile) {
+// 			 if (error) console.log(error);
+// 			 console.log(element.url);
+// 			 var changedData = dataFromFile.filter(function (el) {
+// 				return (el.engSource==null||el.engSource.trim()==="")&&el.rusSource!=null&&el.rusSource.trim()!="";
+// 			 });
+// 			 console.log(JSON.stringify(changedData));
+// 			if(changedData.length>0){
+// 				console.log("download");
+// 			 	download(JSON.stringify(changedData), element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) + '_empty_engSource.json', 'text/json');
+// 			}
+// 		 });
+// 	 });
+
+//  loadedData.forEach(element => {
+//  	if (element.id < 9) {
+//  		// d3.json(element.url, function (error, dataFromFile) {
+//  		// 	if (error) console.log(error);
+//  		// 	var changedData = dataFromFile.filter(function (el) {
+//  		// 		return parseInt(el.date) >= 1900;
+//  		// 	  });
+//  		// 	download(JSON.stringify(changedData), element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) + '_small_1900.json', 'text/json');
+//  		// });
+ 	
+// 	console.log(element.url.substring(0,element.url.lastIndexOf('/')+1)+element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) + '_big.json');	
+// 	 d3.json(element.url.substring(0,element.url.lastIndexOf('/')+1)+element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) + '_big.json', function (error, dataFromFile) {
+// 		if (error) console.log(error);
+// 		var changedData = dataFromFile.filter(function (el) {
+// 			return parseInt(el.date) >= 1900;
 // 		});
-// 	}
 
-// 	// d3.json(element.url, function (error, dataFromFile) {
-// 	// 	if (error) console.log(error);
-// 	// 	var changedData = dataFromFile;
-// 	// 	changedData.forEach(element => {
-// 	// 		delete element.engCountry;  // or delete person["age"];
-// 	// 		delete element.rusCity;  // or delete person["age"];
-// 	// 		delete element.engCity;  // or delete person["age"];
-// 	// 		delete element.code;  // or delete person["age"];
-// 	// 		delete element.rusIndicator;  // or delete person["age"];
-// 	// 		delete element.engIndicator;  // or delete person["age"];
-// 	// 		delete element.engUnit;  // or delete person["age"];
-// 	// 		delete element.rusSource;  // or delete person["age"];
-// 	// 		delete element.engSource;  // or delete person["age"];
-// 	// 		delete element.sourceURL;  // or delete person["age"];
-// 	// 		delete element.rusComment;  // or delete person["age"];
-// 	// 		delete element.engComment;  // or delete person["age"];
-// 	// 	});
-// 	//	download(JSON.stringify(changedData), element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) + '_small.json', 'text/json');
-// 	//});
+// 		changedData.forEach(el => {
+// 	 		//delete el.engCountry;  // or delete person["age"];
+// 	 		delete el.rusCity;  // or delete person["age"];
+// 	 		delete el.engCity;  // or delete person["age"];
+// 	 		delete el.code;  // or delete person["age"];
+// 	 		delete el.rusIndicator;  // or delete person["age"];
+// 	 		delete el.engIndicator;  // or delete person["age"];
+// 			 //delete el.engUnit;  // or delete person["age"];
+// 			 loadedData.push({ "id": "1", "EngName": "Agriculture, forestry, and fishing, value added (current US$)", "RusName": "Агропромышленность", "url": "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json", "jsonType": "UFA" });
+// 			 loadedData.push({ "id": "2", "EngName": "Cereal production (metric tons)", "RusName": "Зерно", "url": "data/DTO/Cereal production (metric tons).json", "jsonType": "UFA" });
+// 			 loadedData.push({ "id": "3", "EngName": "GDP (Merged data)", "RusName": "ВВП объединенные", "url": "data/DTO/GDP (Merged data).json", "jsonType": "UFA" });
+// 			 loadedData.push({ "id": "4", "EngName": "Industry (including construction), value added (current US$)", "RusName": "Промышленность", "url": "data/DTO/Industry (including construction), value added (current US$).json", "jsonType": "UFA" });
+// 			 loadedData.push({ "id": "5", "EngName": "Manufacturing, value added (current US$)", "RusName": "Производство", "url": "data/DTO/Manufacturing, value added (current US$).json", "jsonType": "UFA" });
+// 			 loadedData.push({ "id": "6", "EngName": "PerCapita GDP", "RusName": "ВВП на душу", "url": "data/DTO/PerCapita GDP.json", "jsonType": "UFA" });
+// 			 loadedData.push({ "id": "7", "EngName": "Population (Merged data)", "RusName": "Население", "url": "data/DTO/Population (Merged data).json", "jsonType": "UFA" });
+// 			 loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "RusName": "Услуги", "url": "data/DTO/Services, value added (current US$).json", "jsonType": "UFA" });
+// 			if(element.id=="1"||element.id=="3"||element.id=="4"||element.id=="5"||element.id=="8"){
+// 				el.engUnit='$';
+// 				el.rusUnit='$';
+// 			}
+// 			if(element.id=="2"){
+// 				el.engUnit='tons';
+// 				el.rusUnit='тонн';
+// 			}
+// 			if(element.id=="6"){
+// 				el.engUnit='';
+// 				el.rusUnit='';
+// 			}
+// 	 		delete el.rusSource;  // or delete person["age"];
+// 			delete el.engSource;  // or delete person["age"];
+// 			el.rusSource = el.sourceURL;
+// 	 		delete el.sourceURL;  // or delete person["age"];
+// 	 		delete el.rusComment;  // or delete person["age"];
+// 	 		delete el.engComment;  // or delete person["age"];
+// 	 	});
+// 		download(JSON.stringify(changedData), element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) +'.json', 'text/json');//+ '_small_1900.json'
+// 	});
+// }
 // });
 
 // console.time implementation for IE
