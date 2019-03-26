@@ -53,17 +53,16 @@ loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "
 
  //проверка на пустоту
 //  loadedData.forEach(element => {
-//  		var filteredYearData = [];
 //  		d3.json(element.url, function (error, dataFromFile) {
 // 			 if (error) console.log(error);
 // 			 console.log(element.url);
 // 			 var changedData = dataFromFile.filter(function (el) {
-// 				return (el.engSource==null||el.engSource.trim()==="")&&el.rusSource!=null&&el.rusSource.trim()!="";
+// 				return (typeof (el.rusIndicator) == "undefined"||el.rusIndicator==null||el.rusIndicator.trim()==="");
 // 			 });
 // 			 console.log(JSON.stringify(changedData));
 // 			if(changedData.length>0){
 // 				console.log("download");
-// 			 	download(JSON.stringify(changedData), element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) + '_empty_engSource.json', 'text/json');
+// 			 	download(JSON.stringify(changedData), element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) + '_empty_rusIndicator.json', 'text/json');
 // 			}
 // 		 });
 // 	 });
@@ -93,14 +92,14 @@ loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "
 // 	 		delete el.rusIndicator;  // or delete person["age"];
 // 	 		delete el.engIndicator;  // or delete person["age"];
 // 			 //delete el.engUnit;  // or delete person["age"];
-// 			 loadedData.push({ "id": "1", "EngName": "Agriculture, forestry, and fishing, value added (current US$)", "RusName": "Агропромышленность", "url": "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json", "jsonType": "UFA" });
-// 			 loadedData.push({ "id": "2", "EngName": "Cereal production (metric tons)", "RusName": "Зерно", "url": "data/DTO/Cereal production (metric tons).json", "jsonType": "UFA" });
-// 			 loadedData.push({ "id": "3", "EngName": "GDP (Merged data)", "RusName": "ВВП объединенные", "url": "data/DTO/GDP (Merged data).json", "jsonType": "UFA" });
-// 			 loadedData.push({ "id": "4", "EngName": "Industry (including construction), value added (current US$)", "RusName": "Промышленность", "url": "data/DTO/Industry (including construction), value added (current US$).json", "jsonType": "UFA" });
-// 			 loadedData.push({ "id": "5", "EngName": "Manufacturing, value added (current US$)", "RusName": "Производство", "url": "data/DTO/Manufacturing, value added (current US$).json", "jsonType": "UFA" });
-// 			 loadedData.push({ "id": "6", "EngName": "PerCapita GDP", "RusName": "ВВП на душу", "url": "data/DTO/PerCapita GDP.json", "jsonType": "UFA" });
-// 			 loadedData.push({ "id": "7", "EngName": "Population (Merged data)", "RusName": "Население", "url": "data/DTO/Population (Merged data).json", "jsonType": "UFA" });
-// 			 loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "RusName": "Услуги", "url": "data/DTO/Services, value added (current US$).json", "jsonType": "UFA" });
+// 			//  loadedData.push({ "id": "1", "EngName": "Agriculture, forestry, and fishing, value added (current US$)", "RusName": "Агропромышленность", "url": "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json", "jsonType": "UFA" });
+// 			//  loadedData.push({ "id": "2", "EngName": "Cereal production (metric tons)", "RusName": "Зерно", "url": "data/DTO/Cereal production (metric tons).json", "jsonType": "UFA" });
+// 			//  loadedData.push({ "id": "3", "EngName": "GDP (Merged data)", "RusName": "ВВП объединенные", "url": "data/DTO/GDP (Merged data).json", "jsonType": "UFA" });
+// 			//  loadedData.push({ "id": "4", "EngName": "Industry (including construction), value added (current US$)", "RusName": "Промышленность", "url": "data/DTO/Industry (including construction), value added (current US$).json", "jsonType": "UFA" });
+// 			//  loadedData.push({ "id": "5", "EngName": "Manufacturing, value added (current US$)", "RusName": "Производство", "url": "data/DTO/Manufacturing, value added (current US$).json", "jsonType": "UFA" });
+// 			//  loadedData.push({ "id": "6", "EngName": "PerCapita GDP", "RusName": "ВВП на душу", "url": "data/DTO/PerCapita GDP.json", "jsonType": "UFA" });
+// 			//  loadedData.push({ "id": "7", "EngName": "Population (Merged data)", "RusName": "Население", "url": "data/DTO/Population (Merged data).json", "jsonType": "UFA" });
+// 			//  loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "RusName": "Услуги", "url": "data/DTO/Services, value added (current US$).json", "jsonType": "UFA" });
 // 			if(element.id=="1"||element.id=="3"||element.id=="4"||element.id=="5"||element.id=="8"){
 // 				el.engUnit='$';
 // 				el.rusUnit='$';
@@ -110,9 +109,13 @@ loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "
 // 				el.rusUnit='тонн';
 // 			}
 // 			if(element.id=="6"){
-// 				el.engUnit='';
-// 				el.rusUnit='';
+// 				el.engUnit='$';
+// 				el.rusUnit='$';
 // 			}
+// 			if(element.id=="7"){
+// 				el.engUnit='person';
+// 				el.rusUnit='человек';
+// 			}			
 // 	 		delete el.rusSource;  // or delete person["age"];
 // 			delete el.engSource;  // or delete person["age"];
 // 			el.rusSource = el.sourceURL;
