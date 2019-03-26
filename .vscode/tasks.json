@@ -6,9 +6,7 @@
       "label": "running node file",
       "type": "shell",
       "command": "node",
-      "args": [
-        "${file}"
-      ],
+      "args": ["${file}"],
       "group": {
         "kind": "build",
         "isDefault": true
@@ -25,10 +23,8 @@
     {
       "label": "running python file",
       "type": "shell",
-      "command": "python3.7",
-      "args": [
-        "${file}"
-      ],
+      "command": "python",
+      "args": ["${file}"],
       "group": {
         "kind": "build",
         "isDefault": true

@@ -2,6 +2,7 @@ const log = require("../helper/logHelper");
 const DbHelper = require("../loadDatabase/dbHelper");
 const inetHelper = require("../helper/inetHelper");
 const historyEventsJsonMediator = require("../loadDatabase/historyEventsJsonMediator");
+const agreementsJsonMediator = require("../loadDatabase/agreementsJsonMediator");
 const usersJsonMediator = require("../loadDatabase/usersJsonMediator");
 const dictEngRusJsonMediator = require("../loadDatabase/dictEngRusJsonMediator");
 const dictEngRusProtocol = require("../socketProtocol/dictEngRusProtocol");
@@ -35,10 +36,16 @@ Promise.resolve(true)
   // })
   .then(() => {
     return dbHelper.saveFilesFromDir({
-      source: "python/out_battles",
-      mediator: historyEventsJsonMediator
+      source: "python/out_agreements",
+      mediator: agreementsJsonMediator
     });
   })
+  // .then(() => {
+  //   return dbHelper.saveFilesFromDir({
+  //     source: "python/out_battles",
+  //     mediator: historyEventsJsonMediator
+  //   });
+  // })
   .then(() => {
     log.success(`Успешная загрузка`);
     dbHelper.free();
