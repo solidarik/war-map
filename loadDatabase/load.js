@@ -8,7 +8,7 @@ const dictEngRusJsonMediator = require('../loadDatabase/dictEngRusJsonMediator')
 const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol')
 
 ;(async () => {
-  const coords = await inetHelper.getCoordsFromWiki('брюссель')
+  const coords = await inetHelper.getCoordsForCityOrCountry('Россия')
   console.log(coords)
 })()
 return
