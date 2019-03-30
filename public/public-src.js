@@ -5,8 +5,6 @@
 //
 // anything defined in a previous bundle is accessed via the
 // orig method which is the require for previous bundles
-
-// eslint-disable-next-line no-global-assign
 parcelRequire = (function (modules, cache, entry, globalName) {
   // Save the require from previous bundle to this closure if any
   var previousRequire = typeof parcelRequire === 'function' && parcelRequire;
@@ -77,8 +75,16 @@ parcelRequire = (function (modules, cache, entry, globalName) {
     }, {}];
   };
 
+  var error;
   for (var i = 0; i < entry.length; i++) {
-    newRequire(entry[i]);
+    try {
+      newRequire(entry[i]);
+    } catch (e) {
+      // Save first error but execute all entries
+      if (!error) {
+        error = e;
+      }
+    }
   }
 
   if (entry.length) {
@@ -103,6 +109,13 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   // Override the current require with this new one
+  parcelRequire = newRequire;
+
+  if (error) {
+    // throw error from earlier, _after updating parcelRequire_
+    throw error;
+  }
+
   return newRequire;
 })({"2n/L":[function(require,module,exports) {
 var define;
@@ -24051,7 +24064,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var kremlinLocation = new _ol.default.proj.fromLonLat([37.617499, 55.752023]); //moscow kremlin
+var kremlinLocation = new _ol.default.proj.fromLonLat([37.617499, 55.752023]); // moscow kremlin
 
 var MapControl =
 /*#__PURE__*/
@@ -24071,27 +24084,27 @@ function (_EventEmitter) {
     });
     var view = new _ol.default.View({
       center: new _ol.default.proj.fromLonLat([56.004, 54.695]),
-      //ufa place
-      //center: kremlinLocation,
-      zoom: 3 //projection: 'EPSG:4326'
+      // ufa place
+      // center: kremlinLocation,
+      zoom: 3 // projection: 'EPSG:4326'
 
     });
     var map = new _ol.default.Map({
       controls: _ol.default.control.defaults({
         attribution: false,
         zoom: false
-      }).extend([//new ol.control.FullScreen()
+      }).extend([// new ol.control.FullScreen()
       ]),
       layers: [rasterLayer],
-      target: "map",
+      target: 'map',
       view: view
     });
-    map.on("click", function (evt) {
+    map.on('click', function (evt) {
       var coordinates = evt.coordinate;
       var lonLatCoords = new _ol.default.proj.toLonLat(coordinates);
-      console.log("clicked on map with coordinates: " + coordinates + "; WGS: " + lonLatCoords);
+      console.log('clicked on map with coordinates: ' + coordinates + '; WGS: ' + lonLatCoords);
     });
-    map.on("moveend", function (evt) {
+    map.on('moveend', function (evt) {
       var map = evt.map; //   console.log(map.getView().getZoom());
     });
     _this.map = map;
@@ -24114,7 +24127,7 @@ function (_EventEmitter) {
       h: 256
     };
     setTimeout(function () {
-      //this._addSelectInteraction();
+      // this._addSelectInteraction();
       _this.addYearLayer();
 
       _this.addHistoryEventsLayer();
@@ -24154,11 +24167,11 @@ function (_EventEmitter) {
 
       var style = new _ol.default.style.Style({
         fill: new _ol.default.style.Fill({
-          color: "rgba(255,255,255,0.5)"
+          color: 'rgba(255,255,255,0.5)'
         }),
         stroke: new _ol.default.style.Stroke({
           width: 2,
-          color: "rgba(40, 40, 40, 0.50)"
+          color: 'rgba(40, 40, 40, 0.50)'
         }),
         //   text: new ol.style.Text({
         //     font: "12px helvetica,sans-serif",
@@ -24172,11 +24185,11 @@ function (_EventEmitter) {
         //   }),
         image: new _ol.default.style.Circle({
           fill: new _ol.default.style.Fill({
-            color: "rgba(255, 160, 122, 0.5)"
+            color: 'rgba(255, 160, 122, 0.5)'
           }),
           stroke: new _ol.default.style.Stroke({
             width: 1,
-            color: "rgba(40, 40, 40, 0.50)"
+            color: 'rgba(40, 40, 40, 0.50)'
           }),
           radius: 70000
         })
@@ -24221,15 +24234,15 @@ function (_EventEmitter) {
       var geom = ft.getGeometry();
 
       switch (geom.getType()) {
-        case "Point":
+        case 'Point':
           return geom.getCoordinates();
           break;
 
-        case "LineString":
+        case 'LineString':
           return this.getMedianXY(geom.getCoordinates());
           break;
 
-        case "Polygon":
+        case 'Polygon':
           return this.getMedianXY(geom.getCoordinates()[0]);
           break;
       }
@@ -24261,13 +24274,13 @@ function (_EventEmitter) {
     value: function getYearLayerUrl(tileCoord, pixelRatio, projection) {
       if (!this.currentYearForMap) return;
       var ano = this.currentYearForMap;
-      var anow = "" + ano;
-      anow = anow.replace("-", "B");
+      var anow = '' + ano;
+      anow = anow.replace('-', 'B');
       var z = tileCoord[0];
       var x = tileCoord[1];
       var y = -tileCoord[2] - 1;
-      if (0 == z || z > 6) return;
-      var url = "http://cdn.geacron.com" + "/tiles/area/" + anow + "/Z" + z + "/" + y + "/" + x + ".png";
+      if (z == 0 || z > 6) return;
+      var url = 'http://cdn.geacron.com' + '/tiles/area/' + anow + '/Z' + z + '/' + y + '/' + x + '.png';
       return url;
     }
   }, {
@@ -24276,7 +24289,7 @@ function (_EventEmitter) {
       var _this4 = this;
 
       this.map.addControl(new YearControl({
-        caption: "Выбрать год событий",
+        caption: 'Выбрать год событий',
         year: this.currentYear,
         handler: function handler(year) {
           _this4.changeYear(year);
@@ -24290,7 +24303,7 @@ function (_EventEmitter) {
       this.currentYear = year;
       this.currentYearForMap = this.currentYear == 1951 ? 1950 : this.currentYear;
       this.yearLayer.getSource().refresh();
-      this.emit("changeYear", year);
+      this.emit('changeYear', year);
     }
   }, {
     key: "hexToRgbA",
@@ -24298,14 +24311,14 @@ function (_EventEmitter) {
       var c;
 
       if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
-        c = hex.substring(1).split("");
+        c = hex.substring(1).split('');
 
         if (c.length == 3) {
           c = [c[0], c[0], c[1], c[1], c[2], c[2]];
         }
 
-        c = "0x" + c.join("");
-        return [c >> 16 & 255, c >> 8 & 255, c & 255, opacity ? opacity : 0];
+        c = '0x' + c.join('');
+        return [c >> 16 & 255, c >> 8 & 255, c & 255, opacity || 0];
       }
 
       throw new Error("Bad Hex ".concat(hex));
@@ -24316,15 +24329,15 @@ function (_EventEmitter) {
       var geom;
 
       switch (mo.kind) {
-        case "Point":
+        case 'Point':
           geom = new _ol.default.geom.Point(mo.coords);
           break;
 
-        case "LineString":
+        case 'LineString':
           geom = new _ol.default.geom.LineString(mo.coords);
           break;
 
-        case "Polygon":
+        case 'Polygon':
           geom = new _ol.default.geom.Polygon(mo.coords);
           break;
       }
@@ -24345,10 +24358,10 @@ function (_EventEmitter) {
       for (var i = 0; i < map.features.length; i++) {
         var geom = map.features[i].geometry;
 
-        if ("Point" === geom.type) {
+        if (geom.type === 'Point') {
           all_coords.push(new _ol.default.proj.fromLonLat(geom.coordinates));
         } else {
-          var srcCoords = "Polygon" === geom.type ? geom.coordinates[0] : geom.coordinates;
+          var srcCoords = geom.type === 'Polygon' ? geom.coordinates[0] : geom.coordinates;
 
           for (var j = 0; j < srcCoords.length; j++) {
             all_coords.push(new _ol.default.proj.fromLonLat(srcCoords[j]));
@@ -24398,24 +24411,24 @@ function (_EventEmitter) {
 
         if (style_prop.fill) {
           style.fill = new _ol.default.style.Fill({
-            color: this.hexToRgbA(style_prop.fill, style_prop["fill-opacity"])
+            color: this.hexToRgbA(style_prop.fill, style_prop['fill-opacity'])
           });
         }
 
         if (style_prop.stroke) {
           style.stroke = new _ol.default.style.Stroke({
-            color: this.hexToRgbA(style_prop.stroke, style_prop["stroke-opacity"]),
-            width: style_prop["stroke-width"]
+            color: this.hexToRgbA(style_prop.stroke, style_prop['stroke-opacity']),
+            width: style_prop['stroke-width']
           });
         }
 
         var coords = [];
 
-        if ("Point" === geom.type) {
+        if (geom.type === 'Point') {
           coords = new _ol.default.proj.fromLonLat(geom.coordinates);
           all_coords.push(coords);
         } else {
-          var srcCoords = "Polygon" === geom.type ? geom.coordinates[0] : geom.coordinates;
+          var srcCoords = geom.type === 'Polygon' ? geom.coordinates[0] : geom.coordinates;
 
           for (var j = 0; j < srcCoords.length; j++) {
             var point = new _ol.default.proj.fromLonLat(srcCoords[j]);
@@ -24423,14 +24436,14 @@ function (_EventEmitter) {
             all_coords.push(point);
           }
 
-          if ("Polygon" === geom.type) {
+          if (geom.type === 'Polygon') {
             coords = [coords];
           }
         }
 
         var _ft = new _ol.default.Feature({
           uid: 100,
-          name: "test",
+          name: 'test',
           geometry: this.createGeom({
             kind: geom.type,
             coords: coords
@@ -24449,19 +24462,19 @@ function (_EventEmitter) {
       });
       var ft = new _ol.default.Feature({
         uid: 1000,
-        name: "test2",
+        name: 'test2',
         geometry: this.createGeom({
-          kind: "Polygon",
+          kind: 'Polygon',
           coords: [hull_coords]
         })
       });
       ft.setStyle(new _ol.default.style.Style({
         stroke: new _ol.default.style.Stroke({
-          color: "maroon",
+          color: 'maroon',
           width: 5
         }),
         fill: new _ol.default.style.Fill({
-          color: "rgba(0, 0, 255, 0.1)"
+          color: 'rgba(0, 0, 255, 0.1)'
         })
       }));
       this.historyEventsSource.addFeature(ft);
@@ -24472,9 +24485,9 @@ function (_EventEmitter) {
       var _this6 = this;
 
       this.map.addControl(new CustomControl({
-        caption: "Выбрать объект",
-        class: "pointer-control",
-        icon: "mdi mdi-cursor-default-outline",
+        caption: 'Выбрать объект',
+        class: 'pointer-control',
+        icon: 'mdi mdi-cursor-default-outline',
         default: true,
         handler: function handler(btn) {
           _this6._setActiveButton(btn);
@@ -24485,15 +24498,15 @@ function (_EventEmitter) {
         }
       }));
       this.map.addControl(new CustomControl({
-        caption: "Импортировать объекты из geojson-файла",
-        class: "box-control",
-        icon: "mdi mdi-import",
+        caption: 'Импортировать объекты из geojson-файла',
+        class: 'box-control',
+        icon: 'mdi mdi-import',
         handler: function handler(btn) {
-          console.log("click to import...");
+          console.log('click to import...');
 
           _this6._setActiveButton(btn);
 
-          document.getElementById("fileImport").click();
+          document.getElementById('fileImport').click();
         }
       }));
     }
@@ -24501,51 +24514,51 @@ function (_EventEmitter) {
     key: "_setActiveButton",
     value: function _setActiveButton(btn) {
       if (this.activeButton) {
-        $(this.activeButton).removeClass("glow-button");
+        $(this.activeButton).removeClass('glow-button');
       }
 
       this.activeButton = btn;
-      $(btn).addClass("glow-button");
+      $(btn).addClass('glow-button');
     }
   }, {
     key: "_getStyleFunction",
     value: function _getStyleFunction(feature, resolution) {
       var stroke = new _ol.default.style.Stroke({
-        color: "#ff0000",
+        color: '#ff0000',
         width: 2
       });
       var fill = new _ol.default.style.Fill({
-        color: "rgba(255, 255, 0, 0.2)"
+        color: 'rgba(255, 255, 0, 0.2)'
       });
       var imageStyle = new _ol.default.style.Circle({
         radius: 5,
         fill: new _ol.default.style.Fill({
-          color: "red"
+          color: 'red'
         }),
         stroke: new _ol.default.style.Stroke({
-          color: "black",
+          color: 'black',
           width: 1
         })
       });
-      var textColor = "red";
+      var textColor = 'red';
 
-      switch (feature.get("country")) {
-        case "germany":
+      switch (feature.get('country')) {
+        case 'germany':
           stroke = new _ol.default.style.Stroke({
-            color: "#000000",
+            color: '#000000',
             width: 2
           });
           imageStyle = new _ol.default.style.Circle({
             radius: 5,
             fill: new _ol.default.style.Fill({
-              color: "black"
+              color: 'black'
             }),
             stroke: new _ol.default.style.Stroke({
-              color: "black",
+              color: 'black',
               width: 1
             })
           });
-          textColor = "black";
+          textColor = 'black';
       }
 
       return new _ol.default.style.Style({
@@ -24553,17 +24566,17 @@ function (_EventEmitter) {
         stroke: stroke,
         image: imageStyle,
         text: this._createTextStyle.call(this, feature, resolution, {
-          align: "center",
-          baseline: "middle",
-          size: "14px",
+          align: 'center',
+          baseline: 'middle',
+          size: '14px',
           offsetX: 0,
           offsetY: 15,
-          weight: "bold",
-          overflow: "true",
+          weight: 'bold',
+          overflow: 'true',
           rotation: 0,
-          font: "Arial",
+          font: 'Arial',
           color: textColor,
-          outline: "black",
+          outline: 'black',
           outlineWidth: 0,
           maxreso: 20000
         })
@@ -24580,14 +24593,14 @@ function (_EventEmitter) {
       var weight = dom.weight;
       var placement = dom.placement ? dom.placement : undefined;
       var maxAngle = dom.maxangle ? parseFloat(dom.maxangle) : undefined;
-      var overflow = dom.overflow ? dom.overflow == "true" : undefined;
+      var overflow = dom.overflow ? dom.overflow == 'true' : undefined;
       var rotation = parseFloat(dom.rotation);
-      var font = weight + " " + size + " " + dom.font;
+      var font = weight + ' ' + size + ' ' + dom.font;
       var fillColor = dom.color;
       var outlineColor = dom.outline;
       var outlineWidth = parseInt(dom.outlineWidth, 10);
       return new _ol.default.style.Text({
-        textAlign: align == "" ? undefined : align,
+        textAlign: align == '' ? undefined : align,
         textBaseline: baseline,
         font: font,
         text: this._getText(feature, resolution, dom),
@@ -24611,17 +24624,17 @@ function (_EventEmitter) {
     value: function _getText(feature, resolution, dom) {
       var type = dom.text;
       var maxResolution = dom.maxreso;
-      var text = feature.get("name");
-      text = text ? text : "";
+      var text = feature.get('name');
+      text = text || '';
 
       if (resolution > maxResolution) {
-        text = "";
-      } else if (type == "hide") {
-        text = "";
-      } else if (type == "shorten") {
+        text = '';
+      } else if (type == 'hide') {
+        text = '';
+      } else if (type == 'shorten') {
         text = text.trunc(12);
-      } else if (type == "wrap" && dom.placement != "line") {
-        text = stringDivider(text, 16, "\n");
+      } else if (type == 'wrap' && dom.placement != 'line') {
+        text = stringDivider(text, 16, '\n');
       }
 
       return text;
@@ -24670,43 +24683,43 @@ function (_SuperCustomControl) {
     _classCallCheck(this, CustomControl);
 
     _this7 = _possibleConstructorReturn(this, _getPrototypeOf(CustomControl).call(this, inputParams));
-    var caption = get(inputParams, "caption");
-    var hint = get(inputParams, "hint") || caption;
-    var button = document.createElement("button");
-    button.innerHTML = _this7.getBSIconHTML(get(inputParams, "icon"));
-    button.className = get(inputParams, "class");
+    var caption = get(inputParams, 'caption');
+    var hint = get(inputParams, 'hint') || caption;
+    var button = document.createElement('button');
+    button.innerHTML = _this7.getBSIconHTML(get(inputParams, 'icon'));
+    button.className = get(inputParams, 'class');
     button.title = hint;
-    var parentDiv = $("#custom-control")[0];
+    var parentDiv = $('#custom-control')[0];
 
     if (!parentDiv) {
-      parentDiv = document.createElement("div");
-      parentDiv.className = "ol-control";
-      parentDiv.setAttribute("id", "custom-control");
+      parentDiv = document.createElement('div');
+      parentDiv.className = 'ol-control';
+      parentDiv.setAttribute('id', 'custom-control');
     }
 
     parentDiv.appendChild(button);
     _this7.element = parentDiv;
 
-    _ol.default.control.Control.call(_assertThisInitialized(_assertThisInitialized(_this7)), {
+    _ol.default.control.Control.call(_assertThisInitialized(_this7), {
       label: caption,
       hint: hint,
       tipLabel: caption,
-      element: parentDiv //target: get(inputParams, "target")
+      element: parentDiv // target: get(inputParams, "target")
 
     });
 
-    var handler = get(inputParams, "handler");
+    var handler = get(inputParams, 'handler');
 
     if (handler) {
-      button.addEventListener("click", function () {
+      button.addEventListener('click', function () {
         handler(button);
       }, false);
-      button.addEventListener("touchstart", function () {
+      button.addEventListener('touchstart', function () {
         handler(button);
       }, false);
     }
 
-    var isDefault = get(inputParams, "default");
+    var isDefault = get(inputParams, 'default');
 
     if (isDefault) {
       handler(button);
@@ -24733,12 +24746,12 @@ function (_SuperCustomControl2) {
     var hint = inputParams.hint || caption;
     _this8.year = inputParams.year;
     _this8.handler = inputParams.handler;
-    var yearInput = document.createElement("input");
-    yearInput.className = "input-without-focus";
+    var yearInput = document.createElement('input');
+    yearInput.className = 'input-without-focus';
     yearInput.title = hint;
-    yearInput.setAttribute("id", "year-input");
+    yearInput.setAttribute('id', 'year-input');
     yearInput.value = _this8.year;
-    yearInput.addEventListener("keyup", function (event) {
+    yearInput.addEventListener('keyup', function (event) {
       if (event.keyCode == 13) {
         _this8._inputKeyUp();
 
@@ -24746,35 +24759,35 @@ function (_SuperCustomControl2) {
       }
     });
     _this8.yearInput = yearInput;
-    var yearLeftButton = document.createElement("button");
-    yearLeftButton.innerHTML = _this8.getBSIconHTML("mdi mdi-step-backward-2");
-    yearLeftButton.title = "Предыдущий год";
-    yearLeftButton.setAttribute("id", "year-left-button");
-    yearLeftButton.addEventListener("click", function () {
+    var yearLeftButton = document.createElement('button');
+    yearLeftButton.innerHTML = _this8.getBSIconHTML('mdi mdi-step-backward-2');
+    yearLeftButton.title = 'Предыдущий год';
+    yearLeftButton.setAttribute('id', 'year-left-button');
+    yearLeftButton.addEventListener('click', function () {
       _this8._leftButtonClick();
-    }, false); //yearLeftButton.addEventListener('touchstart', () => { this._leftButtonClick(); }, false);
+    }, false); // yearLeftButton.addEventListener('touchstart', () => { this._leftButtonClick(); }, false);
 
-    var yearRightButton = document.createElement("button");
-    yearRightButton.innerHTML = _this8.getBSIconHTML("mdi mdi-step-forward-2");
-    yearRightButton.title = "Следующий год";
-    yearRightButton.setAttribute("id", "year-right-button");
-    yearRightButton.addEventListener("click", function () {
+    var yearRightButton = document.createElement('button');
+    yearRightButton.innerHTML = _this8.getBSIconHTML('mdi mdi-step-forward-2');
+    yearRightButton.title = 'Следующий год';
+    yearRightButton.setAttribute('id', 'year-right-button');
+    yearRightButton.addEventListener('click', function () {
       _this8._rightButtonClick();
-    }, false); //yearRightButton.addEventListener('touchstart', () => { this._rightButtonClick(); }, false);
+    }, false); // yearRightButton.addEventListener('touchstart', () => { this._rightButtonClick(); }, false);
 
-    var parentDiv = document.createElement("div");
-    parentDiv.className = "ol-control";
-    parentDiv.setAttribute("id", "year-control");
+    var parentDiv = document.createElement('div');
+    parentDiv.className = 'ol-control';
+    parentDiv.setAttribute('id', 'year-control');
     parentDiv.appendChild(yearLeftButton);
     parentDiv.appendChild(yearInput);
     parentDiv.appendChild(yearRightButton);
     _this8.element = parentDiv;
 
-    _ol.default.control.Control.call(_assertThisInitialized(_assertThisInitialized(_this8)), {
-      label: "test",
-      hint: "test",
+    _ol.default.control.Control.call(_assertThisInitialized(_this8), {
+      label: 'test',
+      hint: 'test',
       tipLabel: caption,
-      element: parentDiv //target: get(inputParams, "target")
+      element: parentDiv // target: get(inputParams, "target")
 
     });
 
@@ -25427,7 +25440,6 @@ Item.prototype.run = function () {
 };
 
 process.title = 'browser';
-process.browser = true;
 process.env = {};
 process.argv = [];
 process.version = ''; // empty string to avoid regexp issues
@@ -43814,29 +43826,29 @@ function (_EventEmitter) {
     _this.listDiv = (0, _jquery.default)("#event-list")[0];
     _this.imgDiv = (0, _jquery.default)("#event-image-div")[0];
     _this.events = [];
-    _this.active_event = '';
-    _this.active_map = '';
+    _this.active_event = "";
+    _this.active_map = "";
     return _this;
   }
 
   _createClass(HistoryEventsControl, [{
     key: "_getHtmlForEvent",
     value: function _getHtmlForEvent(event, is_active) {
-      var html = '<tr data-href="' + event.id + '" class="hand-cursor' + (is_active ? ' event-active-row' : '') + '">';
-      html += '<td>' + event.startDate + '</td>';
-      html += '<td>' + event.endDate + '</td>';
+      var html = '<tr data-href="' + event.id + '" class="hand-cursor' + (is_active ? " event-active-row" : "") + '">';
+      html += "<td>" + event.startDate + "</td>";
+      html += "<td>" + event.endDate + "</td>";
       var name = event.name;
 
       if (1 < event.maps.length) {
-        var delim = '&nbsp';
+        var delim = "&nbsp";
 
         for (var i = 0; i < event.maps.length; i++) {
-          name += delim + '<span class="event-feature-color" data-href="' + i + '">' + (i + 1) + '</span>';
+          name += delim + '<span class="event-feature-color" data-href="' + i + '">' + (i + 1) + "</span>";
         }
       }
 
-      html += '<td>' + name + '</td>';
-      html += '</tr>';
+      html += "<td>" + name + "</td>";
+      html += "</tr>";
       return html;
     }
   }, {
@@ -43868,7 +43880,7 @@ function (_EventEmitter) {
     value: function _refreshEventImage(event) {
       var _this2 = this;
 
-      this.imgDiv.innerHTML = '';
+      this.imgDiv.innerHTML = "";
       if (!event.imgUrl) return;
 
       this._resizeImage(event.imgUrl, 300, function (canvas) {
@@ -43885,7 +43897,7 @@ function (_EventEmitter) {
 
       this.active_event = event;
       this.active_map = event.maps[map];
-      this.emit('activatedEvent', {
+      this.emit("activatedEvent", {
         event: this.active_event,
         map: this.active_map
       });
@@ -43894,20 +43906,20 @@ function (_EventEmitter) {
     key: "rowEventClick",
     value: function rowEventClick(tr) {
       var isMapEventClick = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      var id = tr.attr('data-href');
+      var id = tr.attr("data-href");
       if (!id) return;
-      tr.addClass('event-active-row').siblings().removeClass('event-active-row');
+      tr.addClass("event-active-row").siblings().removeClass("event-active-row");
       var activeEvent = this.events.filter(function (event) {
         return event.id == id;
       })[0];
 
       if (!isMapEventClick) {
         this.active_map = 0;
-        (0, _jquery.default)('table tr td span').removeClass('event-feature-active-color');
+        (0, _jquery.default)("table tr td span").removeClass("event-feature-active-color");
 
         if (1 < activeEvent.maps.length) {
-          var firstSpan = (0, _jquery.default)(tr[0].childNodes[2]).children('span:first');
-          firstSpan.addClass('event-feature-active-color');
+          var firstSpan = (0, _jquery.default)(tr[0].childNodes[2]).children("span:first");
+          firstSpan.addClass("event-feature-active-color");
         }
       }
 
@@ -43916,9 +43928,9 @@ function (_EventEmitter) {
   }, {
     key: "mapEventClick",
     value: function mapEventClick(a) {
-      this.active_map = a.attr('data-href');
-      (0, _jquery.default)('table tr td span').removeClass('event-feature-active-color');
-      a.addClass('event-feature-active-color');
+      this.active_map = a.attr("data-href");
+      (0, _jquery.default)("table tr td span").removeClass("event-feature-active-color");
+      a.addClass("event-feature-active-color");
       var tr = a.parent().parent();
       this.rowEventClick(tr, true);
     }
@@ -43928,7 +43940,7 @@ function (_EventEmitter) {
       var _this3 = this;
 
       this.active_map = 0;
-      this.listDiv.innerHTML = '';
+      this.listDiv.innerHTML = "";
       this.events = events;
       if (!events || 0 == events.length) return;
       var html = "\n        <table class=\"table table-sm table-borderless\">\n        <thead>\n            <tr>\n                <th scope=\"col\">\u041D\u0430\u0447\u0430\u043B\u043E</th>\n                <th scope=\"col\">\u041E\u043A\u043E\u043D\u0447\u0430\u043D\u0438\u0435</th>\n                <th scope=\"col\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 c\u043E\u0431\u044B\u0442\u0438\u044F</th>\n            </tr>\n        </thead>\n        <tbody>\n        ";
@@ -43937,9 +43949,9 @@ function (_EventEmitter) {
         html += _this3._getHtmlForEvent(event, once);
         once = false;
       });
-      html += '</tbody></table>';
+      html += "</tbody></table>";
       this.listDiv.innerHTML = html;
-      this.emit('refreshedEventList');
+      this.emit("refreshedEventList");
       this.setActiveEvent(events[0], this.active_map);
     }
   }], [{

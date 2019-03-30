@@ -12,6 +12,7 @@
         "isDefault": true
       },
       "presentation": {
+        "clear": true,
         "echo": false,
         "reveal": "always",
         "focus": false,
@@ -30,6 +31,7 @@
         "isDefault": true
       },
       "presentation": {
+        "clear": true,
         "echo": false,
         "reveal": "always",
         "focus": false,

@@ -1,13 +1,18 @@
-const log = require("../helper/logHelper");
-const DbHelper = require("../loadDatabase/dbHelper");
-const inetHelper = require("../helper/inetHelper");
-const historyEventsJsonMediator = require("../loadDatabase/historyEventsJsonMediator");
-const agreementsJsonMediator = require("../loadDatabase/agreementsJsonMediator");
-const usersJsonMediator = require("../loadDatabase/usersJsonMediator");
-const dictEngRusJsonMediator = require("../loadDatabase/dictEngRusJsonMediator");
-const dictEngRusProtocol = require("../socketProtocol/dictEngRusProtocol");
+const log = require('../helper/logHelper')
+const DbHelper = require('../loadDatabase/dbHelper')
+const inetHelper = require('../helper/inetHelper')
+const historyEventsJsonMediator = require('../loadDatabase/historyEventsJsonMediator')
+const agreementsJsonMediator = require('../loadDatabase/agreementsJsonMediator')
+const usersJsonMediator = require('../loadDatabase/usersJsonMediator')
+const dictEngRusJsonMediator = require('../loadDatabase/dictEngRusJsonMediator')
+const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol')
 
-dbHelper = new DbHelper();
+;(async () => {
+  const coords = await inetHelper.getCoordsFromWiki('брюссель')
+  console.log(coords)
+})()
+return
+dbHelper = new DbHelper()
 
 // dictEngRusProtocol
 //   .getEngRusObjectId("блаблабла")
@@ -20,7 +25,7 @@ dbHelper = new DbHelper();
 
 Promise.resolve(true)
   .then(() => {
-    return dbHelper.clearDb("historyEvents");
+    return dbHelper.clearDb('historyEvents')
   })
   // .then(() => {
   //   return dbHelper.saveFilesFromDir({
@@ -36,9 +41,9 @@ Promise.resolve(true)
   // })
   .then(() => {
     return dbHelper.saveFilesFromDir({
-      source: "python/out_agreements",
+      source: 'python/out_agreements',
       mediator: agreementsJsonMediator
-    });
+    })
   })
   // .then(() => {
   //   return dbHelper.saveFilesFromDir({
@@ -47,10 +52,10 @@ Promise.resolve(true)
   //   });
   // })
   .then(() => {
-    log.success(`Успешная загрузка`);
-    dbHelper.free();
+    log.success(`Успешная загрузка`)
+    dbHelper.free()
   })
   .catch(err => {
-    dbHelper.free();
-    log.error(`Ошибка загрузки данных: ${err}`);
-  });
+    dbHelper.free()
+    log.error(`Ошибка загрузки данных: ${err}`)
+  })
