@@ -48,6 +48,16 @@ class InetHelper {
     })
   }
 
+  async getCoordsForCityOrCountry(name) {
+    let coords = null
+    coords = this.getCoordsFromWiki(name)
+    if (coords) return coords
+    coords = this.getCoordsFromWiki(`Столица ${name}`)
+    if (coords) return coords
+    coords = this.getCoordsFromWiki(`capital of ${name}`)
+    return coords
+  }
+
   async getCoordsFromWiki(name) {
     try {
       const pageId = await this.getWikiPageId(name)
