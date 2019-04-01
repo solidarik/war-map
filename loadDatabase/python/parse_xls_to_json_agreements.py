@@ -12,7 +12,8 @@ col_player1, col_player2 = tuple(range(4, 6, 1))
 col_results, col_source, col_img = tuple(range(6, 9, 1))
 
 def get_sheet_value(row, col):
-    return scheet.cell(row, col).value
+    v = scheet.cell(row, col).value
+    return v.replace('"', '\\"').rstrip().rstrip(',')
 
 
 def get_sheet_value_date(row, col):

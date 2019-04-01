@@ -7,11 +7,11 @@ const usersJsonMediator = require('../loadDatabase/usersJsonMediator')
 const dictEngRusJsonMediator = require('../loadDatabase/dictEngRusJsonMediator')
 const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol')
 
-;(async () => {
-  const coords = await inetHelper.getCoordsForCityOrCountry('Россия')
-  console.log(coords)
-})()
-return
+// ;(async () => {
+//   const coords = await inetHelper.getCoordsForCityOrCountry('Ньон')
+//   console.log(coords)
+// })()
+// return
 dbHelper = new DbHelper()
 
 // dictEngRusProtocol
@@ -24,14 +24,20 @@ dbHelper = new DbHelper()
 // return;
 
 Promise.resolve(true)
+  // .then(() => {
+  //   return dbHelper.clearDb('users')
+  // })
+  // .then(() => {
+  //   return dbHelper.clearDb('historyEvents')
+  // })
   .then(() => {
-    return dbHelper.clearDb('historyEvents')
+    return dbHelper.clearDb('agreements')
   })
   // .then(() => {
   //   return dbHelper.saveFilesFromDir({
-  //     source: "data_sources/secretUsers.json",
+  //     source: 'data_sources/secretUsers.json',
   //     mediator: usersJsonMediator
-  //   });
+  //   })
   // })
   // .then(() => {
   //   return dbHelper.saveFilesFromDir({
@@ -47,9 +53,9 @@ Promise.resolve(true)
   })
   // .then(() => {
   //   return dbHelper.saveFilesFromDir({
-  //     source: "python/out_battles",
+  //     source: 'python/out_battles',
   //     mediator: historyEventsJsonMediator
-  //   });
+  //   })
   // })
   .then(() => {
     log.success(`Успешная загрузка`)

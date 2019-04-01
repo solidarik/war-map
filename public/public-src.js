@@ -24090,6 +24090,10 @@ function (_EventEmitter) {
 
     });
     var map = new _ol.default.Map({
+      interactions: _ol.default.interaction.defaults({
+        altShiftDragRotate: false,
+        pinchRotate: false
+      }),
       controls: _ol.default.control.defaults({
         attribution: false,
         zoom: false
@@ -24109,6 +24113,7 @@ function (_EventEmitter) {
     });
     _this.map = map;
     _this.historyEvents = [];
+    _this.agreements = [];
     _this.view = view;
     _this.draw = undefined;
     _this.snap = undefined;
@@ -24131,6 +24136,8 @@ function (_EventEmitter) {
       _this.addYearLayer();
 
       _this.addHistoryEventsLayer();
+
+      _this.addAgreementsLayer();
 
       _this.changeYear(1941);
 
@@ -24216,12 +24223,39 @@ function (_EventEmitter) {
         style: function style(feature, _) {
           return _this3.eventStyleFunc(feature, _this3.view.getZoom());
         },
-        zIndex: 5,
+        zIndex: 6,
         updateWhileAnimating: true,
         updateWhileInteracting: true
       });
       this.allHistoryEventsSource = allHistoryEventsSource;
       this.map.addLayer(allHistoryEventsLayer);
+    }
+  }, {
+    key: "addAgreementsLayer",
+    value: function addAgreementsLayer() {
+      var _this4 = this;
+
+      var agreementsSource = new _ol.default.source.Vector();
+      var agreementsLayer = new _ol.default.layer.Vector({
+        source: agreementsSource,
+        zIndex: 7,
+        updateWhileAnimating: true,
+        updateWhileInteracting: true
+      });
+      this.agreementsSource = agreementsSource;
+      this.map.addLayer(agreementsLayer);
+      var allAgreementsSource = new _ol.default.source.Vector();
+      var allAgreementsLayer = new _ol.default.layer.Vector({
+        source: allAgreementsSource,
+        style: function style(feature, _) {
+          return _this4.eventStyleFunc(feature, _this4.view.getZoom());
+        },
+        zIndex: 8,
+        updateWhileAnimating: true,
+        updateWhileInteracting: true
+      });
+      this.allAgreementsSource = allAgreementsSource;
+      this.map.addLayer(allAgreementsLayer);
     }
   }, {
     key: "fixMapHeight",
@@ -24286,13 +24320,13 @@ function (_EventEmitter) {
   }, {
     key: "addYearControl",
     value: function addYearControl() {
-      var _this4 = this;
+      var _this5 = this;
 
       this.map.addControl(new YearControl({
         caption: 'Выбрать год событий',
         year: this.currentYear,
         handler: function handler(year) {
-          _this4.changeYear(year);
+          _this5.changeYear(year);
         }
       }));
     }
@@ -24300,6 +24334,7 @@ function (_EventEmitter) {
     key: "changeYear",
     value: function changeYear(year) {
       this.historyEventsSource.clear();
+      this.agreementsSource.clear();
       this.currentYear = year;
       this.currentYearForMap = this.currentYear == 1951 ? 1950 : this.currentYear;
       this.yearLayer.getSource().refresh();
@@ -24384,17 +24419,17 @@ function (_EventEmitter) {
   }, {
     key: "repaintHistoryEvents",
     value: function repaintHistoryEvents() {
-      var _this5 = this;
+      var _this6 = this;
 
       this.allHistoryEventsSource.clear();
       this.historyEvents.forEach(function (event) {
         var ft = new _ol.default.Feature({
           name: event.name,
-          geometry: new _ol.default.geom.Circle(_this5.getCenterOfMap(event.maps[0]), 100000) // eventFeature: event.maps[0].features
+          geometry: new _ol.default.geom.Circle(_this6.getCenterOfMap(event.maps[0]), 100000) // eventFeature: event.maps[0].features
 
         });
 
-        _this5.allHistoryEventsSource.addFeature(ft);
+        _this6.allHistoryEventsSource.addFeature(ft);
       });
     }
   }, {
@@ -24482,7 +24517,7 @@ function (_EventEmitter) {
   }, {
     key: "_addButtons",
     value: function _addButtons() {
-      var _this6 = this;
+      var _this7 = this;
 
       this.map.addControl(new CustomControl({
         caption: 'Выбрать объект',
@@ -24490,11 +24525,11 @@ function (_EventEmitter) {
         icon: 'mdi mdi-cursor-default-outline',
         default: true,
         handler: function handler(btn) {
-          _this6._setActiveButton(btn);
+          _this7._setActiveButton(btn);
 
-          _this6.map.removeInteraction(_this6.draw);
+          _this7.map.removeInteraction(_this7.draw);
 
-          _this6.map.removeInteraction(_this6.snap);
+          _this7.map.removeInteraction(_this7.snap);
         }
       }));
       this.map.addControl(new CustomControl({
@@ -24504,7 +24539,7 @@ function (_EventEmitter) {
         handler: function handler(btn) {
           console.log('click to import...');
 
-          _this6._setActiveButton(btn);
+          _this7._setActiveButton(btn);
 
           document.getElementById('fileImport').click();
         }
@@ -24678,15 +24713,15 @@ function (_SuperCustomControl) {
   _inherits(CustomControl, _SuperCustomControl);
 
   function CustomControl(inputParams) {
-    var _this7;
+    var _this8;
 
     _classCallCheck(this, CustomControl);
 
-    _this7 = _possibleConstructorReturn(this, _getPrototypeOf(CustomControl).call(this, inputParams));
+    _this8 = _possibleConstructorReturn(this, _getPrototypeOf(CustomControl).call(this, inputParams));
     var caption = get(inputParams, 'caption');
     var hint = get(inputParams, 'hint') || caption;
     var button = document.createElement('button');
-    button.innerHTML = _this7.getBSIconHTML(get(inputParams, 'icon'));
+    button.innerHTML = _this8.getBSIconHTML(get(inputParams, 'icon'));
     button.className = get(inputParams, 'class');
     button.title = hint;
     var parentDiv = $('#custom-control')[0];
@@ -24698,9 +24733,9 @@ function (_SuperCustomControl) {
     }
 
     parentDiv.appendChild(button);
-    _this7.element = parentDiv;
+    _this8.element = parentDiv;
 
-    _ol.default.control.Control.call(_assertThisInitialized(_this7), {
+    _ol.default.control.Control.call(_assertThisInitialized(_this8), {
       label: caption,
       hint: hint,
       tipLabel: caption,
@@ -24725,7 +24760,7 @@ function (_SuperCustomControl) {
       handler(button);
     }
 
-    return _this7;
+    return _this8;
   }
 
   return CustomControl;
@@ -24737,42 +24772,42 @@ function (_SuperCustomControl2) {
   _inherits(YearControl, _SuperCustomControl2);
 
   function YearControl(inputParams) {
-    var _this8;
+    var _this9;
 
     _classCallCheck(this, YearControl);
 
-    _this8 = _possibleConstructorReturn(this, _getPrototypeOf(YearControl).call(this, inputParams));
+    _this9 = _possibleConstructorReturn(this, _getPrototypeOf(YearControl).call(this, inputParams));
     var caption = inputParams.caption;
     var hint = inputParams.hint || caption;
-    _this8.year = inputParams.year;
-    _this8.handler = inputParams.handler;
+    _this9.year = inputParams.year;
+    _this9.handler = inputParams.handler;
     var yearInput = document.createElement('input');
     yearInput.className = 'input-without-focus';
     yearInput.title = hint;
     yearInput.setAttribute('id', 'year-input');
-    yearInput.value = _this8.year;
+    yearInput.value = _this9.year;
     yearInput.addEventListener('keyup', function (event) {
       if (event.keyCode == 13) {
-        _this8._inputKeyUp();
+        _this9._inputKeyUp();
 
         event.preventDefault();
       }
     });
-    _this8.yearInput = yearInput;
+    _this9.yearInput = yearInput;
     var yearLeftButton = document.createElement('button');
-    yearLeftButton.innerHTML = _this8.getBSIconHTML('mdi mdi-step-backward-2');
+    yearLeftButton.innerHTML = _this9.getBSIconHTML('mdi mdi-step-backward-2');
     yearLeftButton.title = 'Предыдущий год';
     yearLeftButton.setAttribute('id', 'year-left-button');
     yearLeftButton.addEventListener('click', function () {
-      _this8._leftButtonClick();
+      _this9._leftButtonClick();
     }, false); // yearLeftButton.addEventListener('touchstart', () => { this._leftButtonClick(); }, false);
 
     var yearRightButton = document.createElement('button');
-    yearRightButton.innerHTML = _this8.getBSIconHTML('mdi mdi-step-forward-2');
+    yearRightButton.innerHTML = _this9.getBSIconHTML('mdi mdi-step-forward-2');
     yearRightButton.title = 'Следующий год';
     yearRightButton.setAttribute('id', 'year-right-button');
     yearRightButton.addEventListener('click', function () {
-      _this8._rightButtonClick();
+      _this9._rightButtonClick();
     }, false); // yearRightButton.addEventListener('touchstart', () => { this._rightButtonClick(); }, false);
 
     var parentDiv = document.createElement('div');
@@ -24781,9 +24816,9 @@ function (_SuperCustomControl2) {
     parentDiv.appendChild(yearLeftButton);
     parentDiv.appendChild(yearInput);
     parentDiv.appendChild(yearRightButton);
-    _this8.element = parentDiv;
+    _this9.element = parentDiv;
 
-    _ol.default.control.Control.call(_assertThisInitialized(_this8), {
+    _ol.default.control.Control.call(_assertThisInitialized(_this9), {
       label: 'test',
       hint: 'test',
       tipLabel: caption,
@@ -24791,7 +24826,7 @@ function (_SuperCustomControl2) {
 
     });
 
-    return _this8;
+    return _this9;
   }
 
   _createClass(YearControl, [{
@@ -33388,16 +33423,34 @@ function (_EventEmitter) {
         });
         var events = data.events.map(function (event) {
           return {
-            "id": event._id,
-            "startDate": _this2._getStrDateFromEvent(event.startDate),
-            "endDate": _this2._getStrDateFromEvent(event.endDate),
-            "maps": event.maps,
-            "name": _this2._getDictName(event._name),
-            "imgUrl": event.imgUrl
+            id: event._id,
+            startDate: _this2._getStrDateFromEvent(event.startDate),
+            endDate: _this2._getStrDateFromEvent(event.endDate),
+            maps: event.maps,
+            name: _this2._getDictName(event._name),
+            imgUrl: event.imgUrl
+          };
+        });
+        var agreements = data.agreements.map(function (agreement) {
+          return {
+            id: agreement._id,
+            kind: agreement.kind,
+            place: agreement.place,
+            startDate: _this2._getStrDateFromEvent(agreement.startDate),
+            endDate: _this2._getStrDateFromEvent(agreement.endDate),
+            player1: agreement.player1,
+            player2: agreement.player2,
+            results: agreement.results,
+            imgUrl: agreement.imgUrl,
+            source: agreement.source
           };
         });
 
         _this2.emit('refreshHistoryEvents', events);
+
+        _this2.emit('refreshAgreements', agreements);
+
+        console.log('agreements', agreements);
       });
     }
   }], [{
@@ -43996,10 +44049,10 @@ function fixMapHeight() {
 }
 
 function fixMiniMapVisible(isHide) {
-  var elem = (0, _jquery.default)("#event-image-div");
+  var elem = (0, _jquery.default)('#event-image-div');
 
   if (isHide) {
-    (0, _jquery.default)("#event-image-div")[0].innerHTML = "";
+    (0, _jquery.default)('#event-image-div')[0].innerHTML = '';
     elem.hide();
     return;
   }
@@ -44012,42 +44065,42 @@ function changeWindowSize() {
   fixMapHeight(); //fixMiniMapVisible();
 }
 
-window.onresize = changeWindowSize;
+window.onresize = fixMapHeight; //changeWindowSize
 
 function startApp() {
   var protocol = _clientProtocol.ClientProtocol.create();
 
   var mapControl = _mapControl.MapControl.create();
 
-  mapControl.subscribe("changeYear", function (year) {
+  mapControl.subscribe('changeYear', function (year) {
     fixMiniMapVisible(true);
     protocol.getHistoryEventsByYear(year);
   });
 
   var historyEventsControl = _historyEventsControl.HistoryEventsControl.create();
 
-  protocol.subscribe("refreshHistoryEvents", function (events) {
+  protocol.subscribe('refreshHistoryEvents', function (events) {
     mapControl.setHistoryEvents(events);
     historyEventsControl.showEvents(events);
   });
-  historyEventsControl.subscribe("refreshedEventList", function () {
-    (0, _jquery.default)("table tr").click(function () {
+  historyEventsControl.subscribe('refreshedEventList', function () {
+    (0, _jquery.default)('table tr').click(function () {
       historyEventsControl.rowEventClick((0, _jquery.default)(this));
       return false;
     });
-    (0, _jquery.default)("table tr td span").click(function () {
+    (0, _jquery.default)('table tr td span').click(function () {
       historyEventsControl.mapEventClick((0, _jquery.default)(this));
       return false;
     });
   });
-  historyEventsControl.subscribe("activatedEvent", function (data) {
+  historyEventsControl.subscribe('activatedEvent', function (data) {
     mapControl.setCurrentEventMap(data.map);
     fixMiniMapVisible();
   });
   window.map = mapControl; // var something = document.getElementById('content');
   // something.style.cursor = 'pointer';
 
-  (0, _jquery.default)(document.getElementsByClassName("ol-attribution ol-unselectable ol-control ol-collapsed")).remove();
+  (0, _jquery.default)(document.getElementsByClassName('ol-attribution ol-unselectable ol-control ol-collapsed')).remove();
   changeWindowSize();
 }
 },{"./mapControl":"p/4q","./clientProtocol":"/Vmv","./historyEventsControl":"LhR7","jquery":"juYr"}],"Focm":[function(require,module,exports) {

@@ -22,6 +22,10 @@ export class MapControl extends EventEmitter {
     })
 
     const map = new ol.Map({
+      interactions: ol.interaction.defaults({
+        altShiftDragRotate: false,
+        pinchRotate: false
+      }),
       controls: ol.control
         .defaults({ attribution: false, zoom: false })
         .extend([
@@ -50,6 +54,7 @@ export class MapControl extends EventEmitter {
 
     this.map = map
     this.historyEvents = []
+    this.agreements = []
 
     this.view = view
     this.draw = undefined
@@ -72,6 +77,7 @@ export class MapControl extends EventEmitter {
       // this._addSelectInteraction();
       this.addYearLayer()
       this.addHistoryEventsLayer()
+      this.addAgreementsLayer()
       this.changeYear(1941)
       this.addYearControl()
       // this._addButtons();
@@ -155,12 +161,35 @@ export class MapControl extends EventEmitter {
     let allHistoryEventsLayer = new ol.layer.Vector({
       source: allHistoryEventsSource,
       style: (feature, _) => this.eventStyleFunc(feature, this.view.getZoom()),
-      zIndex: 5,
+      zIndex: 6,
       updateWhileAnimating: true,
       updateWhileInteracting: true
     })
     this.allHistoryEventsSource = allHistoryEventsSource
     this.map.addLayer(allHistoryEventsLayer)
+  }
+
+  addAgreementsLayer() {
+    let agreementsSource = new ol.source.Vector()
+    let agreementsLayer = new ol.layer.Vector({
+      source: agreementsSource,
+      zIndex: 7,
+      updateWhileAnimating: true,
+      updateWhileInteracting: true
+    })
+    this.agreementsSource = agreementsSource
+    this.map.addLayer(agreementsLayer)
+
+    let allAgreementsSource = new ol.source.Vector()
+    let allAgreementsLayer = new ol.layer.Vector({
+      source: allAgreementsSource,
+      style: (feature, _) => this.eventStyleFunc(feature, this.view.getZoom()),
+      zIndex: 8,
+      updateWhileAnimating: true,
+      updateWhileInteracting: true
+    })
+    this.allAgreementsSource = allAgreementsSource
+    this.map.addLayer(allAgreementsLayer)
   }
 
   fixMapHeight() {
@@ -245,6 +274,7 @@ export class MapControl extends EventEmitter {
 
   changeYear(year) {
     this.historyEventsSource.clear()
+    this.agreementsSource.clear()
     this.currentYear = year
     this.currentYearForMap = this.currentYear == 1951 ? 1950 : this.currentYear
     this.yearLayer.getSource().refresh()
