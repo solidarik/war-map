@@ -10,36 +10,34 @@ const log = require('../helper/logHelper')
 class AgreementsJsonMediator extends SuperJsonMediator {
   constructor() {
     super()
-    this.equilFields = ['startDate', '_name']
+    this.equilFields = ['startDate', 'place']
     this.model = AgreementsModel
   }
-
-  async getPlaceCoords(place) {}
 
   processJson(json) {
     return new Promise((resolve, reject) => {
       let promises = [
-        dictEngRusProtocol.getEngRusObjectId(json.name),
-        this.getPlaceCoords(json.place)
+        //dictEngRusProtocol.getEngRusObjectId(json.name),
+        inetHelper.getCoordsForCityOrCountry(json.place)
       ]
 
       Promise.all(promises)
-        .then(res => {
-          let [name_id, placeCoords] = res
-
+        .then(placeCoords => {
+          placeCoords = placeCoords[0]
           const newJson = {
-            _name: name_id,
+            // _name: name_id,
             startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
             endDate: moment.utc(json.endDate, 'DD.MM.YYYY'),
             kind: json.kind ? json.kind : '',
             place: json.place,
-            placeCoord: placeCoords,
-            imgUrl: json.imgUrl,
-            allies: allies,
-            enemies: enemies,
-            maps: maps,
-            corvexes: corvexes
+            placeCoords: placeCoords ? [placeCoords.lon, placeCoords.lat] : [],
+            player1: json.player1,
+            player2: json.player2,
+            results: json.results,
+            imgUrl: json.imgUrl
           }
+
+          !placeCoords && console.log('json', newJson)
 
           resolve(newJson)
         })

@@ -58,23 +58,39 @@ class InetHelper {
     return coords
   }
 
-  async getCoordsFromWiki(name) {
-    try {
-      const pageId = await this.getWikiPageId(name)
-      let url = this.composeWikiUrl({
+  async getCoordsByPageId(pageId, isRus) {
+    let url = this.composeWikiUrl(
+      {
         action: 'query',
         prop: 'coordinates',
         format: 'json',
         pageids: pageId
-      })
+      },
+      isRus
+    )
+    const body = await this.getDataFromUrl(url)
+    const json = JSON.parse(body)
+    const coords = json['query']['pages'][pageId]['coordinates']
+    return coords && coords.length > 0
+      ? { lon: coords[0].lon, lat: coords[0].lat }
+      : null
+  }
 
-      const body = await this.getDataFromUrl(url)
-      const json = JSON.parse(body)
-      const coords = json['query']['pages'][pageId]['coordinates']
-      return coords && coords.length > 0
-        ? { lon: coords[0].lon, lat: coords[0].lat }
-        : null
+  async getCoordsFromWiki(name) {
+    try {
+      const isRus = /[а-яА-ЯЁё]/.test(name)
+
+      let pageId = await this.getWikiPageId(name)
+      let coords = await this.getCoordsByPageId(pageId, isRus)
+
+      //try eng language
+      if (!coords) {
+        pageId = await this.getWikiEngPageId(pageId, isRus)
+        coords = await this.getCoordsByPageId(pageId, false)
+      }
+      return coords ? coords : null
     } catch (error) {
+      console.log('error', error)
       return null
     }
   }
@@ -129,6 +145,7 @@ class InetHelper {
     return url
   }
 
+  //пока не используется
   getUrlFromPageId(pageId, isRus = false) {
     return new Promise((resolve, reject) => {
       let url = this.composeWikiUrl(
@@ -200,90 +217,91 @@ class InetHelper {
     })
   }
 
+  async getWikiEngPageId(pageId, isRus) {
+    const engTitle = await this.getLangTitleFromPageId(pageId, 'en', isRus)
+    return await this.getPageIdFromEngTitle(engTitle)
+  }
+
   getWikiPageId(stringSearch) {
     return new Promise((resolve, reject) => {
-      if (!Array.isArray(stringSearch)) stringSearch = [stringSearch]
+      const isRus = /[а-яА-ЯЁё]/.test(stringSearch)
 
-      let promises = []
-      let isRus = false
+      const promises = [
+        new Promise((resolve, reject) => {
+          const url = this.composeWikiUrl(
+            {
+              action: 'query',
+              format: 'json',
+              generator: 'prefixsearch',
+              prop: encodeURI('pageprops|description'),
+              ppprop: 'displaytitle',
+              gpssearch: encodeURI(stringSearch),
+              gpsnamespace: 0,
+              gpslimit: 6
+            },
+            isRus
+          )
 
-      stringSearch.forEach(str => {
-        isRus = /[а-яА-ЯЁё]/.test(stringSearch)
+          this.getDataFromUrl(url)
+            .then(body => {
+              const json = JSON.parse(body)
+              const pages = json['query']['pages']
+              resolve(Object.keys(pages)[0])
+            })
+            .catch(err => {
+              reject(err)
+            })
+        }),
 
-        promises.push(
-          new Promise((resolve, reject) => {
-            let url = this.composeWikiUrl(
-              {
-                action: 'query',
-                format: 'json',
-                generator: 'prefixsearch',
-                prop: encodeURI('pageprops|description'),
-                ppprop: 'displaytitle',
-                gpssearch: encodeURI(str),
-                gpsnamespace: 0,
-                gpslimit: 6
-              },
-              isRus
-            )
+        new Promise((resolve, reject) => {
+          const url = this.composeWikiUrl(
+            {
+              action: 'query',
+              list: 'search',
+              srlimit: 1,
+              srprop: 'size',
+              format: 'json',
+              srsearch: encodeURI(stringSearch)
+            },
+            isRus
+          )
 
-            this.getDataFromUrl(url)
-              .then(body => {
-                let json = JSON.parse(body)
-                let pages = json['query']['pages']
-                resolve(Object.keys(pages)[0])
-              })
-              .catch(err => {
-                reject(err)
-              })
-          })
-        )
-
-        promises.push(
-          new Promise((resolve, reject) => {
-            let url = this.composeWikiUrl(
-              {
-                action: 'query',
-                list: 'search',
-                srlimit: 1,
-                srprop: 'size',
-                format: 'json',
-                srsearch: encodeURI(str)
-              },
-              isRus
-            )
-
-            this.getDataFromUrl(url)
-              .then(body => {
-                let json = JSON.parse(body)
-                resolve(json['query']['search'][0]['pageid'])
-              })
-              .catch(err => {
-                reject(err)
-              })
-          })
-        )
-      })
+          this.getDataFromUrl(url)
+            .then(body => {
+              const json = JSON.parse(body)
+              resolve(json['query']['search'][0]['pageid'])
+            })
+            .catch(err => {
+              reject(err)
+            })
+        })
+      ]
 
       Promise.all(promises)
         .then(([firstPageId, secondPageId]) => {
           const pageId = secondPageId ? secondPageId : firstPageId
-          if (!isRus) {
-            resolve(pageId)
-            return
-          }
+          resolve(pageId)
 
-          this.getLangTitleFromPageId(pageId, 'en', isRus)
-            .then(engTitle => {
-              return this.getPageIdFromEngTitle(engTitle)
-            })
-            .then(pageId => {
-              resolve(pageId)
-            })
-            .catch(err =>
-              reject(`Не смогли найти глобальный pageId по рус. наводке ${err}`)
-            )
+          // if (!isRus) {
+          //   resolve(pageId)
+          //   return
+          // }
+
+          // this.getLangTitleFromPageId(pageId, 'en', isRus)
+          //   .then(engTitle => {
+          //     return this.getPageIdFromEngTitle(engTitle)
+          //   })
+          //   .then(pageId => {
+          //     resolve(pageId)
+          //   })
+          //   .catch(err =>
+          //     reject(`Не смогли найти глобальный pageId по рус. наводке ${err}`)
+          //   )
         })
-        .catch(err => reject(`Не удалось найти wiki-страницу: ${err}`))
+        .catch(err => {
+          console.log('err', err)
+          reject(`Не удалось найти wiki-страницу: ${err}`)
+        })
     })
   }
 }
