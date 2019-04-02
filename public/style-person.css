@@ -1,0 +1,13 @@
+.person-cont{
+    padding:5%;
+}
+.image-cont{
+    text-align:center;
+}
+.detail-cont{
+    border-left:3px solid #ded4da;
+}
+.detail-cont p{
+    font-size:15px;
+    font-weight:bold;
+}

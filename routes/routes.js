@@ -14,6 +14,7 @@ ensureAuthenticated = async function  (ctx, next) {
 router.get('/login', require('./login').get)
 router.post('/login', require('./login').post)
 router.get('/start', ensureAuthenticated, require('./page-start'))
+router.get('/person', ensureAuthenticated, require('./page-person'))
 router.get('/info', ensureAuthenticated, require('./page-info'))
 router.get('/', ensureAuthenticated, require('./page-events'))
 router.get('/events', ensureAuthenticated, require('./page-events'))

@@ -1,0 +1,20 @@
+extends layout
+block head
+
+  link(rel='stylesheet' href='/style-person.css')
+
+block content
+    +header('person')
+    div.content(role='content' id='content' dragable='true')
+        .row.person-cont
+            .col-md-6.img.image-cont
+                img.img-rounded(src='img/person/ilyushin.jpg' alt='' height='300' width='400')
+            .col-md-6.details.detail-cont
+                blockquote
+                h5 Сергей Владимирович Ильюшин
+                small
+                    cite(title='Source Title')
+                    | 	18 (30) марта 1894 - 9 февраля 1977
+                    i.icon-map-marker
+                p
+                |  Выдающийся советский авиаконструктор, разработчик самого массового боевого самолёта в истории — штурмовика Ил-2. Трижды Герой Социалистического Труда (1941, 1957, 1974). Единственный лауреат семи Сталинских премий, генерал-полковник инженерно-технической службы (1967; с 1971 года — генерал-полковник-инженер), академик АН СССР (1968).
