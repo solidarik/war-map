@@ -24103,6 +24103,21 @@ function (_EventEmitter) {
       target: 'map',
       view: view
     });
+    var select = new _ol.default.interaction.Select({
+      condition: _ol.default.events.condition.pointerMove,
+      style: new _ol.default.style.Style({
+        fill: new _ol.default.style.Fill({
+          color: 'rgba(255,255,255,0.5)'
+        }),
+        stroke: new _ol.default.style.Stroke({
+          width: 10,
+          color: 'rgba(40, 40, 40, 5)'
+        })
+      })
+    });
+    map.addInteraction(select);
+    select.on('select', function (e) {//e.target.getFeatures().getLength() +
+    });
     map.on('click', function (evt) {
       var coordinates = evt.coordinate;
       var lonLatCoords = new _ol.default.proj.toLonLat(coordinates);
@@ -24217,6 +24232,15 @@ function (_EventEmitter) {
       });
       this.historyEventsSource = historyEventsSource;
       this.map.addLayer(historyEventsLayer);
+      var hullSource = new _ol.default.source.Vector();
+      var hullLayer = new _ol.default.layer.Vector({
+        source: hullSource,
+        zIndex: 1,
+        updateWithAnimating: true,
+        updateWhileInteracting: true
+      });
+      this.hullSource = hullSource;
+      this.map.addLayer(hullLayer);
       var allHistoryEventsSource = new _ol.default.source.Vector();
       var allHistoryEventsLayer = new _ol.default.layer.Vector({
         source: allHistoryEventsSource,
@@ -24334,6 +24358,7 @@ function (_EventEmitter) {
     key: "changeYear",
     value: function changeYear(year) {
       this.historyEventsSource.clear();
+      this.hullSource.clear();
       this.agreementsSource.clear();
       this.currentYear = year;
       this.currentYearForMap = this.currentYear == 1951 ? 1950 : this.currentYear;
@@ -24436,6 +24461,7 @@ function (_EventEmitter) {
     key: "setCurrentEventMap",
     value: function setCurrentEventMap(map) {
       this.historyEventsSource.clear();
+      this.hullSource.clear();
       var features = map.features;
       var all_coords = [];
 
@@ -24495,24 +24521,26 @@ function (_EventEmitter) {
       hull_indexes.forEach(function (idx) {
         hull_coords.push(all_coords[idx]);
       });
+      var polygon = this.createGeom({
+        kind: 'Polygon',
+        coords: [hull_coords]
+      });
+      polygon.scale(1.01, 1.01);
       var ft = new _ol.default.Feature({
         uid: 1000,
         name: 'test2',
-        geometry: this.createGeom({
-          kind: 'Polygon',
-          coords: [hull_coords]
-        })
+        geometry: polygon
       });
       ft.setStyle(new _ol.default.style.Style({
         stroke: new _ol.default.style.Stroke({
           color: 'maroon',
-          width: 5
+          width: 2
         }),
         fill: new _ol.default.style.Fill({
-          color: 'rgba(0, 0, 255, 0.1)'
+          color: 'rgba(0, 0, 255, 0.2)'
         })
       }));
-      this.historyEventsSource.addFeature(ft);
+      this.hullSource.addFeature(ft);
     }
   }, {
     key: "_addButtons",

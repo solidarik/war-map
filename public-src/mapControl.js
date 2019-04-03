@@ -36,6 +36,24 @@ export class MapControl extends EventEmitter {
       view: view
     })
 
+    const select = new ol.interaction.Select({
+      condition: ol.events.condition.pointerMove,
+      style: new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: 'rgba(255,255,255,0.5)'
+        }),
+        stroke: new ol.style.Stroke({
+          width: 10,
+          color: 'rgba(40, 40, 40, 5)'
+        })
+      })
+    })
+
+    map.addInteraction(select)
+    select.on('select', function(e) {
+      //e.target.getFeatures().getLength() +
+    })
+
     map.on('click', function(evt) {
       let coordinates = evt.coordinate
       let lonLatCoords = new ol.proj.toLonLat(coordinates)
@@ -157,6 +175,16 @@ export class MapControl extends EventEmitter {
     this.historyEventsSource = historyEventsSource
     this.map.addLayer(historyEventsLayer)
 
+    let hullSource = new ol.source.Vector()
+    let hullLayer = new ol.layer.Vector({
+      source: hullSource,
+      zIndex: 1,
+      updateWithAnimating: true,
+      updateWhileInteracting: true
+    })
+    this.hullSource = hullSource
+    this.map.addLayer(hullLayer)
+
     let allHistoryEventsSource = new ol.source.Vector()
     let allHistoryEventsLayer = new ol.layer.Vector({
       source: allHistoryEventsSource,
@@ -274,6 +302,7 @@ export class MapControl extends EventEmitter {
 
   changeYear(year) {
     this.historyEventsSource.clear()
+    this.hullSource.clear()
     this.agreementsSource.clear()
     this.currentYear = year
     this.currentYearForMap = this.currentYear == 1951 ? 1950 : this.currentYear
@@ -357,6 +386,7 @@ export class MapControl extends EventEmitter {
 
   setCurrentEventMap(map) {
     this.historyEventsSource.clear()
+    this.hullSource.clear()
 
     let features = map.features
     let all_coords = []
@@ -402,28 +432,32 @@ export class MapControl extends EventEmitter {
       ft.setStyle(new ol.style.Style(style))
       this.historyEventsSource.addFeature(ft)
     }
+
     let hull_indexes = convexHull(all_coords)
     let hull_coords = []
     hull_indexes.forEach(idx => {
       hull_coords.push(all_coords[idx])
     })
+
+    let polygon = this.createGeom({ kind: 'Polygon', coords: [hull_coords] })
+    polygon.scale(1.01, 1.01)
     let ft = new ol.Feature({
       uid: 1000,
       name: 'test2',
-      geometry: this.createGeom({ kind: 'Polygon', coords: [hull_coords] })
+      geometry: polygon
     })
     ft.setStyle(
       new ol.style.Style({
         stroke: new ol.style.Stroke({
           color: 'maroon',
-          width: 5
+          width: 2
         }),
         fill: new ol.style.Fill({
-          color: 'rgba(0, 0, 255, 0.1)'
+          color: 'rgba(0, 0, 255, 0.2)'
         })
       })
     )
-    this.historyEventsSource.addFeature(ft)
+    this.hullSource.addFeature(ft)
   }
 
   _addButtons() {
