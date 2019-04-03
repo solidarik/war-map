@@ -47,8 +47,13 @@ function startApp() {
   let historyEventsControl = HistoryEventsControl.create()
 
   protocol.subscribe('refreshHistoryEvents', events => {
+    console.log('>>>>>> events', events)
     mapControl.setHistoryEvents(events)
     historyEventsControl.showEvents(events)
+  })
+
+  protocol.subscribe('refreshAgreements', agreements => {
+    mapControl.setAgreements(agreements)
   })
 
   historyEventsControl.subscribe('refreshedEventList', () => {

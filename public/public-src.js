@@ -5,6 +5,8 @@
 //
 // anything defined in a previous bundle is accessed via the
 // orig method which is the require for previous bundles
+
+// eslint-disable-next-line no-global-assign
 parcelRequire = (function (modules, cache, entry, globalName) {
   // Save the require from previous bundle to this closure if any
   var previousRequire = typeof parcelRequire === 'function' && parcelRequire;
@@ -75,16 +77,8 @@ parcelRequire = (function (modules, cache, entry, globalName) {
     }, {}];
   };
 
-  var error;
   for (var i = 0; i < entry.length; i++) {
-    try {
-      newRequire(entry[i]);
-    } catch (e) {
-      // Save first error but execute all entries
-      if (!error) {
-        error = e;
-      }
-    }
+    newRequire(entry[i]);
   }
 
   if (entry.length) {
@@ -109,13 +103,6 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   // Override the current require with this new one
-  parcelRequire = newRequire;
-
-  if (error) {
-    // throw error from earlier, _after updating parcelRequire_
-    throw error;
-  }
-
   return newRequire;
 })({"2n/L":[function(require,module,exports) {
 var define;
@@ -24103,20 +24090,33 @@ function (_EventEmitter) {
       target: 'map',
       view: view
     });
-    var select = new _ol.default.interaction.Select({
-      condition: _ol.default.events.condition.pointerMove,
-      style: new _ol.default.style.Style({
-        fill: new _ol.default.style.Fill({
-          color: 'rgba(255,255,255,0.5)'
-        }),
-        stroke: new _ol.default.style.Stroke({
-          width: 10,
-          color: 'rgba(40, 40, 40, 5)'
-        })
+    var selectedStyle = new _ol.default.style.Style({
+      stroke: new _ol.default.style.Stroke({
+        color: 'red',
+        width: 4
+      }),
+      fill: new _ol.default.style.Fill({
+        color: 'rgba(0, 0, 255, 0.1)'
       })
     });
+    var select = new _ol.default.interaction.Select({
+      condition: _ol.default.events.condition.pointerMove,
+      style: selectedStyle,
+      multi: false
+    });
     map.addInteraction(select);
-    select.on('select', function (e) {//e.target.getFeatures().getLength() +
+    select.on('select', function (e) {
+      var selected = e.selected;
+      window.map.historyEventsSource.forEachFeature(function (f) {// f.setStyle(null)
+      });
+
+      if (selected.length) {
+        selected.forEach(function (feature) {
+          console.info(feature.values_.eventMap); // window.map.showEventMap(feature.values_.eventMap)
+          // feature.setStyle(null)
+          //feature.setStyle(selectedStyle)
+        });
+      }
     });
     map.on('click', function (evt) {
       var coordinates = evt.coordinate;
@@ -24183,10 +24183,9 @@ function (_EventEmitter) {
   }, {
     key: "eventStyleFunc",
     value: function eventStyleFunc(feature, zoom) {
-      if (zoom > 4.5) {
-        return [new _ol.default.style.Style()];
-      }
-
+      // if (zoom > 4.5) {
+      //   return [new ol.style.Style()]
+      // }
       var style = new _ol.default.style.Style({
         fill: new _ol.default.style.Fill({
           color: 'rgba(255,255,255,0.5)'
@@ -24195,25 +24194,83 @@ function (_EventEmitter) {
           width: 2,
           color: 'rgba(40, 40, 40, 0.50)'
         }),
-        //   text: new ol.style.Text({
-        //     font: "12px helvetica,sans-serif",
-        //     text: feature.get("name"),
-        //     //zoom > 5 ? feature.get("name") : ""
-        //     fill: new ol.style.Fill({ color: "#000" }),
-        //     stroke: new ol.style.Stroke({
-        //       color: "#fff",
-        //       width: 2
-        //     })
-        //   }),
-        image: new _ol.default.style.Circle({
+        text: new _ol.default.style.Text({
+          font: '20px helvetica,sans-serif',
+          text: zoom > 3 ? feature.get('name') : '',
           fill: new _ol.default.style.Fill({
-            color: 'rgba(255, 160, 122, 0.5)'
+            color: 'black'
           }),
           stroke: new _ol.default.style.Stroke({
-            width: 1,
-            color: 'rgba(40, 40, 40, 0.50)'
+            color: 'white',
+            width: 2
           }),
-          radius: 70000
+          baseline: 'middle',
+          align: 'right',
+          offsetX: 100,
+          offsetY: 40,
+          overflow: 'true',
+          // outline: 'black',
+          outlineWidth: 0
+        }),
+        image: new _ol.default.style.RegularShape({
+          fill: new _ol.default.style.Fill({
+            color: '#000'
+          }),
+          stroke: new _ol.default.style.Stroke({
+            width: 2,
+            color: 'rgba(255, 0, 0, 0.50)'
+          }),
+          points: 5,
+          radius: 30,
+          radius2: 12,
+          angle: 0
+        })
+      });
+      return [style];
+    }
+  }, {
+    key: "agreementStyleFunc",
+    value: function agreementStyleFunc(feature, zoom) {
+      // if (zoom > 4.5) {
+      //   return [new ol.style.Style()]
+      // }
+      var style = new _ol.default.style.Style({
+        fill: new _ol.default.style.Fill({
+          color: 'rgba(255,255,255,0.5)'
+        }),
+        stroke: new _ol.default.style.Stroke({
+          width: 2,
+          color: 'rgba(40, 40, 40, 0.50)'
+        }),
+        text: new _ol.default.style.Text({
+          font: '20px helvetica,sans-serif',
+          text: zoom > 3 ? feature.get('name') : '',
+          fill: new _ol.default.style.Fill({
+            color: 'black'
+          }),
+          stroke: new _ol.default.style.Stroke({
+            color: 'white',
+            width: 2
+          }),
+          baseline: 'middle',
+          align: 'right',
+          offsetX: 100,
+          offsetY: 40,
+          overflow: 'true',
+          // outline: 'black',
+          outlineWidth: 0
+        }),
+        image: new _ol.default.style.RegularShape({
+          fill: new _ol.default.style.Fill({
+            color: 'blue'
+          }),
+          stroke: new _ol.default.style.Stroke({
+            width: 2,
+            color: 'yellow'
+          }),
+          points: 3,
+          radius: 30,
+          angle: 0
         })
       });
       return [style];
@@ -24226,7 +24283,7 @@ function (_EventEmitter) {
       var historyEventsSource = new _ol.default.source.Vector();
       var historyEventsLayer = new _ol.default.layer.Vector({
         source: historyEventsSource,
-        zIndex: 5,
+        zIndex: 1,
         updateWhileAnimating: true,
         updateWhileInteracting: true
       });
@@ -24235,7 +24292,7 @@ function (_EventEmitter) {
       var hullSource = new _ol.default.source.Vector();
       var hullLayer = new _ol.default.layer.Vector({
         source: hullSource,
-        zIndex: 1,
+        zIndex: 100,
         updateWithAnimating: true,
         updateWhileInteracting: true
       });
@@ -24262,24 +24319,15 @@ function (_EventEmitter) {
       var agreementsSource = new _ol.default.source.Vector();
       var agreementsLayer = new _ol.default.layer.Vector({
         source: agreementsSource,
+        style: function style(feature, _) {
+          return _this4.agreementStyleFunc(feature, _this4.view.getZoom());
+        },
         zIndex: 7,
         updateWhileAnimating: true,
         updateWhileInteracting: true
       });
       this.agreementsSource = agreementsSource;
       this.map.addLayer(agreementsLayer);
-      var allAgreementsSource = new _ol.default.source.Vector();
-      var allAgreementsLayer = new _ol.default.layer.Vector({
-        source: allAgreementsSource,
-        style: function style(feature, _) {
-          return _this4.eventStyleFunc(feature, _this4.view.getZoom());
-        },
-        zIndex: 8,
-        updateWhileAnimating: true,
-        updateWhileInteracting: true
-      });
-      this.allAgreementsSource = allAgreementsSource;
-      this.map.addLayer(allAgreementsLayer);
     }
   }, {
     key: "fixMapHeight",
@@ -24405,6 +24453,13 @@ function (_EventEmitter) {
       return geom;
     }
   }, {
+    key: "setAgreements",
+    value: function setAgreements(agreements) {
+      console.log('>>>>', agreements);
+      this.agreements = agreements;
+      this.repaintAgreements();
+    }
+  }, {
     key: "setHistoryEvents",
     value: function setHistoryEvents(events) {
       this.historyEvents = events;
@@ -24446,20 +24501,47 @@ function (_EventEmitter) {
     value: function repaintHistoryEvents() {
       var _this6 = this;
 
+      this.historyEventsSource.clear(); // this.historyEvents.forEach(event => {
+      //   this.showEventMap(event.maps[0])
+      // })
+
+      console.log('features', this.historyEventsSource);
       this.allHistoryEventsSource.clear();
       this.historyEvents.forEach(function (event) {
         var ft = new _ol.default.Feature({
           name: event.name,
-          geometry: new _ol.default.geom.Circle(_this6.getCenterOfMap(event.maps[0]), 100000) // eventFeature: event.maps[0].features
-
+          geometry: new _ol.default.geom.Point(_this6.getCenterOfMap(event.maps[0])),
+          size: 20000,
+          eventMap: event.maps[0]
         });
 
         _this6.allHistoryEventsSource.addFeature(ft);
       });
     }
   }, {
+    key: "repaintAgreements",
+    value: function repaintAgreements() {
+      var _this7 = this;
+
+      this.agreementsSource.clear();
+      this.agreements.forEach(function (agreement) {
+        if (agreement.placeCoords && agreement.placeCoords.length) {
+          var ft = new _ol.default.Feature({
+            name: agreement.results,
+            geometry: new _ol.default.geom.Point(_ol.default.proj.fromLonLat(agreement.placeCoords))
+          });
+
+          _this7.agreementsSource.addFeature(ft);
+        }
+      });
+    }
+  }, {
     key: "setCurrentEventMap",
-    value: function setCurrentEventMap(map) {
+    value: function setCurrentEventMap(map) {//this.currentEventMap = map
+    }
+  }, {
+    key: "showEventMap",
+    value: function showEventMap(map) {
       this.historyEventsSource.clear();
       this.hullSource.clear();
       var features = map.features;
@@ -24525,27 +24607,18 @@ function (_EventEmitter) {
         kind: 'Polygon',
         coords: [hull_coords]
       });
-      polygon.scale(1.01, 1.01);
+      polygon.scale(1.03, 1.03);
       var ft = new _ol.default.Feature({
         uid: 1000,
         name: 'test2',
         geometry: polygon
       });
-      ft.setStyle(new _ol.default.style.Style({
-        stroke: new _ol.default.style.Stroke({
-          color: 'maroon',
-          width: 2
-        }),
-        fill: new _ol.default.style.Fill({
-          color: 'rgba(0, 0, 255, 0.2)'
-        })
-      }));
       this.hullSource.addFeature(ft);
     }
   }, {
     key: "_addButtons",
     value: function _addButtons() {
-      var _this7 = this;
+      var _this8 = this;
 
       this.map.addControl(new CustomControl({
         caption: 'Выбрать объект',
@@ -24553,11 +24626,11 @@ function (_EventEmitter) {
         icon: 'mdi mdi-cursor-default-outline',
         default: true,
         handler: function handler(btn) {
-          _this7._setActiveButton(btn);
+          _this8._setActiveButton(btn);
 
-          _this7.map.removeInteraction(_this7.draw);
+          _this8.map.removeInteraction(_this8.draw);
 
-          _this7.map.removeInteraction(_this7.snap);
+          _this8.map.removeInteraction(_this8.snap);
         }
       }));
       this.map.addControl(new CustomControl({
@@ -24567,7 +24640,7 @@ function (_EventEmitter) {
         handler: function handler(btn) {
           console.log('click to import...');
 
-          _this7._setActiveButton(btn);
+          _this8._setActiveButton(btn);
 
           document.getElementById('fileImport').click();
         }
@@ -24741,15 +24814,15 @@ function (_SuperCustomControl) {
   _inherits(CustomControl, _SuperCustomControl);
 
   function CustomControl(inputParams) {
-    var _this8;
+    var _this9;
 
     _classCallCheck(this, CustomControl);
 
-    _this8 = _possibleConstructorReturn(this, _getPrototypeOf(CustomControl).call(this, inputParams));
+    _this9 = _possibleConstructorReturn(this, _getPrototypeOf(CustomControl).call(this, inputParams));
     var caption = get(inputParams, 'caption');
     var hint = get(inputParams, 'hint') || caption;
     var button = document.createElement('button');
-    button.innerHTML = _this8.getBSIconHTML(get(inputParams, 'icon'));
+    button.innerHTML = _this9.getBSIconHTML(get(inputParams, 'icon'));
     button.className = get(inputParams, 'class');
     button.title = hint;
     var parentDiv = $('#custom-control')[0];
@@ -24761,9 +24834,9 @@ function (_SuperCustomControl) {
     }
 
     parentDiv.appendChild(button);
-    _this8.element = parentDiv;
+    _this9.element = parentDiv;
 
-    _ol.default.control.Control.call(_assertThisInitialized(_this8), {
+    _ol.default.control.Control.call(_assertThisInitialized(_assertThisInitialized(_this9)), {
       label: caption,
       hint: hint,
       tipLabel: caption,
@@ -24788,7 +24861,7 @@ function (_SuperCustomControl) {
       handler(button);
     }
 
-    return _this8;
+    return _this9;
   }
 
   return CustomControl;
@@ -24800,42 +24873,42 @@ function (_SuperCustomControl2) {
   _inherits(YearControl, _SuperCustomControl2);
 
   function YearControl(inputParams) {
-    var _this9;
+    var _this10;
 
     _classCallCheck(this, YearControl);
 
-    _this9 = _possibleConstructorReturn(this, _getPrototypeOf(YearControl).call(this, inputParams));
+    _this10 = _possibleConstructorReturn(this, _getPrototypeOf(YearControl).call(this, inputParams));
     var caption = inputParams.caption;
     var hint = inputParams.hint || caption;
-    _this9.year = inputParams.year;
-    _this9.handler = inputParams.handler;
+    _this10.year = inputParams.year;
+    _this10.handler = inputParams.handler;
     var yearInput = document.createElement('input');
     yearInput.className = 'input-without-focus';
     yearInput.title = hint;
     yearInput.setAttribute('id', 'year-input');
-    yearInput.value = _this9.year;
+    yearInput.value = _this10.year;
     yearInput.addEventListener('keyup', function (event) {
       if (event.keyCode == 13) {
-        _this9._inputKeyUp();
+        _this10._inputKeyUp();
 
         event.preventDefault();
       }
     });
-    _this9.yearInput = yearInput;
+    _this10.yearInput = yearInput;
     var yearLeftButton = document.createElement('button');
-    yearLeftButton.innerHTML = _this9.getBSIconHTML('mdi mdi-step-backward-2');
+    yearLeftButton.innerHTML = _this10.getBSIconHTML('mdi mdi-step-backward-2');
     yearLeftButton.title = 'Предыдущий год';
     yearLeftButton.setAttribute('id', 'year-left-button');
     yearLeftButton.addEventListener('click', function () {
-      _this9._leftButtonClick();
+      _this10._leftButtonClick();
     }, false); // yearLeftButton.addEventListener('touchstart', () => { this._leftButtonClick(); }, false);
 
     var yearRightButton = document.createElement('button');
-    yearRightButton.innerHTML = _this9.getBSIconHTML('mdi mdi-step-forward-2');
+    yearRightButton.innerHTML = _this10.getBSIconHTML('mdi mdi-step-forward-2');
     yearRightButton.title = 'Следующий год';
     yearRightButton.setAttribute('id', 'year-right-button');
     yearRightButton.addEventListener('click', function () {
-      _this9._rightButtonClick();
+      _this10._rightButtonClick();
     }, false); // yearRightButton.addEventListener('touchstart', () => { this._rightButtonClick(); }, false);
 
     var parentDiv = document.createElement('div');
@@ -24844,9 +24917,9 @@ function (_SuperCustomControl2) {
     parentDiv.appendChild(yearLeftButton);
     parentDiv.appendChild(yearInput);
     parentDiv.appendChild(yearRightButton);
-    _this9.element = parentDiv;
+    _this10.element = parentDiv;
 
-    _ol.default.control.Control.call(_assertThisInitialized(_this9), {
+    _ol.default.control.Control.call(_assertThisInitialized(_assertThisInitialized(_this10)), {
       label: 'test',
       hint: 'test',
       tipLabel: caption,
@@ -24854,7 +24927,7 @@ function (_SuperCustomControl2) {
 
     });
 
-    return _this9;
+    return _this10;
   }
 
   _createClass(YearControl, [{
@@ -25503,6 +25576,7 @@ Item.prototype.run = function () {
 };
 
 process.title = 'browser';
+process.browser = true;
 process.env = {};
 process.argv = [];
 process.version = ''; // empty string to avoid regexp issues
@@ -33463,7 +33537,7 @@ function (_EventEmitter) {
           return {
             id: agreement._id,
             kind: agreement.kind,
-            place: agreement.place,
+            placeCoords: agreement.placeCoords,
             startDate: _this2._getStrDateFromEvent(agreement.startDate),
             endDate: _this2._getStrDateFromEvent(agreement.endDate),
             player1: agreement.player1,
@@ -33477,8 +33551,6 @@ function (_EventEmitter) {
         _this2.emit('refreshHistoryEvents', events);
 
         _this2.emit('refreshAgreements', agreements);
-
-        console.log('agreements', agreements);
       });
     }
   }], [{
@@ -44108,8 +44180,12 @@ function startApp() {
   var historyEventsControl = _historyEventsControl.HistoryEventsControl.create();
 
   protocol.subscribe('refreshHistoryEvents', function (events) {
+    console.log('>>>>>> events', events);
     mapControl.setHistoryEvents(events);
     historyEventsControl.showEvents(events);
+  });
+  protocol.subscribe('refreshAgreements', function (agreements) {
+    mapControl.setAgreements(agreements);
   });
   historyEventsControl.subscribe('refreshedEventList', function () {
     (0, _jquery.default)('table tr').click(function () {

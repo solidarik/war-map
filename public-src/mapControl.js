@@ -36,22 +36,38 @@ export class MapControl extends EventEmitter {
       view: view
     })
 
+    const selectedStyle = new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: 'red',
+        width: 4
+      }),
+      fill: new ol.style.Fill({
+        color: 'rgba(0, 0, 255, 0.1)'
+      })
+    })
+
     const select = new ol.interaction.Select({
       condition: ol.events.condition.pointerMove,
-      style: new ol.style.Style({
-        fill: new ol.style.Fill({
-          color: 'rgba(255,255,255,0.5)'
-        }),
-        stroke: new ol.style.Stroke({
-          width: 10,
-          color: 'rgba(40, 40, 40, 5)'
-        })
-      })
+      style: selectedStyle,
+      multi: false
     })
 
     map.addInteraction(select)
     select.on('select', function(e) {
-      //e.target.getFeatures().getLength() +
+      const selected = e.selected
+
+      window.map.historyEventsSource.forEachFeature(f => {
+        // f.setStyle(null)
+      })
+
+      if (selected.length) {
+        selected.forEach(function(feature) {
+          console.info(feature.values_.eventMap)
+          // window.map.showEventMap(feature.values_.eventMap)
+          // feature.setStyle(null)
+          //feature.setStyle(selectedStyle)
+        })
+      }
     })
 
     map.on('click', function(evt) {
@@ -128,9 +144,9 @@ export class MapControl extends EventEmitter {
   }
 
   eventStyleFunc(feature, zoom) {
-    if (zoom > 4.5) {
-      return [new ol.style.Style()]
-    }
+    // if (zoom > 4.5) {
+    //   return [new ol.style.Style()]
+    // }
 
     let style = new ol.style.Style({
       fill: new ol.style.Fill({
@@ -140,25 +156,75 @@ export class MapControl extends EventEmitter {
         width: 2,
         color: 'rgba(40, 40, 40, 0.50)'
       }),
-      //   text: new ol.style.Text({
-      //     font: "12px helvetica,sans-serif",
-      //     text: feature.get("name"),
-      //     //zoom > 5 ? feature.get("name") : ""
-      //     fill: new ol.style.Fill({ color: "#000" }),
-      //     stroke: new ol.style.Stroke({
-      //       color: "#fff",
-      //       width: 2
-      //     })
-      //   }),
-      image: new ol.style.Circle({
-        fill: new ol.style.Fill({
-          color: 'rgba(255, 160, 122, 0.5)'
-        }),
+      text: new ol.style.Text({
+        font: '20px helvetica,sans-serif',
+        text: zoom > 3 ? feature.get('name') : '',
+        fill: new ol.style.Fill({ color: 'black' }),
         stroke: new ol.style.Stroke({
-          width: 1,
-          color: 'rgba(40, 40, 40, 0.50)'
+          color: 'white',
+          width: 2
         }),
-        radius: 70000
+        baseline: 'middle',
+        align: 'right',
+        offsetX: 100,
+        offsetY: 40,
+        overflow: 'true',
+        // outline: 'black',
+        outlineWidth: 0
+      }),
+      image: new ol.style.RegularShape({
+        fill: new ol.style.Fill({ color: '#000' }),
+        stroke: new ol.style.Stroke({
+          width: 2,
+          color: 'rgba(255, 0, 0, 0.50)'
+        }),
+        points: 5,
+        radius: 30,
+        radius2: 12,
+        angle: 0
+      })
+    })
+    return [style]
+  }
+
+  agreementStyleFunc(feature, zoom) {
+    // if (zoom > 4.5) {
+    //   return [new ol.style.Style()]
+    // }
+
+    let style = new ol.style.Style({
+      fill: new ol.style.Fill({
+        color: 'rgba(255,255,255,0.5)'
+      }),
+      stroke: new ol.style.Stroke({
+        width: 2,
+        color: 'rgba(40, 40, 40, 0.50)'
+      }),
+      text: new ol.style.Text({
+        font: '20px helvetica,sans-serif',
+        text: zoom > 3 ? feature.get('name') : '',
+        fill: new ol.style.Fill({ color: 'black' }),
+        stroke: new ol.style.Stroke({
+          color: 'white',
+          width: 2
+        }),
+        baseline: 'middle',
+        align: 'right',
+        offsetX: 100,
+        offsetY: 40,
+        overflow: 'true',
+        // outline: 'black',
+        outlineWidth: 0
+      }),
+      image: new ol.style.RegularShape({
+        fill: new ol.style.Fill({ color: 'blue' }),
+        stroke: new ol.style.Stroke({
+          width: 2,
+          color: 'yellow'
+        }),
+        points: 3,
+        radius: 30,
+        angle: 0
       })
     })
     return [style]
@@ -168,7 +234,7 @@ export class MapControl extends EventEmitter {
     let historyEventsSource = new ol.source.Vector()
     let historyEventsLayer = new ol.layer.Vector({
       source: historyEventsSource,
-      zIndex: 5,
+      zIndex: 1,
       updateWhileAnimating: true,
       updateWhileInteracting: true
     })
@@ -178,7 +244,7 @@ export class MapControl extends EventEmitter {
     let hullSource = new ol.source.Vector()
     let hullLayer = new ol.layer.Vector({
       source: hullSource,
-      zIndex: 1,
+      zIndex: 100,
       updateWithAnimating: true,
       updateWhileInteracting: true
     })
@@ -201,23 +267,14 @@ export class MapControl extends EventEmitter {
     let agreementsSource = new ol.source.Vector()
     let agreementsLayer = new ol.layer.Vector({
       source: agreementsSource,
+      style: (feature, _) =>
+        this.agreementStyleFunc(feature, this.view.getZoom()),
       zIndex: 7,
       updateWhileAnimating: true,
       updateWhileInteracting: true
     })
     this.agreementsSource = agreementsSource
     this.map.addLayer(agreementsLayer)
-
-    let allAgreementsSource = new ol.source.Vector()
-    let allAgreementsLayer = new ol.layer.Vector({
-      source: allAgreementsSource,
-      style: (feature, _) => this.eventStyleFunc(feature, this.view.getZoom()),
-      zIndex: 8,
-      updateWhileAnimating: true,
-      updateWhileInteracting: true
-    })
-    this.allAgreementsSource = allAgreementsSource
-    this.map.addLayer(allAgreementsLayer)
   }
 
   fixMapHeight() {
@@ -339,6 +396,12 @@ export class MapControl extends EventEmitter {
     return geom
   }
 
+  setAgreements(agreements) {
+    console.log('>>>>', agreements)
+    this.agreements = agreements
+    this.repaintAgreements()
+  }
+
   setHistoryEvents(events) {
     this.historyEvents = events
     this.repaintHistoryEvents()
@@ -372,19 +435,46 @@ export class MapControl extends EventEmitter {
   }
 
   repaintHistoryEvents() {
+    this.historyEventsSource.clear()
+    // this.historyEvents.forEach(event => {
+    //   this.showEventMap(event.maps[0])
+    // })
+
+    console.log('features', this.historyEventsSource)
+
     this.allHistoryEventsSource.clear()
     this.historyEvents.forEach(event => {
       let ft = new ol.Feature({
         name: event.name,
-        geometry: new ol.geom.Circle(this.getCenterOfMap(event.maps[0]), 100000)
-        // eventFeature: event.maps[0].features
+        geometry: new ol.geom.Point(this.getCenterOfMap(event.maps[0])),
+        size: 20000,
+        eventMap: event.maps[0]
       })
 
       this.allHistoryEventsSource.addFeature(ft)
     })
   }
 
+  repaintAgreements() {
+    this.agreementsSource.clear()
+
+    this.agreements.forEach(agreement => {
+      if (agreement.placeCoords && agreement.placeCoords.length) {
+        let ft = new ol.Feature({
+          name: agreement.results,
+          geometry: new ol.geom.Point(ol.proj.fromLonLat(agreement.placeCoords))
+        })
+
+        this.agreementsSource.addFeature(ft)
+      }
+    })
+  }
+
   setCurrentEventMap(map) {
+    //this.currentEventMap = map
+  }
+
+  showEventMap(map) {
     this.historyEventsSource.clear()
     this.hullSource.clear()
 
@@ -440,23 +530,12 @@ export class MapControl extends EventEmitter {
     })
 
     let polygon = this.createGeom({ kind: 'Polygon', coords: [hull_coords] })
-    polygon.scale(1.01, 1.01)
+    polygon.scale(1.03, 1.03)
     let ft = new ol.Feature({
       uid: 1000,
       name: 'test2',
       geometry: polygon
     })
-    ft.setStyle(
-      new ol.style.Style({
-        stroke: new ol.style.Stroke({
-          color: 'maroon',
-          width: 2
-        }),
-        fill: new ol.style.Fill({
-          color: 'rgba(0, 0, 255, 0.2)'
-        })
-      })
-    )
     this.hullSource.addFeature(ft)
   }
 
