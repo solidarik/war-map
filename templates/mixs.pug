@@ -9,13 +9,14 @@ mixin li(activeElem, link, name)
 mixin header(activeElem)
     nav(id='head-navbar' class='navbar navbar-dark bg-dark' data-role='navbar')
         div(class='container-fluid')
-            ul(class='nav navbar-nav')
+            ul(class='nav navbar-nav' style='white-space:nowrap')
                 +li(activeElem, 'start', 'Начальная')
                 +li(activeElem, 'events', 'События')
                 +li(activeElem, 'info', 'Инфографика')
                 +li(activeElem, 'person', 'Личности')
-            a(href="https://metrika.yandex.ru/stat/?id=52827664&amp;from=informer" target="_blank" rel="nofollow")
-                img(src="https://informer.yandex.ru/informer/52827664/3_0_535353FF_333333FF_1_pageviews" style="width:88px; height:31px; border:0;"
-                    alt="Яндекс.Метрика" title="Яндекс.Метрика: данные за сегодня (просмотры, визиты и уникальные посетители)" class="ym-advanced-informer" data-cid="52827664" data-lang="ru")
+            span(class='yandex-metrica pull-right')
+                a(href="https://metrika.yandex.ru/stat/?id=52827664&amp;from=informer" target="_blank" rel="nofollow")
+                    img(src="https://informer.yandex.ru/informer/52827664/3_0_535353FF_333333FF_1_pageviews" style="width:88px; height:31px; border:0;"
+                        alt="Яндекс.Метрика" title="Яндекс.Метрика: данные за сегодня (просмотры, визиты и уникальные посетители)" class="ym-advanced-informer" data-cid="52827664" data-lang="ru")
             //- span(class='navbar-text pull-right')
             //-     | #{user.displayName}

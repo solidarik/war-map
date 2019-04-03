@@ -1,14 +1,17 @@
-html, body {height:100%;}
+html,
+body {
+  height: 100%;
+}
 
 .wrap {
-/*центрируем*/
-  position:relative;
-  width:100%; /*могут быть и пиксели*/
-  margin: 0px auto ;
-/*вытягиваем в высоту*/
-  height:auto !important;
-  height:100%;
-  min-height:100%;
+  /*центрируем*/
+  position: relative;
+  width: 100%; /*могут быть и пиксели*/
+  margin: 0px auto;
+  /*вытягиваем в высоту*/
+  height: auto !important;
+  height: 100%;
+  min-height: 100%;
 }
 
 .container-fluid {
@@ -24,7 +27,7 @@ html, body {height:100%;}
   padding: 0 5px;
 }
 
-.nav>li {
+.nav > li {
   display: inline-block;
   width: initial;
   float: left;
@@ -34,14 +37,19 @@ html, body {height:100%;}
 
 .nav {
   display: inline-block;
+  white-space: nowrap;
 }
 
 .nav-link {
   padding: 0px;
 }
 
-@media screen and (max-width:768px)
-{
+.yandex-metrica {
+  position: absolute;
+  right: 0px;
+}
+
+@media screen and (max-width: 700) {
   .nav {
     display: inline-block;
   }
@@ -52,10 +60,9 @@ html, body {height:100%;}
 }
 
 .glow-button {
-  box-shadow: 0 4px 15px rgba(255, 0, 0, .4) !important;
-  outline: 4px auto  rgba(255, 0, 0, .4) !important;
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4) !important;
+  outline: 4px auto rgba(255, 0, 0, 0.4) !important;
 }
-
 
 /* .ol-zoom {
   top: 50px;
@@ -99,8 +106,9 @@ html, body {height:100%;}
   line-height: 26px !important;
 }
 
-.ol-control button, #year-input {
-  background-color: rgba(40, 40, 40, 0.60) !important;
+.ol-control button,
+#year-input {
+  background-color: rgba(40, 40, 40, 0.6) !important;
   cursor: pointer;
   touch-action: manipulation;
 }
@@ -147,7 +155,7 @@ html, body {height:100%;}
 }
 
 .event-feature-color {
-  color:hsl(48, 100%, 67%) ;
+  color: hsl(48, 100%, 67%);
 }
 
 .event-feature-color:hover {
@@ -174,13 +182,12 @@ html, body {height:100%;}
   overflow-y: scroll;
 }
 
-
 #events-control {
   position: fixed;
   height: auto;
   width: 100%;
   max-height: 30%;
-  background-color: rgba(40, 40, 40, 0.50) !important;
+  background-color: rgba(40, 40, 40, 0.5) !important;
   position: absolute;
   bottom: 0px;
   left: 0px;
@@ -229,7 +236,7 @@ html, body {height:100%;}
   margin-bottom: 5px !important;
 }
 
-.card-header  {
+.card-header {
   touch-action: manipulation;
   height: 32px;
   min-height: 32px;
@@ -273,7 +280,6 @@ input.form-control {
 .btn-super-nav-group-object {
   right: 70px;
 }
-
 
 .btn-super-group {
   position: absolute;
@@ -334,6 +340,3 @@ input.form-control {
 #data-counter {
   font-weight: bold;
 }
-
-
-
