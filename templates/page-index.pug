@@ -1,0 +1,61 @@
+doctype html
+head
+  meta(charset='utf-8')
+  title Хроника военных действий
+  link(rel='shortcut icon' href='favicon.ico' type='image/x-icon')
+  meta(name='author' content='Mokrev AA')
+  meta(name='viewport' content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1')
+  link(rel='stylesheet' href='css/normalize.css' media='all')
+  link(rel='stylesheet' href='css/style.css' media='all')
+  link(href='http://fonts.googleapis.com/css?family=Lato:300,400,700,900,300italic,400italic,700italic,900italic|Raleway:400,200,300,500,700,600,800,900' rel='stylesheet' type='text/css')
+  link(href='http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css' rel='stylesheet')
+  script(src='js/jquery-1.11.1.min.js')
+  script(src='js/device.min.js')
+  // OPTIONAL JQUERY PLUGIN
+  script(src='js/jquery.mb.YTPlayer.js')
+  script(src='js/custom.js')
+  meta(name='robots' content='noindex,follow')
+script.
+  setTimeout(showButton, 8000);
+  function showButton() {
+  var progress = document.getElementById("progrees");
+  progress.style.display = "none";
+  var statrWork = document.getElementById("statrWork");
+  statrWork.style.display = "block";
+  };
+section.big-background
+  a#bgndVideo.player(data-property="{videoURL:'https://www.youtube.com/watch?v=B49on4qFQiQ',containment:'body',autoPlay:true, mute:true, startAt:-1, opacity:1}")
+  .pattern
+  .big-background-container
+    h1.big-background-title Многомерная карта истории
+    .divider
+    h4#colorize-cit
+        | "Страна, забывшая свою культуру, историю, традиции и национальных героев – обречена на вымирание"
+        br
+        | Лев Николаевич Толстой
+    #progrees(style='display: block;')
+      img(src='images/progress1.gif')
+      h1#colorize Загрузка...
+    #statrWork(style='display: none;')
+      a.big-background-btn(href='UIAC_Index.html') Войти
+.wrapper
+  section.about-section
+    .about-section-container
+      h2.about-section-title Многомерная карта истории
+      p
+        | Наш проект не имеет целью восполнить пробелы в истории, не претендует на стопроцентную историческую правоту, 
+        br
+        | а нацелен лишь на сбор в едином интернет-ресурсе, систематизацию и визуализацию данных.
+      // <a href="https://github.com/pupunzi/jquery.mb.YTPlayer" target="_blank" class="about-section-btn">Check it here</a>
+  section.small-background-section
+    .pattern
+    .small-background-container
+      h2.small-background-title
+        span Связаться с нами
+      ul.socials
+        // <li><a href="https://www.facebook.com/designmodo" target="_blank"><i class="fa fa-facebook-square fa-3x"></i></a></li>
+        // <li><a href="https://twitter.com/Designmodo" target="_blank"><i class="fa fa-twitter-square fa-3x"></i></a></li>
+        // <li><a href="https://plus.google.com/+Designmodo" target="_blank"><i class="fa fa-google-plus-square fa-3x"></i></a></li>
+        li
+          a(href='mailto:almo_985@mail.ru?subject=Map history' title='Письмо разработчикам')
+            i.fa.fa-envelope-square.fa-3x
