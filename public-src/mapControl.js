@@ -149,39 +149,39 @@ export class MapControl extends EventEmitter {
     // }
 
     let style = new ol.style.Style({
-      fill: new ol.style.Fill({
-        color: 'rgba(255,255,255,0.5)'
-      }),
-      stroke: new ol.style.Stroke({
-        width: 2,
-        color: 'rgba(40, 40, 40, 0.50)'
-      }),
-      text: new ol.style.Text({
-        font: '20px helvetica,sans-serif',
-        text: zoom > 3 ? feature.get('name') : '',
-        fill: new ol.style.Fill({ color: 'black' }),
-        stroke: new ol.style.Stroke({
-          color: 'white',
-          width: 2
-        }),
-        baseline: 'middle',
-        align: 'right',
-        offsetX: 100,
-        offsetY: 40,
-        overflow: 'true',
-        // outline: 'black',
-        outlineWidth: 0
-      }),
+      // fill: new ol.style.Fill({
+      //   color: 'rgba(255,255,255,0.5)'
+      // }),
+      // stroke: new ol.style.Stroke({
+      //   width: 2,
+      //   color: 'rgba(40, 40, 40, 0.50)'
+      // }),
+      // text: new ol.style.Text({
+      //   font: '14px helvetica,sans-serif',
+      //   text: zoom > 3 ? feature.get('name') : '',
+      //   fill: new ol.style.Fill({ color: 'red' }),
+      //   stroke: new ol.style.Stroke({
+      //     color: 'white',
+      //     width: 2
+      //   }),
+      //   baseline: 'middle',
+      //   align: 'right',
+      //   offsetX: 100,
+      //   offsetY: 40,
+      //   overflow: 'true',
+      //   // outline: 'black',
+      //   outlineWidth: 0
+      // }),
       image: new ol.style.RegularShape({
-        fill: new ol.style.Fill({ color: '#000' }),
-        stroke: new ol.style.Stroke({
-          width: 2,
-          color: 'rgba(255, 0, 0, 0.50)'
-        }),
+        fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 0.5)' }),
+        // stroke: new ol.style.Stroke({
+        //   width: 0,
+        //   color: 'gray'
+        // }),
         points: 5,
-        radius: 30,
-        radius2: 12,
-        angle: 0
+        radius: 12,
+        radius2: 5,
+        angle: -50
       })
     })
     return [style]
@@ -193,38 +193,38 @@ export class MapControl extends EventEmitter {
     // }
 
     let style = new ol.style.Style({
-      fill: new ol.style.Fill({
-        color: 'rgba(255,255,255,0.5)'
-      }),
-      stroke: new ol.style.Stroke({
-        width: 2,
-        color: 'rgba(40, 40, 40, 0.50)'
-      }),
-      text: new ol.style.Text({
-        font: '20px helvetica,sans-serif',
-        text: zoom > 3 ? feature.get('name') : '',
-        fill: new ol.style.Fill({ color: 'black' }),
-        stroke: new ol.style.Stroke({
-          color: 'white',
-          width: 2
-        }),
-        baseline: 'middle',
-        align: 'right',
-        offsetX: 100,
-        offsetY: 40,
-        overflow: 'true',
-        // outline: 'black',
-        outlineWidth: 0
-      }),
-      image: new ol.style.RegularShape({
-        fill: new ol.style.Fill({ color: 'blue' }),
-        stroke: new ol.style.Stroke({
-          width: 2,
-          color: 'yellow'
-        }),
-        points: 3,
-        radius: 30,
-        angle: 0
+      // fill: new ol.style.Fill({
+      //   color: 'rgba(255,255,255,0.5)'
+      // }),
+      // stroke: new ol.style.Stroke({
+      //   width: 2,
+      //   color: 'rgba(40, 40, 40, 0.50)'
+      // }),
+      // text: new ol.style.Text({
+      //   font: '20px helvetica,sans-serif',
+      //   text: zoom > 3 ? feature.get('name') : '',
+      //   fill: new ol.style.Fill({ color: 'black' }),
+      //   stroke: new ol.style.Stroke({
+      //     color: 'white',
+      //     width: 2
+      //   }),
+      //   baseline: 'middle',
+      //   align: 'right',
+      //   offsetX: 100,
+      //   offsetY: 40,
+      //   overflow: 'true',
+      //   // outline: 'black',
+      //   outlineWidth: 0
+      // }),
+      image: new ol.style.Circle({
+        fill: new ol.style.Fill({ color: 'rgba(51,153,255,0.5)' }),
+        // stroke: new ol.style.Stroke({
+        //   width: 2,
+        //   color: 'yellow'
+        // }),
+        // points: 3,
+        radius: 7
+        // angle: 0
       })
     })
     return [style]

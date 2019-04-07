@@ -5,8 +5,6 @@
 //
 // anything defined in a previous bundle is accessed via the
 // orig method which is the require for previous bundles
-
-// eslint-disable-next-line no-global-assign
 parcelRequire = (function (modules, cache, entry, globalName) {
   // Save the require from previous bundle to this closure if any
   var previousRequire = typeof parcelRequire === 'function' && parcelRequire;
@@ -77,8 +75,16 @@ parcelRequire = (function (modules, cache, entry, globalName) {
     }, {}];
   };
 
+  var error;
   for (var i = 0; i < entry.length; i++) {
-    newRequire(entry[i]);
+    try {
+      newRequire(entry[i]);
+    } catch (e) {
+      // Save first error but execute all entries
+      if (!error) {
+        error = e;
+      }
+    }
   }
 
   if (entry.length) {
@@ -103,6 +109,13 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   // Override the current require with this new one
+  parcelRequire = newRequire;
+
+  if (error) {
+    // throw error from earlier, _after updating parcelRequire_
+    throw error;
+  }
+
   return newRequire;
 })({"2n/L":[function(require,module,exports) {
 var define;
@@ -24187,43 +24200,41 @@ function (_EventEmitter) {
       //   return [new ol.style.Style()]
       // }
       var style = new _ol.default.style.Style({
-        fill: new _ol.default.style.Fill({
-          color: 'rgba(255,255,255,0.5)'
-        }),
-        stroke: new _ol.default.style.Stroke({
-          width: 2,
-          color: 'rgba(40, 40, 40, 0.50)'
-        }),
-        text: new _ol.default.style.Text({
-          font: '20px helvetica,sans-serif',
-          text: zoom > 3 ? feature.get('name') : '',
-          fill: new _ol.default.style.Fill({
-            color: 'black'
-          }),
-          stroke: new _ol.default.style.Stroke({
-            color: 'white',
-            width: 2
-          }),
-          baseline: 'middle',
-          align: 'right',
-          offsetX: 100,
-          offsetY: 40,
-          overflow: 'true',
-          // outline: 'black',
-          outlineWidth: 0
-        }),
+        // fill: new ol.style.Fill({
+        //   color: 'rgba(255,255,255,0.5)'
+        // }),
+        // stroke: new ol.style.Stroke({
+        //   width: 2,
+        //   color: 'rgba(40, 40, 40, 0.50)'
+        // }),
+        // text: new ol.style.Text({
+        //   font: '14px helvetica,sans-serif',
+        //   text: zoom > 3 ? feature.get('name') : '',
+        //   fill: new ol.style.Fill({ color: 'red' }),
+        //   stroke: new ol.style.Stroke({
+        //     color: 'white',
+        //     width: 2
+        //   }),
+        //   baseline: 'middle',
+        //   align: 'right',
+        //   offsetX: 100,
+        //   offsetY: 40,
+        //   overflow: 'true',
+        //   // outline: 'black',
+        //   outlineWidth: 0
+        // }),
         image: new _ol.default.style.RegularShape({
           fill: new _ol.default.style.Fill({
-            color: '#000'
+            color: 'rgba(255, 0, 0, 0.5)'
           }),
-          stroke: new _ol.default.style.Stroke({
-            width: 2,
-            color: 'rgba(255, 0, 0, 0.50)'
-          }),
+          // stroke: new ol.style.Stroke({
+          //   width: 0,
+          //   color: 'gray'
+          // }),
           points: 5,
-          radius: 30,
-          radius2: 12,
-          angle: 0
+          radius: 12,
+          radius2: 5,
+          angle: -50
         })
       });
       return [style];
@@ -24235,42 +24246,40 @@ function (_EventEmitter) {
       //   return [new ol.style.Style()]
       // }
       var style = new _ol.default.style.Style({
-        fill: new _ol.default.style.Fill({
-          color: 'rgba(255,255,255,0.5)'
-        }),
-        stroke: new _ol.default.style.Stroke({
-          width: 2,
-          color: 'rgba(40, 40, 40, 0.50)'
-        }),
-        text: new _ol.default.style.Text({
-          font: '20px helvetica,sans-serif',
-          text: zoom > 3 ? feature.get('name') : '',
+        // fill: new ol.style.Fill({
+        //   color: 'rgba(255,255,255,0.5)'
+        // }),
+        // stroke: new ol.style.Stroke({
+        //   width: 2,
+        //   color: 'rgba(40, 40, 40, 0.50)'
+        // }),
+        // text: new ol.style.Text({
+        //   font: '20px helvetica,sans-serif',
+        //   text: zoom > 3 ? feature.get('name') : '',
+        //   fill: new ol.style.Fill({ color: 'black' }),
+        //   stroke: new ol.style.Stroke({
+        //     color: 'white',
+        //     width: 2
+        //   }),
+        //   baseline: 'middle',
+        //   align: 'right',
+        //   offsetX: 100,
+        //   offsetY: 40,
+        //   overflow: 'true',
+        //   // outline: 'black',
+        //   outlineWidth: 0
+        // }),
+        image: new _ol.default.style.Circle({
           fill: new _ol.default.style.Fill({
-            color: 'black'
+            color: 'rgba(51,153,255,0.5)'
           }),
-          stroke: new _ol.default.style.Stroke({
-            color: 'white',
-            width: 2
-          }),
-          baseline: 'middle',
-          align: 'right',
-          offsetX: 100,
-          offsetY: 40,
-          overflow: 'true',
-          // outline: 'black',
-          outlineWidth: 0
-        }),
-        image: new _ol.default.style.RegularShape({
-          fill: new _ol.default.style.Fill({
-            color: 'blue'
-          }),
-          stroke: new _ol.default.style.Stroke({
-            width: 2,
-            color: 'yellow'
-          }),
-          points: 3,
-          radius: 30,
-          angle: 0
+          // stroke: new ol.style.Stroke({
+          //   width: 2,
+          //   color: 'yellow'
+          // }),
+          // points: 3,
+          radius: 7 // angle: 0
+
         })
       });
       return [style];
@@ -24836,7 +24845,7 @@ function (_SuperCustomControl) {
     parentDiv.appendChild(button);
     _this9.element = parentDiv;
 
-    _ol.default.control.Control.call(_assertThisInitialized(_assertThisInitialized(_this9)), {
+    _ol.default.control.Control.call(_assertThisInitialized(_this9), {
       label: caption,
       hint: hint,
       tipLabel: caption,
@@ -24919,7 +24928,7 @@ function (_SuperCustomControl2) {
     parentDiv.appendChild(yearRightButton);
     _this10.element = parentDiv;
 
-    _ol.default.control.Control.call(_assertThisInitialized(_assertThisInitialized(_this10)), {
+    _ol.default.control.Control.call(_assertThisInitialized(_this10), {
       label: 'test',
       hint: 'test',
       tipLabel: caption,
@@ -25576,7 +25585,6 @@ Item.prototype.run = function () {
 };
 
 process.title = 'browser';
-process.browser = true;
 process.env = {};
 process.argv = [];
 process.version = ''; // empty string to avoid regexp issues
