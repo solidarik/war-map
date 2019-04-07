@@ -1,6 +1,7 @@
 import ol from './libs/ol'
 import { EventEmitter } from './eventEmitter'
 import convexHull from 'monotone-convex-hull-2d'
+import strHelper from '../helper/strHelper'
 
 const kremlinLocation = new ol.proj.fromLonLat([37.617499, 55.752023]) // moscow kremlin
 
@@ -62,10 +63,10 @@ export class MapControl extends EventEmitter {
 
       if (selected.length) {
         selected.forEach(function(feature) {
-          console.info(feature.values_.eventMap)
-          // window.map.showEventMap(feature.values_.eventMap)
+          // console.info('>>>> hover feature', feature)
+          // window.map.showEventMap(feature.get('eventMap'))
           // feature.setStyle(null)
-          //feature.setStyle(selectedStyle)
+          // feature.setStyle(selectedStyle)
         })
       }
     })
@@ -172,8 +173,13 @@ export class MapControl extends EventEmitter {
       //   // outline: 'black',
       //   outlineWidth: 0
       // }),
+
       image: new ol.style.RegularShape({
-        fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 0.5)' }),
+        fill: new ol.style.Fill(
+          feature.get('isWinnerUSSR') == true
+            ? { color: 'rgba(255,0,0,0.6)' }
+            : { color: 'rgba(0,0,0,0.6)' } //black enemy
+        ),
         // stroke: new ol.style.Stroke({
         //   width: 0,
         //   color: 'gray'
@@ -217,7 +223,7 @@ export class MapControl extends EventEmitter {
       //   outlineWidth: 0
       // }),
       image: new ol.style.Circle({
-        fill: new ol.style.Fill({ color: 'rgba(51,153,255,0.5)' }),
+        fill: new ol.style.Fill({ color: 'rgba(51,153,255,0.7)' }),
         // stroke: new ol.style.Stroke({
         //   width: 2,
         //   color: 'yellow'
@@ -254,7 +260,7 @@ export class MapControl extends EventEmitter {
     let allHistoryEventsSource = new ol.source.Vector()
     let allHistoryEventsLayer = new ol.layer.Vector({
       source: allHistoryEventsSource,
-      style: (feature, _) => this.eventStyleFunc(feature, this.view.getZoom()),
+      style: (f, _) => this.eventStyleFunc(f, this.view.getZoom()),
       zIndex: 6,
       updateWhileAnimating: true,
       updateWhileInteracting: true
@@ -397,7 +403,6 @@ export class MapControl extends EventEmitter {
   }
 
   setAgreements(agreements) {
-    console.log('>>>>', agreements)
     this.agreements = agreements
     this.repaintAgreements()
   }
@@ -435,12 +440,10 @@ export class MapControl extends EventEmitter {
   }
 
   repaintHistoryEvents() {
-    this.historyEventsSource.clear()
+    this.allHistoryEventsSource.clear()
     // this.historyEvents.forEach(event => {
     //   this.showEventMap(event.maps[0])
     // })
-
-    console.log('features', this.historyEventsSource)
 
     this.allHistoryEventsSource.clear()
     this.historyEvents.forEach(event => {
@@ -448,7 +451,10 @@ export class MapControl extends EventEmitter {
         name: event.name,
         geometry: new ol.geom.Point(this.getCenterOfMap(event.maps[0])),
         size: 20000,
-        eventMap: event.maps[0]
+        isWinnerUSSR: strHelper.compareEngLanguage(event.winner, 'CCCР'),
+        winner: event.winner,
+        eventMap: event.maps[0],
+        filename: event.filename
       })
 
       this.allHistoryEventsSource.addFeature(ft)
@@ -560,7 +566,6 @@ export class MapControl extends EventEmitter {
         class: 'box-control',
         icon: 'mdi mdi-import',
         handler: btn => {
-          console.log('click to import...')
           this._setActiveButton(btn)
           document.getElementById('fileImport').click()
         }

@@ -68,7 +68,9 @@ export class ClientProtocol extends EventEmitter {
           endDate: this._getStrDateFromEvent(event.endDate),
           maps: event.maps,
           name: this._getDictName(event._name),
-          imgUrl: event.imgUrl
+          imgUrl: event.imgUrl,
+          winner: event.winner,
+          filename: event.filename
         }
       })
 

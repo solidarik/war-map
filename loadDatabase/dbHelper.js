@@ -84,7 +84,7 @@ class DbHelper {
               let newJsonItem = undefined
 
               mediator
-                .processJson(jsonItem)
+                .processJson(jsonItem, filePath)
                 .then(procJsonItem => {
                   newJsonItem = procJsonItem
                   return mediator.isExistObject(procJsonItem)

@@ -1,47 +1,47 @@
-const HistoryEventsModel = require("../models/historyEventsModel");
-const dictEngRusProtocol = require("../socketProtocol/dictEngRusProtocol");
-const geoHelper = require("../helper/geoHelper");
-const inetHelper = require("../helper/inetHelper");
-const fileHelper = require("../helper/fileHelper");
-const SuperJsonMediator = require("./superJsonMediator");
-const moment = require("moment");
-const log = require("../helper/logHelper");
+const HistoryEventsModel = require('../models/historyEventsModel')
+const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol')
+const geoHelper = require('../helper/geoHelper')
+const inetHelper = require('../helper/inetHelper')
+const fileHelper = require('../helper/fileHelper')
+const SuperJsonMediator = require('./superJsonMediator')
+const moment = require('moment')
+const log = require('../helper/logHelper')
 const convexHull = require('monotone-convex-hull-2d')
 
 class HistoryEventsJsonMediator extends SuperJsonMediator {
   constructor() {
-    super();
-    this.equilFields = ["startDate", "_name"];
-    this.model = HistoryEventsModel;
+    super()
+    this.equilFields = ['startDate', '_name']
+    this.model = HistoryEventsModel
   }
 
   getPlacesFromJson(json) {
     return new Promise((resolve, reject) => {
       let promicesName = json.map(item =>
         dictEngRusProtocol.getEngRusObjectId(item.name)
-      );
+      )
       Promise.all(promicesName)
         .then(objNames => {
-          return objNames;
+          return objNames
         })
         .then(objNames => {
-          let places = [];
+          let places = []
           for (let i = 0; i < json.length; i++) {
-            let place = {};
-            let obj = json[i];
-            place.coordinates = geoHelper.fromLonLat(obj.lonlat_coordinates);
-            place.name = objNames[i];
-            places.push(place);
+            let place = {}
+            let obj = json[i]
+            place.coordinates = geoHelper.fromLonLat(obj.lonlat_coordinates)
+            place.name = objNames[i]
+            places.push(place)
           }
-          resolve(places);
+          resolve(places)
         })
-        .catch(err => reject(`Ошибка в getPlacesFromJson: ${err}`));
-    });
+        .catch(err => reject(`Ошибка в getPlacesFromJson: ${err}`))
+    })
   }
 
   getAlliesFromJson(json) {
     return new Promise((resolve, reject) => {
-      resolve([]);
+      resolve(json)
 
       // soli
       //   let allies = [];
@@ -68,52 +68,53 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
       //       resolve(allies);
       //     })
       //     .catch(err => reject(`Ошибка в getAlliesFromJson: ${err}`));
-    });
+    })
   }
 
-  getCorvexFromPath(path) {
+  getCorvexFromPath(path) {}
 
-  }
-
-  processJson(json) {
+  processJson(json, filePath = '') {
     return new Promise((resolve, reject) => {
       let promises = [
         dictEngRusProtocol.getEngRusObjectId(json.name), //name_id
         this.getAlliesFromJson(json.allies), //allies
         this.getAlliesFromJson(json.enemies) //enemies
-      ];
+      ]
 
-      var maps = [];
+      var maps = []
       var corvexes = []
-      if (!Array.isArray(json.features)) json.features = [json.features];
+      if (!Array.isArray(json.features)) json.features = [json.features]
 
       json.features.forEach(featureFile => {
-        let featurePath = fileHelper.composePath("новые карты", featureFile);
+        let featurePath = fileHelper.composePath('новые карты', featureFile)
+        console.log('>>>> featurePath', featurePath)
         corvexes.push(this.getCorvexFromPath(featurePath))
         maps.push(fileHelper.getJsonFromFile(featurePath))
-      });
+      })
 
       Promise.all(promises)
         .then(res => {
-          let [name_id, allies, enemies] = res;
+          let [name_id, allies, enemies] = res
 
           const newJson = {
             _name: name_id,
-            startDate: moment.utc(json.startDate, "DD.MM.YYYY"),
-            endDate: moment.utc(json.endDate, "DD.MM.YYYY"),
-            kind: json.kind ? json.kind : "battle",
+            startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
+            endDate: moment.utc(json.endDate, 'DD.MM.YYYY'),
+            kind: json.kind ? json.kind : 'battle',
             imgUrl: json.imgUrl,
             allies: allies,
             enemies: enemies,
+            winner: json.winner,
+            filename: fileHelper.getFileNameFromPath(filePath),
             maps: maps,
             corvexes: corvexes
-          };
+          }
 
-          resolve(newJson);
+          resolve(newJson)
         })
-        .catch(err => reject(`Ошибка в processJson: ${err}`));
-    });
+        .catch(err => reject(`Ошибка в processJson: ${err}`))
+    })
   }
 }
 
-module.exports = new HistoryEventsJsonMediator();
+module.exports = new HistoryEventsJsonMediator()

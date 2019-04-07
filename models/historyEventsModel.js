@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 var historyEventsSchema = new mongoose.Schema(
   {
     _name: mongoose.Schema.ObjectId,
+    filename: String,
     startDate: {
       type: Date,
       required: 'Не задана начальная дата события'
@@ -13,6 +14,7 @@ var historyEventsSchema = new mongoose.Schema(
     imgUrl: String,
     enemies: [],
     allies: [],
+    winner: String,
     maps: [],
     corvexes: []
   },

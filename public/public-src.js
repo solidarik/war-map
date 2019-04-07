@@ -24030,7 +24030,44 @@ function monotoneConvexHull2D(points) {
   //Return result
   return result
 }
-},{"robust-orientation":"GDiG"}],"p/4q":[function(require,module,exports) {
+},{"robust-orientation":"GDiG"}],"IGBU":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var StrHelper =
+/*#__PURE__*/
+function () {
+  function StrHelper() {
+    _classCallCheck(this, StrHelper);
+  }
+
+  _createClass(StrHelper, null, [{
+    key: "strToEngSymbols",
+    value: function strToEngSymbols(input) {
+      if (!input || input == '') return '';
+      var rus = 'УКЕНХВАРОМС';
+      var eng = 'YKEHXBAPOMC';
+      var output = '';
+      rus.split('').forEach(function (s, i) {
+        output = input.replace(new RegExp(s, 'g'), eng[i]);
+      });
+      return output;
+    }
+  }, {
+    key: "compareEngLanguage",
+    value: function compareEngLanguage(input, template) {
+      return this.strToEngSymbols(input).includes(this.strToEngSymbols(template));
+    }
+  }]);
+
+  return StrHelper;
+}();
+
+module.exports = StrHelper;
+},{}],"p/4q":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24043,6 +24080,8 @@ var _ol = _interopRequireDefault(require("./libs/ol"));
 var _eventEmitter = require("./eventEmitter");
 
 var _monotoneConvexHull2d = _interopRequireDefault(require("monotone-convex-hull-2d"));
+
+var _strHelper = _interopRequireDefault(require("../helper/strHelper"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24124,10 +24163,10 @@ function (_EventEmitter) {
       });
 
       if (selected.length) {
-        selected.forEach(function (feature) {
-          console.info(feature.values_.eventMap); // window.map.showEventMap(feature.values_.eventMap)
+        selected.forEach(function (feature) {// console.info('>>>> hover feature', feature)
+          // window.map.showEventMap(feature.get('eventMap'))
           // feature.setStyle(null)
-          //feature.setStyle(selectedStyle)
+          // feature.setStyle(selectedStyle)
         });
       }
     });
@@ -24224,8 +24263,11 @@ function (_EventEmitter) {
         //   outlineWidth: 0
         // }),
         image: new _ol.default.style.RegularShape({
-          fill: new _ol.default.style.Fill({
-            color: 'rgba(255, 0, 0, 0.5)'
+          fill: new _ol.default.style.Fill(feature.get('isWinnerUSSR') == true ? {
+            color: 'rgba(255,0,0,0.6)'
+          } : {
+            color: 'rgba(0,0,0,0.6)' //black enemy
+
           }),
           // stroke: new ol.style.Stroke({
           //   width: 0,
@@ -24271,7 +24313,7 @@ function (_EventEmitter) {
         // }),
         image: new _ol.default.style.Circle({
           fill: new _ol.default.style.Fill({
-            color: 'rgba(51,153,255,0.5)'
+            color: 'rgba(51,153,255,0.7)'
           }),
           // stroke: new ol.style.Stroke({
           //   width: 2,
@@ -24310,8 +24352,8 @@ function (_EventEmitter) {
       var allHistoryEventsSource = new _ol.default.source.Vector();
       var allHistoryEventsLayer = new _ol.default.layer.Vector({
         source: allHistoryEventsSource,
-        style: function style(feature, _) {
-          return _this3.eventStyleFunc(feature, _this3.view.getZoom());
+        style: function style(f, _) {
+          return _this3.eventStyleFunc(f, _this3.view.getZoom());
         },
         zIndex: 6,
         updateWhileAnimating: true,
@@ -24464,7 +24506,6 @@ function (_EventEmitter) {
   }, {
     key: "setAgreements",
     value: function setAgreements(agreements) {
-      console.log('>>>>', agreements);
       this.agreements = agreements;
       this.repaintAgreements();
     }
@@ -24510,18 +24551,20 @@ function (_EventEmitter) {
     value: function repaintHistoryEvents() {
       var _this6 = this;
 
-      this.historyEventsSource.clear(); // this.historyEvents.forEach(event => {
+      this.allHistoryEventsSource.clear(); // this.historyEvents.forEach(event => {
       //   this.showEventMap(event.maps[0])
       // })
 
-      console.log('features', this.historyEventsSource);
       this.allHistoryEventsSource.clear();
       this.historyEvents.forEach(function (event) {
         var ft = new _ol.default.Feature({
           name: event.name,
           geometry: new _ol.default.geom.Point(_this6.getCenterOfMap(event.maps[0])),
           size: 20000,
-          eventMap: event.maps[0]
+          isWinnerUSSR: _strHelper.default.compareEngLanguage(event.winner, 'CCCР'),
+          winner: event.winner,
+          eventMap: event.maps[0],
+          filename: event.filename
         });
 
         _this6.allHistoryEventsSource.addFeature(ft);
@@ -24647,8 +24690,6 @@ function (_EventEmitter) {
         class: 'box-control',
         icon: 'mdi mdi-import',
         handler: function handler(btn) {
-          console.log('click to import...');
-
           _this8._setActiveButton(btn);
 
           document.getElementById('fileImport').click();
@@ -24991,7 +25032,7 @@ function (_SuperCustomControl2) {
 
   return YearControl;
 }(SuperCustomControl);
-},{"./libs/ol":"2n/L","./eventEmitter":"STwH","monotone-convex-hull-2d":"nEKu"}],"ime/":[function(require,module,exports) {
+},{"./libs/ol":"2n/L","./eventEmitter":"STwH","monotone-convex-hull-2d":"nEKu","../helper/strHelper":"IGBU"}],"ime/":[function(require,module,exports) {
 /**
  * Parses an URI
  *
@@ -33538,7 +33579,9 @@ function (_EventEmitter) {
             endDate: _this2._getStrDateFromEvent(event.endDate),
             maps: event.maps,
             name: _this2._getDictName(event._name),
-            imgUrl: event.imgUrl
+            imgUrl: event.imgUrl,
+            winner: event.winner,
+            filename: event.filename
           };
         });
         var agreements = data.agreements.map(function (agreement) {
