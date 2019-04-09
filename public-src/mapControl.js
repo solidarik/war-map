@@ -1,4 +1,5 @@
-import ol from './libs/ol'
+// import ol from './libs/ol'
+// import olExt from './libs/ol-ext.min'
 import { EventEmitter } from './eventEmitter'
 import convexHull from 'monotone-convex-hull-2d'
 import strHelper from '../helper/strHelper'
@@ -54,21 +55,34 @@ export class MapControl extends EventEmitter {
     })
 
     map.addInteraction(select)
-    select.on('select', function(e) {
-      const selected = e.selected
 
-      window.map.historyEventsSource.forEachFeature(f => {
-        // f.setStyle(null)
+    var transparent = [0, 0, 0, 0.01]
+    var filltransparent = [0, 0, 0, 0]
+    var transparentStyle = [
+      new ol.style.Style({
+        image: new ol.style.RegularShape({
+          radius: 10,
+          radius2: 5,
+          points: 5,
+          fill: new ol.style.Fill({ color: transparent })
+        }),
+        stroke: new ol.style.Stroke({ color: transparent, width: 2 }),
+        fill: new ol.style.Fill({ color: filltransparent })
       })
+    ]
 
-      if (selected.length) {
-        selected.forEach(function(feature) {
-          // console.info('>>>> hover feature', feature)
-          // window.map.showEventMap(feature.get('eventMap'))
-          // feature.setStyle(null)
-          // feature.setStyle(selectedStyle)
-        })
-      }
+    // var anim = new ol.featureAnimation.Bounce({
+    //   duration: 800,
+    //   hiddenStyle: transparentStyle
+    // })
+
+    select.on('select', function(e) {
+      if (e.selected.length) return
+      const sel = e.selected[0]
+
+      // map.historyEventsSource.animateFeature(sel, anim)
+
+      // window.map.showEventMap(feature.get('eventMap'))
     })
 
     map.on('click', function(evt) {
@@ -246,6 +260,7 @@ export class MapControl extends EventEmitter {
     })
     this.historyEventsSource = historyEventsSource
     this.map.addLayer(historyEventsLayer)
+    this.map.historyEventsSource = historyEventsSource
 
     let hullSource = new ol.source.Vector()
     let hullLayer = new ol.layer.Vector({

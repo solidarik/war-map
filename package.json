@@ -54,6 +54,7 @@
     "mongoose": "latest",
     "monotone-convex-hull-2d": "latest",
     "nodemw": "latest",
+    "ol-ext": "latest",
     "passport-local": "latest",
     "popper.js": "latest",
     "pug": "latest",
