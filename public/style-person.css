@@ -22,3 +22,16 @@ cite{
     font-size:15px;
     font-weight:bold;
 }
+#events-control {
+    height: auto;
+    width: 100%;
+    max-height: 20%;
+    background-color: rgba(40, 40, 40, 0.5) !important;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    color: white;
+    text-align: justify;
+    border-radius: 0px;
+    overflow-y: scroll;
+}
