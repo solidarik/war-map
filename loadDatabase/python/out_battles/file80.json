@@ -1,0 +1,19 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв40.geojson"],
+	"name": "Сражение в Датском проливе",
+	"startDate": "24.05.1941",
+	"endDate": "24.05.1941",
+	"allies": "Великобритания",
+	"enemies": "Германия",
+	"ally_ships_cnt": "2.0",
+	"ally_deads": "1429.0",
+	"ally_woundeds": "9.0",
+	"ally_ships_lost": "1.0",
+	"enem_ships_cnt": "2.0",
+	"enem_woundeds": "5.0",
+	"winner": "Германия",
+	"comment": "У Германии и Великобритании повреждены по 1 линкору",
+	"source_url": "https://ru.wikipedia.org/wiki/Сражение_в_Датском_проливе",
+	"imgUrl": "http://ipb.su/uploads/ipbsu/waroffline/post-373-1476826501.gif"
+}]

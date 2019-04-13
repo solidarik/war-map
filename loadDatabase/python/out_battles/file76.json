@@ -1,0 +1,19 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв37.geojson"],
+	"name": "Сражение у мыса Матапан",
+	"startDate": "27.03.1941",
+	"endDate": "29.03.1941",
+	"allies": "Великобритания",
+	"enemies": "Италия",
+	"ally_ships_cnt": "24.0",
+	"ally_deads": "3.0",
+	"ally_airplans_lost": "1.0",
+	"enem_ships_cnt": "22.0",
+	"enem_deads": "ок.2400",
+	"enem_ships_lost": "5.0",
+	"winner": "Великобритания",
+	"comment": "У Италии 1 линкор поврежден",
+	"source_url": "https://ru.wikipedia.org/wiki/Сражение_у_мыса_Матапан",
+	"imgUrl": "http://nozdr.ru/militera/h/roskill/s11.gif"
+}]

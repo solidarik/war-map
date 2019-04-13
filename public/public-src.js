@@ -985,18 +985,18 @@ function (_EventEmitter) {
     var selectedStyle = new ol.style.Style({
       stroke: new ol.style.Stroke({
         color: 'red',
-        width: 4
+        width: 2
       }),
       fill: new ol.style.Fill({
         color: 'rgba(0, 0, 255, 0.1)'
       })
-    });
-    var select = new ol.interaction.Select({
-      condition: ol.events.condition.pointerMove,
-      style: selectedStyle,
-      multi: false
-    });
-    map.addInteraction(select);
+    }); // const select = new ol.interaction.Select({
+    //   condition: ol.events.condition.pointerMove,
+    //   style: selectedStyle,
+    //   multi: false
+    // })
+    // map.addInteraction(select)
+
     var transparent = [0, 0, 0, 0.01];
     var filltransparent = [0, 0, 0, 0];
     var transparentStyle = [new ol.style.Style({
@@ -1010,21 +1010,17 @@ function (_EventEmitter) {
       }),
       stroke: new ol.style.Stroke({
         color: transparent,
-        width: 2
+        width: 1
       }),
       fill: new ol.style.Fill({
         color: filltransparent
       })
-    })]; // var anim = new ol.featureAnimation.Bounce({
-    //   duration: 800,
-    //   hiddenStyle: transparentStyle
+    })]; // select.on('select', function(e) {
+    //   if (e.selected.length) return
+    //   const feature = e.selected[0]
+    //   window.map.showEventMap(feature.get('eventMap'))
     // })
 
-    select.on('select', function (e) {
-      if (e.selected.length) return;
-      var sel = e.selected[0]; // map.historyEventsSource.animateFeature(sel, anim)
-      // window.map.showEventMap(feature.get('eventMap'))
-    });
     map.on('click', function (evt) {
       var coordinates = evt.coordinate;
       var lonLatCoords = new ol.proj.toLonLat(coordinates);
@@ -1118,7 +1114,9 @@ function (_EventEmitter) {
         //   outlineWidth: 0
         // }),
         image: new ol.style.RegularShape({
-          fill: new ol.style.Fill(feature.get('isWinnerUSSR') == true ? {
+          fill: new ol.style.Fill(feature.get('kind') == 'wmw' ? {
+            color: 'rgba(102,102,255,0.9 ) '
+          } : feature.get('isWinnerUSSR') == true ? {
             color: 'rgba(255,0,0,0.6)'
           } : {
             color: 'rgba(0,0,0,0.6)' //black enemy
@@ -1407,17 +1405,16 @@ function (_EventEmitter) {
     value: function repaintHistoryEvents() {
       var _this6 = this;
 
-      this.allHistoryEventsSource.clear(); // this.historyEvents.forEach(event => {
-      //   this.showEventMap(event.maps[0])
-      // })
-
       this.allHistoryEventsSource.clear();
-      this.historyEvents.forEach(function (event) {
+      this.allHistoryEventsSource.clear();
+      this.historyEvents.forEach(function (event, i) {
+        0 == i && _this6.showEventMap(event.maps[0]);
         var ft = new ol.Feature({
           name: event.name,
           geometry: new ol.geom.Point(_this6.getCenterOfMap(event.maps[0])),
           size: 20000,
           isWinnerUSSR: _strHelper.default.compareEngLanguage(event.winner, 'CCCР'),
+          kind: event.kind,
           winner: event.winner,
           eventMap: event.maps[0],
           filename: event.filename
@@ -1445,7 +1442,8 @@ function (_EventEmitter) {
     }
   }, {
     key: "setCurrentEventMap",
-    value: function setCurrentEventMap(map) {//this.currentEventMap = map
+    value: function setCurrentEventMap(map) {
+      this.showEventMap(map); //this.currentEventMap = map
     }
   }, {
     key: "showEventMap",
@@ -1453,6 +1451,11 @@ function (_EventEmitter) {
       this.historyEventsSource.clear();
       this.hullSource.clear();
       var features = map.features;
+
+      if (!features) {
+        return;
+      }
+
       var all_coords = [];
 
       for (var i = 0; i < features.length; i++) {
@@ -1522,6 +1525,10 @@ function (_EventEmitter) {
         geometry: polygon
       });
       this.hullSource.addFeature(ft);
+      this.view.animate({
+        center: this.getCenterOfMap(map),
+        duration: 1000
+      });
     }
   }, {
     key: "_addButtons",
@@ -1567,7 +1574,7 @@ function (_EventEmitter) {
     value: function _getStyleFunction(feature, resolution) {
       var stroke = new ol.style.Stroke({
         color: '#ff0000',
-        width: 2
+        width: 1
       });
       var fill = new ol.style.Fill({
         color: 'rgba(255, 255, 0, 0.2)'
@@ -1588,7 +1595,7 @@ function (_EventEmitter) {
         case 'germany':
           stroke = new ol.style.Stroke({
             color: '#000000',
-            width: 2
+            width: 1
           });
           imageStyle = new ol.style.Circle({
             radius: 5,
@@ -10335,6 +10342,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -10425,16 +10436,13 @@ function (_EventEmitter) {
           return a.startDate > b.startDate ? 1 : -1;
         });
         var events = data.events.map(function (event) {
-          return {
+          return _objectSpread({}, event, {
             id: event._id,
             startDate: _this2._getStrDateFromEvent(event.startDate),
             endDate: _this2._getStrDateFromEvent(event.endDate),
             maps: event.maps,
-            name: _this2._getDictName(event._name),
-            imgUrl: event.imgUrl,
-            winner: event.winner,
-            filename: event.filename
-          };
+            name: _this2._getDictName(event._name)
+          });
         });
         var agreements = data.agreements.map(function (agreement) {
           return {
@@ -20879,32 +20887,36 @@ function (_EventEmitter) {
     _classCallCheck(this, HistoryEventsControl);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(HistoryEventsControl).call(this));
-    _this.listDiv = (0, _jquery.default)("#event-list")[0];
-    _this.imgDiv = (0, _jquery.default)("#event-image-div")[0];
+    _this.listDiv = (0, _jquery.default)('#event-list')[0];
+    _this.imgDiv = (0, _jquery.default)('#event-image-div')[0];
     _this.events = [];
-    _this.active_event = "";
-    _this.active_map = "";
+    _this.active_event = '';
+    _this.active_map = '';
     return _this;
   }
 
   _createClass(HistoryEventsControl, [{
     key: "_getHtmlForEvent",
     value: function _getHtmlForEvent(event, is_active) {
-      var html = '<tr data-href="' + event.id + '" class="hand-cursor' + (is_active ? " event-active-row" : "") + '">';
-      html += "<td>" + event.startDate + "</td>";
-      html += "<td>" + event.endDate + "</td>";
+      var html = '<tr data-href="' + event.id + '" class="hand-cursor' + (is_active ? ' event-active-row' : '') + '">';
+      html += '<td>' + event.startDate + '</td>';
+      html += '<td>' + event.endDate + '</td>';
       var name = event.name;
 
+      if (event.kind == 'wmw') {
+        name = '<span class="event-name-color">' + event.name + '</span>';
+      }
+
       if (1 < event.maps.length) {
-        var delim = "&nbsp";
+        var delim = '&nbsp';
 
         for (var i = 0; i < event.maps.length; i++) {
-          name += delim + '<span class="event-feature-color" data-href="' + i + '">' + (i + 1) + "</span>";
+          name += delim + '<span class="event-feature-color" data-href="' + i + '">' + (i + 1) + '</span>';
         }
       }
 
-      html += "<td>" + name + "</td>";
-      html += "</tr>";
+      html += '<td>' + name + '</td>';
+      html += '</tr>';
       return html;
     }
   }, {
@@ -20914,7 +20926,7 @@ function (_EventEmitter) {
 
       sourceImage.onload = function () {
         // Create a canvas with the desired dimensions
-        var canvas = document.createElement("canvas");
+        var canvas = document.createElement('canvas');
         var imgWidth = this.width;
         var aspectRatio = Math.round(imgWidth / fixWidth);
         var imgHeight = this.height;
@@ -20922,7 +20934,7 @@ function (_EventEmitter) {
         canvas.width = fixWidth;
         canvas.height = fixHeight; // Scale and draw the source image to the canvas
 
-        var ctx = canvas.getContext("2d");
+        var ctx = canvas.getContext('2d');
         ctx.globalAlpha = 0.6;
         ctx.drawImage(sourceImage, 0, 0, fixWidth, fixHeight); // Convert the canvas to a data URL in PNG format
 
@@ -20936,7 +20948,7 @@ function (_EventEmitter) {
     value: function _refreshEventImage(event) {
       var _this2 = this;
 
-      this.imgDiv.innerHTML = "";
+      this.imgDiv.innerHTML = '';
       if (!event.imgUrl) return;
 
       this._resizeImage(event.imgUrl, 300, function (canvas) {
@@ -20953,7 +20965,7 @@ function (_EventEmitter) {
 
       this.active_event = event;
       this.active_map = event.maps[map];
-      this.emit("activatedEvent", {
+      this.emit('activatedEvent', {
         event: this.active_event,
         map: this.active_map
       });
@@ -20962,20 +20974,20 @@ function (_EventEmitter) {
     key: "rowEventClick",
     value: function rowEventClick(tr) {
       var isMapEventClick = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      var id = tr.attr("data-href");
+      var id = tr.attr('data-href');
       if (!id) return;
-      tr.addClass("event-active-row").siblings().removeClass("event-active-row");
+      tr.addClass('event-active-row').siblings().removeClass('event-active-row');
       var activeEvent = this.events.filter(function (event) {
         return event.id == id;
       })[0];
 
       if (!isMapEventClick) {
         this.active_map = 0;
-        (0, _jquery.default)("table tr td span").removeClass("event-feature-active-color");
+        (0, _jquery.default)('table tr td span').removeClass('event-feature-active-color');
 
         if (1 < activeEvent.maps.length) {
-          var firstSpan = (0, _jquery.default)(tr[0].childNodes[2]).children("span:first");
-          firstSpan.addClass("event-feature-active-color");
+          var firstSpan = (0, _jquery.default)(tr[0].childNodes[2]).children('span:first');
+          firstSpan.addClass('event-feature-active-color');
         }
       }
 
@@ -20984,9 +20996,9 @@ function (_EventEmitter) {
   }, {
     key: "mapEventClick",
     value: function mapEventClick(a) {
-      this.active_map = a.attr("data-href");
-      (0, _jquery.default)("table tr td span").removeClass("event-feature-active-color");
-      a.addClass("event-feature-active-color");
+      this.active_map = a.attr('data-href');
+      (0, _jquery.default)('table tr td span').removeClass('event-feature-active-color');
+      a.addClass('event-feature-active-color');
       var tr = a.parent().parent();
       this.rowEventClick(tr, true);
     }
@@ -20996,7 +21008,7 @@ function (_EventEmitter) {
       var _this3 = this;
 
       this.active_map = 0;
-      this.listDiv.innerHTML = "";
+      this.listDiv.innerHTML = '';
       this.events = events;
       if (!events || 0 == events.length) return;
       var html = "\n        <table class=\"table table-sm table-borderless\">\n        <thead>\n            <tr>\n                <th scope=\"col\">\u041D\u0430\u0447\u0430\u043B\u043E</th>\n                <th scope=\"col\">\u041E\u043A\u043E\u043D\u0447\u0430\u043D\u0438\u0435</th>\n                <th scope=\"col\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 c\u043E\u0431\u044B\u0442\u0438\u044F</th>\n            </tr>\n        </thead>\n        <tbody>\n        ";
@@ -21005,9 +21017,9 @@ function (_EventEmitter) {
         html += _this3._getHtmlForEvent(event, once);
         once = false;
       });
-      html += "</tbody></table>";
+      html += '</tbody></table>';
       this.listDiv.innerHTML = html;
-      this.emit("refreshedEventList");
+      this.emit('refreshedEventList');
       this.setActiveEvent(events[0], this.active_map);
     }
   }], [{

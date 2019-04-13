@@ -1,0 +1,16 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв85.geojson"],
+	"name": "Гуамская операция (1944)",
+	"startDate": "21.07.1944",
+	"endDate": "10.08.1944",
+	"allies": "США",
+	"enemies": "Япония",
+	"ally_troops": "36000.0",
+	"ally_deads": "3000.0",
+	"enem_troops": "18500.0",
+	"enem_deads": "18000.0",
+	"winner": "США",
+	"source_url": "https://ru.wikipedia.org/wiki/Гуамская_операция_(1944)",
+	"imgUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Battle_of_Guam_map.jpg"
+}]

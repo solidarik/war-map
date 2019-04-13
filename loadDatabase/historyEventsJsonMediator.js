@@ -97,14 +97,12 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
           let [name_id, allies, enemies] = res
 
           const newJson = {
+            ...json,
             _name: name_id,
             startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
             endDate: moment.utc(json.endDate, 'DD.MM.YYYY'),
-            kind: json.kind ? json.kind : 'battle',
-            imgUrl: json.imgUrl,
             allies: allies,
             enemies: enemies,
-            winner: json.winner,
             filename: fileHelper.getFileNameFromPath(filePath),
             maps: maps,
             corvexes: corvexes

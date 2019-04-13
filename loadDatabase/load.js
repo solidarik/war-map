@@ -40,10 +40,13 @@ Promise.resolve(true)
   //   })
   // })
   // .then(() => {
+  //   return dbHelper.clearDb('dictEngRus')
+  // })
+  // .then(() => {
   //   return dbHelper.saveFilesFromDir({
-  //     source: "data_sources/engRus.json",
+  //     source: 'data_sources/engRus.json',
   //     mediator: dictEngRusJsonMediator
-  //   });
+  //   })
   // })
   // .then(() => {
   //   return dbHelper.saveFilesFromDir({

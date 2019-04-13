@@ -1,0 +1,19 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв89.geojson"],
+	"name": "Битва за Пелелиу",
+	"startDate": "15.09.1944",
+	"endDate": "27.11.1944",
+	"allies": "США",
+	"enemies": "Япония",
+	"ally_troops": "28584.0",
+	"ally_deads": "1460.0",
+	"ally_woundeds": "6100.0",
+	"ally_missing": "115.0",
+	"enem_troops": "11000.0",
+	"enem_deads": "10695.0",
+	"enem_prisoners": "301.0",
+	"winner": "США",
+	"source_url": "https://ru.wikipedia.org/wiki/Битва_за_Пелелиу",
+	"imgUrl": "https://upload.wikimedia.org/wikipedia/commons/2/22/Battle_of_Peleliu_map.jpg"
+}]

@@ -1,0 +1,17 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв45.geojson"],
+	"name": "Сражение в Яванском море",
+	"startDate": "27.02.1942",
+	"endDate": "27.02.1942",
+	"allies": "Союзники",
+	"enemies": "Япония",
+	"ally_ships_cnt": "14.0",
+	"ally_deads": "2300.0",
+	"ally_ships_lost": "7.0",
+	"enem_ships_cnt": "58.0",
+	"enem_ships_lost": "4.0",
+	"winner": "Япония",
+	"source_url": "https://ru.wikipedia.org/wiki/Сражение_в_Яванском_море",
+	"imgUrl": "http://nozdr.ru/militera/h/kroese_a/s02.gif"
+}]

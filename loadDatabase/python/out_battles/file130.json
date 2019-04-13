@@ -1,0 +1,20 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв91.geojson"],
+	"name": "Сражение в заливе Лейте",
+	"startDate": "23.10.1944",
+	"endDate": "26.10.1944",
+	"allies": "США",
+	"enemies": "Япония",
+	"ally_airplans_cnt": "1500.0",
+	"ally_ships_cnt": "195.0",
+	"ally_deads": "3500.0",
+	"ally_ships_lost": "9.0",
+	"enem_airplans_cnt": "200.0",
+	"enem_ships_cnt": "64.0",
+	"enem_deads": "10000.0",
+	"enem_ships_lost": "27.0",
+	"winner": "США",
+	"source_url": "https://ru.wikipedia.org/wiki/Сражение_в_заливе_Лейте",
+	"imgUrl": "https://arsenal-info.ru/img/187274158/i_241.jpg"
+}]

@@ -6,7 +6,9 @@
       "label": "running node file",
       "type": "shell",
       "command": "node",
-      "args": ["${file}"],
+      "args": [
+        "${file}"
+      ],
       "group": {
         "kind": "build",
         "isDefault": true
@@ -25,7 +27,9 @@
       "label": "running python file",
       "type": "shell",
       "command": "python",
-      "args": ["${file}"],
+      "args": [
+        "${file}"
+      ],
       "group": {
         "kind": "build",
         "isDefault": true
@@ -37,7 +41,8 @@
         "focus": false,
         "panel": "dedicated",
         "showReuseMessage": true
-      }
+      },
+      "problemMatcher": []
     }
   ]
 }

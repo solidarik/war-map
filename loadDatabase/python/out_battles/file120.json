@@ -1,0 +1,19 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв81.geojson"],
+	"name": "Высадка в Нормандии",
+	"startDate": "06.06.1944",
+	"endDate": "06.06.1944",
+	"allies": "Союзники",
+	"enemies": "Германия",
+	"ally_troops": "156000.0",
+	"ally_airplans_cnt": "11590.0",
+	"ally_ships_cnt": "6939.0",
+	"ally_losses": "10249.0",
+	"ally_airplans_lost": "127.0",
+	"enem_troops": "380000.0",
+	"enem_losses": "4000.0",
+	"winner": "Союзники",
+	"source_url": "https://ru.wikipedia.org/wiki/Высадка_в_Нормандии",
+	"imgUrl": "https://i.pinimg.com/originals/ec/5b/7d/ec5b7dd2ce469df37e2f144231fb05e5.jpg"
+}]

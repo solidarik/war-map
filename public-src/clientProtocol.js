@@ -63,14 +63,12 @@ export class ClientProtocol extends EventEmitter {
       })
       let events = data.events.map(event => {
         return {
+          ...event,
           id: event._id,
           startDate: this._getStrDateFromEvent(event.startDate),
           endDate: this._getStrDateFromEvent(event.endDate),
           maps: event.maps,
-          name: this._getDictName(event._name),
-          imgUrl: event.imgUrl,
-          winner: event.winner,
-          filename: event.filename
+          name: this._getDictName(event._name)
         }
       })
 

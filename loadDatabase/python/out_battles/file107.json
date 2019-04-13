@@ -1,0 +1,19 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв64.geojson"],
+	"name": "Бой у Тассафаронга",
+	"startDate": "30.11.1942",
+	"endDate": "30.11.1942",
+	"allies": "США",
+	"enemies": "Япония",
+	"ally_ships_cnt": "11.0",
+	"ally_deads": "395.0",
+	"ally_ships_lost": "1.0",
+	"enem_troops": "8.0",
+	"enem_deads": "197.0",
+	"enem_airplans_lost": "1.0",
+	"winner": "Япония",
+	"comment": "У США 3 крейсера повреждены",
+	"source_url": "https://ru.wikipedia.org/wiki/Бой_у_Тассафаронга",
+	"imgUrl": "http://wiki.gcdn.co/images/4/47/Battle_of_tassafaronga_map.jpg"
+}]

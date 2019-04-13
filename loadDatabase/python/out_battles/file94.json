@@ -1,0 +1,20 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв53.geojson"],
+	"name": "Первое сражение при Эль-Аламейне",
+	"startDate": "01.07.1942",
+	"endDate": "27.07.1942",
+	"allies": "Великобритания",
+	"enemies": "Германия, Италия",
+	"ally_troops": "150000.0",
+	"ally_tanks_cnt": "1114.0",
+	"ally_airplans_cnt": "1500.0",
+	"ally_losses": "18700.0",
+	"enem_troops": "96000.0",
+	"enem_tanks_cnt": "585.0",
+	"enem_airplans_cnt": "500.0",
+	"enem_losses": "17000.0",
+	"winner": "Великобритания",
+	"source_url": "https://ru.wikipedia.org/wiki/Первое_сражение_при_Эль-Аламейне",
+	"imgUrl": "https://i.imgur.com/GRe8j9f.jpg"
+}]

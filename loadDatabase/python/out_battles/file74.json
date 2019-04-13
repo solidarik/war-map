@@ -1,0 +1,23 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв35.geojson"],
+	"name": "Атака Таранто",
+	"startDate": "12.11.1940",
+	"endDate": "12.11.1940",
+	"allies": "Великобритания",
+	"enemies": "Италия",
+	"ally_airplans_cnt": "21.0",
+	"ally_ships_cnt": "10.0",
+	"ally_deads": "2.0",
+	"ally_prisoners": "2.0",
+	"ally_airplans_lost": "2.0",
+	"enem_ships_cnt": "35.0",
+	"enem_deads": "59.0",
+	"enem_woundeds": "600.0",
+	"enem_airplans_lost": "2.0",
+	"enem_ships_lost": "1.0",
+	"winner": "Великобритания",
+	"comment": "У Италии 2 линкора тяжело повреждены  2 эсминца легко повреждены",
+	"source_url": "https://ru.wikipedia.org/wiki/Атака_Таранто",
+	"imgUrl": "https://www.ibiblio.org/hyperwar/UN/UK/UK-Med-I/maps/UK-Med-I-14.jpg"
+}]

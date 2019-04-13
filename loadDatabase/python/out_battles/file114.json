@@ -1,0 +1,18 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв72.geojson"],
+	"name": "Битва за Тараву",
+	"startDate": "20.11.1943",
+	"endDate": "23.11.1943",
+	"allies": "США",
+	"enemies": "Япония",
+	"ally_troops": "35000.0",
+	"ally_deads": "1696.0",
+	"ally_woundeds": "2101.0",
+	"enem_troops": "4836.0",
+	"enem_deads": "4690.0",
+	"enem_prisoners": "146.0",
+	"winner": "США",
+	"source_url": "https://ru.wikipedia.org/wiki/Битва_за_Тараву",
+	"imgUrl": "http://hartmann.valka.cz/panzergeneral/pacpg/bitvy/mapy/078c.jpg"
+}]

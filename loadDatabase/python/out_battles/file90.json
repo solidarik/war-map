@@ -1,0 +1,20 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв46.geojson"],
+	"name": "Рейд Дулиттла",
+	"startDate": "18.04.1942",
+	"endDate": "18.04.1942",
+	"allies": "США",
+	"enemies": "Япония",
+	"ally_troops": "80.0",
+	"ally_airplans_cnt": "16.0",
+	"ally_deads": "7.0",
+	"ally_prisoners": "8.0",
+	"ally_airplans_lost": "15.0",
+	"enem_troops": "нет данных",
+	"enem_deads": "50.0",
+	"enem_woundeds": "400.0",
+	"winner": "США",
+	"source_url": "https://ru.wikipedia.org/wiki/Рейд_Дулиттла",
+	"imgUrl": "https://warfarehistorynetwork.com/wp-content/uploads/WW-Doolittle-Map-4CJul02.jpg"
+}]

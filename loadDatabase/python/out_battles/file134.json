@@ -1,0 +1,19 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв94.geojson"],
+	"name": "Битва за Иводзиму",
+	"startDate": "19.02.1945",
+	"endDate": "26.03.1945",
+	"allies": "США",
+	"enemies": "Япония",
+	"ally_troops": "110000.0",
+	"ally_losses": "28686.0",
+	"ally_deads": "6821.0",
+	"ally_woundeds": "21865.0",
+	"enem_troops": "22000.0",
+	"enem_losses": "20919.0",
+	"enem_prisoners": "216.0",
+	"winner": "США",
+	"source_url": "https://ru.wikipedia.org/wiki/Битва_за_Иводзиму",
+	"imgUrl": "https://www.ibiblio.org/hyperwar/USN/USN-Ops-XIV/maps/USN-XIV-p60.jpg"
+}]

@@ -1,0 +1,20 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв14.geojson"],
+	"name": "Югославская операция",
+	"startDate": "06.04.1941",
+	"endDate": "17.04.1941",
+	"allies": "Югославия",
+	"enemies": "Страны Оси",
+	"ally_troops": "850000.0",
+	"ally_deads": "ок.5000",
+	"ally_prisoners": "344000.0",
+	"enem_troops": "700000.0",
+	"enem_deads": "3595.0",
+	"enem_woundeds": "615.0",
+	"enem_missing": "27.0",
+	"enem_airplans_lost": "41.0",
+	"winner": "Страны Оси",
+	"source_url": "https://ru.wikipedia.org/wiki/Югославская_операция",
+	"imgUrl": "https://topwar.ru/uploads/posts/2016-04/thumbs/1461003025_033.jpg"
+}]

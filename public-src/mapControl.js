@@ -41,20 +41,20 @@ export class MapControl extends EventEmitter {
     const selectedStyle = new ol.style.Style({
       stroke: new ol.style.Stroke({
         color: 'red',
-        width: 4
+        width: 2
       }),
       fill: new ol.style.Fill({
         color: 'rgba(0, 0, 255, 0.1)'
       })
     })
 
-    const select = new ol.interaction.Select({
-      condition: ol.events.condition.pointerMove,
-      style: selectedStyle,
-      multi: false
-    })
+    // const select = new ol.interaction.Select({
+    //   condition: ol.events.condition.pointerMove,
+    //   style: selectedStyle,
+    //   multi: false
+    // })
 
-    map.addInteraction(select)
+    // map.addInteraction(select)
 
     var transparent = [0, 0, 0, 0.01]
     var filltransparent = [0, 0, 0, 0]
@@ -66,24 +66,17 @@ export class MapControl extends EventEmitter {
           points: 5,
           fill: new ol.style.Fill({ color: transparent })
         }),
-        stroke: new ol.style.Stroke({ color: transparent, width: 2 }),
+        stroke: new ol.style.Stroke({ color: transparent, width: 1 }),
         fill: new ol.style.Fill({ color: filltransparent })
       })
     ]
 
-    // var anim = new ol.featureAnimation.Bounce({
-    //   duration: 800,
-    //   hiddenStyle: transparentStyle
+    // select.on('select', function(e) {
+    //   if (e.selected.length) return
+    //   const feature = e.selected[0]
+
+    //   window.map.showEventMap(feature.get('eventMap'))
     // })
-
-    select.on('select', function(e) {
-      if (e.selected.length) return
-      const sel = e.selected[0]
-
-      // map.historyEventsSource.animateFeature(sel, anim)
-
-      // window.map.showEventMap(feature.get('eventMap'))
-    })
 
     map.on('click', function(evt) {
       let coordinates = evt.coordinate
@@ -190,7 +183,9 @@ export class MapControl extends EventEmitter {
 
       image: new ol.style.RegularShape({
         fill: new ol.style.Fill(
-          feature.get('isWinnerUSSR') == true
+          feature.get('kind') == 'wmw'
+            ? { color: 'rgba(102,102,255,0.9 ) ' }
+            : feature.get('isWinnerUSSR') == true
             ? { color: 'rgba(255,0,0,0.6)' }
             : { color: 'rgba(0,0,0,0.6)' } //black enemy
         ),
@@ -456,17 +451,17 @@ export class MapControl extends EventEmitter {
 
   repaintHistoryEvents() {
     this.allHistoryEventsSource.clear()
-    // this.historyEvents.forEach(event => {
-    //   this.showEventMap(event.maps[0])
-    // })
 
     this.allHistoryEventsSource.clear()
-    this.historyEvents.forEach(event => {
+    this.historyEvents.forEach((event, i) => {
+      0 == i && this.showEventMap(event.maps[0])
+
       let ft = new ol.Feature({
         name: event.name,
         geometry: new ol.geom.Point(this.getCenterOfMap(event.maps[0])),
         size: 20000,
         isWinnerUSSR: strHelper.compareEngLanguage(event.winner, 'CCCР'),
+        kind: event.kind,
         winner: event.winner,
         eventMap: event.maps[0],
         filename: event.filename
@@ -492,6 +487,7 @@ export class MapControl extends EventEmitter {
   }
 
   setCurrentEventMap(map) {
+    this.showEventMap(map)
     //this.currentEventMap = map
   }
 
@@ -500,6 +496,11 @@ export class MapControl extends EventEmitter {
     this.hullSource.clear()
 
     let features = map.features
+
+    if (!features) {
+      return
+    }
+
     let all_coords = []
     for (let i = 0; i < features.length; i++) {
       let geom = features[i].geometry
@@ -558,6 +559,11 @@ export class MapControl extends EventEmitter {
       geometry: polygon
     })
     this.hullSource.addFeature(ft)
+
+    this.view.animate({
+      center: this.getCenterOfMap(map),
+      duration: 1000
+    })
   }
 
   _addButtons() {
@@ -600,7 +606,7 @@ export class MapControl extends EventEmitter {
   _getStyleFunction(feature, resolution) {
     var stroke = new ol.style.Stroke({
       color: '#ff0000',
-      width: 2
+      width: 1
     })
 
     var fill = new ol.style.Fill({
@@ -624,7 +630,7 @@ export class MapControl extends EventEmitter {
       case 'germany':
         stroke = new ol.style.Stroke({
           color: '#000000',
-          width: 2
+          width: 1
         })
 
         imageStyle = new ol.style.Circle({

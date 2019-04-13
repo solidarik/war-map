@@ -5,7 +5,6 @@ import helper
 print(sys.stdout.encoding)
 
 root_folder = 'out_agreements'
-helper.clear_folder(root_folder)
 
 col_kind, col_place, col_startDate, col_endDate = tuple(range(0, 4, 1))
 col_player1, col_player2 = tuple(range(4, 6, 1))
@@ -94,7 +93,5 @@ while i < len(entities):
     file.close()
 
 
-# try: value = str(int(value))
-        # except: pass
-
+print("Completed")
 exit(0)

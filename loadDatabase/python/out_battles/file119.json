@@ -1,0 +1,18 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв79.geojson"],
+	"name": "Налёт на Трук",
+	"startDate": "17.02.1944",
+	"endDate": "23.02.1944",
+	"allies": "США",
+	"enemies": "Япония",
+	"ally_deads": "313.0",
+	"ally_woundeds": "879.0",
+	"ally_missing": "77.0",
+	"enem_troops": "3500.0",
+	"enem_deads": "3380.0",
+	"enem_prisoners": "144.0",
+	"winner": "США",
+	"source_url": "https://en.wikipedia.org/wiki/Battle_of_Eniwetok",
+	"imgUrl": "http://victoryinstitute.net/history/images/6/6d/Seizure_of_Eniwetok_Atoll.jpg"
+}]

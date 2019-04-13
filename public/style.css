@@ -340,3 +340,7 @@ input.form-control {
 #data-counter {
   font-weight: bold;
 }
+
+.event-name-color {
+  color: skyblue;
+}

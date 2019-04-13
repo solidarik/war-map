@@ -1,0 +1,21 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв67.geojson"],
+	"name": "Битва в море Бисмарка",
+	"startDate": "02.03.1943",
+	"endDate": "04.03.1942",
+	"allies": "США",
+	"enemies": "Япония",
+	"ally_airplans_cnt": "158.0",
+	"ally_ships_cnt": "10.0",
+	"ally_deads": "13.0",
+	"ally_airplans_lost": "6.0",
+	"enem_airplans_cnt": "100.0",
+	"enem_ships_cnt": "16.0",
+	"enem_deads": "2890.0",
+	"enem_airplans_lost": "20.0",
+	"enem_ships_lost": "13.0",
+	"winner": "США",
+	"source_url": "https://ru.wikipedia.org/wiki/Битва_в_море_Бисмарка",
+	"imgUrl": "http://booksonline.com.ua/pic/1/2/9/2/2/9/s14.png"
+}]

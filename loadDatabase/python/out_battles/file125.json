@@ -1,0 +1,15 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв86.geojson"],
+	"name": "Операция «Кобра»",
+	"startDate": "25.07.1944",
+	"endDate": "31.07.1944",
+	"allies": "Союзники",
+	"enemies": "Германия",
+	"ally_losses": "1080.0",
+	"ally_tanks_lost": "109.0",
+	"enem_tanks_lost": "70.0",
+	"winner": "Союзники",
+	"source_url": "https://ru.wikipedia.org/wiki/Операция_«Кобра»",
+	"imgUrl": "https://ru.wikipedia.org/wiki/Операция_«Кобра»#/media/File:Saint_Lo_and_Vicinity_-_Operation_Cobra.jpg"
+}]

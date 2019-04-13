@@ -1,0 +1,19 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв44.geojson"],
+	"name": "Сингапурская оборона",
+	"startDate": "08.02.1945",
+	"endDate": "15.02.1942",
+	"allies": "Великобритания",
+	"enemies": "Япония",
+	"ally_troops": "85000.0",
+	"ally_deads": "2000.0",
+	"ally_prisoners": "80000.0",
+	"ally_woundeds": "5000.0",
+	"enem_troops": "36000.0",
+	"enem_deads": "1713.0",
+	"enem_woundeds": "2772.0",
+	"winner": "Япония",
+	"source_url": "https://ru.wikipedia.org/wiki/Сингапурская_оборона",
+	"imgUrl": "http://www.ibiblio.org/hyperwar/PTO/RisingSun/BicycleBlitz/maps/bicycle-2.jpg"
+}]

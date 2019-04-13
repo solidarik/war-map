@@ -1,0 +1,18 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв25.geojson"],
+	"name": "Мароккано-алжирская операция",
+	"startDate": "08.11.1942",
+	"endDate": "16.11.1942",
+	"allies": "Союзники",
+	"enemies": "Французское государство",
+	"ally_troops": "73500.0",
+	"ally_deads": "1474.0",
+	"ally_woundeds": "2200.0",
+	"enem_troops": "60000.0",
+	"enem_deads": "1340.0",
+	"enem_woundeds": "2000.0",
+	"winner": "Союзники",
+	"source_url": "https://ru.wikipedia.org/wiki/Мароккано-алжирская_операция",
+	"imgUrl": "http://frontlinesbook.com/images/OPERATION-TORCH-OVERVIEW.png"
+}]

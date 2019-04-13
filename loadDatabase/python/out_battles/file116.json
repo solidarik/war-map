@@ -1,0 +1,21 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв74.geojson"],
+	"name": "Бой у Нордкапа",
+	"startDate": "26.12.1943",
+	"endDate": "26.12.1943",
+	"allies": "Великобритания",
+	"enemies": "Германия",
+	"ally_ships_cnt": "13.0",
+	"ally_deads": "11.0",
+	"ally_woundeds": "12.0",
+	"ally_missing": "1.0",
+	"enem_ships_cnt": "6.0",
+	"enem_deads": "1932.0",
+	"enem_prisoners": "36.0",
+	"enem_ships_lost": "1.0",
+	"winner": "Великобритания",
+	"comment": "У Великобритании лёгкие повреждения получили линкор, 2 крейсера, 1 эсминец",
+	"source_url": "https://ru.wikipedia.org/wiki/Бой_у_Нордкапа",
+	"imgUrl": "http://nozdr.ru/militera/h/roskill/s18.gif"
+}]

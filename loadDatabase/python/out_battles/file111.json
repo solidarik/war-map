@@ -1,0 +1,19 @@
+[{
+	"kind": "wmw",
+	"features": ["вмв68.geojson"],
+	"name": "Операция «Месть»",
+	"startDate": "18.04.1943",
+	"endDate": "18.04.1943",
+	"allies": "США",
+	"enemies": "Япония",
+	"ally_airplans_cnt": "16.0",
+	"ally_deads": "1.0",
+	"ally_airplans_lost": "1.0",
+	"enem_airplans_cnt": "8.0",
+	"enem_deads": "19.0",
+	"enem_airplans_lost": "2.0",
+	"winner": "США",
+	"comment": "Операция «Месть» по устранению адмирала Ямомото прошла успешно",
+	"source_url": "https://ru.wikipedia.org/wiki/Операция_«Месть»",
+	"imgUrl": "http://cdn.thinglink.me/api/image/867875140275273733/1024/10/scaletowidth/0/0/1/1/false/true?wait=true"
+}]
