@@ -8,9 +8,7 @@ module.exports = {
   port: process.env.PORT || 3000,
   redis_uri: process.env.REDISCLOUD_URL || 'redis://localhost:6379',
   mongoose: {
-    //uri: process.env.MONGODB_URI || "mongodb://localhost/app",
-    uri:
-      'mongodb://heroku_xpxmcbtl:7opt22fs38so3vpkgb84470s42@ds147589.mlab.com:47589/heroku_xpxmcbtl',
+    uri: process.env.MONGODB_URI || 'mongodb://localhost/app',
     options: {
       keepAlive: 1,
       poolSize: 5,
