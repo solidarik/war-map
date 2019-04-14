@@ -67,7 +67,15 @@
   "devDependencies": {
     "@babel/cli": "latest",
     "@babel/core": "latest",
+    "@babel/polyfill": "latest",
     "@babel/preset-env": "latest",
-    "parcel": "latest"
-  }
+    "babel-preset-env": "latest",
+    "babel-preset-react": "latest",
+    "parcel": "latest",
+    "parcel-bundler": "latest"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
 }

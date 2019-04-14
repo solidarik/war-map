@@ -13,7 +13,9 @@ class StrHelper {
   }
 
   static compareEngLanguage(input, template) {
-    return this.strToEngSymbols(input).includes(this.strToEngSymbols(template))
+    return (
+      0 <= this.strToEngSymbols(input).indexOf(this.strToEngSymbols(template))
+    )
   }
 }
 
