@@ -1,25 +1,24 @@
-const Router = require('koa-router');
-const router = new Router();
+const Router = require('koa-router')
+const router = new Router()
 
-ensureAuthenticated = async function  (ctx, next) {
+ensureAuthenticated = async function(ctx, next) {
+  if (ctx.isAuthenticated()) {
+    return next()
+  }
 
-    if (ctx.isAuthenticated()) {
-        return next()
-    }
-
-    ctx.session.returnTo = ctx.request.url
-    ctx.body = ctx.render('login')
+  ctx.session.returnTo = ctx.request.url
+  ctx.body = ctx.render('login')
 }
 
 router.get('/login', require('./login').get)
 router.post('/login', require('./login').post)
+//router.get('/index', ensureAuthenticated, require('./page-index'))
 router.get('/index', ensureAuthenticated, require('./page-index'))
-router.get('/about', ensureAuthenticated, require('./page-about'))
-router.get('/person', ensureAuthenticated, require('./page-person'))
-router.get('/info', ensureAuthenticated, require('./page-info'))
-router.get('/', ensureAuthenticated, require('./page-events'))
-router.get('/events', ensureAuthenticated, require('./page-events'))
+router.get('/about', require('./page-about'))
+router.get('/person', require('./page-person'))
+router.get('/info', require('./page-info'))
+router.get('/', require('./page-index'))
+router.get('/events', require('./page-events'))
 router.get('/logout', require('./logout').get)
-
 
 module.exports = router.routes()
