@@ -229,7 +229,7 @@
                 console.log("allData=" + JSON.stringify(allData));    
                 var dataForInfo = addSlider.filterByIso3New(allData, d.iso3);
 
-                var amid =  new AddMapInfoDiagramm("mapContainerInfo",dataForInfo,parseInt(d3.select("#mapContainerInfo").style("width")));
+                var amid =  new AddMapInfoDiagramm("mapContainerInfo",dataForInfo,parseInt(d3.select("#mapContainerInfo").style("width")),parseInt(d3.select("#mapContainerInfo").style("height")));
                 amid.addMapInfoDiagrammInDiv();
 
             })

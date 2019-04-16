@@ -23,7 +23,7 @@ script.
   var statrWork = document.getElementById("statrWork");
   statrWork.style.display = "block";
   };
-section.big-background
+section.big-background.big-background-default-image
   a#bgndVideo.player(data-property="{videoURL:'https://www.youtube.com/watch?v=B49on4qFQiQ',containment:'body',autoPlay:true, mute:true, startAt:-1, opacity:1}")
   .pattern
   .big-background-container
@@ -34,7 +34,7 @@ section.big-background
         br
         | Лев Николаевич Толстой
     #progrees(style='display: block;')
-      img(src='images/progress1.gif')
+      img(src='images/progress.gif')
       h1#colorize Загрузка...
     #statrWork(style='display: none;')
       a.big-background-btn(href='events') Войти
@@ -47,7 +47,7 @@ section.big-background
         br
         | а нацелен лишь на сбор в едином интернет-ресурсе, систематизацию и визуализацию данных.
       // <a href="https://github.com/pupunzi/jquery.mb.YTPlayer" target="_blank" class="about-section-btn">Check it here</a>
-  section.small-background-section
+  section.small-background-section.big-background-default-image
     .pattern
     .small-background-container
       h2.small-background-title

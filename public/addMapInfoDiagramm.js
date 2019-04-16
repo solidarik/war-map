@@ -8,15 +8,41 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+var hslToRgb = function hslToRgb(h, s, l) {
+  var r, g, b;
+
+  if (s == 0) {
+    r = g = b = l; // achromatic
+  } else {
+    var hue2rgb = function hue2rgb(p, q, t) {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+
+    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    var p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1 / 3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1 / 3);
+  }
+
+  return '#' + Math.round(r * 255).toString(16) + Math.round(g * 255).toString(16) + Math.round(b * 255).toString(16);
+};
+
 var AddMapInfoDiagramm =
 /*#__PURE__*/
 function () {
-  function AddMapInfoDiagramm(divElement, data, width) {
+  function AddMapInfoDiagramm(divElement, data, width, height) {
     _classCallCheck(this, AddMapInfoDiagramm);
 
     this.divElement = divElement;
     this.data = data;
     this.width = width;
+    this.height = height;
   }
 
   _createClass(AddMapInfoDiagramm, [{
@@ -24,13 +50,15 @@ function () {
     value: function addMapInfoDiagrammInDiv() {
       // set the dimensions and margins of the graph
       var margin = {
-        top: 20,
+        top: 20,//20
         right: 20,
-        bottom: 30,
+        bottom: 30,//30
         left: 40
       },
           width = this.width - margin.left - margin.right,
-          height = Math.round(this.width * 0.52) - margin.top - margin.bottom; // set the ranges
+          height = Math.round(this.height * 1) - margin.top - margin.bottom;
+      console.log("this.width=" + this.width);
+      console.log("this.height=" + this.height); // set the ranges
 
       var x = d3.scaleBand().range([0, width]).padding(0.1);
       var y = d3.scaleLinear().range([height, 0]); // append the svg object to the body of the page
@@ -59,7 +87,13 @@ function () {
 
       svg.selectAll(".bar").data(this.data).enter().append("rect").attr("class", "bar").attr("x", function (d) {
         return x(d.date);
-      }).attr("width", x.bandwidth()).attr("y", function (d) {
+      }).attr("width", x.bandwidth()).attr("fill", function (d) {
+        var golden_ratio_conjugate = 0.618033988749895;
+        var h = Math.random();
+        h += golden_ratio_conjugate;
+        h %= 1;
+        return hslToRgb(h, 0.5, 0.60);
+      }).attr("y", function (d) {
         return y(d.value);
       }).attr("height", function (d) {
         return height - y(d.value);

@@ -22,7 +22,7 @@
 
         //Device.js will check if it is Tablet or Mobile - http://matthewhudson.me/projects/device.js/
         if (!device.tablet() && !device.mobile()) {
-            $(".player").mb_YTPlayer();
+            $(".player").mb_YTPlayer({onReady:function(){$('.big-background, .small-background-section').removeClass('big-background-default-image');}});
         } else {
             //jQuery will add the default background to the preferred class 
             $('.big-background, .small-background-section').addClass(

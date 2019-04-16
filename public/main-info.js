@@ -11,14 +11,16 @@ loadedData.push({ "id": "13", "EngName": "Large ships", "RusName": "Больши
 loadedData.push({ "id": "14", "EngName": "Fighters", "RusName": "Истребители", "url": "data/number_fighters.json", "jsonType": "UFA" });
 loadedData.push({ "id": "15", "EngName": "Military", "RusName": "Войска", "url": "data/military_strength.json", "jsonType": "UFA" });
 loadedData.push({ "id": "16", "EngName": "Ground forses", "RusName": "Сухопутные войска", "url": "data/ground_forses.json", "jsonType": "UFA" });
-loadedData.push({ "id": "17", "EngName": "Artillery", "RusName": "Артилерия", "url": "data/artillery.json", "jsonType": "UFA" });
-loadedData.push({ "id": "18", "EngName": "Heavy artillery", "RusName": "Тяжелая артилерия", "url": "data/heavy_artillery.json", "jsonType": "UFA" });
-loadedData.push({ "id": "19", "EngName": "Losses soldiers war 1", "RusName": "Военный потери 1 мировая", "url": "data/losses_soldiers_war_1.json", "jsonType": "UFA" });
-loadedData.push({ "id": "20", "EngName": "Losses soldiers war 2", "RusName": "Военный потери 2 мировая", "url": "data/losses_soldiers_war_2.json", "jsonType": "UFA" });
+loadedData.push({ "id": "17", "EngName": "Artillery", "RusName": "Артиллерия", "url": "data/artillery.json", "jsonType": "UFA" });
+loadedData.push({ "id": "18", "EngName": "Heavy artillery", "RusName": "Тяжелая артиллерия", "url": "data/heavy_artillery.json", "jsonType": "UFA" });
+//loadedData.push({ "id": "19", "EngName": "Losses soldiers war 1", "RusName": "Военный потери 1 мировая", "url": "data/losses_soldiers_war_1.json", "jsonType": "UFA" });
+//loadedData.push({ "id": "20", "EngName": "Losses soldiers war 2", "RusName": "Военный потери 2 мировая", "url": "data/losses_soldiers_war_2.json", "jsonType": "UFA" });
 loadedData.push({ "id": "21", "EngName": "Tanks", "RusName": "Танки", "url": "data/tanks.json", "jsonType": "UFA" });
-loadedData.push({ "id": "22", "EngName": "Total losses world war 1", "RusName": "Общие потери 1 мировая", "url": "data/total_losses_world_war_1.json", "jsonType": "UFA" });
-loadedData.push({ "id": "23", "EngName": "Total losses world war 2", "RusName": "Общие потери 2 мировая", "url": "data/total_losses_world_war_2.json", "jsonType": "UFA" });
+//loadedData.push({ "id": "22", "EngName": "Total losses world war 1", "RusName": "Общие потери 1 мировая", "url": "data/total_losses_world_war_1.json", "jsonType": "UFA" });
+//loadedData.push({ "id": "23", "EngName": "Total losses world war 2", "RusName": "Общие потери 2 мировая", "url": "data/total_losses_world_war_2.json", "jsonType": "UFA" });
 
+loadedData.push({ "id": "24", "EngName": "Total losses world war", "RusName": "Общие потери войн", "url": "data/total_losses_world_war.json", "jsonType": "UFA" });
+loadedData.push({ "id": "25", "EngName": "Losses soldiers war", "RusName": "Военный потери войн", "url": "data/losses_soldiers_war.json", "jsonType": "UFA" });
 
 
 loadedData.push({ "id": "1", "EngName": "Agriculture, forestry, and fishing, value added (current US$)", "RusName": "Агропромышленность", "url": "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json", "jsonType": "UFA" });
@@ -66,6 +68,115 @@ loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "
 // 			}
 // 		 });
 // 	 });
+
+// function UrlExists(url) {
+//     var http = new XMLHttpRequest();
+//     http.open('HEAD', url, false);
+//     http.send();
+//     if (http.status != 404)
+//        {}
+//     else{
+// 		console.log(url);
+// 	}
+// 	http.abort();	
+// }
+// var now = new Date().getTime();
+// while(new Date().getTime() < now + 5000){ /* do nothing */ } 
+//  //проверка наличия картинок
+//   loadedData.forEach(element => {
+// 		console.log(element.EngName);
+// 	  //if(element.id = 16 ){
+// 		d3.json(element.url, function (error, dataFromFile) {
+// 			if (error) console.log(error);
+// 			dataFromFile.forEach(el => {
+// 				// $.ajax({
+// 				// 	url: "img/flags/"+el.iso2+".png",
+// 				// 	type: "GET",
+// 				// 	complete: function(xhr, textStatus) {
+// 				// 		if(xhr.status=="404"){
+// 				// 			console.log(xhr.status);
+// 				// 			console.log("img/flags/"+el.iso2+".png");
+// 				// 		}
+// 				// 	} 
+// 				// });
+// 				UrlExists("img/flags/"+el.iso2+".png");
+// 			});
+// 		});
+// 	  //s}
+// 	});
+
+ //проставляем ссылки
+//   loadedData.forEach(element => {
+// 	  if(element.id < 9 ){
+// 		d3.json(element.url, function (error, dataFromFile) {
+// 			if (error) console.log(error);
+// 			dataFromFile.forEach(el => {
+// 				if(el.rusSource=="http://www.worldbank.org/"){
+// 					if(element.id=1){
+// 						el.rusSource="http://data.worldbank.org/indicator/NV.AGR.TOTL.CD";
+// 					}
+// 					if(element.id=2){
+// 						el.rusSource="http://data.worldbank.org/indicator/ag.prd.crel.mt";
+// 					}
+// 					if(element.id=3){
+// 						el.rusSource="http://data.worldbank.org/indicator/ny.gdp.mktp.cd";
+// 					}
+// 					if(element.id=4){
+// 						el.rusSource="http://data.worldbank.org/indicator/NV.IND.TOTL.CD";
+// 					}
+// 					if(element.id=5){
+// 						el.rusSource="http://data.worldbank.org/indicator/nv.ind.manf.cd";
+// 					}
+// 					if(element.id=6){
+// 						el.rusSource="http://data.worldbank.org/indicator/ny.gdp.pcap.cd";
+// 					}
+// 					if(element.id=7){
+// 						el.rusSource="http://data.worldbank.org/indicator/SP.POP.TOTL";
+// 					}					
+// 					if(element.id=8){
+// 						el.rusSource="http://data.worldbank.org/indicator/NV.SRV.TOTL.ZS";
+// 					}										
+// 				}
+// 			});
+// 			download(JSON.stringify(dataFromFile), element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) + '_full_url.json', 'text/json');
+// 		});
+		
+// 	  }
+// 	});
+
+//объединение по войне
+// var target = [];
+// var  obj1, obj2;
+
+
+
+// loadedData.forEach(element => {
+// 	console.log(element.id);
+//   	if ((element.id == '19')||(element.id == '20')) {
+// 		console.log(element.id);
+//   		d3.json(element.url, function (error, dataFromFile) {
+// 			if (error) console.log(error);
+// 			if (element.id == '19'){
+// 				obj1=JSON.parse(JSON.stringify(dataFromFile)); 
+// 				console.log(obj1);
+// 			}   
+// 			if (element.id == '20'){
+// 				obj2=JSON.parse(JSON.stringify(dataFromFile)); 
+// 				console.log(obj2);
+// 			} 
+// 			if(typeof(obj2)!=undefined)  {
+// 				target = obj1.concat(obj2);
+// 				target.sort(function (a, b) {
+// 					return a.date.localeCompare(b.date);
+// 				});
+// 				console.log(target);
+// 				download(JSON.stringify(target), 'losses_soldiers_war.json', 'text/json');
+// 			}
+// 		});
+// 	}
+// });
+
+
 
 //  loadedData.forEach(element => {
 //  	if (element.id < 9) {
