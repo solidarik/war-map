@@ -50,15 +50,15 @@ function () {
     value: function addMapInfoDiagrammInDiv() {
       // set the dimensions and margins of the graph
       var margin = {
-        top: 20,//20
+        top: 20,
         right: 20,
-        bottom: 30,//30
+        bottom: 30,
         left: 40
       },
           width = this.width - margin.left - margin.right,
-          height = Math.round(this.height * 1) - margin.top - margin.bottom;
-      console.log("this.width=" + this.width);
-      console.log("this.height=" + this.height); // set the ranges
+          height = Math.round(this.height * 0.52) - margin.top - margin.bottom; //console.log("this.width="+this.width);
+      //console.log("this.height="+this.height);
+      // set the ranges
 
       var x = d3.scaleBand().range([0, width]).padding(0.1);
       var y = d3.scaleLinear().range([height, 0]); // append the svg object to the body of the page
@@ -66,21 +66,17 @@ function () {
       // moves the 'group' element to the top left margin
 
       d3.select("#" + this.divElement + "Svg").remove();
-      var svg = d3.select("#" + this.divElement).append("svg").attr("id", this.divElement + "Svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-      console.log("this.data=" + JSON.stringify(this.data)); // this.data.forEach(function (d) {
+      var svg = d3.select("#" + this.divElement).append("svg").attr("id", this.divElement + "Svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")"); //console.log("this.data=" + JSON.stringify(this.data));
+      // this.data.forEach(function (d) {
       //      d.value = +d.value;
       // });
       // Scale the range of the data in the domains
+      //console.log("this.data.map=" + this.data.map(function (d) { return d.date; }));
 
-      console.log("this.data.map=" + this.data.map(function (d) {
-        return d.date;
-      }));
       x.domain(this.data.map(function (d) {
         return d.date;
-      }));
-      console.log("d3.max=" + d3.max(this.data, function (d) {
-        return d.value;
-      }));
+      })); //console.log("d3.max=" + d3.max(this.data, function (d) { return d.value; }));
+
       y.domain([0, d3.max(this.data, function (d) {
         return d.value;
       })]); // append the rectangles for the bar chart

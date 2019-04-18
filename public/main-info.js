@@ -542,11 +542,11 @@ function addEvent(evnt, elem, func) {
 	if (elem.addEventListener)  // W3C DOM
 	{
 	   elem.addEventListener(evnt, func, false);
-	   console.log('addeventlistener');
+	   //console.log('addeventlistener');
 	}
 	else if (elem.attachEvent) { // IE DOM
 	   elem.attachEvent("on"+evnt, func);
-	   console.log('attackEvent');
+	   //console.log('attackEvent');
 	}
 	else { // No much to do
 	   elem["on"+evnt] = func;

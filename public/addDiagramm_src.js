@@ -66,9 +66,9 @@ var width = window.innerWidth || document.documentElement.clientWidth || documen
 //     dashboard('#dashboard',indicatorsData);
 // });
 
-function updateDasboardFunction() {
-    console.log("updateDasboardFunction");
-}
+//function updateDasboardFunction() {
+    //console.log("updateDasboardFunction");
+//}
 
 function updateDasboardFunction(h, handle, label, xScale) {
     // update position and text of label according to slider scale

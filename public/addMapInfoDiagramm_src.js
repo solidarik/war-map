@@ -40,8 +40,8 @@ class AddMapInfoDiagramm {
             width = this.width - margin.left - margin.right,
             height = Math.round(this.height*0.52) - margin.top - margin.bottom;
 
-            console.log("this.width="+this.width);
-            console.log("this.height="+this.height);
+            //console.log("this.width="+this.width);
+            //console.log("this.height="+this.height);
 
         // set the ranges
         var x = d3.scaleBand()
@@ -63,16 +63,16 @@ class AddMapInfoDiagramm {
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
 
-            console.log("this.data=" + JSON.stringify(this.data));
+            //console.log("this.data=" + JSON.stringify(this.data));
 
             // this.data.forEach(function (d) {
             //      d.value = +d.value;
             // });
 
             // Scale the range of the data in the domains
-            console.log("this.data.map=" + this.data.map(function (d) { return d.date; }));
+            //console.log("this.data.map=" + this.data.map(function (d) { return d.date; }));
             x.domain(this.data.map(function (d) { return d.date; }));
-            console.log("d3.max=" + d3.max(this.data, function (d) { return d.value; }));
+            //console.log("d3.max=" + d3.max(this.data, function (d) { return d.value; }));
             y.domain([0, d3.max(this.data, function (d) { return d.value; })]);
 
             // append the rectangles for the bar chart

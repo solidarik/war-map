@@ -44,7 +44,7 @@
         this.data.sort(this.sortIfDataCountries);
 
         let maxValue = this.data[0].dataCountries[0].value;//this.mxval;//this.getMaxValue(this.data);//
-        console.log("maxValue="+maxValue);
+        //console.log("maxValue="+maxValue);
 
         let sizeScale = d3.scaleSqrt().domain([0, maxValue]).range([0, Math.round(0.037*this.width)]);//70
         // Define the div for the tooltip
@@ -226,7 +226,7 @@
                     .style("top", (d3.event.pageY - 28) + "px");
 
 
-                console.log("allData=" + JSON.stringify(allData));    
+                //console.log("allData=" + JSON.stringify(allData));    
                 var dataForInfo = addSlider.filterByIso3New(allData, d.iso3);
 
                 var amid =  new AddMapInfoDiagramm("mapContainerInfo",dataForInfo,parseInt(d3.select("#mapContainerInfo").style("width")),parseInt(d3.select("#mapContainerInfo").style("height")));
