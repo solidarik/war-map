@@ -472,11 +472,13 @@ function startApp() {
 
 		console.time("add countries");
 		width = parseInt(d3.select("#mapContainer").style("width")),
-			height = Math.round(width * 5 / 12);//parseInt(d3.select("#mapContainer").style("height"));
+			height = Math.round(width * 4 / 7.1);//parseInt(d3.select("#mapContainer").style("height"));
+		
 		var scale0 = (width - 1) / 2 / Math.PI;
+		
 		projection = d3.geoEquirectangular()
 			.scale([scale0]) // scale to fit group width;
-			.translate([width / 2, height / 2 + 50])// ensure centred in group
+			.translate([width / 2, height / 2])// ensure centred in group
 			//.translate([0,0])// ensure centred in group
 			;
 

@@ -36,9 +36,15 @@ class AddMapInfoDiagramm {
 
     addMapInfoDiagrammInDiv() {
         // set the dimensions and margins of the graph
-        var margin = { top: 20, right: 20, bottom: 30, left: 40 },
-            width = this.width - margin.left - margin.right,
-            height = Math.round(this.height*0.52) - margin.top - margin.bottom;
+        var margin = { top: 20, right: 20, bottom: 30, left: 40 };
+        var width = this.width - margin.left - margin.right;
+        var height;
+        if(this.width>=160){
+          height = Math.round(this.height * 0.52) - margin.top - margin.bottom;
+        }
+        else{
+          height = Math.round(this.height) - margin.top - margin.bottom;
+        }
 
             //console.log("this.width="+this.width);
             //console.log("this.height="+this.height);
@@ -94,32 +100,58 @@ class AddMapInfoDiagramm {
 
             var domainXaxis;    
 
-            if(x.domain().length<=10)    {
-                domainXaxis=x.domain();
-            }else{
-                if(x.domain().length<=50)    {
-                    domainXaxis = x.domain().filter(function (d, i) { return !(i % 5);});
-                }else{
-                    if(x.domain().length<=200)    {
-                        domainXaxis = x.domain().filter(function (d, i) { return !(i % 10);});
+            if (this.width >= 160) {
+                
+                if (x.domain().length <= 10) {
+                  domainXaxis = x.domain();
+                } 
+                else {
+                  if (x.domain().length <= 50) {
+                    domainXaxis = x.domain().filter(function (d, i) {
+                      return !(i % 5);
+                    });
+                  } 
+                  else {
+                    if (x.domain().length <= 200) {
+                        domainXaxis = x.domain().filter(function (d, i) {
+                            return !(i % 10);
+                       });
                     }
+                  }
                 }
+
+                // add the x Axis
+                svg.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x).tickValues(domainXaxis)).selectAll("text").style("text-anchor", "end").attr("dx", "-.8em").attr("dy", ".15em").attr("transform", "rotate(-90)");
+
+                // add the y Axis
+                svg.append("g").call(d3.axisLeft(y).ticks(5));
+            }
+            else{
+
+              var delit =  x.domain().length-1;///2;
+              //console.log("x.domain().length="+x.domain().length);
+              //console.log("x.domain().length/3="+x.domain().length/3);
+              //console.log("x.domain().length/2="+x.domain().length/2);
+              //delit = +delit;
+		          //if (!isFinite(delit)) {
+              //  delit = delit;
+              //}
+              //else{
+              //  delit = (delit - delit % 1)   ||   (delit < 0 ? -0 : delit === 0 ? delit : 0);
+              //}
+              //console.log("delit="+delit);
+
+              domainXaxis = x.domain().filter(function (d, i) {
+                    return !(i % delit);
+                  });
+                
+                // add the x Axis
+                svg.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x).tickValues(domainXaxis)).selectAll("text").style("text-anchor", "end").attr("dx", "-1em").attr("dy", "-.9em").attr("transform", "rotate(-90)").style("font-size","8px");
+
+                // add the y Axis
+                svg.append("g").call(d3.axisLeft(y).ticks(1)).style("font-size","8px");              
             }
 
-            // add the x Axis
-             svg.append("g")
-                 .attr("transform", "translate(0," + height + ")")
-                 .call(d3.axisBottom(x).tickValues(domainXaxis))
-                 .selectAll("text")	
-                    .style("text-anchor", "end")
-                    .attr("dx", "-.8em")
-                    .attr("dy", ".15em")
-                    .attr("transform", "rotate(-90)");
-                 
-
-            // add the y Axis
-            svg.append("g")
-                .call(d3.axisLeft(y).ticks(5));
     }
 
 }

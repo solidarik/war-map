@@ -239,8 +239,6 @@ a.about-section-btn {
 }
 
 
-
-
 /* MEDIA QUERIES
 ================================================== */
 
@@ -252,7 +250,7 @@ a.about-section-btn {
 
 @media screen and (max-width: 480px) {
 .big-background-title {
-    font-size:58px
+    font-size:25px
 }
 
 .small-background-title {
@@ -270,7 +268,7 @@ a.about-section-btn {
 
 @media screen and (max-width: 320px) {
 .small-background-title {
-    font-size:30px
+    font-size:20px
 }
 }
 
