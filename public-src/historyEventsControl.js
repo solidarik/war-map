@@ -64,16 +64,18 @@ export class HistoryEventsControl extends EventEmitter {
 
     const f = value => {
       if (Array.isArray(value)) {
-        return value.length > 0 ? value.join(',') : '-'
+        return value.length > 0 ? value.join(', ').replace(/, /g, '<br/>') : '-'
       } else {
         if (value == undefined) return '-'
         const tryFloat = parseFloat(value)
-        return Number.isNaN(tryFloat) ? value : tryFloat.toString()
+        return Number.isNaN(tryFloat)
+          ? value.replace(/, /g, '<br />')
+          : tryFloat.toString()
       }
     }
 
-    html += '<td>' + f(event.enemies) + '</td>'
     html += '<td>' + f(event.allies) + '</td>'
+    html += '<td>' + f(event.enemies) + '</td>'
     html += '<td>' + f(event.ally_troops) + '</td>'
     html += '<td>' + f(event.enem_troops) + '</td>'
     html += '<td>' + f(event.winner) + '</td>'
