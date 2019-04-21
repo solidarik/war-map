@@ -10674,8 +10674,8 @@ function (_EventEmitter) {
   }
 
   _createClass(HistoryEventsControl, [{
-    key: "_getHtmlForEvent",
-    value: function _getHtmlForEvent(event, is_active) {
+    key: "getHtmlForEvent",
+    value: function getHtmlForEvent(event, is_active) {
       var html = '<tr data-href="' + event.id + '" class="hand-cursor' + (is_active ? ' event-active-row' : '') + '">';
       html += '<td>' + event.startDate + '</td>';
       html += '<td>' + event.endDate + '</td>';
@@ -10694,6 +10694,22 @@ function (_EventEmitter) {
       }
 
       html += '<td>' + name + '</td>';
+
+      var f = function f(value) {
+        if (Array.isArray(value)) {
+          return value.length > 0 ? value.join(',') : '-';
+        } else {
+          if (value == undefined) return '-';
+          var tryFloat = parseFloat(value);
+          return Number.isNaN(tryFloat) ? value : tryFloat.toString();
+        }
+      };
+
+      html += '<td>' + f(event.enemies) + '</td>';
+      html += '<td>' + f(event.allies) + '</td>';
+      html += '<td>' + f(event.ally_troops) + '</td>';
+      html += '<td>' + f(event.enem_troops) + '</td>';
+      html += '<td>' + f(event.winner) + '</td>';
       html += '</tr>';
       return html;
     }
@@ -10789,10 +10805,10 @@ function (_EventEmitter) {
       this.listDiv.innerHTML = '';
       this.events = events;
       if (!events || 0 == events.length) return;
-      var html = "\n        <table class=\"table table-sm table-borderless\">\n        <thead>\n            <tr>\n                <th scope=\"col\">\u041D\u0430\u0447\u0430\u043B\u043E</th>\n                <th scope=\"col\">\u041E\u043A\u043E\u043D\u0447\u0430\u043D\u0438\u0435</th>\n                <th scope=\"col\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 c\u043E\u0431\u044B\u0442\u0438\u044F</th>\n            </tr>\n        </thead>\n        <tbody>\n        ";
+      var html = "\n        <table class=\"table table-sm table-borderless\">\n        <thead>\n            <tr>\n                <th scope=\"col\">\u041D\u0430\u0447\u0430\u043B\u043E</th>\n                <th scope=\"col\">\u041E\u043A\u043E\u043D\u0447\u0430\u043D\u0438\u0435</th>\n                <th scope=\"col\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435</th>\n                <th scope=\"col\">\u0423\u0447\u0430\u0441\u0442\u043D\u0438\u043A 1</th>\n                <th scope=\"col\">\u0423\u0447\u0430\u0441\u0442\u043D\u0438\u043A 2</th>\n                <th scope=\"col\">\u0427\u0438\u0441\u043B-\u0442\u044C 1</th>\n                <th scope=\"col\">\u0427\u0438\u0441\u043B-\u0442\u044C 2</th>\n                <th scope=\"col\">\u041F\u043E\u0431\u0435\u0434\u0438\u0442\u0435\u043B\u044C</th>\n            </tr>\n        </thead>\n        <tbody>\n        ";
       var once = true;
       events.forEach(function (event) {
-        html += _this3._getHtmlForEvent(event, once);
+        html += _this3.getHtmlForEvent(event, once);
         once = false;
       });
       html += '</tbody></table>';

@@ -32,7 +32,7 @@ export class HistoryEventsControl extends EventEmitter {
     return new HistoryEventsControl()
   }
 
-  _getHtmlForEvent(event, is_active) {
+  getHtmlForEvent(event, is_active) {
     let html =
       '<tr data-href="' +
       event.id +
@@ -61,6 +61,22 @@ export class HistoryEventsControl extends EventEmitter {
     }
 
     html += '<td>' + name + '</td>'
+
+    const f = value => {
+      if (Array.isArray(value)) {
+        return value.length > 0 ? value.join(',') : '-'
+      } else {
+        if (value == undefined) return '-'
+        const tryFloat = parseFloat(value)
+        return Number.isNaN(tryFloat) ? value : tryFloat.toString()
+      }
+    }
+
+    html += '<td>' + f(event.enemies) + '</td>'
+    html += '<td>' + f(event.allies) + '</td>'
+    html += '<td>' + f(event.ally_troops) + '</td>'
+    html += '<td>' + f(event.enem_troops) + '</td>'
+    html += '<td>' + f(event.winner) + '</td>'
 
     html += '</tr>'
     return html
@@ -159,7 +175,12 @@ export class HistoryEventsControl extends EventEmitter {
             <tr>
                 <th scope="col">Начало</th>
                 <th scope="col">Окончание</th>
-                <th scope="col">Название cобытия</th>
+                <th scope="col">Название</th>
+                <th scope="col">Участник 1</th>
+                <th scope="col">Участник 2</th>
+                <th scope="col">Числ-ть 1</th>
+                <th scope="col">Числ-ть 2</th>
+                <th scope="col">Победитель</th>
             </tr>
         </thead>
         <tbody>
@@ -167,7 +188,7 @@ export class HistoryEventsControl extends EventEmitter {
 
     let once = true
     events.forEach(event => {
-      html += this._getHtmlForEvent(event, once)
+      html += this.getHtmlForEvent(event, once)
       once = false
     })
 
