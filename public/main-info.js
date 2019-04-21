@@ -471,9 +471,24 @@ function startApp() {
 		if (error) console.log(error);
 
 		console.time("add countries");
-		width = parseInt(d3.select("#mapContainer").style("width")),
+		width = parseInt(d3.select("#mapContainer").style("width"));
+		height = Math.round(width * 4 / 7.1);//parseInt(d3.select("#mapContainer").style("height"));
+
+		if(height>(document.documentElement.clientHeight-200)){
+			height = document.documentElement.clientHeight-200;
+			width = Math.round(height * 7.1 / 4 );
+		}
+		else{
+			width = parseInt(d3.select("#mapContainer").style("width"));
 			height = Math.round(width * 4 / 7.1);//parseInt(d3.select("#mapContainer").style("height"));
-		
+		}
+
+		console.log("height"+height);
+		console.log("height-264"+(height-264));
+		console.log("document.body.clientHeight"+document.body.clientHeight);
+		console.log("document.documentElement.clientHeight"+document.documentElement.clientHeight);
+		console.log("document.documentElement.scrollHeight"+document.documentElement.scrollHeight);
+
 		var scale0 = (width - 1) / 2 / Math.PI;
 		
 		projection = d3.geoEquirectangular()
