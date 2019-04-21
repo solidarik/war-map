@@ -1,37 +1,37 @@
 body {
-    display: block;
-    overflow-x: hidden;
-    background-color: #e6f7ff;
-   }
+  display: block;
+  overflow-x: hidden;
+  background-color: #e6f7ff;
+}
 h5 {
-    text-align: center;
+  text-align: center;
 }
-cite{
-    text-align: center; 
+cite {
+  text-align: center;
 }
-.person-cont{
-    padding:1%;
+.person-cont {
+  padding: 1%;
 }
-.image-cont{
-    text-align:center;
+.image-cont {
+  text-align: center;
 }
-.detail-cont{
-    border-left:3px solid #ded4da;
+.detail-cont {
+  border-left: 3px solid #ded4da;
 }
-.detail-cont p{
-    font-size:15px;
-    font-weight:bold;
+.detail-cont p {
+  font-size: 15px;
+  font-weight: bold;
 }
 #events-control {
-    height: auto;
-    width: 100%;
-    max-height: 20%;
-    background-color: rgba(40, 40, 40, 0.5) !important;
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    color: white;
-    text-align: justify;
-    border-radius: 0px;
-    overflow-y: scroll;
+  height: auto;
+  width: 100%;
+  max-height: 20%;
+  background-color: rgba(40, 40, 40, 0.5) !important;
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  color: white;
+  text-align: justify;
+  border-radius: 0px;
+  overflow-y: scroll;
 }

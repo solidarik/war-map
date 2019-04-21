@@ -1,15 +1,31 @@
 import { EventEmitter } from './eventEmitter'
-import jquery from 'jquery'
 
 export class HistoryEventsControl extends EventEmitter {
   constructor() {
     super()
 
-    this.listDiv = jquery('#event-list')[0]
-    this.imgDiv = jquery('#event-image-div')[0]
+    this.listDiv = $('#eventInfo')[0]
+    this.imgDiv = $('#event-image-div')[0]
     this.events = []
     this.active_event = ''
     this.active_map = ''
+
+    $(document).ready(() => {
+      const c = $('#collapseEventInfo')
+      const ch = $('#collapseButton').children()
+
+      c.on('shown.bs.collapse', () => {
+        ch.removeClass('mdi-chevron-double-up').addClass(
+          'mdi-chevron-double-down'
+        )
+      })
+
+      c.on('hidden.bs.collapse', () => {
+        ch.removeClass('mdi-chevron-double-down').addClass(
+          'mdi-chevron-double-up'
+        )
+      })
+    })
   }
 
   static create() {
@@ -112,9 +128,9 @@ export class HistoryEventsControl extends EventEmitter {
     let activeEvent = this.events.filter(event => event.id == id)[0]
     if (!isMapEventClick) {
       this.active_map = 0
-      jquery('table tr td span').removeClass('event-feature-active-color')
+      $('table tr td span').removeClass('event-feature-active-color')
       if (1 < activeEvent.maps.length) {
-        let firstSpan = jquery(tr[0].childNodes[2]).children('span:first')
+        let firstSpan = $(tr[0].childNodes[2]).children('span:first')
         firstSpan.addClass('event-feature-active-color')
       }
     }
@@ -124,7 +140,7 @@ export class HistoryEventsControl extends EventEmitter {
   mapEventClick(a) {
     this.active_map = a.attr('data-href')
 
-    jquery('table tr td span').removeClass('event-feature-active-color')
+    $('table tr td span').removeClass('event-feature-active-color')
     a.addClass('event-feature-active-color')
     let tr = a.parent().parent()
     this.rowEventClick(tr, true)

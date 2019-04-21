@@ -6,6 +6,34 @@ import strHelper from '../helper/strHelper'
 
 const kremlinLocation = new ol.proj.fromLonLat([37.617499, 55.752023]) // moscow kremlin
 
+function resizeImage(url, fixWidth, callback) {
+  var sourceImage = new Image()
+
+  sourceImage.onload = function() {
+    // Create a canvas with the desired dimensions
+    var canvas = document.createElement('canvas')
+
+    let imgWidth = this.width
+    let aspectRatio = Math.round(imgWidth / fixWidth)
+
+    let imgHeight = this.height
+    let fixHeight = Math.round(imgHeight / aspectRatio)
+
+    canvas.width = fixWidth
+    canvas.height = fixHeight
+
+    // Scale and draw the source image to the canvas
+    let ctx = canvas.getContext('2d')
+    ctx.globalAlpha = 0.6
+    ctx.drawImage(sourceImage, 0, 0, fixWidth, fixHeight)
+
+    // Convert the canvas to a data URL in PNG format
+    if (callback) callback(canvas)
+  }
+
+  return (sourceImage.src = url)
+}
+
 export class MapControl extends EventEmitter {
   constructor() {
     super()
@@ -48,13 +76,13 @@ export class MapControl extends EventEmitter {
       })
     })
 
-    // const select = new ol.interaction.Select({
-    //   condition: ol.events.condition.pointerMove,
-    //   style: selectedStyle,
-    //   multi: false
-    // })
+    const select = new ol.interaction.Select({
+      condition: ol.events.condition.pointerMove,
+      //      style: selectedStyle,
+      multi: false
+    })
 
-    // map.addInteraction(select)
+    map.addInteraction(select)
 
     var transparent = [0, 0, 0, 0.01]
     var filltransparent = [0, 0, 0, 0]
@@ -71,12 +99,12 @@ export class MapControl extends EventEmitter {
       })
     ]
 
-    // select.on('select', function(e) {
-    //   if (e.selected.length) return
-    //   const feature = e.selected[0]
+    select.on('select', function(evt) {
+      if (evt.selected.length) return
+      const feature = evt.selected[0]
 
-    //   window.map.showEventMap(feature.get('eventMap'))
-    // })
+      //window.map.showEventMap(feature.get('eventMap'))
+    })
 
     map.on('click', function(evt) {
       let coordinates = evt.coordinate
@@ -87,11 +115,52 @@ export class MapControl extends EventEmitter {
           '; WGS: ' +
           lonLatCoords
       )
+
+      let imgUrl = undefined
+      let featureEvent = undefined
+      const isHit = map.forEachFeatureAtPixel(evt.pixel, function(
+        feature,
+        layer
+      ) {
+        featureEvent = feature
+        imgUrl = feature.get('imgUrl')
+        return ['wmw', 'wow', 'politics'].indexOf(feature.get('kind')) >= 0
+      })
+
+      const isExistUrl = imgUrl !== undefined
+
+      if (isHit && isExistUrl) {
+        window.map.showEventMap(featureEvent.get('eventMap'))
+
+        $('#imgModalLabel').html(featureEvent.get('name'))
+
+        resizeImage(imgUrl, $(window).width() - 500, canvas => {
+          $('#imgModal').modal()
+          $('.modal-body').html(canvas)
+        })
+      }
     })
 
     map.on('moveend', evt => {
       var map = evt.map
       //   console.log(map.getView().getZoom());
+    })
+
+    map.on('pointermove', function(evt) {
+      const isHit = map.forEachFeatureAtPixel(evt.pixel, function(
+        feature,
+        layer
+      ) {
+        if (feature === undefined || feature.get('kind') === undefined)
+          return false
+        return ['wmw', 'wow', 'politics'].indexOf(feature.get('kind')) >= 0
+      })
+
+      if (isHit) {
+        this.getTargetElement().style.cursor = 'pointer'
+      } else {
+        this.getTargetElement().style.cursor = ''
+      }
     })
 
     this.map = map
@@ -116,18 +185,21 @@ export class MapControl extends EventEmitter {
     this.tileSize = { w: 256, h: 256 }
 
     setTimeout(() => {
-      // this._addSelectInteraction();
+      // this.addSelectInteraction()
       this.addYearLayer()
       this.addHistoryEventsLayer()
       this.addAgreementsLayer()
-      this.changeYear(1941)
-      this.addYearControl()
       // this._addButtons();
     }, 10)
   }
 
   static create() {
     return new MapControl()
+  }
+
+  setCurrentYearFromServer(year) {
+    this.changeYear(year)
+    this.addYearControl()
   }
 
   addYearLayer() {
@@ -462,6 +534,7 @@ export class MapControl extends EventEmitter {
         size: 20000,
         isWinnerUSSR: strHelper.compareEngLanguage(event.winner, 'CCCР'),
         kind: event.kind,
+        imgUrl: event.imgUrl,
         winner: event.winner,
         eventMap: event.maps[0],
         filename: event.filename
@@ -478,6 +551,7 @@ export class MapControl extends EventEmitter {
       if (agreement.placeCoords && agreement.placeCoords.length) {
         let ft = new ol.Feature({
           name: agreement.results,
+          kind: 'politics',
           geometry: new ol.geom.Point(ol.proj.fromLonLat(agreement.placeCoords))
         })
 
@@ -562,7 +636,7 @@ export class MapControl extends EventEmitter {
 
     this.view.animate({
       center: this.getCenterOfMap(map),
-      duration: 1000
+      duration: 500
     })
   }
 

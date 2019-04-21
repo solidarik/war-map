@@ -8,8 +8,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "parcel": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js",
-    "watch": "nodemon -w public-src -x npm run parcel",
+    "parcel": "parcel public-src/index.html -p 3000",
+    "build": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js && cp dist/index.js.map public/public-src.js.map",
+    "watch": "nodemon -w public-src -x npm run build",
     "dev": "nodemon index.js"
   },
   "repository": {
@@ -32,6 +33,7 @@
   },
   "homepage": "https://github.com/solidarik/war-map#readme",
   "dependencies": {
+    "@material-ui/core": "latest",
     "chalk": "latest",
     "co-busboy": "latest",
     "config": "latest",
@@ -58,6 +60,8 @@
     "passport-local": "latest",
     "popper.js": "latest",
     "pug": "latest",
+    "react": "latest",
+    "react-dom": "latest",
     "request": "latest",
     "socket.io": "latest",
     "socket.io-emitter": "latest",
@@ -65,13 +69,9 @@
     "winston": "latest"
   },
   "devDependencies": {
-    "@babel/cli": "latest",
     "@babel/core": "latest",
-    "@babel/polyfill": "latest",
-    "@babel/preset-env": "latest",
-    "babel-preset-env": "latest",
-    "babel-preset-react": "latest",
-    "parcel": "latest",
+    "@babel/plugin-proposal-class-properties": "latest",
+    "@babel/plugin-proposal-object-rest-spread": "latest",
     "parcel-bundler": "latest"
   },
   "browserslist": [

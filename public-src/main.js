@@ -2,7 +2,6 @@ import { MapControl } from './mapControl'
 import { ClientProtocol } from './clientProtocol'
 import { HistoryEventsControl } from './historyEventsControl'
 import $ from 'jquery'
-
 window.app = {}
 var app = window.app
 
@@ -17,6 +16,7 @@ function fixMapHeight() {
 }
 
 function fixMiniMapVisible(isHide) {
+  return
   let elem = $('#event-image-div')
   if (isHide) {
     $('#event-image-div')[0].innerHTML = ''
@@ -39,6 +39,11 @@ function startApp() {
   let protocol = ClientProtocol.create()
 
   let mapControl = MapControl.create()
+
+  protocol.subscribe('setCurrentYear', year => {
+    mapControl.setCurrentYearFromServer(year)
+  })
+
   mapControl.subscribe('changeYear', year => {
     fixMiniMapVisible(true)
     protocol.getHistoryEventsByYear(year)
@@ -47,7 +52,6 @@ function startApp() {
   let historyEventsControl = HistoryEventsControl.create()
 
   protocol.subscribe('refreshHistoryEvents', events => {
-    console.log('>>>>>> events', events)
     mapControl.setHistoryEvents(events)
     historyEventsControl.showEvents(events)
   })

@@ -1,11 +1,18 @@
 const log = require('../helper/logHelper')
 const ServerProtocol = require('../libs/serverProtocol')
-let HistoryEventsModel = require('../models/historyEventsModel')
-let AgreementsModel = require('../models/agreementsModel')
+const HistoryEventsModel = require('../models/historyEventsModel')
+const AgreementsModel = require('../models/agreementsModel')
 
 class HistoryEventsProtocol extends ServerProtocol {
   init() {
     super.addHandler('clQueryEvents', this.getEventsByYear)
+    super.addHandler('clGetCurrentYear', this.getCurrentYear)
+  }
+
+  getCurrentYear(socket, msg, cb) {
+    let res = {}
+    res.year = undefined // todo
+    cb(JSON.stringify(res))
   }
 
   getEventsByYear(socket, msg, cb) {

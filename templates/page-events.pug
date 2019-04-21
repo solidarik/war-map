@@ -17,9 +17,24 @@ block head
 block content
   +header('events')
 
+  div(class="modal fade" id="imgModal" tabindex="-1" role="dialog" aria-labelledby="imgModalLabel" aria-hidden="true")
+    div(class="modal-dialog modal-lg" role="document")
+      div(class="modal-content")
+        div(class="modal-header")
+          h5(class="modal-title" id="imgModalLabel")
+            | Modal Title
+          button(type="button" class="close" data-dismiss="modal" aria-label="Close")
+            span(aria-hidden="true")
+              | &times
+        div(class="modal-body")
+          | ...
+
   div.content(role="content" id='content' dragable='true')
-    input(id='fileImport' accept='application/kml' type='file' style='display:none;')
+    //- input(id='fileImport' accept='application/kml' type='file' style='display:none;')
     div.map(class='fill panel panel-default' id='map' data-role='map')
     div(id='events-control')
-      div(id='event-list' class='table-responsive')
-      div(id='event-image-div')
+      button(id="collapseButton" class="btn btn-dark btn-small" type="button" data-toggle="collapse" data-target="#collapseEventInfo" aria-expanded="false" aria-controls="collapseEventInfo")
+        span(class="mdi mdi-chevron-double-up")
+      div(class="collapse" id="collapseEventInfo")
+        div(id='eventInfo' class='table-responsive')
+      //- div(id='event-image-div')

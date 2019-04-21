@@ -945,6 +945,29 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 var kremlinLocation = new ol.proj.fromLonLat([37.617499, 55.752023]); // moscow kremlin
 
+function resizeImage(url, fixWidth, callback) {
+  var sourceImage = new Image();
+
+  sourceImage.onload = function () {
+    // Create a canvas with the desired dimensions
+    var canvas = document.createElement('canvas');
+    var imgWidth = this.width;
+    var aspectRatio = Math.round(imgWidth / fixWidth);
+    var imgHeight = this.height;
+    var fixHeight = Math.round(imgHeight / aspectRatio);
+    canvas.width = fixWidth;
+    canvas.height = fixHeight; // Scale and draw the source image to the canvas
+
+    var ctx = canvas.getContext('2d');
+    ctx.globalAlpha = 0.6;
+    ctx.drawImage(sourceImage, 0, 0, fixWidth, fixHeight); // Convert the canvas to a data URL in PNG format
+
+    if (callback) callback(canvas);
+  };
+
+  return sourceImage.src = url;
+}
+
 var MapControl =
 /*#__PURE__*/
 function (_EventEmitter) {
@@ -990,13 +1013,13 @@ function (_EventEmitter) {
       fill: new ol.style.Fill({
         color: 'rgba(0, 0, 255, 0.1)'
       })
-    }); // const select = new ol.interaction.Select({
-    //   condition: ol.events.condition.pointerMove,
-    //   style: selectedStyle,
-    //   multi: false
-    // })
-    // map.addInteraction(select)
-
+    });
+    var select = new ol.interaction.Select({
+      condition: ol.events.condition.pointerMove,
+      //      style: selectedStyle,
+      multi: false
+    });
+    map.addInteraction(select);
     var transparent = [0, 0, 0, 0.01];
     var filltransparent = [0, 0, 0, 0];
     var transparentStyle = [new ol.style.Style({
@@ -1015,19 +1038,47 @@ function (_EventEmitter) {
       fill: new ol.style.Fill({
         color: filltransparent
       })
-    })]; // select.on('select', function(e) {
-    //   if (e.selected.length) return
-    //   const feature = e.selected[0]
-    //   window.map.showEventMap(feature.get('eventMap'))
-    // })
-
+    })];
+    select.on('select', function (evt) {
+      if (evt.selected.length) return;
+      var feature = evt.selected[0]; //window.map.showEventMap(feature.get('eventMap'))
+    });
     map.on('click', function (evt) {
       var coordinates = evt.coordinate;
       var lonLatCoords = new ol.proj.toLonLat(coordinates);
       console.log('clicked on map with coordinates: ' + coordinates + '; WGS: ' + lonLatCoords);
+      var imgUrl = undefined;
+      var featureEvent = undefined;
+      var isHit = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+        featureEvent = feature;
+        imgUrl = feature.get('imgUrl');
+        return ['wmw', 'wow', 'politics'].indexOf(feature.get('kind')) >= 0;
+      });
+      var isExistUrl = imgUrl !== undefined;
+
+      if (isHit && isExistUrl) {
+        window.map.showEventMap(featureEvent.get('eventMap'));
+        $('#imgModalLabel').html(featureEvent.get('name'));
+        resizeImage(imgUrl, $(window).width() - 500, function (canvas) {
+          $('#imgModal').modal();
+          $('.modal-body').html(canvas);
+        });
+      }
     });
     map.on('moveend', function (evt) {
       var map = evt.map; //   console.log(map.getView().getZoom());
+    });
+    map.on('pointermove', function (evt) {
+      var isHit = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+        if (feature === undefined || feature.get('kind') === undefined) return false;
+        return ['wmw', 'wow', 'politics'].indexOf(feature.get('kind')) >= 0;
+      });
+
+      if (isHit) {
+        this.getTargetElement().style.cursor = 'pointer';
+      } else {
+        this.getTargetElement().style.cursor = '';
+      }
     });
     _this.map = map;
     _this.historyEvents = [];
@@ -1050,22 +1101,24 @@ function (_EventEmitter) {
       h: 256
     };
     setTimeout(function () {
-      // this._addSelectInteraction();
+      // this.addSelectInteraction()
       _this.addYearLayer();
 
       _this.addHistoryEventsLayer();
 
-      _this.addAgreementsLayer();
-
-      _this.changeYear(1941);
-
-      _this.addYearControl(); // this._addButtons();
+      _this.addAgreementsLayer(); // this._addButtons();
 
     }, 10);
     return _this;
   }
 
   _createClass(MapControl, [{
+    key: "setCurrentYearFromServer",
+    value: function setCurrentYearFromServer(year) {
+      this.changeYear(year);
+      this.addYearControl();
+    }
+  }, {
     key: "addYearLayer",
     value: function addYearLayer() {
       var _this2 = this;
@@ -1415,6 +1468,7 @@ function (_EventEmitter) {
           size: 20000,
           isWinnerUSSR: _strHelper.default.compareEngLanguage(event.winner, 'CCCР'),
           kind: event.kind,
+          imgUrl: event.imgUrl,
           winner: event.winner,
           eventMap: event.maps[0],
           filename: event.filename
@@ -1433,6 +1487,7 @@ function (_EventEmitter) {
         if (agreement.placeCoords && agreement.placeCoords.length) {
           var ft = new ol.Feature({
             name: agreement.results,
+            kind: 'politics',
             geometry: new ol.geom.Point(ol.proj.fromLonLat(agreement.placeCoords))
           });
 
@@ -1527,7 +1582,7 @@ function (_EventEmitter) {
       this.hullSource.addFeature(ft);
       this.view.animate({
         center: this.getCenterOfMap(map),
-        duration: 1000
+        duration: 500
       });
     }
   }, {
@@ -10326,7 +10381,79 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./url":"ECAZ","socket.io-parser":"EDhw","./manager":"Di21","debug":"jcLW","./socket":"wT76"}],"/Vmv":[function(require,module,exports) {
+},{"./url":"ECAZ","socket.io-parser":"EDhw","./manager":"Di21","debug":"jcLW","./socket":"wT76"}],"WAuT":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CookieHelper = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var CookieHelper =
+/*#__PURE__*/
+function () {
+  function CookieHelper() {
+    _classCallCheck(this, CookieHelper);
+  }
+
+  _createClass(CookieHelper, null, [{
+    key: "getCookie",
+    value: function getCookie(name) {
+      var matches = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
+      if (!matches) return undefined;
+      matches = decodeURIComponent(matches[1]);
+      return matches == 'undefined' ? undefined : matches;
+    }
+  }, {
+    key: "setCookie",
+    value: function setCookie(name, value, options) {
+      options = options || {};
+      var expires = options.expires;
+
+      if (typeof expires == 'number' && expires) {
+        var d = new Date();
+        d.setTime(d.getTime() + expires * 1000);
+        expires = options.expires = d;
+      }
+
+      if (expires && expires.toUTCString) {
+        options.expires = expires.toUTCString();
+      }
+
+      value = encodeURIComponent(value);
+      var updatedCookie = name + '=' + value;
+
+      for (var propName in options) {
+        updatedCookie += '; ' + propName;
+        var propValue = options[propName];
+
+        if (propValue !== true) {
+          updatedCookie += '=' + propValue;
+        }
+      }
+
+      document.cookie = updatedCookie;
+    }
+  }, {
+    key: "deleteCookie",
+    value: function deleteCookie(name) {
+      setCookie(name, '', {
+        expires: -1
+      });
+    }
+  }]);
+
+  return CookieHelper;
+}();
+
+exports.CookieHelper = CookieHelper;
+},{}],"/Vmv":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10337,6 +10464,8 @@ exports.ClientProtocol = void 0;
 var _socket = _interopRequireDefault(require("socket.io-client"));
 
 var _eventEmitter = require("./eventEmitter");
+
+var _cookieHelper = require("./cookieHelper");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10388,6 +10517,14 @@ function (_EventEmitter) {
         _this.dict.set(item.id, obj);
       });
     });
+    socket.emit('clGetCurrentYear', '', function (msg) {
+      var data = JSON.parse(msg);
+      var serverYear = data.year;
+
+      var cookieYear = _cookieHelper.CookieHelper.getCookie('year');
+
+      _this.emit('setCurrentYear', serverYear ? serverYear : cookieYear ? cookieYear : '1945');
+    });
     socket.on('error', function (message) {
       console.error(message);
     });
@@ -10428,13 +10565,17 @@ function (_EventEmitter) {
     value: function getHistoryEventsByYear(year) {
       var _this2 = this;
 
+      if (undefined === year) {
+        return;
+      }
+
+      _cookieHelper.CookieHelper.setCookie('year', year);
+
       this.socket.emit('clQueryEvents', JSON.stringify({
         year: year
       }), function (msg) {
         var data = JSON.parse(msg);
-        data.events.sort(function (a, b) {
-          return a.startDate > b.startDate ? 1 : -1;
-        });
+        data.events.sort(function (a, b) {});
         var events = data.events.map(function (event) {
           return _objectSpread({}, event, {
             id: event._id,
@@ -10475,7 +10616,202 @@ function (_EventEmitter) {
 }(_eventEmitter.EventEmitter);
 
 exports.ClientProtocol = ClientProtocol;
-},{"socket.io-client":"+1g+","./eventEmitter":"STwH"}],"juYr":[function(require,module,exports) {
+},{"socket.io-client":"+1g+","./eventEmitter":"STwH","./cookieHelper":"WAuT"}],"LhR7":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.HistoryEventsControl = void 0;
+
+var _eventEmitter = require("./eventEmitter");
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var HistoryEventsControl =
+/*#__PURE__*/
+function (_EventEmitter) {
+  _inherits(HistoryEventsControl, _EventEmitter);
+
+  function HistoryEventsControl() {
+    var _this;
+
+    _classCallCheck(this, HistoryEventsControl);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(HistoryEventsControl).call(this));
+    _this.listDiv = $('#eventInfo')[0];
+    _this.imgDiv = $('#event-image-div')[0];
+    _this.events = [];
+    _this.active_event = '';
+    _this.active_map = '';
+    $(document).ready(function () {
+      var c = $('#collapseEventInfo');
+      var ch = $('#collapseButton').children();
+      c.on('shown.bs.collapse', function () {
+        ch.removeClass('mdi-chevron-double-up').addClass('mdi-chevron-double-down');
+      });
+      c.on('hidden.bs.collapse', function () {
+        ch.removeClass('mdi-chevron-double-down').addClass('mdi-chevron-double-up');
+      });
+    });
+    return _this;
+  }
+
+  _createClass(HistoryEventsControl, [{
+    key: "_getHtmlForEvent",
+    value: function _getHtmlForEvent(event, is_active) {
+      var html = '<tr data-href="' + event.id + '" class="hand-cursor' + (is_active ? ' event-active-row' : '') + '">';
+      html += '<td>' + event.startDate + '</td>';
+      html += '<td>' + event.endDate + '</td>';
+      var name = event.name;
+
+      if (event.kind == 'wmw') {
+        name = '<span class="event-name-color">' + event.name + '</span>';
+      }
+
+      if (1 < event.maps.length) {
+        var delim = '&nbsp';
+
+        for (var i = 0; i < event.maps.length; i++) {
+          name += delim + '<span class="event-feature-color" data-href="' + i + '">' + (i + 1) + '</span>';
+        }
+      }
+
+      html += '<td>' + name + '</td>';
+      html += '</tr>';
+      return html;
+    }
+  }, {
+    key: "_resizeImage",
+    value: function _resizeImage(url, fixWidth, callback) {
+      var sourceImage = new Image();
+
+      sourceImage.onload = function () {
+        // Create a canvas with the desired dimensions
+        var canvas = document.createElement('canvas');
+        var imgWidth = this.width;
+        var aspectRatio = Math.round(imgWidth / fixWidth);
+        var imgHeight = this.height;
+        var fixHeight = Math.round(imgHeight / aspectRatio);
+        canvas.width = fixWidth;
+        canvas.height = fixHeight; // Scale and draw the source image to the canvas
+
+        var ctx = canvas.getContext('2d');
+        ctx.globalAlpha = 0.6;
+        ctx.drawImage(sourceImage, 0, 0, fixWidth, fixHeight); // Convert the canvas to a data URL in PNG format
+
+        if (callback) callback(canvas);
+      };
+
+      return sourceImage.src = url;
+    }
+  }, {
+    key: "_refreshEventImage",
+    value: function _refreshEventImage(event) {
+      var _this2 = this;
+
+      this.imgDiv.innerHTML = '';
+      if (!event.imgUrl) return;
+
+      this._resizeImage(event.imgUrl, 300, function (canvas) {
+        _this2.imgDiv.appendChild(canvas);
+      });
+    }
+  }, {
+    key: "setActiveEvent",
+    value: function setActiveEvent(event, map) {
+      if (event == this.active_event && event.maps[map] == this.active_map) return;
+
+      if (event != this.active_event) {//soli disable minimap this._refreshEventImage(event);
+      }
+
+      this.active_event = event;
+      this.active_map = event.maps[map];
+      this.emit('activatedEvent', {
+        event: this.active_event,
+        map: this.active_map
+      });
+    }
+  }, {
+    key: "rowEventClick",
+    value: function rowEventClick(tr) {
+      var isMapEventClick = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var id = tr.attr('data-href');
+      if (!id) return;
+      tr.addClass('event-active-row').siblings().removeClass('event-active-row');
+      var activeEvent = this.events.filter(function (event) {
+        return event.id == id;
+      })[0];
+
+      if (!isMapEventClick) {
+        this.active_map = 0;
+        $('table tr td span').removeClass('event-feature-active-color');
+
+        if (1 < activeEvent.maps.length) {
+          var firstSpan = $(tr[0].childNodes[2]).children('span:first');
+          firstSpan.addClass('event-feature-active-color');
+        }
+      }
+
+      this.setActiveEvent(activeEvent, this.active_map);
+    }
+  }, {
+    key: "mapEventClick",
+    value: function mapEventClick(a) {
+      this.active_map = a.attr('data-href');
+      $('table tr td span').removeClass('event-feature-active-color');
+      a.addClass('event-feature-active-color');
+      var tr = a.parent().parent();
+      this.rowEventClick(tr, true);
+    }
+  }, {
+    key: "showEvents",
+    value: function showEvents(events) {
+      var _this3 = this;
+
+      this.active_map = 0;
+      this.listDiv.innerHTML = '';
+      this.events = events;
+      if (!events || 0 == events.length) return;
+      var html = "\n        <table class=\"table table-sm table-borderless\">\n        <thead>\n            <tr>\n                <th scope=\"col\">\u041D\u0430\u0447\u0430\u043B\u043E</th>\n                <th scope=\"col\">\u041E\u043A\u043E\u043D\u0447\u0430\u043D\u0438\u0435</th>\n                <th scope=\"col\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 c\u043E\u0431\u044B\u0442\u0438\u044F</th>\n            </tr>\n        </thead>\n        <tbody>\n        ";
+      var once = true;
+      events.forEach(function (event) {
+        html += _this3._getHtmlForEvent(event, once);
+        once = false;
+      });
+      html += '</tbody></table>';
+      this.listDiv.innerHTML = html;
+      this.emit('refreshedEventList');
+      this.setActiveEvent(events[0], this.active_map);
+    }
+  }], [{
+    key: "create",
+    value: function create() {
+      return new HistoryEventsControl();
+    }
+  }]);
+
+  return HistoryEventsControl;
+}(_eventEmitter.EventEmitter);
+
+exports.HistoryEventsControl = HistoryEventsControl;
+},{"./eventEmitter":"STwH"}],"juYr":[function(require,module,exports) {
 var global = arguments[3];
 var process = require("process");
 var define;
@@ -21068,196 +21404,7 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{"process":"pBGv"}],"LhR7":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.HistoryEventsControl = void 0;
-
-var _eventEmitter = require("./eventEmitter");
-
-var _jquery = _interopRequireDefault(require("jquery"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-var HistoryEventsControl =
-/*#__PURE__*/
-function (_EventEmitter) {
-  _inherits(HistoryEventsControl, _EventEmitter);
-
-  function HistoryEventsControl() {
-    var _this;
-
-    _classCallCheck(this, HistoryEventsControl);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(HistoryEventsControl).call(this));
-    _this.listDiv = (0, _jquery.default)('#event-list')[0];
-    _this.imgDiv = (0, _jquery.default)('#event-image-div')[0];
-    _this.events = [];
-    _this.active_event = '';
-    _this.active_map = '';
-    return _this;
-  }
-
-  _createClass(HistoryEventsControl, [{
-    key: "_getHtmlForEvent",
-    value: function _getHtmlForEvent(event, is_active) {
-      var html = '<tr data-href="' + event.id + '" class="hand-cursor' + (is_active ? ' event-active-row' : '') + '">';
-      html += '<td>' + event.startDate + '</td>';
-      html += '<td>' + event.endDate + '</td>';
-      var name = event.name;
-
-      if (event.kind == 'wmw') {
-        name = '<span class="event-name-color">' + event.name + '</span>';
-      }
-
-      if (1 < event.maps.length) {
-        var delim = '&nbsp';
-
-        for (var i = 0; i < event.maps.length; i++) {
-          name += delim + '<span class="event-feature-color" data-href="' + i + '">' + (i + 1) + '</span>';
-        }
-      }
-
-      html += '<td>' + name + '</td>';
-      html += '</tr>';
-      return html;
-    }
-  }, {
-    key: "_resizeImage",
-    value: function _resizeImage(url, fixWidth, callback) {
-      var sourceImage = new Image();
-
-      sourceImage.onload = function () {
-        // Create a canvas with the desired dimensions
-        var canvas = document.createElement('canvas');
-        var imgWidth = this.width;
-        var aspectRatio = Math.round(imgWidth / fixWidth);
-        var imgHeight = this.height;
-        var fixHeight = Math.round(imgHeight / aspectRatio);
-        canvas.width = fixWidth;
-        canvas.height = fixHeight; // Scale and draw the source image to the canvas
-
-        var ctx = canvas.getContext('2d');
-        ctx.globalAlpha = 0.6;
-        ctx.drawImage(sourceImage, 0, 0, fixWidth, fixHeight); // Convert the canvas to a data URL in PNG format
-
-        if (callback) callback(canvas);
-      };
-
-      return sourceImage.src = url;
-    }
-  }, {
-    key: "_refreshEventImage",
-    value: function _refreshEventImage(event) {
-      var _this2 = this;
-
-      this.imgDiv.innerHTML = '';
-      if (!event.imgUrl) return;
-
-      this._resizeImage(event.imgUrl, 300, function (canvas) {
-        _this2.imgDiv.appendChild(canvas);
-      });
-    }
-  }, {
-    key: "setActiveEvent",
-    value: function setActiveEvent(event, map) {
-      if (event == this.active_event && event.maps[map] == this.active_map) return;
-
-      if (event != this.active_event) {//soli disable minimap this._refreshEventImage(event);
-      }
-
-      this.active_event = event;
-      this.active_map = event.maps[map];
-      this.emit('activatedEvent', {
-        event: this.active_event,
-        map: this.active_map
-      });
-    }
-  }, {
-    key: "rowEventClick",
-    value: function rowEventClick(tr) {
-      var isMapEventClick = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      var id = tr.attr('data-href');
-      if (!id) return;
-      tr.addClass('event-active-row').siblings().removeClass('event-active-row');
-      var activeEvent = this.events.filter(function (event) {
-        return event.id == id;
-      })[0];
-
-      if (!isMapEventClick) {
-        this.active_map = 0;
-        (0, _jquery.default)('table tr td span').removeClass('event-feature-active-color');
-
-        if (1 < activeEvent.maps.length) {
-          var firstSpan = (0, _jquery.default)(tr[0].childNodes[2]).children('span:first');
-          firstSpan.addClass('event-feature-active-color');
-        }
-      }
-
-      this.setActiveEvent(activeEvent, this.active_map);
-    }
-  }, {
-    key: "mapEventClick",
-    value: function mapEventClick(a) {
-      this.active_map = a.attr('data-href');
-      (0, _jquery.default)('table tr td span').removeClass('event-feature-active-color');
-      a.addClass('event-feature-active-color');
-      var tr = a.parent().parent();
-      this.rowEventClick(tr, true);
-    }
-  }, {
-    key: "showEvents",
-    value: function showEvents(events) {
-      var _this3 = this;
-
-      this.active_map = 0;
-      this.listDiv.innerHTML = '';
-      this.events = events;
-      if (!events || 0 == events.length) return;
-      var html = "\n        <table class=\"table table-sm table-borderless\">\n        <thead>\n            <tr>\n                <th scope=\"col\">\u041D\u0430\u0447\u0430\u043B\u043E</th>\n                <th scope=\"col\">\u041E\u043A\u043E\u043D\u0447\u0430\u043D\u0438\u0435</th>\n                <th scope=\"col\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 c\u043E\u0431\u044B\u0442\u0438\u044F</th>\n            </tr>\n        </thead>\n        <tbody>\n        ";
-      var once = true;
-      events.forEach(function (event) {
-        html += _this3._getHtmlForEvent(event, once);
-        once = false;
-      });
-      html += '</tbody></table>';
-      this.listDiv.innerHTML = html;
-      this.emit('refreshedEventList');
-      this.setActiveEvent(events[0], this.active_map);
-    }
-  }], [{
-    key: "create",
-    value: function create() {
-      return new HistoryEventsControl();
-    }
-  }]);
-
-  return HistoryEventsControl;
-}(_eventEmitter.EventEmitter);
-
-exports.HistoryEventsControl = HistoryEventsControl;
-},{"./eventEmitter":"STwH","jquery":"juYr"}],"epB2":[function(require,module,exports) {
+},{"process":"pBGv"}],"epB2":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21288,6 +21435,7 @@ function fixMapHeight() {
 }
 
 function fixMiniMapVisible(isHide) {
+  return;
   var elem = (0, _jquery.default)('#event-image-div');
 
   if (isHide) {
@@ -21311,6 +21459,9 @@ function startApp() {
 
   var mapControl = _mapControl.MapControl.create();
 
+  protocol.subscribe('setCurrentYear', function (year) {
+    mapControl.setCurrentYearFromServer(year);
+  });
   mapControl.subscribe('changeYear', function (year) {
     fixMiniMapVisible(true);
     protocol.getHistoryEventsByYear(year);
@@ -21319,7 +21470,6 @@ function startApp() {
   var historyEventsControl = _historyEventsControl.HistoryEventsControl.create();
 
   protocol.subscribe('refreshHistoryEvents', function (events) {
-    console.log('>>>>>> events', events);
     mapControl.setHistoryEvents(events);
     historyEventsControl.showEvents(events);
   });

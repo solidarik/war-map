@@ -1,5 +1,6 @@
 import io from 'socket.io-client'
 import { EventEmitter } from './eventEmitter'
+import { CookieHelper } from './cookieHelper'
 
 export class ClientProtocol extends EventEmitter {
   constructor() {
@@ -15,6 +16,17 @@ export class ClientProtocol extends EventEmitter {
         let obj = { eng: item.eng, rus: item.rus }
         this.dict.set(item.id, obj)
       })
+    })
+
+    socket.emit('clGetCurrentYear', '', msg => {
+      const data = JSON.parse(msg)
+      const serverYear = data.year
+      const cookieYear = CookieHelper.getCookie('year')
+
+      this.emit(
+        'setCurrentYear',
+        serverYear ? serverYear : cookieYear ? cookieYear : '1945'
+      )
     })
 
     socket.on('error', message => {
@@ -56,11 +68,15 @@ export class ClientProtocol extends EventEmitter {
   }
 
   getHistoryEventsByYear(year) {
+    if (undefined === year) {
+      return
+    }
+
+    CookieHelper.setCookie('year', year)
+
     this.socket.emit('clQueryEvents', JSON.stringify({ year: year }), msg => {
       let data = JSON.parse(msg)
-      data.events.sort((a, b) => {
-        return a.startDate > b.startDate ? 1 : -1
-      })
+      data.events.sort((a, b) => {})
       let events = data.events.map(event => {
         return {
           ...event,
