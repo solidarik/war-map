@@ -180,8 +180,8 @@ export class HistoryEventsControl extends EventEmitter {
                 <th scope="col">Название</th>
                 <th scope="col">Участник 1</th>
                 <th scope="col">Участник 2</th>
-                <th scope="col">Числ-ть 1</th>
-                <th scope="col">Числ-ть 2</th>
+                <th scope="col">Числ. 1</th>
+                <th scope="col">Числ. 2</th>
                 <th scope="col">Победитель</th>
             </tr>
         </thead>
