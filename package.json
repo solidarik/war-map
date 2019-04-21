@@ -8,9 +8,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "parcel": "parcel public-src/index.html -p 3000",
-    "build": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js && cp dist/index.js.map public/public-src.js.map",
-    "watch": "nodemon -w public-src -x npm run build",
+    "parcel": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js && cp dist/index.js.map public/public-src.js.map",
+    "watch": "nodemon -w public-src -x npm run parcel",
     "dev": "nodemon index.js"
   },
   "repository": {
