@@ -48,6 +48,9 @@ var AddMapInfoDiagramm = function () {
             var height;
             if (this.width >= 160) {
                 height = Math.round(this.height * 0.52) - margin.top - margin.bottom;
+                if(height<=110){
+                    height = Math.round(this.height) - margin.top - margin.bottom;
+                }
             } else {
                 height = Math.round(this.height) - margin.top - margin.bottom;
             }
@@ -99,7 +102,7 @@ var AddMapInfoDiagramm = function () {
 
             var domainXaxis;
 
-            if (this.width >= 160) {
+            if ((this.width >= 160)&&(height === (Math.round(this.height) - margin.top - margin.bottom))) {
 
                 if (x.domain().length <= 10) {
                     domainXaxis = x.domain();
