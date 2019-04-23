@@ -39,11 +39,13 @@ class AddMapInfoDiagramm {
         var margin = { top: 20, right: 20, bottom: 30, left: 40 };
         var width = this.width - margin.left - margin.right;
         var height;
-        if(this.width>=160){
-          height = Math.round(this.height * 0.52) - margin.top - margin.bottom;
-        }
-        else{
-          height = Math.round(this.height) - margin.top - margin.bottom;
+        if (this.width >= 160) {
+            height = Math.round(this.height * 0.52) - margin.top - margin.bottom;
+            if(height<=110){
+                height = Math.round(this.height) - margin.top - margin.bottom;
+            }
+        } else {
+            height = Math.round(this.height) - margin.top - margin.bottom;
         }
 
             //console.log("this.width="+this.width);
@@ -100,7 +102,7 @@ class AddMapInfoDiagramm {
 
             var domainXaxis;    
 
-            if (this.width >= 160) {
+            if ((this.width >= 160)&&(height !== (Math.round(this.height) - margin.top - margin.bottom))) {
                 
                 if (x.domain().length <= 10) {
                   domainXaxis = x.domain();

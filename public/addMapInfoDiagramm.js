@@ -102,7 +102,7 @@ var AddMapInfoDiagramm = function () {
 
             var domainXaxis;
 
-            if ((this.width >= 160)&&(height === (Math.round(this.height) - margin.top - margin.bottom))) {
+            if ((this.width >= 160)&&(height !== (Math.round(this.height) - margin.top - margin.bottom))) {
 
                 if (x.domain().length <= 10) {
                     domainXaxis = x.domain();
