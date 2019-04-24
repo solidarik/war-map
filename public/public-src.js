@@ -1059,10 +1059,14 @@ function (_EventEmitter) {
       if (isHit && isExistUrl) {
         window.map.showEventMap(featureEvent.get('eventMap'));
         $('#imgModalLabel').html(featureEvent.get('name'));
-        resizeImage(imgUrl, $(window).width() - 500, function (canvas) {
-          $('#imgModal').modal();
-          $('.modal-body').html(canvas);
-        });
+        $('.modal-body').html("\n        <div class=\"d-flex justify-content-center\">\n          <div class=\"spinner-border\" role=\"status\">\n            <span class=\"sr-only\">Loading...</span>\n          </div>\n        </div>\n        ");
+        $('#imgModal').modal();
+        setTimeout(function () {
+          console.log('>>>>>>>> width', $('.modal-body').width());
+          resizeImage(imgUrl, $('.modal-body').width(), function (canvas) {
+            $('.modal-body').html(canvas);
+          });
+        }, 1000);
       }
     });
     map.on('moveend', function (evt) {
@@ -10701,7 +10705,10 @@ function (_EventEmitter) {
         } else {
           if (value == undefined) return '-';
           var tryFloat = parseFloat(value);
-          return Number.isNaN(tryFloat) ? value.replace(/, /g, '<br />') : tryFloat.toString();
+
+          var _isNaN = typeof Number.isNaN !== 'undefined' ? Number.isNaN(tryFloat) : tryFloat !== tryFloat ? true : false;
+
+          return _isNaN ? value.replace(/, /g, '<br />') : tryFloat.toString();
         }
       };
 

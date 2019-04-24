@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "parcel": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js && cp dist/index.js.map public/public-src.js.map",
+    "parcel": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js",
     "watch": "nodemon -w public-src -x npm run parcel",
     "dev": "nodemon index.js"
   },
@@ -69,7 +69,7 @@
   },
   "devDependencies": {
     "@babel/core": "latest",
-    "@babel/plugin-proposal-class-properties": "latest",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/plugin-proposal-object-rest-spread": "latest",
     "parcel-bundler": "latest"
   },

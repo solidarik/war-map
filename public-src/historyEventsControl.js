@@ -68,9 +68,13 @@ export class HistoryEventsControl extends EventEmitter {
       } else {
         if (value == undefined) return '-'
         const tryFloat = parseFloat(value)
-        return Number.isNaN(tryFloat)
-          ? value.replace(/, /g, '<br />')
-          : tryFloat.toString()
+        const isNaN =
+          typeof Number.isNaN !== 'undefined'
+            ? Number.isNaN(tryFloat)
+            : tryFloat !== tryFloat
+            ? true
+            : false
+        return isNaN ? value.replace(/, /g, '<br />') : tryFloat.toString()
       }
     }
 

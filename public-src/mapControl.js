@@ -133,11 +133,21 @@ export class MapControl extends EventEmitter {
         window.map.showEventMap(featureEvent.get('eventMap'))
 
         $('#imgModalLabel').html(featureEvent.get('name'))
+        $('.modal-body').html(`
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+        `)
+        $('#imgModal').modal()
 
-        resizeImage(imgUrl, $(window).width() - 500, canvas => {
-          $('#imgModal').modal()
-          $('.modal-body').html(canvas)
-        })
+        setTimeout(() => {
+          console.log('>>>>>>>> width', $('.modal-body').width())
+          resizeImage(imgUrl, $('.modal-body').width(), canvas => {
+            $('.modal-body').html(canvas)
+          })
+        }, 1000)
       }
     })
 
