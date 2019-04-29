@@ -1157,25 +1157,25 @@ function (_EventEmitter) {
       // }
       var allyTroops = this.getNumber(feature.get('ally_troops'));
       var enemTroops = this.getNumber(feature.get('enem_troops'));
-      var starSize = 10;
+      var starSize = 4;
       var starSizes = [{
         count: 2500,
-        size: 12
+        size: 6
       }, {
         count: 5000,
-        size: 13
+        size: 8
       }, {
         count: 70000,
-        size: 14
+        size: 10
       }, {
         count: 100000,
-        size: 15
+        size: 12
       }, {
         count: 200000,
-        size: 16
+        size: 14
       }, {
         count: 500000,
-        size: 17
+        size: 16
       }, {
         count: 1000000,
         size: 18

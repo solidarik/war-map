@@ -254,15 +254,15 @@ export class MapControl extends EventEmitter {
 
     const allyTroops = this.getNumber(feature.get('ally_troops'))
     const enemTroops = this.getNumber(feature.get('enem_troops'))
-    let starSize = 10
+    let starSize = 4
 
     const starSizes = [
-      { count: 2500, size: 12 },
-      { count: 5000, size: 13 },
-      { count: 70000, size: 14 },
-      { count: 100000, size: 15 },
-      { count: 200000, size: 16 },
-      { count: 500000, size: 17 },
+      { count: 2500, size: 6 },
+      { count: 5000, size: 8 },
+      { count: 70000, size: 10 },
+      { count: 100000, size: 12 },
+      { count: 200000, size: 14 },
+      { count: 500000, size: 16 },
       { count: 1000000, size: 18 },
       { count: 10000000000, size: 20 }
     ]
