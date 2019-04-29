@@ -194,6 +194,8 @@ export class MapControl extends EventEmitter {
     this.maxResolution = 156543.0339
     this.tileSize = { w: 256, h: 256 }
 
+    this.styleCache = {}
+
     setTimeout(() => {
       // this.addSelectInteraction()
       this.addYearLayer()
@@ -233,10 +235,49 @@ export class MapControl extends EventEmitter {
     this.map.addLayer(yearLayer)
   }
 
+  getNumber(value) {
+    if (value == undefined) return 0
+    const tryFloat = parseFloat(value)
+    const isNaN =
+      typeof Number.isNaN !== 'undefined'
+        ? Number.isNaN(tryFloat)
+        : tryFloat !== tryFloat
+        ? true
+        : false
+    return isNaN ? 0 : tryFloat
+  }
+
   eventStyleFunc(feature, zoom) {
     // if (zoom > 4.5) {
     //   return [new ol.style.Style()]
     // }
+
+    const allyTroops = this.getNumber(feature.get('ally_troops'))
+    const enemTroops = this.getNumber(feature.get('enem_troops'))
+    let starSize = 10
+
+    const starSizes = [
+      { count: 2500, size: 12 },
+      { count: 5000, size: 13 },
+      { count: 70000, size: 14 },
+      { count: 100000, size: 15 },
+      { count: 200000, size: 16 },
+      { count: 500000, size: 17 },
+      { count: 1000000, size: 18 },
+      { count: 10000000000, size: 20 }
+    ]
+
+    if (allyTroops + enemTroops > 0) {
+      const v = allyTroops + enemTroops
+      for (let i = 0; i < starSizes.length; i++) {
+        if (v < starSizes[i].count) {
+          starSize = starSizes[i].size
+          break
+        }
+      }
+    }
+
+    console.log('>>>>starSize: ', allyTroops, enemTroops, starSize)
 
     let style = new ol.style.Style({
       // fill: new ol.style.Fill({
@@ -276,8 +317,8 @@ export class MapControl extends EventEmitter {
         //   color: 'gray'
         // }),
         points: 5,
-        radius: 12,
-        radius2: 5,
+        radius: starSize + 2,
+        radius2: Math.floor(starSize / 2),
         angle: -50
       })
     })
@@ -543,6 +584,8 @@ export class MapControl extends EventEmitter {
         geometry: new ol.geom.Point(this.getCenterOfMap(event.maps[0])),
         size: 20000,
         isWinnerUSSR: strHelper.compareEngLanguage(event.winner, 'CCCР'),
+        ally_troops: event.ally_troops,
+        enem_troops: event.enem_troops,
         kind: event.kind,
         imgUrl: event.imgUrl,
         winner: event.winner,
