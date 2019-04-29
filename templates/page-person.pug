@@ -2,6 +2,14 @@ extends layout
 block head
 
   link(rel='stylesheet' href='/style-person.css')
+  
+  script(src='/libs/oboe-browser.min.js')
+  script(src='/libs/d3.min.js')
+  script(src='/libs/jquery.min.js')
+
+  script(src='/addPersons.js')
+
+  script(src='/main-persons.js')
 
 block content
     +header('person')
@@ -28,9 +36,9 @@ block content
                 a(href='https://ru.wikipedia.org/wiki/%D0%98%D0%BB%D1%8C%D1%8E%D1%88%D0%B8%D0%BD,_%D0%A1%D0%B5%D1%80%D0%B3%D0%B5%D0%B9_%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B8%D1%87') Подробнее...
             .col-md-6.img.image-cont
                 img.img-rounded(src='img/person/il.jpg' alt='' height='300' width='400')
-        #events-control
-            #eventInfo.table-responsive
-                table.table.table-sm.table-borderless
+        #persons-control
+            #personsInfo.table-responsive
+                table.table.table-sm.table-borderless(id='persons-table')
                     thead
                         tr
                             th(scope='col') #
