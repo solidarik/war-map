@@ -49,7 +49,7 @@ function () {
     value: function addFlagCircleInMap() {
       this.data.sort(this.sortIfDataCountries);
       var maxValue = this.data[0].dataCountries[0].value; //this.mxval;//this.getMaxValue(this.data);//
-      //console.log("maxValue="+maxValue);
+      console.log("maxValue="+maxValue);
 
       var sizeScale = d3.scaleSqrt().domain([0, maxValue]).range([0, Math.round(0.037 * this.width)]); //70
       // Define the div for the tooltip
@@ -137,7 +137,7 @@ function () {
     value: function addFlagCircleInMapNew() {
       this.data.sort(this.sortIfDataCountriesNew);
       var maxValue = this.data[0].value; //this.mxval;//this.getMaxValueNew(this.data);//
-
+      console.log(maxValue);
       var sizeScale = d3.scaleSqrt().domain([0, maxValue]).range([0, Math.round(0.037 * this.width)]); //70
       // Define the div for the tooltip
 

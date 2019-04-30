@@ -21,7 +21,7 @@ loadedData.push({ "id": "21", "EngName": "Tanks", "RusName": "Танки", "url"
 
 loadedData.push({ "id": "24", "EngName": "Total losses world war", "RusName": "Общие потери войн", "url": "data/total_losses_world_war.json", "jsonType": "UFA" });
 loadedData.push({ "id": "25", "EngName": "Losses soldiers war", "RusName": "Военные потери войн", "url": "data/losses_soldiers_war.json", "jsonType": "UFA" });
-
+loadedData.push({ "id": "26", "EngName": "Oil", "RusName": "Нефть", "url": "data/oil.json", "jsonType": "UFA" });
 
 loadedData.push({ "id": "1", "EngName": "Agriculture, forestry, and fishing, value added (current US$)", "RusName": "Агропромышленность", "url": "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json", "jsonType": "UFA" });
 loadedData.push({ "id": "2", "EngName": "Cereal production (metric tons)", "RusName": "Зерно", "url": "data/DTO/Cereal production (metric tons).json", "jsonType": "UFA" });
@@ -52,6 +52,42 @@ loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "
  	a.download = fileName;
  	a.click();
  }
+
+ //fill centroid
+ loadedData.forEach(element => {
+	 if(element.id==26){
+ 		d3.json(element.url, function (error, dataFromFile) {
+ 			 if (error) console.log(error);
+			 console.log(element.url);
+			 var edda = [];
+			 d3.json("data/word-country-data.json", function (error, wcd) {
+				if (error) console.log(error);
+				console.log("data/word-country-data.json");
+				dataFromFile.forEach(function (el,i,a) {
+					console.log(el.iso3);
+					var centr = wcd.filter(function (e) {
+						if(el.iso3=="SSD")
+							return e.iso3=="SDN";
+						else if(el.iso3=="SUN")
+							return e.iso3=="RUS";
+						else
+							return e.iso3==el.iso3;	
+						
+					});
+					console.log(centr);
+					centr=centr[0].centroid;
+					console.log(centr);
+					console.log(a[i]);
+					a[i].centroid=centr;
+					a[i].value=parseFloat(a[i].value);
+					console.log(a[i]);
+					edda.push(a[i]);
+				});
+				download(JSON.stringify(edda), element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) + '_centr.json', 'text/json');
+			 });
+		 });
+		}
+	 });
 
  //проверка на пустоту
 //  loadedData.forEach(element => {
