@@ -54,40 +54,40 @@ loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "
  }
 
  //fill centroid
- loadedData.forEach(element => {
-	 if(element.id==26){
- 		d3.json(element.url, function (error, dataFromFile) {
- 			 if (error) console.log(error);
-			 console.log(element.url);
-			 var edda = [];
-			 d3.json("data/word-country-data.json", function (error, wcd) {
-				if (error) console.log(error);
-				console.log("data/word-country-data.json");
-				dataFromFile.forEach(function (el,i,a) {
-					console.log(el.iso3);
-					var centr = wcd.filter(function (e) {
-						if(el.iso3=="SSD")
-							return e.iso3=="SDN";
-						else if(el.iso3=="SUN")
-							return e.iso3=="RUS";
-						else
-							return e.iso3==el.iso3;	
+//  loadedData.forEach(element => {
+// 	 if(element.id==26){
+//  		d3.json(element.url, function (error, dataFromFile) {
+//  			 if (error) console.log(error);
+// 			 console.log(element.url);
+// 			 var edda = [];
+// 			 d3.json("data/word-country-data.json", function (error, wcd) {
+// 				if (error) console.log(error);
+// 				console.log("data/word-country-data.json");
+// 				dataFromFile.forEach(function (el,i,a) {
+// 					console.log(el.iso3);
+// 					var centr = wcd.filter(function (e) {
+// 						if(el.iso3=="SSD")
+// 							return e.iso3=="SDN";
+// 						else if(el.iso3=="SUN")
+// 							return e.iso3=="RUS";
+// 						else
+// 							return e.iso3==el.iso3;	
 						
-					});
-					console.log(centr);
-					centr=centr[0].centroid;
-					console.log(centr);
-					console.log(a[i]);
-					a[i].centroid=centr;
-					a[i].value=parseFloat(a[i].value);
-					console.log(a[i]);
-					edda.push(a[i]);
-				});
-				download(JSON.stringify(edda), element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) + '_centr.json', 'text/json');
-			 });
-		 });
-		}
-	 });
+// 					});
+// 					console.log(centr);
+// 					centr=centr[0].centroid;
+// 					console.log(centr);
+// 					console.log(a[i]);
+// 					a[i].centroid=centr;
+// 					a[i].value=parseFloat(a[i].value);
+// 					console.log(a[i]);
+// 					edda.push(a[i]);
+// 				});
+// 				download(JSON.stringify(edda), element.url.substring(element.url.lastIndexOf('/') + 1, element.url.lastIndexOf('.')) + '_centr.json', 'text/json');
+// 			 });
+// 		 });
+// 		}
+// 	 });
 
  //проверка на пустоту
 //  loadedData.forEach(element => {
