@@ -4,33 +4,49 @@ window.app = {};
 var app = window.app;
 
 var loadedData = [];
-loadedData.push({ "id": "10", "EngName": "Submarines", "RusName": "Подводные лодки", "url": "data/number_submarines.json", "jsonType": "UFA" });
-loadedData.push({ "id": "11", "EngName": "Ships", "RusName": "Корабли", "url": "data/number_ships.json", "jsonType": "UFA" });
-loadedData.push({ "id": "12", "EngName": "Aircraft", "RusName": "Самолеты", "url": "data/number_military_aircraft.json", "jsonType": "UFA" });
-loadedData.push({ "id": "13", "EngName": "Large ships", "RusName": "Большие корабли", "url": "data/number_large_ships.json", "jsonType": "UFA" });
-loadedData.push({ "id": "14", "EngName": "Fighters", "RusName": "Истребители", "url": "data/number_fighters.json", "jsonType": "UFA" });
-loadedData.push({ "id": "15", "EngName": "Military", "RusName": "Войска", "url": "data/military_strength.json", "jsonType": "UFA" });
-loadedData.push({ "id": "16", "EngName": "Ground forses", "RusName": "Сухопутные войска", "url": "data/ground_forses.json", "jsonType": "UFA" });
+loadedData.push({ "id": "21", "EngName": "Tanks", "RusName": "Танки", "url": "data/tanks.json", "jsonType": "UFA" });
 loadedData.push({ "id": "17", "EngName": "Artillery", "RusName": "Артиллерия", "url": "data/artillery.json", "jsonType": "UFA" });
 loadedData.push({ "id": "18", "EngName": "Heavy artillery", "RusName": "Тяжелая артиллерия", "url": "data/heavy_artillery.json", "jsonType": "UFA" });
+
+loadedData.push({ "id": "11", "EngName": "Ships", "RusName": "Корабли", "url": "data/number_ships.json", "jsonType": "UFA" });
+loadedData.push({ "id": "13", "EngName": "Large ships", "RusName": "Линкоры", "url": "data/number_large_ships.json", "jsonType": "UFA" });
+loadedData.push({ "id": "10", "EngName": "Submarines", "RusName": "Подводные лодки", "url": "data/number_submarines.json", "jsonType": "UFA" });
+
+loadedData.push({ "id": "12", "EngName": "Aircraft", "RusName": "Самолеты", "url": "data/number_military_aircraft.json", "jsonType": "UFA" });
+loadedData.push({ "id": "14", "EngName": "Fighters", "RusName": "Истребители", "url": "data/number_fighters.json", "jsonType": "UFA" });
+
+loadedData.push({ "id": "7", "EngName": "Population (Merged data)", "RusName": "Население", "url": "data/DTO/Population (Merged data).json", "jsonType": "UFA" });
+
+loadedData.push({ "id": "15", "EngName": "Military", "RusName": "Войска", "url": "data/military_strength.json", "jsonType": "UFA" });
+loadedData.push({ "id": "16", "EngName": "Ground forses", "RusName": "Сухопутные войска", "url": "data/ground_forses.json", "jsonType": "UFA" });
+loadedData.push({ "id": "24", "EngName": "Total losses world war", "RusName": "Общие потери войн", "url": "data/total_losses_world_war.json", "jsonType": "UFA" });
+loadedData.push({ "id": "25", "EngName": "Losses soldiers war", "RusName": "Боевые потери войн", "url": "data/losses_soldiers_war.json", "jsonType": "UFA" });
+
+loadedData.push({ "id": "3", "EngName": "GDP (Merged data)", "RusName": "ВВП", "url": "data/DTO/GDP (Merged data).json", "jsonType": "UFA" });
+loadedData.push({ "id": "6", "EngName": "PerCapita GDP", "RusName": "ВВП на душу населения", "url": "data/DTO/PerCapita GDP.json", "jsonType": "UFA" });
+loadedData.push({ "id": "26", "EngName": "Oil", "RusName": "Добыча нефти", "url": "data/oil.json", "jsonType": "UFA" });
+loadedData.push({ "id": "4", "EngName": "Industry (including construction), value added (current US$)", "RusName": "Промышленность", "url": "data/DTO/Industry (including construction), value added (current US$).json", "jsonType": "UFA" });
+loadedData.push({ "id": "5", "EngName": "Manufacturing, value added (current US$)", "RusName": "Производство", "url": "data/DTO/Manufacturing, value added (current US$).json", "jsonType": "UFA" });
+loadedData.push({ "id": "1", "EngName": "Agriculture, forestry, and fishing, value added (current US$)", "RusName": "Сельскоехозяйство", "url": "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json", "jsonType": "UFA" });
+loadedData.push({ "id": "2", "EngName": "Cereal production (metric tons)", "RusName": "Производство зерна", "url": "data/DTO/Cereal production (metric tons).json", "jsonType": "UFA" });
+loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "RusName": "Сфера услуг", "url": "data/DTO/Services, value added (current US$).json", "jsonType": "UFA" });
+
 //loadedData.push({ "id": "19", "EngName": "Losses soldiers war 1", "RusName": "Военные потери 1 мировая", "url": "data/losses_soldiers_war_1.json", "jsonType": "UFA" });
 //loadedData.push({ "id": "20", "EngName": "Losses soldiers war 2", "RusName": "Военные потери 2 мировая", "url": "data/losses_soldiers_war_2.json", "jsonType": "UFA" });
-loadedData.push({ "id": "21", "EngName": "Tanks", "RusName": "Танки", "url": "data/tanks.json", "jsonType": "UFA" });
+
 //loadedData.push({ "id": "22", "EngName": "Total losses world war 1", "RusName": "Общие потери 1 мировая", "url": "data/total_losses_world_war_1.json", "jsonType": "UFA" });
 //loadedData.push({ "id": "23", "EngName": "Total losses world war 2", "RusName": "Общие потери 2 мировая", "url": "data/total_losses_world_war_2.json", "jsonType": "UFA" });
 
-loadedData.push({ "id": "24", "EngName": "Total losses world war", "RusName": "Общие потери войн", "url": "data/total_losses_world_war.json", "jsonType": "UFA" });
-loadedData.push({ "id": "25", "EngName": "Losses soldiers war", "RusName": "Военные потери войн", "url": "data/losses_soldiers_war.json", "jsonType": "UFA" });
-loadedData.push({ "id": "26", "EngName": "Oil", "RusName": "Нефть", "url": "data/oil.json", "jsonType": "UFA" });
 
-loadedData.push({ "id": "1", "EngName": "Agriculture, forestry, and fishing, value added (current US$)", "RusName": "Агропромышленность", "url": "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json", "jsonType": "UFA" });
-loadedData.push({ "id": "2", "EngName": "Cereal production (metric tons)", "RusName": "Зерно", "url": "data/DTO/Cereal production (metric tons).json", "jsonType": "UFA" });
-loadedData.push({ "id": "3", "EngName": "GDP (Merged data)", "RusName": "ВВП объединенные", "url": "data/DTO/GDP (Merged data).json", "jsonType": "UFA" });
-loadedData.push({ "id": "4", "EngName": "Industry (including construction), value added (current US$)", "RusName": "Промышленность", "url": "data/DTO/Industry (including construction), value added (current US$).json", "jsonType": "UFA" });
-loadedData.push({ "id": "5", "EngName": "Manufacturing, value added (current US$)", "RusName": "Производство", "url": "data/DTO/Manufacturing, value added (current US$).json", "jsonType": "UFA" });
-loadedData.push({ "id": "6", "EngName": "PerCapita GDP", "RusName": "ВВП на душу", "url": "data/DTO/PerCapita GDP.json", "jsonType": "UFA" });
-loadedData.push({ "id": "7", "EngName": "Population (Merged data)", "RusName": "Население", "url": "data/DTO/Population (Merged data).json", "jsonType": "UFA" });
-loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "RusName": "Услуги", "url": "data/DTO/Services, value added (current US$).json", "jsonType": "UFA" });
+
+
+
+
+
+
+
+
+
 //loadedData.push({ "id": "9", "EngName": "GDP", "RusName": "ВВП", "url": "data/data_new.json", "jsonType": "SAMARA" });
 
 
