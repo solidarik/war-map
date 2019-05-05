@@ -48,7 +48,7 @@ Promise.resolve(true)
   //     mediator: dictEngRusJsonMediator
   //   })
   // })
-  // .then(() => {
+  // // .then(() => {
   //   return dbHelper.saveFilesFromDir({
   //     source: 'python/out_agreements',
   //     mediator: agreementsJsonMediator

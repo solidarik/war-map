@@ -1044,17 +1044,26 @@ function (_EventEmitter) {
       var feature = evt.selected[0]; //window.map.showEventMap(feature.get('eventMap'))
     });
     map.on('click', function (evt) {
+      window.map.popup.hide();
       var coordinates = evt.coordinate;
       var lonLatCoords = new ol.proj.toLonLat(coordinates);
       console.log('clicked on map with coordinates: ' + coordinates + '; WGS: ' + lonLatCoords);
       var imgUrl = undefined;
       var featureEvent = undefined;
+      var kind = undefined;
       var isHit = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
         featureEvent = feature;
         imgUrl = feature.get('imgUrl');
+        kind = feature.get('kind');
         return ['wmw', 'wow', 'politics'].indexOf(feature.get('kind')) >= 0;
       });
       var isExistUrl = imgUrl !== undefined;
+
+      if ('politics' === kind) {
+        var coords = featureEvent.getGeometry().getFirstCoordinate();
+        console.log('hit to politics', coords);
+        window.map.popup.show(coords, 'test');
+      }
 
       if (isHit && isExistUrl) {
         window.map.showEventMap(featureEvent.get('eventMap'));
@@ -1062,7 +1071,6 @@ function (_EventEmitter) {
         $('.modal-body').html("\n        <div class=\"d-flex justify-content-center\">\n          <div class=\"spinner-border\" role=\"status\">\n            <span class=\"sr-only\">Loading...</span>\n          </div>\n        </div>\n        ");
         $('#imgModal').modal();
         setTimeout(function () {
-          console.log('>>>>>>>> width', $('.modal-body').width());
           resizeImage(imgUrl, $('.modal-body').width(), function (canvas) {
             $('.modal-body').html(canvas);
           });
@@ -1082,6 +1090,22 @@ function (_EventEmitter) {
         this.getTargetElement().style.cursor = 'pointer';
       } else {
         this.getTargetElement().style.cursor = '';
+      }
+    });
+    _this.popup = new ol.Overlay.Popup({
+      popupClass: 'default',
+      //"tooltips", "warning" "black" "default", "tips", "shadow",
+      closeBox: true,
+      onshow: function onshow() {
+        console.log('You opened the box');
+      },
+      onclose: function onclose() {
+        console.log('You close the box');
+      },
+      positioning: 'auto',
+      autoPan: true,
+      autoPanAnimation: {
+        duration: 250
       }
     });
     _this.map = map;
@@ -1195,7 +1219,6 @@ function (_EventEmitter) {
         }
       }
 
-      console.log('>>>>starSize: ', allyTroops, enemTroops, starSize);
       var style = new ol.style.Style({
         // fill: new ol.style.Fill({
         //   color: 'rgba(255,255,255,0.5)'
@@ -10711,14 +10734,14 @@ function (_EventEmitter) {
     _classCallCheck(this, HistoryEventsControl);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(HistoryEventsControl).call(this));
-    _this.listDiv = $('#eventInfo')[0];
+    _this.listDiv = $('#events-info-content')[0];
     _this.imgDiv = $('#event-image-div')[0];
     _this.events = [];
     _this.active_event = '';
     _this.active_map = '';
     $(document).ready(function () {
-      var c = $('#collapseEventInfo');
-      var ch = $('#collapseButton').children();
+      var c = $('#collapse-events-info');
+      var ch = $('#collapse-button').children();
       c.on('shown.bs.collapse', function () {
         ch.removeClass('mdi-chevron-double-up').addClass('mdi-chevron-double-down');
       });
@@ -10864,7 +10887,7 @@ function (_EventEmitter) {
       this.listDiv.innerHTML = '';
       this.events = events;
       if (!events || 0 == events.length) return;
-      var html = "\n        <table class=\"table table-sm table-borderless\">\n        <thead>\n            <tr>\n                <th scope=\"col\">\u041D\u0430\u0447\u0430\u043B\u043E</th>\n                <th scope=\"col\">\u041E\u043A\u043E\u043D\u0447\u0430\u043D\u0438\u0435</th>\n                <th scope=\"col\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435</th>\n                <th scope=\"col\">\u0423\u0447\u0430\u0441\u0442\u043D\u0438\u043A 1</th>\n                <th scope=\"col\">\u0423\u0447\u0430\u0441\u0442\u043D\u0438\u043A 2</th>\n                <th scope=\"col\">\u0427\u0438\u0441\u043B. 1</th>\n                <th scope=\"col\">\u0427\u0438\u0441\u043B. 2</th>\n                <th scope=\"col\">\u041F\u043E\u0431\u0435\u0434\u0438\u0442\u0435\u043B\u044C</th>\n            </tr>\n        </thead>\n        <tbody>\n        ";
+      var html = "\n        <table class=\"table table-sm table-borderless\" id=\"table-events\">\n        <thead>\n            <tr>\n                <th scope=\"col\">\u041D\u0430\u0447\u0430\u043B\u043E</th>\n                <th scope=\"col\">\u041E\u043A\u043E\u043D\u0447\u0430\u043D\u0438\u0435</th>\n                <th scope=\"col\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435</th>\n                <th scope=\"col\" colspan=\"2\">\u0421\u0442\u043E\u0440\u043E\u043D\u044B</th>\n                <th scope=\"col\" colspan=\"2\">\u0421\u0438\u043B\u044B \u0441\u0442\u043E\u0440\u043E\u043D</th>\n                <th scope=\"col\">\u041F\u043E\u0431\u0435\u0434\u0438\u0442\u0435\u043B\u044C</th>\n            </tr>\n        </thead>\n        <tbody>\n        ";
       var once = true;
       events.forEach(function (event) {
         html += _this3.getHtmlForEvent(event, once);
@@ -10891,7 +10914,7 @@ var global = arguments[3];
 var process = require("process");
 var define;
 /*!
- * jQuery JavaScript Library v3.4.0
+ * jQuery JavaScript Library v3.4.1
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -10901,7 +10924,7 @@ var define;
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2019-04-10T19:48Z
+ * Date: 2019-05-01T21:04Z
  */
 ( function( global, factory ) {
 
@@ -11034,7 +11057,7 @@ function toType( obj ) {
 
 
 var
-	version = "3.4.0",
+	version = "3.4.1",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -15390,8 +15413,12 @@ var documentElement = document.documentElement;
 		},
 		composed = { composed: true };
 
+	// Support: IE 9 - 11+, Edge 12 - 18+, iOS 10.0 - 10.2 only
 	// Check attachment across shadow DOM boundaries when possible (gh-3504)
-	if ( documentElement.attachShadow ) {
+	// Support: iOS 10.0-10.2 only
+	// Early iOS 10 versions support `attachShadow` but not `getRootNode`,
+	// leading to errors. We need to check for `getRootNode`.
+	if ( documentElement.getRootNode ) {
 		isAttached = function( elem ) {
 			return jQuery.contains( elem.ownerDocument, elem ) ||
 				elem.getRootNode( composed ) === elem.ownerDocument;
@@ -16251,8 +16278,7 @@ jQuery.event = {
 
 				// Claim the first handler
 				if ( rcheckableType.test( el.type ) &&
-					el.click && nodeName( el, "input" ) &&
-					dataPriv.get( el, "click" ) === undefined ) {
+					el.click && nodeName( el, "input" ) ) {
 
 					// dataPriv.set( el, "click", ... )
 					leverageNative( el, "click", returnTrue );
@@ -16269,8 +16295,7 @@ jQuery.event = {
 
 				// Force setup before triggering a click
 				if ( rcheckableType.test( el.type ) &&
-					el.click && nodeName( el, "input" ) &&
-					dataPriv.get( el, "click" ) === undefined ) {
+					el.click && nodeName( el, "input" ) ) {
 
 					leverageNative( el, "click" );
 				}
@@ -16311,7 +16336,9 @@ function leverageNative( el, type, expectSync ) {
 
 	// Missing expectSync indicates a trigger call, which must force setup through jQuery.event.add
 	if ( !expectSync ) {
-		jQuery.event.add( el, type, returnTrue );
+		if ( dataPriv.get( el, type ) === undefined ) {
+			jQuery.event.add( el, type, returnTrue );
+		}
 		return;
 	}
 
@@ -16326,9 +16353,13 @@ function leverageNative( el, type, expectSync ) {
 			if ( ( event.isTrigger & 1 ) && this[ type ] ) {
 
 				// Interrupt processing of the outer synthetic .trigger()ed event
-				if ( !saved ) {
+				// Saved data should be false in such cases, but might be a leftover capture object
+				// from an async native handler (gh-4350)
+				if ( !saved.length ) {
 
 					// Store arguments for use when handling the inner native event
+					// There will always be at least one argument (an event object), so this array
+					// will not be confused with a leftover capture object.
 					saved = slice.call( arguments );
 					dataPriv.set( this, type, saved );
 
@@ -16341,14 +16372,14 @@ function leverageNative( el, type, expectSync ) {
 					if ( saved !== result || notAsync ) {
 						dataPriv.set( this, type, false );
 					} else {
-						result = undefined;
+						result = {};
 					}
 					if ( saved !== result ) {
 
 						// Cancel the outer synthetic event
 						event.stopImmediatePropagation();
 						event.preventDefault();
-						return result;
+						return result.value;
 					}
 
 				// If this is an inner synthetic event for an event with a bubbling surrogate
@@ -16363,17 +16394,19 @@ function leverageNative( el, type, expectSync ) {
 
 			// If this is a native event triggered above, everything is now in order
 			// Fire an inner synthetic event with the original arguments
-			} else if ( saved ) {
+			} else if ( saved.length ) {
 
 				// ...and capture the result
-				dataPriv.set( this, type, jQuery.event.trigger(
+				dataPriv.set( this, type, {
+					value: jQuery.event.trigger(
 
-					// Support: IE <=9 - 11+
-					// Extend with the prototype to reset the above stopImmediatePropagation()
-					jQuery.extend( saved.shift(), jQuery.Event.prototype ),
-					saved,
-					this
-				) );
+						// Support: IE <=9 - 11+
+						// Extend with the prototype to reset the above stopImmediatePropagation()
+						jQuery.extend( saved[ 0 ], jQuery.Event.prototype ),
+						saved.slice( 1 ),
+						this
+					)
+				} );
 
 				// Abort handling of the native event
 				event.stopImmediatePropagation();

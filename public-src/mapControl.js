@@ -107,6 +107,8 @@ export class MapControl extends EventEmitter {
     })
 
     map.on('click', function(evt) {
+      window.map.popup.hide()
+
       let coordinates = evt.coordinate
       let lonLatCoords = new ol.proj.toLonLat(coordinates)
       console.log(
@@ -118,16 +120,24 @@ export class MapControl extends EventEmitter {
 
       let imgUrl = undefined
       let featureEvent = undefined
+      let kind = undefined
       const isHit = map.forEachFeatureAtPixel(evt.pixel, function(
         feature,
         layer
       ) {
         featureEvent = feature
         imgUrl = feature.get('imgUrl')
+        kind = feature.get('kind')
         return ['wmw', 'wow', 'politics'].indexOf(feature.get('kind')) >= 0
       })
 
       const isExistUrl = imgUrl !== undefined
+
+      if ('politics' === kind) {
+        const coords = featureEvent.getGeometry().getFirstCoordinate()
+        console.log('hit to politics', coords)
+        window.map.popup.show(coords, 'test')
+      }
 
       if (isHit && isExistUrl) {
         window.map.showEventMap(featureEvent.get('eventMap'))
@@ -143,7 +153,6 @@ export class MapControl extends EventEmitter {
         $('#imgModal').modal()
 
         setTimeout(() => {
-          console.log('>>>>>>>> width', $('.modal-body').width())
           resizeImage(imgUrl, $('.modal-body').width(), canvas => {
             $('.modal-body').html(canvas)
           })
@@ -171,6 +180,20 @@ export class MapControl extends EventEmitter {
       } else {
         this.getTargetElement().style.cursor = ''
       }
+    })
+
+    this.popup = new ol.Overlay.Popup({
+      popupClass: 'default', //"tooltips", "warning" "black" "default", "tips", "shadow",
+      closeBox: true,
+      onshow: function() {
+        console.log('You opened the box')
+      },
+      onclose: function() {
+        console.log('You close the box')
+      },
+      positioning: 'auto',
+      autoPan: true,
+      autoPanAnimation: { duration: 250 }
     })
 
     this.map = map
@@ -276,8 +299,6 @@ export class MapControl extends EventEmitter {
         }
       }
     }
-
-    console.log('>>>>starSize: ', allyTroops, enemTroops, starSize)
 
     let style = new ol.style.Style({
       // fill: new ol.style.Fill({

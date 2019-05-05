@@ -70,7 +70,7 @@
   },
   "devDependencies": {
     "@babel/core": "latest",
-    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/plugin-proposal-class-properties": "latest",
     "@babel/plugin-proposal-object-rest-spread": "latest",
     "parcel-bundler": "latest"
   },

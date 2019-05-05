@@ -4,15 +4,15 @@ export class HistoryEventsControl extends EventEmitter {
   constructor() {
     super()
 
-    this.listDiv = $('#eventInfo')[0]
+    this.listDiv = $('#events-info-content')[0]
     this.imgDiv = $('#event-image-div')[0]
     this.events = []
     this.active_event = ''
     this.active_map = ''
 
     $(document).ready(() => {
-      const c = $('#collapseEventInfo')
-      const ch = $('#collapseButton').children()
+      const c = $('#collapse-events-info')
+      const ch = $('#collapse-button').children()
 
       c.on('shown.bs.collapse', () => {
         ch.removeClass('mdi-chevron-double-up').addClass(
@@ -176,16 +176,14 @@ export class HistoryEventsControl extends EventEmitter {
     if (!events || 0 == events.length) return
 
     let html = `
-        <table class="table table-sm table-borderless">
+        <table class="table table-sm table-borderless" id="table-events">
         <thead>
             <tr>
                 <th scope="col">Начало</th>
                 <th scope="col">Окончание</th>
                 <th scope="col">Название</th>
-                <th scope="col">Участник 1</th>
-                <th scope="col">Участник 2</th>
-                <th scope="col">Числ. 1</th>
-                <th scope="col">Числ. 2</th>
+                <th scope="col" colspan="2">Стороны</th>
+                <th scope="col" colspan="2">Силы сторон</th>
                 <th scope="col">Победитель</th>
             </tr>
         </thead>
