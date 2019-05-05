@@ -51,6 +51,20 @@ export class MapControl extends EventEmitter {
       // projection: 'EPSG:4326'
     })
 
+    this.popup = new ol.Overlay.Popup({
+      popupClass: 'default shadow', //"tooltips", "warning" "black" "default", "tips", "shadow",
+      closeBox: false,
+      onshow: function() {
+        // console.log('You opened the box')
+      },
+      onclose: function() {
+        // console.log('You close the box')
+      },
+      positioning: 'auto',
+      autoPan: true,
+      autoPanAnimation: { duration: 250 }
+    })
+
     const map = new ol.Map({
       interactions: ol.interaction.defaults({
         altShiftDragRotate: false,
@@ -62,6 +76,7 @@ export class MapControl extends EventEmitter {
           // new ol.control.FullScreen()
         ]),
       layers: [rasterLayer],
+      overlays: [this.popup],
       target: 'map',
       view: view
     })
@@ -135,8 +150,20 @@ export class MapControl extends EventEmitter {
 
       if ('politics' === kind) {
         const coords = featureEvent.getGeometry().getFirstCoordinate()
-        console.log('hit to politics', coords)
-        window.map.popup.show(coords, 'test')
+        let content = featureEvent.get('agrKind')
+        const startDate = featureEvent.get('startDate')
+        const endDate = featureEvent.get('endDate')
+        if (startDate) {
+          const dateStr =
+            startDate != endDate ? `${startDate} - ${endDate}` : startDate
+          content += '<br><h4>' + dateStr + '</h4>'
+        }
+        let results = featureEvent.get('results')
+        if (results) {
+          results = results.replace(/[.,]\s*$/, '')
+          content += '<p>' + results + '</p>'
+        }
+        window.map.popup.show(coords, content)
       }
 
       if (isHit && isExistUrl) {
@@ -180,20 +207,6 @@ export class MapControl extends EventEmitter {
       } else {
         this.getTargetElement().style.cursor = ''
       }
-    })
-
-    this.popup = new ol.Overlay.Popup({
-      popupClass: 'default', //"tooltips", "warning" "black" "default", "tips", "shadow",
-      closeBox: true,
-      onshow: function() {
-        console.log('You opened the box')
-      },
-      onclose: function() {
-        console.log('You close the box')
-      },
-      positioning: 'auto',
-      autoPan: true,
-      autoPanAnimation: { duration: 250 }
     })
 
     this.map = map
@@ -626,7 +639,14 @@ export class MapControl extends EventEmitter {
         let ft = new ol.Feature({
           name: agreement.results,
           kind: 'politics',
-          geometry: new ol.geom.Point(ol.proj.fromLonLat(agreement.placeCoords))
+          agrKind: agreement.kind,
+          geometry: new ol.geom.Point(
+            ol.proj.fromLonLat(agreement.placeCoords)
+          ),
+          startDate: agreement.startDate,
+          endDate: agreement.endDate,
+          results: agreement.results,
+          source: agreement.source
         })
 
         this.agreementsSource.addFeature(ft)

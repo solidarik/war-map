@@ -48,12 +48,15 @@ Promise.resolve(true)
   //     mediator: dictEngRusJsonMediator
   //   })
   // })
-  // // .then(() => {
-  //   return dbHelper.saveFilesFromDir({
-  //     source: 'python/out_agreements',
-  //     mediator: agreementsJsonMediator
-  //   })
-  // })
+  .then(() => {
+    return dbHelper.clearDb('agreements')
+  })
+  .then(() => {
+    return dbHelper.saveFilesFromDir({
+      source: 'python/out_agreements',
+      mediator: agreementsJsonMediator
+    })
+  })
   .then(() => {
     return dbHelper.clearDb('historyEvents')
   })

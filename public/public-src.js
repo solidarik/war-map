@@ -991,6 +991,20 @@ function (_EventEmitter) {
       zoom: 3 // projection: 'EPSG:4326'
 
     });
+    _this.popup = new ol.Overlay.Popup({
+      popupClass: 'default shadow',
+      //"tooltips", "warning" "black" "default", "tips", "shadow",
+      closeBox: false,
+      onshow: function onshow() {// console.log('You opened the box')
+      },
+      onclose: function onclose() {// console.log('You close the box')
+      },
+      positioning: 'auto',
+      autoPan: true,
+      autoPanAnimation: {
+        duration: 250
+      }
+    });
     var map = new ol.Map({
       interactions: ol.interaction.defaults({
         altShiftDragRotate: false,
@@ -1002,6 +1016,7 @@ function (_EventEmitter) {
       }).extend([// new ol.control.FullScreen()
       ]),
       layers: [rasterLayer],
+      overlays: [_this.popup],
       target: 'map',
       view: view
     });
@@ -1061,8 +1076,23 @@ function (_EventEmitter) {
 
       if ('politics' === kind) {
         var coords = featureEvent.getGeometry().getFirstCoordinate();
-        console.log('hit to politics', coords);
-        window.map.popup.show(coords, 'test');
+        var content = featureEvent.get('agrKind');
+        var startDate = featureEvent.get('startDate');
+        var endDate = featureEvent.get('endDate');
+
+        if (startDate) {
+          var dateStr = startDate != endDate ? "".concat(startDate, " - ").concat(endDate) : startDate;
+          content += '<br><h4>' + dateStr + '</h4>';
+        }
+
+        var results = featureEvent.get('results');
+
+        if (results) {
+          results = results.replace(/[.,]\s*$/, '');
+          content += '<p>' + results + '</p>';
+        }
+
+        window.map.popup.show(coords, content);
       }
 
       if (isHit && isExistUrl) {
@@ -1090,22 +1120,6 @@ function (_EventEmitter) {
         this.getTargetElement().style.cursor = 'pointer';
       } else {
         this.getTargetElement().style.cursor = '';
-      }
-    });
-    _this.popup = new ol.Overlay.Popup({
-      popupClass: 'default',
-      //"tooltips", "warning" "black" "default", "tips", "shadow",
-      closeBox: true,
-      onshow: function onshow() {
-        console.log('You opened the box');
-      },
-      onclose: function onclose() {
-        console.log('You close the box');
-      },
-      positioning: 'auto',
-      autoPan: true,
-      autoPanAnimation: {
-        duration: 250
       }
     });
     _this.map = map;
@@ -1567,7 +1581,12 @@ function (_EventEmitter) {
           var ft = new ol.Feature({
             name: agreement.results,
             kind: 'politics',
-            geometry: new ol.geom.Point(ol.proj.fromLonLat(agreement.placeCoords))
+            agrKind: agreement.kind,
+            geometry: new ol.geom.Point(ol.proj.fromLonLat(agreement.placeCoords)),
+            startDate: agreement.startDate,
+            endDate: agreement.endDate,
+            results: agreement.results,
+            source: agreement.source
           });
 
           _this7.agreementsSource.addFeature(ft);
