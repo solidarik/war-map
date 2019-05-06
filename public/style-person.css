@@ -9,18 +9,29 @@ h5 {
 cite {
   text-align: center;
 }
+
+blockquote{
+  margin: auto;
+  /* width: 50%; */
+  /* border: 3px solid green; */
+  padding: 1%;
+  text-align: center
+}
 .person-cont {
   padding: 1%;
 }
-.image-cont {
-  text-align: center;
+.image-center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 .detail-cont {
   border-left: 3px solid #ded4da;
+  margin: 2%;
 }
 .detail-cont p {
   font-size: 15px;
-  font-weight: bold;
+  padding: 1%;
 }
 #persons-control {
   height: auto;
