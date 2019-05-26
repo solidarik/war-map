@@ -196,6 +196,30 @@ loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "
 // 	  }
 // 	});
 
+//население дели на 1000
+
+// loadedData.forEach(element => {
+// 	console.log(element.id);
+//   	if ((element.id == '7')) {
+// 		console.log(element.id);
+//   		d3.json(element.url, function (error, dataFromFile) {
+// 			if (error) console.log(error);
+// 				var target = dataFromFile;
+// 				target.forEach(
+// 					element => {
+// 						// if(element.rusSource=="http://data.worldbank.org/indicator/NV.SRV.TOTL.ZS"){
+// 						// 	element.value = Math.ceil(element.value/1000);
+// 						// }
+// 						element.rusUnit="тыс.чел";
+// 						element.engUnit="thousand people";
+// 					}
+// 				);
+// 				console.log(target);
+// 				download(JSON.stringify(target), 'Population (Merged data)_1000.json', 'text/json');
+// 		});
+// 	}
+// });
+
 //объединение по войне
 // var target = [];
 // var  obj1, obj2;
