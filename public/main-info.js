@@ -196,6 +196,30 @@ loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "
 // 	  }
 // 	});
 
+//ввп дели на 1000000
+
+// loadedData.forEach(element => {
+// 	console.log(element.id);
+//   	if ((element.id == '4'||element.id == '5'||element.id == '1'||element.id == '8') {
+// 		console.log(element.id);
+//   		d3.json(element.url, function (error, dataFromFile) {
+// 			if (error) console.log(error);
+// 				var target = dataFromFile;
+// 				target.forEach(
+// 					element => {
+// 						if(element.rusSource=="http://data.worldbank.org/indicator/NV.SRV.TOTL.ZS"){
+// 						 	element.value = Math.ceil(element.value/1000000);
+// 						}
+// 						element.rusUnit="млн $";
+// 						element.engUnit="mil $";
+// 					}
+// 				);
+// 				console.log(target);
+// 				download(JSON.stringify(target), element.url, 'text/json');
+// 		});
+// 	}
+// });
+
 //население дели на 1000
 
 // loadedData.forEach(element => {

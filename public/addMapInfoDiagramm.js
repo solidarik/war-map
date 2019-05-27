@@ -70,7 +70,7 @@ function () {
       //console.log("this.height="+this.height);
       // set the ranges
 
-      console.log("width="+width);
+
       var x = d3.scaleBand().range([0, width]).padding(0.1);
       var y = d3.scaleLinear().range([height, 0]); // append the svg object to the body of the page
       // append a 'group' element to 'svg'
@@ -88,15 +88,17 @@ function () {
         return d.date;
       })); //console.log("d3.max=" + d3.max(this.data, function (d) { return d.value; }));
 
-      y.domain([0, d3.max(this.data, function (d) {
+      var maxY = d3.max(this.data, function (d) {
         return d.value;
-      })]); // append the rectangles for the bar chart
+      });
+      var uniY = d3.max(this.data, function (d) {
+        return d.rusUnit;
+      });
+      y.domain([0, maxY]); // append the rectangles for the bar chart
 
       svg.selectAll(".bar").data(this.data).enter().append("rect").attr("class", "bar").attr("x", function (d) {
         return x(d.date);
-      }).attr("width", 
-        x.bandwidth()
-      ).attr("fill", function (d) {
+      }).attr("width", x.bandwidth()).attr("fill", function (d) {
         var golden_ratio_conjugate = 0.618033988749895;
         var h = Math.random();
         h += golden_ratio_conjugate;
@@ -105,7 +107,6 @@ function () {
       }).attr("y", function (d) {
         return y(d.value);
       }).attr("height", function (d) {
-        console.log(d.date+" - "+d.value);  
         return height - y(d.value);
       });
       var domainXaxis;
@@ -130,7 +131,14 @@ function () {
 
         svg.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x).tickValues(domainXaxis)).selectAll("text").style("text-anchor", "end").attr("dx", "-.8em").attr("dy", ".15em").attr("transform", "rotate(-90)"); // add the y Axis
 
-        svg.append("g").call(d3.axisLeft(y).ticks(5));
+        svg.append("g").call(d3.axisLeft(y).ticks(5).tickFormat(function (d) {
+          if (maxY < 9999) {
+            if (uniY.indexOf("тыс.") !== -1) return d + "тыс";else if (uniY.indexOf("млн") !== -1) return d + "млн";else return d;
+          } else if (maxY < 99999) {
+            if (uniY.indexOf("тыс.") !== -1) return Math.floor(d / 1000) + "млн";else if (uniY.indexOf("млн") !== -1) return Math.floor(d / 1000) + "млрд";else return Math.floor(d / 1000) + "тыс";
+          } else if (maxY < 9999999999) if (uniY.indexOf("тыс.") !== -1) return Math.floor(d / 1000000) + "млрд";else if (uniY.indexOf("млн") !== -1) return Math.floor(d / 1000000) + "трлн";else return Math.floor(d / 1000000) + "млн";
+        })).style("font-size", "8px");
+        ;
       } else {
         var delit = x.domain().length - 1; ///2;
         //console.log("x.domain().length="+x.domain().length);
@@ -151,7 +159,13 @@ function () {
 
         svg.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x).tickValues(domainXaxis)).selectAll("text").style("text-anchor", "end").attr("dx", "-1em").attr("dy", "-.9em").attr("transform", "rotate(-90)").style("font-size", "8px"); // add the y Axis
 
-        svg.append("g").call(d3.axisLeft(y).ticks(2)).style("font-size", "8px");
+        svg.append("g").call(d3.axisLeft(y).ticks(2).tickFormat(function (d) {
+          if (maxY < 9999) {
+            if (uniY.indexOf("тыс.") !== -1) return d + "тыс";else if (uniY.indexOf("млн") !== -1) return d + "млн";else return d;
+          } else if (maxY < 99999) {
+            if (uniY.indexOf("тыс.") !== -1) return Math.floor(d / 1000) + "млн";else if (uniY.indexOf("млн") !== -1) return Math.floor(d / 1000) + "млрд";else return Math.floor(d / 1000) + "тыс";
+          } else if (maxY < 9999999999) if (uniY.indexOf("тыс.") !== -1) return Math.floor(d / 1000000) + "млрд";else if (uniY.indexOf("млн") !== -1) return Math.floor(d / 1000000) + "трлн";else return Math.floor(d / 1000000) + "млн";
+        })).style("font-size", "8px");
       }
     }
   }]);

@@ -81,7 +81,11 @@ class AddMapInfoDiagramm {
             //console.log("this.data.map=" + this.data.map(function (d) { return d.date; }));
             x.domain(this.data.map(function (d) { return d.date; }));
             //console.log("d3.max=" + d3.max(this.data, function (d) { return d.value; }));
-            y.domain([0, d3.max(this.data, function (d) { return d.value; })]);
+            var maxY = d3.max(this.data, function (d) { return d.value; });
+            var uniY = d3.max(this.data, function (d) { return d.rusUnit; });
+            y.domain([0, maxY]);
+
+            
 
             // append the rectangles for the bar chart
             svg.selectAll(".bar")
@@ -123,10 +127,43 @@ class AddMapInfoDiagramm {
                 }
 
                 // add the x Axis
-                svg.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x).tickValues(domainXaxis)).selectAll("text").style("text-anchor", "end").attr("dx", "-.8em").attr("dy", ".15em").attr("transform", "rotate(-90)");
+                svg.append("g").attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x).tickValues(domainXaxis))
+                        .selectAll("text")
+                        .style("text-anchor", "end")
+                        .attr("dx", "-.8em")
+                        .attr("dy", ".15em")
+                        .attr("transform", "rotate(-90)");
 
                 // add the y Axis
-                svg.append("g").call(d3.axisLeft(y).ticks(5));
+                svg.append("g").call(d3.axisLeft(y)
+                                        .ticks(5)
+                                        .tickFormat(function(d) { 
+                                                        if(maxY<9999){
+                                                            if(uniY.indexOf("тыс.") !== -1)
+                                                                return d  + "тыс"
+                                                            else if(uniY.indexOf("млн") !== -1)
+                                                                return d  + "млн"
+                                                            else
+                                                                return d;
+                                                        }
+                                                        else if(maxY<99999){
+                                                            if(uniY.indexOf("тыс.") !== -1)
+                                                                return Math.floor(d/1000)  + "млн"
+                                                            else if(uniY.indexOf("млн") !== -1)
+                                                                return Math.floor(d/1000)  + "млрд"
+                                                            else
+                                                                return Math.floor(d/1000) + "тыс";
+                                                        } 
+                                                        else if (maxY<9999999999)
+                                                            if(uniY.indexOf("тыс.") !== -1)
+                                                                return Math.floor(d/1000000)  + "млрд"
+                                                            else if(uniY.indexOf("млн") !== -1)
+                                                                return Math.floor(d/1000000)  + "трлн"
+                                                            else
+                                                                return Math.floor(d/1000000) + "млн";                                                        
+                                                    }))
+                                                    .style("font-size","8px");;
             }
             else{
 
@@ -148,10 +185,43 @@ class AddMapInfoDiagramm {
                   });
                 
                 // add the x Axis
-                svg.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x).tickValues(domainXaxis)).selectAll("text").style("text-anchor", "end").attr("dx", "-1em").attr("dy", "-.9em").attr("transform", "rotate(-90)").style("font-size","8px");
+                svg.append("g")
+                  .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x).tickValues(domainXaxis))
+                      .selectAll("text").style("text-anchor", "end")
+                      .attr("dx", "-1em").attr("dy", "-.9em")
+                      .attr("transform", "rotate(-90)")
+                      .style("font-size","8px");
 
                 // add the y Axis
-                svg.append("g").call(d3.axisLeft(y).ticks(2)).style("font-size","8px");              
+                svg.append("g").call(d3.axisLeft(y)
+                                        .ticks(2)
+                                        .tickFormat(function(d) { 
+                                                        if(maxY<9999){
+                                                            if(uniY.indexOf("тыс.") !== -1)
+                                                                return d  + "тыс"
+                                                            else if(uniY.indexOf("млн") !== -1)
+                                                                return d  + "млн"
+                                                            else
+                                                                return d;
+                                                        }
+                                                        else if(maxY<99999){
+                                                            if(uniY.indexOf("тыс.") !== -1)
+                                                                return Math.floor(d/1000)  + "млн"
+                                                            else if(uniY.indexOf("млн") !== -1)
+                                                                return Math.floor(d/1000)  + "млрд"
+                                                            else
+                                                                return Math.floor(d/1000) + "тыс";
+                                                        } 
+                                                        else if (maxY<9999999999)
+                                                            if(uniY.indexOf("тыс.") !== -1)
+                                                                return Math.floor(d/1000000)  + "млрд"
+                                                            else if(uniY.indexOf("млн") !== -1)
+                                                                return Math.floor(d/1000000)  + "трлн"
+                                                            else
+                                                                return Math.floor(d/1000000) + "млн";                                                        
+                                                    }))
+                                .style("font-size","8px");              
             }
 
     }
