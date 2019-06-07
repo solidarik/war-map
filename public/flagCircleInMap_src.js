@@ -226,9 +226,9 @@
                     .style("top", (d3.event.pageY - 28) + "px");
 
 
-                console.log("allData=" + JSON.stringify(allData));    
+                //onsole.log("allData=" + JSON.stringify(allData));    
                 var dataForInfo = addSlider.filterByIso3New(allData, d.iso3);
-                console.log("dataForInfo=" + JSON.stringify(dataForInfo));  
+                //console.log("dataForInfo=" + JSON.stringify(dataForInfo));  
                 var amid =  new AddMapInfoDiagramm("mapContainerInfo",dataForInfo,parseInt(d3.select("#mapContainerInfo").style("width")),parseInt(d3.select("#mapContainerInfo").style("height")));
                 amid.addMapInfoDiagrammInDiv();
 

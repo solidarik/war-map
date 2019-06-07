@@ -372,6 +372,14 @@ var width;
 var height;
 
 var onClickDropDown = function (d) {
+	let div;
+	if (document.getElementById("tooltip") !== null) {
+		div = d3.select("div#tooltip");
+		div.transition()
+		// .duration(500)		
+		.style("opacity", 0);
+	}
+
 	buildBubble(d, svg, projection, width);
 };
 

@@ -37,7 +37,7 @@ class AddMapInfoDiagramm {
     addMapInfoDiagrammInDiv() {
         // set the dimensions and margins of the graph
         var margin = { top: 20, right: 20, bottom: 30, left: 40 };
-        var width = this.width - margin.left - margin.right;
+        var width = this.width - margin.left - margin.right-10;
         var height;
         if (this.width >= 160) {
             height = Math.round(this.height * 0.52) - margin.top - margin.bottom;
@@ -65,7 +65,7 @@ class AddMapInfoDiagramm {
 
         var svg = d3.select("#"+this.divElement).append("svg")
             .attr("id",this.divElement+"Svg")
-            .attr("width", width + margin.left + margin.right)
+            .attr("width", width + margin.left + margin.right - 10)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform",
@@ -83,6 +83,7 @@ class AddMapInfoDiagramm {
             //console.log("d3.max=" + d3.max(this.data, function (d) { return d.value; }));
             var maxY = d3.max(this.data, function (d) { return d.value; });
             var uniY = d3.max(this.data, function (d) { return d.rusUnit; });
+            var couY = d3.max(this.data, function (d) { return d.rusCountry; });
             y.domain([0, maxY]);
 
             
@@ -139,31 +140,48 @@ class AddMapInfoDiagramm {
                 svg.append("g").call(d3.axisLeft(y)
                                         .ticks(5)
                                         .tickFormat(function(d) { 
-                                                        if(maxY<9999){
-                                                            if(uniY.indexOf("тыс.") !== -1)
-                                                                return d  + "тыс"
-                                                            else if(uniY.indexOf("млн") !== -1)
-                                                                return d  + "млн"
-                                                            else
-                                                                return d;
+                                                        if(maxY<9999){ 
+                                                            return d;
                                                         }
-                                                        else if(maxY<99999){
-                                                            if(uniY.indexOf("тыс.") !== -1)
-                                                                return Math.floor(d/1000)  + "млн"
-                                                            else if(uniY.indexOf("млн") !== -1)
-                                                                return Math.floor(d/1000)  + "млрд"
-                                                            else
-                                                                return Math.floor(d/1000) + "тыс";
+                                                        else if(maxY<999999){
+                                                            return (d/1000).toFixed(1);
                                                         } 
-                                                        else if (maxY<9999999999)
-                                                            if(uniY.indexOf("тыс.") !== -1)
-                                                                return Math.floor(d/1000000)  + "млрд"
-                                                            else if(uniY.indexOf("млн") !== -1)
-                                                                return Math.floor(d/1000000)  + "трлн"
-                                                            else
-                                                                return Math.floor(d/1000000) + "млн";                                                        
+                                                        else if (maxY<9999999999){
+                                                            return (d/1000000).toFixed(1);
+                                                        }
                                                     }))
-                                                    .style("font-size","8px");;
+                                                    .style("font-size","8px");
+                svg.append("text")
+                    .attr("x", width / 2)
+                    .attr("y", -10)
+                    .attr("class", "title")
+                    .style("text-anchor", "middle")
+                    .style("font-size", "10px")
+                    .text(function(){ 
+                            if(maxY<9999){
+                                if(uniY.indexOf("тыс.") !== -1)
+                                    return couY + " "+ uniY.replace("тыс.","тысячи").replace("ед","единиц") 
+                                else if(uniY.indexOf("млн") !== -1)
+                                    return couY + " "+ uniY.replace("млн","миллионы").replace("ед","единиц")  
+                                else
+                                    return couY + " "+ uniY.replace("ед","единиц") ;
+                            }
+                            else if(maxY<999999){
+                                if(uniY.indexOf("тыс.") !== -1)
+                                    return couY + " "+ uniY.replace("тыс.","миллионы").replace("ед","единиц")  
+                                else if(uniY.indexOf("млн") !== -1)
+                                    return couY + " "+ uniY.replace("млн","миллиарды").replace("ед","единиц")  
+                                else
+                                    return couY + " " + "тысячи "+uniY.replace("ед","единиц") ;
+                            } 
+                            else if (maxY<9999999999)
+                                if(uniY.indexOf("тыс.") !== -1)
+                                    return couY + " "+ uniY.replace("тыс.","миллиарды").replace("ед","единиц")  
+                                else if(uniY.indexOf("млн") !== -1)
+                                    return couY + " "+ uniY.replace("тыс.","триллиарды").replace("ед","единиц") 
+                                else
+                                    return couY + " "+"миллионы "+ uniY.replace("ед","единиц")  ;                                                        
+                        });
             }
             else{
 
@@ -196,32 +214,49 @@ class AddMapInfoDiagramm {
                 // add the y Axis
                 svg.append("g").call(d3.axisLeft(y)
                                         .ticks(2)
-                                        .tickFormat(function(d) { 
-                                                        if(maxY<9999){
-                                                            if(uniY.indexOf("тыс.") !== -1)
-                                                                return d  + "тыс"
-                                                            else if(uniY.indexOf("млн") !== -1)
-                                                                return d  + "млн"
-                                                            else
-                                                                return d;
+                                        .tickFormat(function(d){ 
+                                                        if(maxY<9999){ 
+                                                            return d;
                                                         }
-                                                        else if(maxY<99999){
-                                                            if(uniY.indexOf("тыс.") !== -1)
-                                                                return Math.floor(d/1000)  + "млн"
-                                                            else if(uniY.indexOf("млн") !== -1)
-                                                                return Math.floor(d/1000)  + "млрд"
-                                                            else
-                                                                return Math.floor(d/1000) + "тыс";
+                                                        else if(maxY<999999){
+                                                            return (d/1000).toFixed(1);
                                                         } 
-                                                        else if (maxY<9999999999)
-                                                            if(uniY.indexOf("тыс.") !== -1)
-                                                                return Math.floor(d/1000000)  + "млрд"
-                                                            else if(uniY.indexOf("млн") !== -1)
-                                                                return Math.floor(d/1000000)  + "трлн"
-                                                            else
-                                                                return Math.floor(d/1000000) + "млн";                                                        
+                                                        else if (maxY<9999999999){
+                                                            return (d/1000000).toFixed(1);
+                                                        }
                                                     }))
-                                .style("font-size","8px");              
+                                .style("font-size","8px");  
+                 svg.append("text")
+                    .attr("x", width / 2)
+                    .attr("y", -8)
+                    .attr("class", "title")
+                    .style("text-anchor", "middle")
+                    .style("font-size", "8px")
+                    .text(function(){ 
+                            if(maxY<9999){
+                                if(uniY.indexOf("тыс.") !== -1)
+                                    return couY + " "+ uniY.replace("тыс.","тысячи").replace("ед","единиц")  
+                                else if(uniY.indexOf("млн") !== -1)
+                                    return couY + " "+ uniY.replace("млн","миллионы").replace("ед","единиц")  
+                                else
+                                    return couY + " "+ uniY.replace("ед","единиц") ;
+                            }
+                            else if(maxY<999999){
+                                if(uniY.indexOf("тыс.") !== -1)
+                                    return couY + " "+ uniY.replace("тыс.","миллионы").replace("ед","единиц")  
+                                else if(uniY.indexOf("млн") !== -1)
+                                    return couY + " "+ uniY.replace("млн","миллиарды").replace("ед","единиц")  
+                                else
+                                    return couY + " " + "тысячи "+uniY.replace("ед","единиц") ;
+                            } 
+                            else if (maxY<9999999999)
+                                if(uniY.indexOf("тыс.") !== -1)
+                                    return couY + " "+ uniY.replace("тыс.","миллиарды").replace("ед","единиц")  
+                                else if(uniY.indexOf("млн") !== -1)
+                                    return couY + " "+ uniY.replace("тыс.","триллиарды").replace("ед","единиц") 
+                                else
+                                    return couY + " "+"миллионы "+ uniY.replace("ед","единиц");                                                        
+                        });            
             }
 
     }

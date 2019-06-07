@@ -16,7 +16,7 @@ var addPersons = function () {
     _createClass(addPersons, [{
         key: "clearTable",
         value: function clearTable() {
-            console.log("clearTable");
+            //console.log("clearTable");
             var dvTable = $("#" + this.idTable);
             dvTable.html("");
         }
@@ -25,7 +25,7 @@ var addPersons = function () {
         value: function rowTableClickHandler(thisThis, thisTr) {
             $(thisTr).addClass("event-active-row");
             $(thisTr).siblings().removeClass("event-active-row");
-            console.log("clicked " + $(thisTr).attr('id'));
+            //console.log("clicked " + $(thisTr).attr('id'));
             var id = parseInt($(thisTr).attr("id"));
             $('#FIO').html(thisThis.data[id].Surname + " " + thisThis.data[id].Name + " " + thisThis.data[id].MiddleName);
             $('#LifeTime').html(thisThis.data[id].DateBirth + " - " + thisThis.data[id].DateDeath + "<br>" + thisThis.data[id].PlaceBirth);
@@ -36,7 +36,7 @@ var addPersons = function () {
     }, {
         key: "addDataToTable",
         value: function addDataToTable() {
-            console.log("addDataTotable");
+            //console.log("addDataTotable");
 
             var obj = this.data;
             this.clearTable();
@@ -77,7 +77,7 @@ var addPersons = function () {
     }, {
         key: "fillTable",
         value: function fillTable() {
-            console.log("fillTable");
+            //console.log("fillTable");
 
             if (this.data == null) {
                 var thisThis = this;
