@@ -27,6 +27,7 @@ middlewares.forEach(function(middleware) {
 app.use(require('./routes/routes.js'))
 
 const serverSocket = require('./libs/serverSocket')
+
 const server = app.listen(config.port)
 
 let protocolFunctions = []
@@ -37,6 +38,11 @@ protocolClasses.forEach(handler => {
   let protocolClass = require('./socketProtocol/' + handler)
   protocolClass.init()
   protocolFunctions.push(protocolClass.getProtocol(app))
+})
+
+app.on('error', err => {
+  console.log('>>>>>>>>>>> ERROR', err)
+  console.error(err.stack)
 })
 
 app.socket = serverSocket(server, protocolFunctions)

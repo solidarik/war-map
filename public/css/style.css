@@ -1,275 +1,315 @@
 html {
-    height:100%
+  height: 100%;
 }
 
 body {
-    /*font:15px/23px 'Raleway',sans-serif;*/
-    margin:0;
-    padding:0;
-    height:100%;
-    width:100%;
-    -webkit-font-smoothing:antialiased;
-    -webkit-text-size-adjust:100%
+  /*font:15px/23px 'Raleway',sans-serif;*/
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
 }
-
 
 p {
-    font-size:20px;
-    line-height:140%;
-    text-align:center
+  font-size: 20px;
+  line-height: 140%;
+  text-align: center;
 }
 
-
 ul li {
-    display:inline-block;
-    list-style:none;
-    padding-right: 10px;
+  display: inline-block;
+  list-style: none;
+  padding-right: 10px;
 }
 
 .wrapper {
-    z-index:600;
-    position:relative
+  z-index: 600;
+  position: relative;
 }
 
 .pattern {
-    background-image:url(../images/pattern.png);
-    background-repeat: repeat;
-    background-attachment:scroll;
-    width:100%;
-    height:100%;
-    position:absolute;
-    top:0;
-    left:0
+  /* background-image:url(../images/pattern.png); */
+  /* background-repeat: repeat; */
+  /* background-attachment: scroll; */
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .divider {
-    background-image:url(../images/divider.png);
-    display:block;
-    width:300px;
-    height:35px;
-    margin:10px auto
+  background-image: url(../images/divider.png);
+  display: block;
+  width: 300px;
+  height: 35px;
+  margin: 10px auto;
 }
 
-
 #colorize {
-    color:#f1c40f;
-    font-family:'Lato',sans-serif;
-    font-size:40px
+  color: #f1c40f;
+  font-family: 'Lato', sans-serif;
+  font-size: 40px;
 }
 
 #colorize-cit {
-    color:#fff;
-    font-family:'Lato',sans-serif;
-    font-size:15px;
-    font-style: italic;
+  color: #fff;
+  font-family: 'Lato', sans-serif;
+  font-size: 15px;
+  font-style: italic;
 }
 
 /* BIG VIDEO BACKGROUND
 ================================================== */
 .big-background {
-    z-index:550;
-    text-align:center;
-    height:100%;
-    min-height:100%;
-    position:relative;
-    overflow:hidden
+  z-index: 550;
+  text-align: center;
+  height: 100%;
+  min-height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+#content_inner_wrapper {
+  margin: 0;
+  opacity: 1;
+  transition: opacity 500ms linear;
+}
+
+#content_inner_wrapper.is-loading {
+  opacity: 0;
+}
+
+#content video {
+  max-width: 100%;
+}
+
+#page_background_videos {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+#page_background_videos:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #000;
+  opacity: 0.6;
+}
+
+#page_background_videos video {
+  opacity: 0;
+  min-width: 100%;
+  min-height: 100%;
+  max-width: none;
+  max-height: none;
+  width: auto;
+  height: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#page_background_videos video:first-of-type {
+  opacity: 1;
 }
 
 .big-background .big-background-container {
-    width:830px;
-    max-width:100%;
-    display:inline-block;
-    position:absolute;
-    top:50%;
-    left:50%;
-    -webkit-transform:translate(-50%,-50%);
-    -moz-transform:translate(-50%,-50%);
-    -ms-transform:translate(-50%,-50%);
-    -o-transform:translate(-50%,-50%);
-    transform:translate(-50%,-50%)
+  width: 830px;
+  max-width: 100%;
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .big-background-title {
-    font-family:'Raleway',sans-serif;
-    font-size:32px;
-    color:#f1c40f;
-    font-weight:400;
-    text-transform:uppercase;
-    text-align:center;
-    margin-bottom:22px;
-    padding-top:20px;
-    display:inline-block;
-    background-attachment:scroll;
-    background-repeat:repeat-x;
-    background-position:top center
+  font-family: 'Raleway', sans-serif;
+  font-size: 32px;
+  color: #f1c40f;
+  font-weight: 400;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 22px;
+  padding-top: 20px;
+  display: inline-block;
+  background-attachment: scroll;
+  background-repeat: repeat-x;
+  background-position: top center;
 }
 
 a.big-background-btn {
-    font-family:'Lato',sans-serif;
-    font-size:13px;
-    text-transform:uppercase;
-    text-decoration:none;
-    color:#fff;
-    background:transparent;
-    border:2px solid #fff;
-    padding:10px 14px;
-    cursor:pointer;
-    letter-spacing:2px;
-    text-align:center;
-    display:inline-block;
-    -webkit-transition:.4s background ease;
-    -moz-transition:.4s background ease;
-    -o-transition:.4s background ease;
-    transition:.4s background ease;
+  font-family: 'Lato', sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #fff;
+  background: transparent;
+  border: 2px solid #fff;
+  padding: 10px 14px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  text-align: center;
+  display: inline-block;
+  -webkit-transition: 0.4s background ease;
+  -moz-transition: 0.4s background ease;
+  -o-transition: 0.4s background ease;
+  transition: 0.4s background ease;
 }
 
 .big-background-btn:hover {
-    color:#fff;
-    background:rgba(255,255,255,0.20)
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .big-background-default-image {
-    background:url(../images/sunset.jpg);
-    background-repeat:no-repeat;
-    background-position:center center;
-    background-size:cover;
-    width:100%;
-    height:100%;
-    z-index:0;
-    backface-visibility:hidden
+  background: url(../images/sunset.jpg);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  backface-visibility: hidden;
 }
-
-
 
 /* ABOUT SECTION
 ================================================== */
 .about-section {
-    font-family:'Lato',sans-serif;
-    color:#7f8c8d;
-    background:#fff;
-    padding:60px 20px
+  font-family: 'Lato', sans-serif;
+  color: #7f8c8d;
+  background: #fff;
+  padding: 60px 20px;
 }
 
 .about-section-container {
-    text-align:center;
-    padding-bottom:50px
+  text-align: center;
+  padding-bottom: 50px;
 }
 
 .about-section-title {
-    font-family:'Raleway',sans-serif;
-    font-size:40px;
-    background:#fff;
-    color:#3d566e;
-    padding:0 35px;
-    margin-bottom:22px;
-    background-attachment:scroll;
-    background-repeat:repeat-x;
-    background-position:center center;
-    text-transform:uppercase
+  font-family: 'Raleway', sans-serif;
+  font-size: 40px;
+  background: #fff;
+  color: #3d566e;
+  padding: 0 35px;
+  margin-bottom: 22px;
+  background-attachment: scroll;
+  background-repeat: repeat-x;
+  background-position: center center;
+  text-transform: uppercase;
 }
 
-
-
 a.about-section-btn {
-    font-family:'Lato',sans-serif;
-    font-size:13px;
-    text-transform:uppercase;
-    text-decoration:none;
-    color:#34495e;
-    background:transparent;
-    border:2px solid #34495e;
-    padding:10px 14px;
-    cursor:pointer;
-    letter-spacing:2px;
-    text-align:center;
-    display:inline-block;
-    -webkit-transition:.4s background ease;
-    -moz-transition:.4s background ease;
-    -o-transition:.4s background ease;
-    transition:.4s background ease;
+  font-family: 'Lato', sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #34495e;
+  background: transparent;
+  border: 2px solid #34495e;
+  padding: 10px 14px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  text-align: center;
+  display: inline-block;
+  -webkit-transition: 0.4s background ease;
+  -moz-transition: 0.4s background ease;
+  -o-transition: 0.4s background ease;
+  transition: 0.4s background ease;
 }
 
 .about-section-btn:hover {
-    color:#fff;
-    background: #34495e;
+  color: #fff;
+  background: #34495e;
 }
 
-
-
-/* SMALL VIDEO BACKGROUND 
+/* SMALL VIDEO BACKGROUND
 ================================================== */
 .small-background-section {
-    font-family:'Raleway',sans-serif;
-    padding:100px 0;
-    position:relative;
-    width:100%;
-    overflow:hidden
+  font-family: 'Raleway', sans-serif;
+  padding: 100px 0;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
 }
 
 .small-background-container {
-    position:relative;
-    text-align:center
+  position: relative;
+  text-align: center;
 }
 
 .small-background-title {
-    font-size:40px;
-    color:#f1c40f;
-    font-weight:300;
-    z-index:10;
-    display:inline-block;
-    text-transform:uppercase;
-    margin-bottom:20px;
-    margin-top: 20px;
-    position:relative;
-    background-attachment:scroll;
-    background-repeat:repeat-x;
-    background-position:top center
+  font-size: 40px;
+  color: #f1c40f;
+  font-weight: 300;
+  z-index: 10;
+  display: inline-block;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  position: relative;
+  background-attachment: scroll;
+  background-repeat: repeat-x;
+  background-position: top center;
 }
-
-
 
 /* SOCIALS
 ================================================== */
 .socials a {
-    color:#fff
+  color: #fff;
 }
 
 .socials a:hover {
-    color:#bdc3c7
+  color: #bdc3c7;
 }
-
 
 /* MEDIA QUERIES
 ================================================== */
 
 @media screen and (max-width: 768px) {
-.about-section-title {
-    line-height:1
-}
+  .about-section-title {
+    line-height: 1;
+  }
 }
 
 @media screen and (max-width: 480px) {
-.big-background-title {
-    font-size:25px
-}
+  .big-background-title {
+    font-size: 25px;
+  }
 
-.small-background-title {
-    line-height:1
-}
+  .small-background-title {
+    line-height: 1;
+  }
 
-/*.player{ display: none;}  -> If you want to remove the video bg on a specific viewport w/o plugin*/
+  /*.player{ display: none;}  -> If you want to remove the video bg on a specific viewport w/o plugin*/
 }
 
 @media screen and (max-width: 360px) {
-.big-background-title,#colorize {
-    line-height:1
-}
+  .big-background-title,
+  #colorize {
+    line-height: 1;
+  }
 }
 
 @media screen and (max-width: 320px) {
-.small-background-title {
-    font-size:20px
+  .small-background-title {
+    font-size: 20px;
+  }
 }
-}
-
-
