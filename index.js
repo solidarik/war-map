@@ -40,9 +40,4 @@ protocolClasses.forEach(handler => {
   protocolFunctions.push(protocolClass.getProtocol(app))
 })
 
-app.on('error', err => {
-  console.log('>>>>>>>>>>> ERROR', err)
-  console.error(err.stack)
-})
-
 app.socket = serverSocket(server, protocolFunctions)
