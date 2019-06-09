@@ -25,6 +25,10 @@ body {
   overflow: hidden;
   height: 40px;
   padding: 0 5px;
+  background-image: url(../images/header_texture2.png);
+  background-size: auto 100%;
+  background-repeat: repeat-x;
+  background-position: left top;
 }
 
 .nav > li {
@@ -38,6 +42,113 @@ body {
 .nav {
   display: inline-block;
   white-space: nowrap;
+  position: absolute;
+}
+
+/* .navbar-nav {
+  margin-left: 80px;
+} */
+
+#helmet {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 45%;
+  width: 100px;
+  height: 100px;
+  border-radius: 15px;
+  background-image: url(../images/helmet.png);
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+}
+
+@media screen and (max-width: 1400px) {
+  #helmet {
+    margin-top: 40px;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  #helmet {
+    margin-top: 60px;
+  }
+}
+
+@media screen and (max-width: 960px) {
+  #helmet {
+    margin-top: 80px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #helmet {
+    visibility: hidden;
+    height: 0;
+    margin-top: -30px;
+  }
+
+  /* .navbar-nav {
+    margin-left: 5px;
+  } */
+}
+
+#content_inner_wrapper {
+  margin: 0;
+  opacity: 1;
+  transition: opacity 500ms linear;
+}
+
+#content_inner_wrapper.is-loading {
+  opacity: 0;
+}
+
+#content video {
+  max-width: 100%;
+}
+
+#page_background_videos {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+#page_background_videos:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #000;
+  opacity: 0.6;
+}
+
+#page_background_videos video {
+  opacity: 0;
+  min-width: 100%;
+  min-height: 100%;
+  max-width: none;
+  max-height: none;
+  width: auto;
+  height: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#page_background_videos video:first-of-type {
+  opacity: 1;
+}
+
+.navbar-brand {
+  float: left;
+  background-image: url(../images/helmet.png);
+  background-size: auto 100%;
+  background-repeat: no-repeat;
 }
 
 .nav-link {
@@ -49,7 +160,7 @@ body {
   right: 0px;
 }
 
-@media screen and (max-width: 700) {
+@media screen and (max-width: 768px) {
   .nav {
     display: inline-block;
   }

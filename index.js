@@ -4,7 +4,9 @@ if (process.env.TRACE) {
 }
 
 const Koa = require('koa')
+
 const app = new Koa()
+app.use(require('koa-range'))
 
 const config = require('config')
 const mongoose = require('./libs/mongoose')
