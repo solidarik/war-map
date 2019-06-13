@@ -17,7 +17,7 @@ block content
         .row.person-cont
             .col-md-6
                 .row.img.image-cont
-                    img.image-center.img-rounded(id='imgPerson' src='img/person/ilyushin.jpg' alt='' height='300' width='400')
+                    img.image-center.img-rounded.resized-image(id='imgPerson' src='img/person/ilyushin.jpg' alt='' )
                 .row.details.detail-cont
                     .col-lg-12
                         blockquote
@@ -35,12 +35,12 @@ block content
             .col-md-6
                 .row.details.detail-cont
                     blockquote
-                        h5 ИЛ-2
-                    p
+                        h5 Описание
+                    p(id='fullDescription')
                         | Ил-2 — советский штурмовик времён Второй мировой войны, созданный в ОКБ-240 под руководством Сергея Владимировича Ильюшина. Самый массовый боевой самолёт в истории авиации, было выпущено более 36 тысяч штук. Конструкторы называли разработанный ими самолёт «летающим танком». Пилоты-истребители люфтваффе прозвали Ил-2 «бетонным самолётом» (нем. Betonflugzeug). По утверждению некоторых советских авторов, солдаты вермахта называли его «чумой» (нем. Schwarzer Tod, дословно: «чёрная смерть»). Ил-2 принимал участие в боях на всех театрах военных действий Великой Отечественной войны, а также в Советско-японской войне. В феврале 1941 года началось серийное производство (приказ А. И. Шахурина № 739 от 14.12.1940). 
                         a(href='https://ru.wikipedia.org/wiki/%D0%98%D0%BB-2') Подробнее...
-                .row.img.image-cont
-                    img.image-center.img-rounded(src='img/person/il.jpg' alt='' height='300' width='400')
+                //.row.img.image-cont
+                //    img.image-center.img-rounded(src='img/person/il.jpg' alt='' height='300' width='400')
 
         //- .row.person-cont
         //-     .col-md-6.img.image-cont

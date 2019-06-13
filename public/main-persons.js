@@ -80,6 +80,9 @@ function startApp() {
     persons.clearTable();
     //console.log('3');
     persons.fillTable();
+
+    $("#persons-table tr:eq(0) td:first-child span").click();
+
 }
 
 /////////////////////////////////////////////////

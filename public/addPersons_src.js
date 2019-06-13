@@ -22,7 +22,7 @@ class addPersons {
         $('#imgPerson').src=thisThis.data[id].PhotoUrl;
         $('#imgPerson').attr('src',thisThis.data[id].PhotoUrl);
         $('#description').html(thisThis.data[id].Description + " <a target='_blank' rel='noopener noreferrer' href='"+thisThis.data[id].Source+"'>"+"Подробнее...</a>");
-        
+        $('#fullDescription').html(thisThis.data[id].FullDescription + " <a target='_blank' rel='noopener noreferrer' href='"+thisThis.data[id].Link+"'>"+"Подробнее...</a>");
     }
 
     addDataToTable() {
@@ -36,9 +36,23 @@ class addPersons {
         var columnCount = columns.length;
         var row = $(table[0].insertRow(-1));
         for (var i = 0; i < columnCount; i++) {
-            if (i == 0 || i == 1 || i == 2 || i == 5) {
+            if (i == 1 || i == 2 || i == 3 || i == 6) {
                 var headerCell = $("<th />");
-                headerCell.html([columns[i]]);
+                if(columns[i]=='Surname'){
+                    headerCell.html('Фамилия');
+                }
+                else if(columns[i]=='Name') {
+                    headerCell.html('Имя');
+                }
+                else if(columns[i]=='MiddleName') {
+                    headerCell.html('Отчество');
+                }
+                else if(columns[i]=='FieldActivity') {
+                    headerCell.html('Сфера деятельности');
+                }
+                else {
+                    headerCell.html('N/A');
+                }
                 row.append(headerCell);
             }
         }
@@ -48,7 +62,7 @@ class addPersons {
             row.addClass("hand-cursor");
             row.attr("id", i);
             for (var j = 0; j < columnCount; j++) {
-                if (j == 0 || j == 1 || j == 2 || j == 5) {
+                if (j == 1 || j == 2 || j == 3 || j == 6) {
                     var cell = $("<td />");
                     cell.html(obj[i][columns[j]]);
                     row.append(cell);
@@ -61,6 +75,8 @@ class addPersons {
         document.querySelectorAll("#" + this.idTable + " tr")
             .forEach(e => e.addEventListener("click", function () {thisThis.rowTableClickHandler(thisThis,this);}));
 
+        $("#persons-table tr:eq(0) td:first-child span").click();    
+        $('#0').trigger('click');
     }
 
     fillTable() {

@@ -46,3 +46,7 @@ blockquote{
   border-radius: 0px;
   overflow-y: scroll;
 }
+.resized-image{
+  width: auto;
+  height: 200px;
+}

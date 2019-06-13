@@ -376,9 +376,12 @@ var onClickDropDown = function (d) {
 	if (document.getElementById("tooltip") !== null) {
 		div = d3.select("div#tooltip");
 		div.transition()
-		// .duration(500)		
 		.style("opacity", 0);
 	}
+	if (document.getElementById("mapContainerInfoSvg") !== null) {
+		d3.select("#mapContainerInfoSvg").remove();
+	}
+	
 
 	buildBubble(d, svg, projection, width);
 };
