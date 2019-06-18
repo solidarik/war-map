@@ -81,6 +81,9 @@ export class MapControl extends EventEmitter {
       view: view
     })
 
+    /*
+    solidarik: Temporarily disabled selectStyle
+
     const selectedStyle = new ol.style.Style({
       stroke: new ol.style.Stroke({
         color: 'red',
@@ -99,6 +102,15 @@ export class MapControl extends EventEmitter {
 
     map.addInteraction(select)
 
+    select.on('select', function(evt) {
+      if (evt.selected.length) return
+      const feature = evt.selected[0]
+
+      //window.map.showEventMap(feature.get('eventMap'))
+    })
+
+    */
+
     var transparent = [0, 0, 0, 0.01]
     var filltransparent = [0, 0, 0, 0]
     var transparentStyle = [
@@ -113,13 +125,6 @@ export class MapControl extends EventEmitter {
         fill: new ol.style.Fill({ color: filltransparent })
       })
     ]
-
-    select.on('select', function(evt) {
-      if (evt.selected.length) return
-      const feature = evt.selected[0]
-
-      //window.map.showEventMap(feature.get('eventMap'))
-    })
 
     map.on('click', function(evt) {
       window.map.popup.hide()
@@ -148,24 +153,30 @@ export class MapControl extends EventEmitter {
 
       const isExistUrl = imgUrl !== undefined
 
+      let content = featureEvent.get('name')
+      const startDate = featureEvent.get('startDate')
+      const endDate = featureEvent.get('endDate')
+      if (startDate) {
+        const dateStr =
+          startDate != endDate ? `${startDate} - ${endDate}` : startDate
+        content += '<br><h4>' + dateStr + '</h4>'
+      }
+
       if ('politics' === kind) {
-        const coords = featureEvent.getGeometry().getFirstCoordinate()
-        let content = featureEvent.get('agrKind')
-        const startDate = featureEvent.get('startDate')
-        const endDate = featureEvent.get('endDate')
-        if (startDate) {
-          const dateStr =
-            startDate != endDate ? `${startDate} - ${endDate}` : startDate
-          content += '<br><h4>' + dateStr + '</h4>'
-        }
         let results = featureEvent.get('results')
         if (results) {
           results = results.replace(/[.,]\s*$/, '')
           content += '<p>' + results + '</p>'
         }
-        window.map.popup.show(coords, content)
+      } else {
+        content += '<p>А тут будет таблица</p>'
       }
 
+      const coords = featureEvent.getGeometry().getFirstCoordinate()
+      window.map.popup.show(coords, content)
+
+      /* Show Big Image */
+      /*
       if (isHit && isExistUrl) {
         window.map.showEventMap(featureEvent.get('eventMap'))
 
@@ -185,6 +196,7 @@ export class MapControl extends EventEmitter {
           })
         }, 1000)
       }
+      */
     })
 
     map.on('moveend', evt => {
@@ -624,7 +636,9 @@ export class MapControl extends EventEmitter {
         imgUrl: event.imgUrl,
         winner: event.winner,
         eventMap: event.maps[0],
-        filename: event.filename
+        filename: event.filename,
+        startDate: event.startDate,
+        endDate: event.endDate
       })
 
       this.allHistoryEventsSource.addFeature(ft)
@@ -637,9 +651,8 @@ export class MapControl extends EventEmitter {
     this.agreements.forEach(agreement => {
       if (agreement.placeCoords && agreement.placeCoords.length) {
         let ft = new ol.Feature({
-          name: agreement.results,
+          name: agreement.kind,
           kind: 'politics',
-          agrKind: agreement.kind,
           geometry: new ol.geom.Point(
             ol.proj.fromLonLat(agreement.placeCoords)
           ),

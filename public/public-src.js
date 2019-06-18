@@ -1020,7 +1020,9 @@ function (_EventEmitter) {
       target: 'map',
       view: view
     });
-    var selectedStyle = new ol.style.Style({
+    /*
+    solidarik: Temporarily disabled selectStyle
+      const selectedStyle = new ol.style.Style({
       stroke: new ol.style.Stroke({
         color: 'red',
         width: 2
@@ -1028,13 +1030,20 @@ function (_EventEmitter) {
       fill: new ol.style.Fill({
         color: 'rgba(0, 0, 255, 0.1)'
       })
-    });
-    var select = new ol.interaction.Select({
+    })
+      const select = new ol.interaction.Select({
       condition: ol.events.condition.pointerMove,
       //      style: selectedStyle,
       multi: false
-    });
-    map.addInteraction(select);
+    })
+      map.addInteraction(select)
+      select.on('select', function(evt) {
+      if (evt.selected.length) return
+      const feature = evt.selected[0]
+        //window.map.showEventMap(feature.get('eventMap'))
+    })
+      */
+
     var transparent = [0, 0, 0, 0.01];
     var filltransparent = [0, 0, 0, 0];
     var transparentStyle = [new ol.style.Style({
@@ -1054,10 +1063,6 @@ function (_EventEmitter) {
         color: filltransparent
       })
     })];
-    select.on('select', function (evt) {
-      if (evt.selected.length) return;
-      var feature = evt.selected[0]; //window.map.showEventMap(feature.get('eventMap'))
-    });
     map.on('click', function (evt) {
       window.map.popup.hide();
       var coordinates = evt.coordinate;
@@ -1073,39 +1078,49 @@ function (_EventEmitter) {
         return ['wmw', 'wow', 'politics'].indexOf(feature.get('kind')) >= 0;
       });
       var isExistUrl = imgUrl !== undefined;
+      var content = featureEvent.get('name');
+      var startDate = featureEvent.get('startDate');
+      var endDate = featureEvent.get('endDate');
+
+      if (startDate) {
+        var dateStr = startDate != endDate ? "".concat(startDate, " - ").concat(endDate) : startDate;
+        content += '<br><h4>' + dateStr + '</h4>';
+      }
 
       if ('politics' === kind) {
-        var coords = featureEvent.getGeometry().getFirstCoordinate();
-        var content = featureEvent.get('agrKind');
-        var startDate = featureEvent.get('startDate');
-        var endDate = featureEvent.get('endDate');
-
-        if (startDate) {
-          var dateStr = startDate != endDate ? "".concat(startDate, " - ").concat(endDate) : startDate;
-          content += '<br><h4>' + dateStr + '</h4>';
-        }
-
         var results = featureEvent.get('results');
 
         if (results) {
           results = results.replace(/[.,]\s*$/, '');
           content += '<p>' + results + '</p>';
         }
-
-        window.map.popup.show(coords, content);
+      } else {
+        content += '<p>А тут будет таблица</p>';
       }
 
+      var coords = featureEvent.getGeometry().getFirstCoordinate();
+      window.map.popup.show(coords, content);
+      /* Show Big Image */
+
+      /*
       if (isHit && isExistUrl) {
-        window.map.showEventMap(featureEvent.get('eventMap'));
-        $('#imgModalLabel').html(featureEvent.get('name'));
-        $('.modal-body').html("\n        <div class=\"d-flex justify-content-center\">\n          <div class=\"spinner-border\" role=\"status\">\n            <span class=\"sr-only\">Loading...</span>\n          </div>\n        </div>\n        ");
-        $('#imgModal').modal();
-        setTimeout(function () {
-          resizeImage(imgUrl, $('.modal-body').width(), function (canvas) {
-            $('.modal-body').html(canvas);
-          });
-        }, 1000);
+        window.map.showEventMap(featureEvent.get('eventMap'))
+          $('#imgModalLabel').html(featureEvent.get('name'))
+        $('.modal-body').html(`
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+        `)
+        $('#imgModal').modal()
+          setTimeout(() => {
+          resizeImage(imgUrl, $('.modal-body').width(), canvas => {
+            $('.modal-body').html(canvas)
+          })
+        }, 1000)
       }
+      */
     });
     map.on('moveend', function (evt) {
       var map = evt.map; //   console.log(map.getView().getZoom());
@@ -1564,7 +1579,9 @@ function (_EventEmitter) {
           imgUrl: event.imgUrl,
           winner: event.winner,
           eventMap: event.maps[0],
-          filename: event.filename
+          filename: event.filename,
+          startDate: event.startDate,
+          endDate: event.endDate
         });
 
         _this6.allHistoryEventsSource.addFeature(ft);
@@ -1579,9 +1596,8 @@ function (_EventEmitter) {
       this.agreements.forEach(function (agreement) {
         if (agreement.placeCoords && agreement.placeCoords.length) {
           var ft = new ol.Feature({
-            name: agreement.results,
+            name: agreement.kind,
             kind: 'politics',
-            agrKind: agreement.kind,
             geometry: new ol.geom.Point(ol.proj.fromLonLat(agreement.placeCoords)),
             startDate: agreement.startDate,
             endDate: agreement.endDate,
