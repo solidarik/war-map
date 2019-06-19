@@ -594,11 +594,11 @@ function startApp() {
 			height = Math.round(width * 4 / 7.1);//parseInt(d3.select("#mapContainer").style("height"));
 		}
 
-		console.log("height"+height);
-		console.log("height-264"+(height-264));
-		console.log("document.body.clientHeight"+document.body.clientHeight);
-		console.log("document.documentElement.clientHeight"+document.documentElement.clientHeight);
-		console.log("document.documentElement.scrollHeight"+document.documentElement.scrollHeight);
+		// console.log("height"+height);
+		// console.log("height-264"+(height-264));
+		// console.log("document.body.clientHeight"+document.body.clientHeight);
+		// console.log("document.documentElement.clientHeight"+document.documentElement.clientHeight);
+		// console.log("document.documentElement.scrollHeight"+document.documentElement.scrollHeight);
 
 		var scale0 = (width - 1) / 2 / Math.PI;
 		
