@@ -83,7 +83,31 @@ function startApp() {
 
     $("#persons-table tr:eq(0) td:first-child span").click();
 
+
+
 }
+
+$(document).ready(function () {
+ 
+  $('#collapse-person-button').on('click',function(){
+    if($('#collapse-person-button').children().hasClass('mdi-chevron-double-up')){
+      $('#collapse-person-button').children().removeClass('mdi-chevron-double-up').addClass('mdi-chevron-double-down');
+    }
+    else if($('#collapse-person-button').children().hasClass('mdi-chevron-double-down')){
+      $('#collapse-person-button').children().removeClass('mdi-chevron-double-down').addClass('mdi-chevron-double-up');
+    }
+  });
+
+  // $('#collapse-persons-info').on('shown.bs.collapse', function() {
+  //   console.log('shown.bs.collapse');
+  //   $('#collapse-person-button').children().removeClass('mdi-chevron-double-up').addClass('mdi-chevron-double-down');
+  // });
+
+  // $('#collapse-persons-info').on('hidden.bs.collapse', function()  {
+  //   console.log('hidden.bs.collapse');
+  //   $('#collapse-person-button').children().removeClass('mdi-chevron-double-down').addClass('mdi-chevron-double-up');
+  // });
+});
 
 /////////////////////////////////////////////////
 function addEvent(evnt, elem, func) {

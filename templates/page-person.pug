@@ -1,8 +1,17 @@
 extends layout
 block head
+  link(rel="stylesheet" href="/libs/materialdesignicons.min.css")
+  
+  link(rel="stylesheet" href="/libs/ol.css")
+  script(src="/libs/ol.js")
 
+  link(rel="stylesheet" href="/libs/ol-ext.min.css")
+  script(src="/libs/ol-ext.min.js")
+  
   link(rel='stylesheet' href='/style-person.css')
   
+
+
   script(src='/libs/oboe-browser.min.js')
   script(src='/libs/d3.min.js')
   script(src='/libs/jquery.min.js')
@@ -65,9 +74,14 @@ block content
         //-     .col-md-6.img.image-cont
         //-         img.img-rounded(src='img/person/il.jpg' alt='' height='300' width='400')
         
-        
-        #persons-control
-            #personsInfo.table-responsive
-                table.table.table-sm.table-borderless(id='persons-table')
+    div(id='persons-info-container')
+      button(id="collapse-person-button" class="btn btn-dark btn-small" type="button" data-toggle="collapse" data-target="#collapse-persons-info" aria-expanded="false" aria-controls="collapsePersonInfo")
+        span(class="mdi mdi-chevron-double-down")
+      div(class="collapse show" id="collapse-persons-info")
+        div(id='persons-info-content' class='table-responsive')
+             table.table.table-sm.table-borderless(id='persons-table')
+        //-#persons-control
+        //-    #personsInfo.table-responsive
+               
 
 

@@ -23,8 +23,7 @@ var addPersons = function () {
     }, {
         key: "rowTableClickHandler",
         value: function rowTableClickHandler(thisThis, thisTr) {
-            $(thisTr).addClass("event-active-row");
-            $(thisTr).siblings().removeClass("event-active-row");
+
             //console.log("clicked " + $(thisTr).attr('id'));
             var id = parseInt($(thisTr).attr("id"));
             $('#FIO').html(thisThis.data[id].Surname + " " + thisThis.data[id].Name + " " + thisThis.data[id].MiddleName);
@@ -33,6 +32,8 @@ var addPersons = function () {
             $('#imgPerson').attr('src', thisThis.data[id].PhotoUrl);
             $('#description').html(thisThis.data[id].Description + " <a target='_blank' rel='noopener noreferrer' href='" + thisThis.data[id].Source + "'>" + "Подробнее...</a>");
             $('#fullDescription').html(thisThis.data[id].FullDescription + " <a target='_blank' rel='noopener noreferrer' href='" + thisThis.data[id].Link + "'>" + "Подробнее...</a>");
+            $(thisTr).addClass("event-active-row");
+            $(thisTr).siblings().removeClass("event-active-row");
         }
     }, {
         key: "addDataToTable",
