@@ -1079,7 +1079,7 @@ function (_EventEmitter) {
       });
       if (!featureEvent) return;
       var isExistUrl = imgUrl !== undefined;
-      var content = "<h5>".concat(featureEvent.get('name'), "</h5>");
+      var content = "<h3>".concat(featureEvent.get('name'), "</h3>");
       var startDate = featureEvent.get('startDate');
       var endDate = featureEvent.get('endDate');
 
@@ -1089,53 +1089,42 @@ function (_EventEmitter) {
       }
 
       var getHtmlForFeatureEvent = function getHtmlForFeatureEvent(event) {
-        var f = function f(value) {
-          if (Array.isArray(value)) {
-            return value.length > 0 ? value.join(', ').replace(/, /g, '<br/>') : '-';
-          } else {
-            if (value == undefined) return '-';
-            var tryFloat = parseFloat(value);
+        var getHtmlCell = function getHtmlCell(caption, param1, param2) {
+          var f = function f(value) {
+            if (Array.isArray(value)) {
+              return value.length > 0 ? value.join(', ').replace(/, /g, '<br/>') : '-';
+            } else {
+              if (value == undefined) return '-';
+              var tryFloat = parseFloat(value);
 
-            var _isNaN = typeof Number.isNaN !== 'undefined' ? Number.isNaN(tryFloat) : tryFloat !== tryFloat ? true : false;
+              var _isNaN = typeof Number.isNaN !== 'undefined' ? Number.isNaN(tryFloat) : tryFloat !== tryFloat ? true : false;
 
-            return _isNaN ? value.replace(/, /g, '<br />') : tryFloat.toString();
+              return _isNaN ? value.replace(/, /g, '<br />') : tryFloat.toString();
+            }
+          };
+
+          var one = f(param1);
+          var two = f(param2);
+
+          if ('-' != one || '-' != two) {
+            return "<tr><td>".concat(caption, "</td><td>").concat(one, "</td><td>").concat(two, "</td></tr>");
           }
+
+          return '';
         };
 
         var html = '';
-        html = '<tr><td>Участники</td>';
-        html += '<td>' + f(event.get('allies')) + '</td>';
-        html += '<td>' + f(event.get('enemies')) + '</td></tr>';
-        html += '<tr><td>Силы сторон (чел.)</td>';
-        html += '<td>' + f(event.get('ally_troops')) + '</td>';
-        html += '<td>' + f(event.get('enem_troops')) + '</td></tr>';
-        html += '<tr><td>Потери (чел.)</td>';
-        html += '<td>' + f(event.get('ally_losses')) + '</td>';
-        html += '<td>' + f(event.get('enem_losses')) + '</td></tr>';
-        html += '<tr><td>Убитые (чел.)</td>';
-        html += '<td>' + f(event.get('ally_deads')) + '</td>';
-        html += '<td>' + f(event.get('enem_deads')) + '</td></tr>';
-        html += '<tr><td>Пленные (чел.)</td>';
-        html += '<td>' + f(event.get('ally_prisoners')) + '</td>';
-        html += '<td>' + f(event.get('enem_prisoners')) + '</td></tr>';
-        html += '<tr><td>Раненые (чел.)</td>';
-        html += '<td>' + f(event.get('ally_woundeds')) + '</td>';
-        html += '<td>' + f(event.get('enem_woundeds')) + '</td></tr>';
-        html += '<tr><td>Пропавшие без вести (чел.)</td>';
-        html += '<td>' + f(event.get('ally_missing')) + '</td>';
-        html += '<td>' + f(event.get('enem_missing')) + '</td></tr>';
-        html += '<tr><td>Танков (шт.)</td>';
-        html += '<td>' + f(event.get('ally_tanks_cnt')) + '</td>';
-        html += '<td>' + f(event.get('enem_tanks_cnt')) + '</td></tr>';
-        html += '<tr><td>Самолетов (шт.)</td>';
-        html += '<td>' + f(event.get('ally_airplans_cnt')) + '</td>';
-        html += '<td>' + f(event.get('enem_airplans_cnt')) + '</td></tr>';
-        html += '<tr><td>Кораблей (шт.)</td>';
-        html += '<td>' + f(event.get('ally_ships_cnt')) + '</td>';
-        html += '<td>' + f(event.get('enem_ships_cnt')) + '</td></tr>';
-        html += '<tr><td>Подводных лодок (шт.)</td>';
-        html += '<td>' + f(event.get('ally_submarines_cnt')) + '</td>';
-        html += '<td>' + f(event.get('enem_submarines_cnt')) + '</td></tr>';
+        html += getHtmlCell('Участники', event.get('allies'), event.get('enemies'));
+        html += getHtmlCell('Силы сторон (чел.)', event.get('ally_troops'), event.get('enem_troops'));
+        html += getHtmlCell('Потери (чел.)', event.get('ally_losses'), event.get('enem_losses'));
+        html += getHtmlCell('Убитые (чел.)', event.get('ally_deads'), event.get('enem_deads'));
+        html += getHtmlCell('Пленные (чел.)', event.get('ally_prisoners'), event.get('enem_prisoners'));
+        html += getHtmlCell('Раненые (чел.)', event.get('ally_woundeds'), event.get('enem_woundeds'));
+        html += getHtmlCell('Пропавшие без вести (чел.)', event.get('ally_missing'), event.get('enem_missing'));
+        html += getHtmlCell('Танков (шт.)', event.get('ally_tanks_cnt'), event.get('enem_tanks_cnt'));
+        html += getHtmlCell('Самолетов (шт.)', event.get('ally_airplans_cnt'), event.get('enem_airplans_cnt'));
+        html += getHtmlCell('Кораблей (шт.)', event.get('ally_ships_cnt'), event.get('enem_ships_cnt'));
+        html += getHtmlCell('Подводных лодок (шт.)', event.get('ally_submarines_cnt'), event.get('enem_submarines_cnt'));
         return html;
       };
 
