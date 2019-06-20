@@ -46,7 +46,7 @@
     "koa-favicon": "latest",
     "koa-logger": "latest",
     "koa-passport": "latest",
-    "koa-range": "^0.3.0",
+    "koa-range": "latest",
     "koa-router": "latest",
     "koa-session": "latest",
     "koa-session-mongoose": "latest",

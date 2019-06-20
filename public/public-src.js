@@ -1020,7 +1020,9 @@ function (_EventEmitter) {
       target: 'map',
       view: view
     });
-    var selectedStyle = new ol.style.Style({
+    /*
+    solidarik: Temporarily disabled selectStyle
+      const selectedStyle = new ol.style.Style({
       stroke: new ol.style.Stroke({
         color: 'red',
         width: 2
@@ -1028,13 +1030,20 @@ function (_EventEmitter) {
       fill: new ol.style.Fill({
         color: 'rgba(0, 0, 255, 0.1)'
       })
-    });
-    var select = new ol.interaction.Select({
+    })
+      const select = new ol.interaction.Select({
       condition: ol.events.condition.pointerMove,
       //      style: selectedStyle,
       multi: false
-    });
-    map.addInteraction(select);
+    })
+      map.addInteraction(select)
+      select.on('select', function(evt) {
+      if (evt.selected.length) return
+      const feature = evt.selected[0]
+        //window.map.showEventMap(feature.get('eventMap'))
+    })
+      */
+
     var transparent = [0, 0, 0, 0.01];
     var filltransparent = [0, 0, 0, 0];
     var transparentStyle = [new ol.style.Style({
@@ -1054,10 +1063,6 @@ function (_EventEmitter) {
         color: filltransparent
       })
     })];
-    select.on('select', function (evt) {
-      if (evt.selected.length) return;
-      var feature = evt.selected[0]; //window.map.showEventMap(feature.get('eventMap'))
-    });
     map.on('click', function (evt) {
       window.map.popup.hide();
       var coordinates = evt.coordinate;
@@ -1072,40 +1077,104 @@ function (_EventEmitter) {
         kind = feature.get('kind');
         return ['wmw', 'wow', 'politics'].indexOf(feature.get('kind')) >= 0;
       });
+      if (!featureEvent) return;
       var isExistUrl = imgUrl !== undefined;
+      var content = "<h5>".concat(featureEvent.get('name'), "</h5>");
+      var startDate = featureEvent.get('startDate');
+      var endDate = featureEvent.get('endDate');
+
+      if (startDate) {
+        var dateStr = startDate != endDate ? "".concat(startDate, " - ").concat(endDate) : startDate;
+        content += '<h4>' + dateStr + '</h4>';
+      }
+
+      var getHtmlForFeatureEvent = function getHtmlForFeatureEvent(event) {
+        var f = function f(value) {
+          if (Array.isArray(value)) {
+            return value.length > 0 ? value.join(', ').replace(/, /g, '<br/>') : '-';
+          } else {
+            if (value == undefined) return '-';
+            var tryFloat = parseFloat(value);
+
+            var _isNaN = typeof Number.isNaN !== 'undefined' ? Number.isNaN(tryFloat) : tryFloat !== tryFloat ? true : false;
+
+            return _isNaN ? value.replace(/, /g, '<br />') : tryFloat.toString();
+          }
+        };
+
+        var html = '';
+        html = '<tr><td>Участники</td>';
+        html += '<td>' + f(event.get('allies')) + '</td>';
+        html += '<td>' + f(event.get('enemies')) + '</td></tr>';
+        html += '<tr><td>Силы сторон (чел.)</td>';
+        html += '<td>' + f(event.get('ally_troops')) + '</td>';
+        html += '<td>' + f(event.get('enem_troops')) + '</td></tr>';
+        html += '<tr><td>Потери (чел.)</td>';
+        html += '<td>' + f(event.get('ally_losses')) + '</td>';
+        html += '<td>' + f(event.get('enem_losses')) + '</td></tr>';
+        html += '<tr><td>Убитые (чел.)</td>';
+        html += '<td>' + f(event.get('ally_deads')) + '</td>';
+        html += '<td>' + f(event.get('enem_deads')) + '</td></tr>';
+        html += '<tr><td>Пленные (чел.)</td>';
+        html += '<td>' + f(event.get('ally_prisoners')) + '</td>';
+        html += '<td>' + f(event.get('enem_prisoners')) + '</td></tr>';
+        html += '<tr><td>Раненые (чел.)</td>';
+        html += '<td>' + f(event.get('ally_woundeds')) + '</td>';
+        html += '<td>' + f(event.get('enem_woundeds')) + '</td></tr>';
+        html += '<tr><td>Пропавшие без вести (чел.)</td>';
+        html += '<td>' + f(event.get('ally_missing')) + '</td>';
+        html += '<td>' + f(event.get('enem_missing')) + '</td></tr>';
+        html += '<tr><td>Танков (шт.)</td>';
+        html += '<td>' + f(event.get('ally_tanks_cnt')) + '</td>';
+        html += '<td>' + f(event.get('enem_tanks_cnt')) + '</td></tr>';
+        html += '<tr><td>Самолетов (шт.)</td>';
+        html += '<td>' + f(event.get('ally_airplans_cnt')) + '</td>';
+        html += '<td>' + f(event.get('enem_airplans_cnt')) + '</td></tr>';
+        html += '<tr><td>Кораблей (шт.)</td>';
+        html += '<td>' + f(event.get('ally_ships_cnt')) + '</td>';
+        html += '<td>' + f(event.get('enem_ships_cnt')) + '</td></tr>';
+        html += '<tr><td>Подводных лодок (шт.)</td>';
+        html += '<td>' + f(event.get('ally_submarines_cnt')) + '</td>';
+        html += '<td>' + f(event.get('enem_submarines_cnt')) + '</td></tr>';
+        return html;
+      };
 
       if ('politics' === kind) {
-        var coords = featureEvent.getGeometry().getFirstCoordinate();
-        var content = featureEvent.get('agrKind');
-        var startDate = featureEvent.get('startDate');
-        var endDate = featureEvent.get('endDate');
-
-        if (startDate) {
-          var dateStr = startDate != endDate ? "".concat(startDate, " - ").concat(endDate) : startDate;
-          content += '<br><h4>' + dateStr + '</h4>';
-        }
-
         var results = featureEvent.get('results');
 
         if (results) {
           results = results.replace(/[.,]\s*$/, '');
           content += '<p>' + results + '</p>';
         }
-
-        window.map.popup.show(coords, content);
+      } else {
+        var table = "\n          <table class=\"table table-sm table-borderless\" id=\"table-info\">\n          <thead>\n              <tr>\n                  <th scope=\"col\"></th>\n                  <th scope=\"col\"></th>\n                  <th scope=\"col\"></th>\n              </tr>\n          </thead>\n          <tbody>\n          ".concat(getHtmlForFeatureEvent(featureEvent), "\n          </tbody></table>");
+        content += "<p>".concat(table, "</p>");
       }
 
+      if ('' == content) return;
+      var coords = featureEvent.getGeometry().getFirstCoordinate();
+      window.map.popup.show(coords, content);
+      /* Show Big Image */
+
+      /*
       if (isHit && isExistUrl) {
-        window.map.showEventMap(featureEvent.get('eventMap'));
-        $('#imgModalLabel').html(featureEvent.get('name'));
-        $('.modal-body').html("\n        <div class=\"d-flex justify-content-center\">\n          <div class=\"spinner-border\" role=\"status\">\n            <span class=\"sr-only\">Loading...</span>\n          </div>\n        </div>\n        ");
-        $('#imgModal').modal();
-        setTimeout(function () {
-          resizeImage(imgUrl, $('.modal-body').width(), function (canvas) {
-            $('.modal-body').html(canvas);
-          });
-        }, 1000);
+        window.map.showEventMap(featureEvent.get('eventMap'))
+          $('#imgModalLabel').html(featureEvent.get('name'))
+        $('.modal-body').html(`
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+        `)
+        $('#imgModal').modal()
+          setTimeout(() => {
+          resizeImage(imgUrl, $('.modal-body').width(), canvas => {
+            $('.modal-body').html(canvas)
+          })
+        }, 1000)
       }
+      */
     });
     map.on('moveend', function (evt) {
       var map = evt.map; //   console.log(map.getView().getZoom());
@@ -1558,13 +1627,43 @@ function (_EventEmitter) {
           geometry: new ol.geom.Point(_this6.getCenterOfMap(event.maps[0])),
           size: 20000,
           isWinnerUSSR: _strHelper.default.compareEngLanguage(event.winner, 'CCCР'),
-          ally_troops: event.ally_troops,
-          enem_troops: event.enem_troops,
           kind: event.kind,
           imgUrl: event.imgUrl,
           winner: event.winner,
           eventMap: event.maps[0],
-          filename: event.filename
+          filename: event.filename,
+          startDate: event.startDate,
+          endDate: event.endDate,
+          allies: event.allies,
+          enemies: event.enemies,
+          ally_troops: event.ally_troops,
+          ally_tanks_cnt: event.ally_tanks_cnt,
+          ally_airplans_cnt: event.ally_airplans_cnt,
+          ally_ships_cnt: event.ally_ships_cnt,
+          ally_submarines_cnt: event.ally_submarines_cnt,
+          ally_losses: event.ally_losses,
+          ally_deads: event.ally_deads,
+          ally_prisoners: event.ally_prisoners,
+          ally_woundeds: event.ally_woundeds,
+          ally_missing: event.ally_missing,
+          ally_tanks_lost: event.ally_tanks_lost,
+          ally_airplans_lost: event.ally_airplans_lost,
+          ally_ships_lost: event.ally_ships_lost,
+          ally_submarines_lost: event.ally_submarines_lost,
+          enem_troops: event.enem_troops,
+          enem_tanks_cnt: event.enem_tanks_cnt,
+          enem_airplans_cnt: event.enem_airplans_cnt,
+          enem_ships_cnt: event.enem_ships_cnt,
+          enem_submarines_cnt: event.enem_submarines_cnt,
+          enem_losses: event.enem_losses,
+          enem_deads: event.enem_deads,
+          enem_prisoners: event.enem_prisoners,
+          enem_woundeds: event.enem_woundeds,
+          enem_missing: event.enem_missing,
+          enem_tanks_lost: event.enem_tanks_lost,
+          enem_airplans_lost: event.enem_airplans_lost,
+          enem_ships_lost: event.enem_ships_lost,
+          enem_submarines_lost: event.enem_submarines_lost
         });
 
         _this6.allHistoryEventsSource.addFeature(ft);
@@ -1579,9 +1678,8 @@ function (_EventEmitter) {
       this.agreements.forEach(function (agreement) {
         if (agreement.placeCoords && agreement.placeCoords.length) {
           var ft = new ol.Feature({
-            name: agreement.results,
+            name: agreement.kind,
             kind: 'politics',
-            agrKind: agreement.kind,
             geometry: new ol.geom.Point(ol.proj.fromLonLat(agreement.placeCoords)),
             startDate: agreement.startDate,
             endDate: agreement.endDate,
