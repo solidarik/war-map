@@ -294,6 +294,14 @@ body {
   overflow-y: scroll;
 }
 
+#table-info {
+  color: black;
+}
+
+#table-info thead {
+  font-weight: bolder;
+}
+
 #table-events {
   color: white;
 }

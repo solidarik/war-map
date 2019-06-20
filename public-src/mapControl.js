@@ -151,15 +151,74 @@ export class MapControl extends EventEmitter {
         return ['wmw', 'wow', 'politics'].indexOf(feature.get('kind')) >= 0
       })
 
+      if (!featureEvent) return
+
       const isExistUrl = imgUrl !== undefined
 
-      let content = featureEvent.get('name')
+      let content = `<h5>${featureEvent.get('name')}</h5>`
       const startDate = featureEvent.get('startDate')
       const endDate = featureEvent.get('endDate')
       if (startDate) {
         const dateStr =
           startDate != endDate ? `${startDate} - ${endDate}` : startDate
-        content += '<br><h4>' + dateStr + '</h4>'
+        content += '<h4>' + dateStr + '</h4>'
+      }
+
+      const getHtmlForFeatureEvent = event => {
+        const f = value => {
+          if (Array.isArray(value)) {
+            return value.length > 0
+              ? value.join(', ').replace(/, /g, '<br/>')
+              : '-'
+          } else {
+            if (value == undefined) return '-'
+            const tryFloat = parseFloat(value)
+            const isNaN =
+              typeof Number.isNaN !== 'undefined'
+                ? Number.isNaN(tryFloat)
+                : tryFloat !== tryFloat
+                ? true
+                : false
+            return isNaN ? value.replace(/, /g, '<br />') : tryFloat.toString()
+          }
+        }
+
+        let html = ''
+        html = '<tr><td>Участники</td>'
+        html += '<td>' + f(event.get('allies')) + '</td>'
+        html += '<td>' + f(event.get('enemies')) + '</td></tr>'
+        html += '<tr><td>Силы сторон (чел.)</td>'
+        html += '<td>' + f(event.get('ally_troops')) + '</td>'
+        html += '<td>' + f(event.get('enem_troops')) + '</td></tr>'
+        html += '<tr><td>Потери (чел.)</td>'
+        html += '<td>' + f(event.get('ally_losses')) + '</td>'
+        html += '<td>' + f(event.get('enem_losses')) + '</td></tr>'
+        html += '<tr><td>Убитые (чел.)</td>'
+        html += '<td>' + f(event.get('ally_deads')) + '</td>'
+        html += '<td>' + f(event.get('enem_deads')) + '</td></tr>'
+        html += '<tr><td>Пленные (чел.)</td>'
+        html += '<td>' + f(event.get('ally_prisoners')) + '</td>'
+        html += '<td>' + f(event.get('enem_prisoners')) + '</td></tr>'
+        html += '<tr><td>Раненые (чел.)</td>'
+        html += '<td>' + f(event.get('ally_woundeds')) + '</td>'
+        html += '<td>' + f(event.get('enem_woundeds')) + '</td></tr>'
+        html += '<tr><td>Пропавшие без вести (чел.)</td>'
+        html += '<td>' + f(event.get('ally_missing')) + '</td>'
+        html += '<td>' + f(event.get('enem_missing')) + '</td></tr>'
+        html += '<tr><td>Танков (шт.)</td>'
+        html += '<td>' + f(event.get('ally_tanks_cnt')) + '</td>'
+        html += '<td>' + f(event.get('enem_tanks_cnt')) + '</td></tr>'
+        html += '<tr><td>Самолетов (шт.)</td>'
+        html += '<td>' + f(event.get('ally_airplans_cnt')) + '</td>'
+        html += '<td>' + f(event.get('enem_airplans_cnt')) + '</td></tr>'
+        html += '<tr><td>Кораблей (шт.)</td>'
+        html += '<td>' + f(event.get('ally_ships_cnt')) + '</td>'
+        html += '<td>' + f(event.get('enem_ships_cnt')) + '</td></tr>'
+        html += '<tr><td>Подводных лодок (шт.)</td>'
+        html += '<td>' + f(event.get('ally_submarines_cnt')) + '</td>'
+        html += '<td>' + f(event.get('enem_submarines_cnt')) + '</td></tr>'
+
+        return html
       }
 
       if ('politics' === kind) {
@@ -169,8 +228,22 @@ export class MapControl extends EventEmitter {
           content += '<p>' + results + '</p>'
         }
       } else {
-        content += '<p>А тут будет таблица</p>'
+        let table = `
+          <table class="table table-sm table-borderless" id="table-info">
+          <thead>
+              <tr>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+              </tr>
+          </thead>
+          <tbody>
+          ${getHtmlForFeatureEvent(featureEvent)}
+          </tbody></table>`
+        content += `<p>${table}</p>`
       }
+
+      if ('' == content) return
 
       const coords = featureEvent.getGeometry().getFirstCoordinate()
       window.map.popup.show(coords, content)
@@ -630,15 +703,43 @@ export class MapControl extends EventEmitter {
         geometry: new ol.geom.Point(this.getCenterOfMap(event.maps[0])),
         size: 20000,
         isWinnerUSSR: strHelper.compareEngLanguage(event.winner, 'CCCР'),
-        ally_troops: event.ally_troops,
-        enem_troops: event.enem_troops,
         kind: event.kind,
         imgUrl: event.imgUrl,
         winner: event.winner,
         eventMap: event.maps[0],
         filename: event.filename,
         startDate: event.startDate,
-        endDate: event.endDate
+        endDate: event.endDate,
+        allies: event.allies,
+        enemies: event.enemies,
+        ally_troops: event.ally_troops,
+        ally_tanks_cnt: event.ally_tanks_cnt,
+        ally_airplans_cnt: event.ally_airplans_cnt,
+        ally_ships_cnt: event.ally_ships_cnt,
+        ally_submarines_cnt: event.ally_submarines_cnt,
+        ally_losses: event.ally_losses,
+        ally_deads: event.ally_deads,
+        ally_prisoners: event.ally_prisoners,
+        ally_woundeds: event.ally_woundeds,
+        ally_missing: event.ally_missing,
+        ally_tanks_lost: event.ally_tanks_lost,
+        ally_airplans_lost: event.ally_airplans_lost,
+        ally_ships_lost: event.ally_ships_lost,
+        ally_submarines_lost: event.ally_submarines_lost,
+        enem_troops: event.enem_troops,
+        enem_tanks_cnt: event.enem_tanks_cnt,
+        enem_airplans_cnt: event.enem_airplans_cnt,
+        enem_ships_cnt: event.enem_ships_cnt,
+        enem_submarines_cnt: event.enem_submarines_cnt,
+        enem_losses: event.enem_losses,
+        enem_deads: event.enem_deads,
+        enem_prisoners: event.enem_prisoners,
+        enem_woundeds: event.enem_woundeds,
+        enem_missing: event.enem_missing,
+        enem_tanks_lost: event.enem_tanks_lost,
+        enem_airplans_lost: event.enem_airplans_lost,
+        enem_ships_lost: event.enem_ships_lost,
+        enem_submarines_lost: event.enem_submarines_lost
       })
 
       this.allHistoryEventsSource.addFeature(ft)
