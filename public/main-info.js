@@ -61,6 +61,49 @@ loadedData.push({ "id": "8", "EngName": "Services, value added (current US$)", "
 // 	downloadAnchorNode.remove();
 // }
 
+
+function dowloadImg(aUrl){
+	//Creating new link node.
+	var link = document.createElement('a');
+	link.href = aUrl;
+	link.setAttribute('target','_blank');
+
+	if (link.download !== undefined) {
+		//Set HTML5 download attribute. This will prevent file from opening if supported.
+		var fileName = aUrl.substring(aUrl.lastIndexOf('/') + 1, aUrl.length);
+		link.download = fileName;
+	}
+
+	//Dispatching click event.
+	if (document.createEvent) {
+		var e = document.createEvent('MouseEvents');
+		e.initEvent('click', true, true);
+		link.dispatchEvent(e);
+		return true;
+	}
+
+	if (aUrl.indexOf('?') === -1) {
+        aUrl += '?download';
+    }
+
+    window.open(aUrl, '_blank');
+    return true;
+}
+
+// d3.json("data/persons.json", function (error, dataFromFile) {
+// 	if (error) console.log(error);
+// 	dataFromFile.forEach(element => {
+// 		//dowloadImg(element.PhotoUrl);
+// 		console.log(element.Surname);
+// 		element.PhotoUrl = 'img/person/'+element.PhotoUrl.substring(element.PhotoUrl.lastIndexOf('/') + 1);
+// 	});
+
+// 	download(JSON.stringify(dataFromFile), 'persons.json', 'text/json');
+
+// });
+
+
+
  function download(content, fileName, contentType) {
  	var a = document.createElement("a");
  	var file = new Blob([content], { type: contentType });
