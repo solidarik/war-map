@@ -573,3 +573,8 @@ input.form-control {
 .ol-popup.default.orange .closeBox:hover {
   background-color: rgba(255, 153, 102, 1);
 }
+
+.hover-on-text {
+  cursor: pointer;
+  color: red;
+}

@@ -282,13 +282,15 @@ export class MapControl extends EventEmitter {
         let table2 = `
         <table class="table table-sm table-borderless" id="table-control">
           <tr><td
+            id="showEventContol"
             onclick="window.map.showActiveEventContour()"
-            onmouseenter="window.map.setCursorPointer(this, true)"
-            onmouseleave="window.map.setCursorPointer(this, false)">Показать/скрыть контур</td></tr>
+            onmouseenter="window.map.setCursorPointer(this, true);"
+            onmouseleave="window.map.setCursorPointer(this, false);">Показать/скрыть контур</td></tr>
           <tr><td
+            id="showMapControl"
             onclick="window.map.showActiveEventMap()"
-            onmouseenter="window.map.setCursorPointer(this, true)"
-            onmouseleave="window.map.setCursorPointer(this, false)">Показать карту</td></tr>
+            onmouseenter="window.map.setCursorPointer(this, true);"
+            onmouseleave="window.map.setCursorPointer(this, false);">Показать карту</td></tr>
         </table>`
         content += table2
       }
@@ -388,15 +390,41 @@ export class MapControl extends EventEmitter {
   showActiveEventMap() {
     const ft = this.activeFeatureEvent
     console.log('showActiveEventMap', ft.get('name'))
+
+    $('#imgModalLabel').html(ft.get('name'))
+    $('.modal-body').html(`
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+    `)
+    $('#imgModal').modal()
+
+    setTimeout(() => {
+      resizeImage(ft.get('imgUrl'), $('.modal-body').width(), canvas => {
+        $('.modal-body').html(canvas)
+      })
+    }, 1000)
   }
 
   setCursorPointer(elem, b) {
-    elem.style.cursor = b ? 'pointer' : 'default'
+    const c = 'hover-on-text'
+    if (!elem) return
+    b ? elem.classList.add(c) : elem.classList.remove(c)
   }
 
   showActiveEventContour() {
     const ft = this.activeFeatureEvent
     console.log('showActiveEventContour', ft.get('name'))
+
+    this.isShowContour = !this.isShowContour
+    this.historyEventsSource.clear()
+    this.hullSource.clear()
+
+    if (this.isShowContour) {
+      this.showEventMap(ft.get('eventMap'))
+    }
   }
 
   setCurrentYearFromServer(year) {
@@ -765,7 +793,7 @@ export class MapControl extends EventEmitter {
 
     this.allHistoryEventsSource.clear()
     this.historyEvents.forEach((event, i) => {
-      0 == i && this.showEventMap(event.maps[0])
+      //0 == i && this.showEventMap(event.maps[0])
 
       let ft = new ol.Feature({
         id: event.id,
@@ -839,7 +867,7 @@ export class MapControl extends EventEmitter {
   }
 
   setCurrentEventMap(map) {
-    this.showEventMap(map)
+    //this.showEventMap(map)
     //this.currentEventMap = map
   }
 

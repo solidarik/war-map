@@ -1022,7 +1022,7 @@ function (_EventEmitter) {
     });
     /*
     solidarik: Temporarily disabled selectStyle
-      const selectedStyle = new ol.style.Style({
+     const selectedStyle = new ol.style.Style({
       stroke: new ol.style.Stroke({
         color: 'red',
         width: 2
@@ -1031,18 +1031,18 @@ function (_EventEmitter) {
         color: 'rgba(0, 0, 255, 0.1)'
       })
     })
-      const select = new ol.interaction.Select({
+     const select = new ol.interaction.Select({
       condition: ol.events.condition.pointerMove,
       //      style: selectedStyle,
       multi: false
     })
-      map.addInteraction(select)
-      select.on('select', function(evt) {
+     map.addInteraction(select)
+     select.on('select', function(evt) {
       if (evt.selected.length) return
       const feature = evt.selected[0]
-        //window.map.showEventMap(feature.get('eventMap'))
+       //window.map.showEventMap(feature.get('eventMap'))
     })
-      */
+     */
 
     var transparent = [0, 0, 0, 0.01];
     var filltransparent = [0, 0, 0, 0];
@@ -1140,7 +1140,7 @@ function (_EventEmitter) {
         var table = "\n          <table class=\"table table-sm table-borderless\" id=\"table-info\">\n          <thead>\n              <tr>\n                  <th scope=\"col\"></th>\n                  <th scope=\"col\"></th>\n                  <th scope=\"col\"></th>\n              </tr>\n          </thead>\n          <tbody>\n          ".concat(getHtmlForFeatureEvent(featureEvent), "\n          </tbody></table>");
         content += "<p>".concat(table, "</p>");
         var eventId = featureEvent.get('id');
-        var table2 = "\n        <table class=\"table table-sm table-borderless\" id=\"table-control\">\n          <tr><td\n            onclick=\"window.map.showActiveEventContour()\"\n            onmouseenter=\"window.map.setCursorPointer(this, true)\"\n            onmouseleave=\"window.map.setCursorPointer(this, false)\">\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C/\u0441\u043A\u0440\u044B\u0442\u044C \u043A\u043E\u043D\u0442\u0443\u0440</td></tr>\n          <tr><td\n            onclick=\"window.map.showActiveEventMap()\"\n            onmouseenter=\"window.map.setCursorPointer(this, true)\"\n            onmouseleave=\"window.map.setCursorPointer(this, false)\">\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u043A\u0430\u0440\u0442\u0443</td></tr>\n        </table>";
+        var table2 = "\n        <table class=\"table table-sm table-borderless\" id=\"table-control\">\n          <tr><td\n            id=\"showEventContol\"\n            onclick=\"window.map.showActiveEventContour()\"\n            onmouseenter=\"window.map.setCursorPointer(this, true);\"\n            onmouseleave=\"window.map.setCursorPointer(this, false);\">\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C/\u0441\u043A\u0440\u044B\u0442\u044C \u043A\u043E\u043D\u0442\u0443\u0440</td></tr>\n          <tr><td\n            id=\"showMapControl\"\n            onclick=\"window.map.showActiveEventMap()\"\n            onmouseenter=\"window.map.setCursorPointer(this, true);\"\n            onmouseleave=\"window.map.setCursorPointer(this, false);\">\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u043A\u0430\u0440\u0442\u0443</td></tr>\n        </table>";
         content += table2;
       }
 
@@ -1152,7 +1152,7 @@ function (_EventEmitter) {
       /*
       if (isHit && isExistUrl) {
         window.map.showEventMap(featureEvent.get('eventMap'))
-          $('#imgModalLabel').html(featureEvent.get('name'))
+         $('#imgModalLabel').html(featureEvent.get('name'))
         $('.modal-body').html(`
         <div class="d-flex justify-content-center">
           <div class="spinner-border" role="status">
@@ -1161,7 +1161,7 @@ function (_EventEmitter) {
         </div>
         `)
         $('#imgModal').modal()
-          setTimeout(() => {
+         setTimeout(() => {
           resizeImage(imgUrl, $('.modal-body').width(), canvas => {
             $('.modal-body').html(canvas)
           })
@@ -1228,17 +1228,34 @@ function (_EventEmitter) {
     value: function showActiveEventMap() {
       var ft = this.activeFeatureEvent;
       console.log('showActiveEventMap', ft.get('name'));
+      $('#imgModalLabel').html(ft.get('name'));
+      $('.modal-body').html("\n    <div class=\"d-flex justify-content-center\">\n      <div class=\"spinner-border\" role=\"status\">\n        <span class=\"sr-only\">Loading...</span>\n      </div>\n    </div>\n    ");
+      $('#imgModal').modal();
+      setTimeout(function () {
+        resizeImage(ft.get('imgUrl'), $('.modal-body').width(), function (canvas) {
+          $('.modal-body').html(canvas);
+        });
+      }, 1000);
     }
   }, {
     key: "setCursorPointer",
     value: function setCursorPointer(elem, b) {
-      elem.style.cursor = b ? 'pointer' : 'default';
+      var c = 'hover-on-text';
+      if (!elem) return;
+      b ? elem.classList.add(c) : elem.classList.remove(c);
     }
   }, {
     key: "showActiveEventContour",
     value: function showActiveEventContour() {
       var ft = this.activeFeatureEvent;
       console.log('showActiveEventContour', ft.get('name'));
+      this.isShowContour = !this.isShowContour;
+      this.historyEventsSource.clear();
+      this.hullSource.clear();
+
+      if (this.isShowContour) {
+        this.showEventMap(ft.get('eventMap'));
+      }
     }
   }, {
     key: "setCurrentYearFromServer",
@@ -1637,7 +1654,7 @@ function (_EventEmitter) {
       this.allHistoryEventsSource.clear();
       this.allHistoryEventsSource.clear();
       this.historyEvents.forEach(function (event, i) {
-        0 == i && _this6.showEventMap(event.maps[0]);
+        //0 == i && this.showEventMap(event.maps[0])
         var ft = new ol.Feature({
           id: event.id,
           name: event.name,
@@ -1710,8 +1727,8 @@ function (_EventEmitter) {
     }
   }, {
     key: "setCurrentEventMap",
-    value: function setCurrentEventMap(map) {
-      this.showEventMap(map); //this.currentEventMap = map
+    value: function setCurrentEventMap(map) {//this.showEventMap(map)
+      //this.currentEventMap = map
     }
   }, {
     key: "showEventMap",
@@ -10684,9 +10701,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
