@@ -1040,7 +1040,7 @@ function (_EventEmitter) {
      select.on('select', function(evt) {
       if (evt.selected.length) return
       const feature = evt.selected[0]
-       //window.map.showEventMap(feature.get('eventMap'))
+       //window.map.showEventContour(feature.get('eventMap'))
     })
      */
 
@@ -1151,7 +1151,7 @@ function (_EventEmitter) {
 
       /*
       if (isHit && isExistUrl) {
-        window.map.showEventMap(featureEvent.get('eventMap'))
+        window.map.showEventContour(featureEvent.get('eventMap'))
          $('#imgModalLabel').html(featureEvent.get('name'))
         $('.modal-body').html(`
         <div class="d-flex justify-content-center">
@@ -1254,7 +1254,7 @@ function (_EventEmitter) {
       this.hullSource.clear();
 
       if (this.isShowContour) {
-        this.showEventMap(ft.get('eventMap'));
+        this.showEventContour(ft.get('eventMap'));
       }
     }
   }, {
@@ -1654,7 +1654,7 @@ function (_EventEmitter) {
       this.allHistoryEventsSource.clear();
       this.allHistoryEventsSource.clear();
       this.historyEvents.forEach(function (event, i) {
-        //0 == i && this.showEventMap(event.maps[0])
+        //0 == i && this.showEventContour(event.maps[0])
         var ft = new ol.Feature({
           id: event.id,
           name: event.name,
@@ -1727,12 +1727,12 @@ function (_EventEmitter) {
     }
   }, {
     key: "setCurrentEventMap",
-    value: function setCurrentEventMap(map) {//this.showEventMap(map)
+    value: function setCurrentEventMap(map) {//this.showEventContour(map)
       //this.currentEventMap = map
     }
   }, {
-    key: "showEventMap",
-    value: function showEventMap(map) {
+    key: "showEventContour",
+    value: function showEventContour(map) {
       this.historyEventsSource.clear();
       this.hullSource.clear();
       var features = map.features;
@@ -1809,11 +1809,10 @@ function (_EventEmitter) {
         name: 'test2',
         geometry: polygon
       });
-      this.hullSource.addFeature(ft);
-      this.view.animate({
-        center: this.getCenterOfMap(map),
-        duration: 500
-      });
+      this.hullSource.addFeature(ft); // this.view.animate({
+      //   center: this.getCenterOfMap(map),
+      //   duration: 500
+      // })
     }
   }, {
     key: "_addButtons",
