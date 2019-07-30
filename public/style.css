@@ -578,3 +578,17 @@ input.form-control {
   cursor: pointer;
   color: red;
 }
+
+.left-align {
+  align-content: left;
+  text-align: left;
+}
+
+.right-align {
+  align-content: right;
+  text-align: right;
+}
+
+.bold-text {
+  font-weight: bold;
+}

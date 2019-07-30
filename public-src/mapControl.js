@@ -164,8 +164,12 @@ export class MapControl extends EventEmitter {
         content += '<h4>' + dateStr + '</h4>'
       }
 
+      let isFirstRow = true
+
       const getHtmlForFeatureEvent = event => {
-        const getHtmlCell = (caption, param1, param2) => {
+        const getHtmlCell = (caption, param1, param2, isBold = false) => {
+          console.log('>>>>', isBold)
+
           const f = value => {
             if (Array.isArray(value)) {
               return value.length > 0
@@ -189,9 +193,24 @@ export class MapControl extends EventEmitter {
           const one = f(param1)
           const two = f(param2)
 
-          if ('-' != one || '-' != two) {
-            return `<tr><td>${caption}</td><td>${one}</td><td>${two}</td></tr>`
+          const getTdWithClassName = (defaultClass, value) => {
+            const className = isBold
+              ? defaultClass + ' ' + 'bold-text'
+              : defaultClass
+            return className.trim() != ''
+              ? `<td class="${className}">${value}</td>`
+              : `<td>${value}</td>`
           }
+
+          if ('-' != one || '-' != two) {
+            let tr = `<tr>
+              ${getTdWithClassName('left-align', caption)}
+              ${getTdWithClassName('', one)}
+              ${getTdWithClassName('right-align', two)}
+            </tr>`
+            return tr
+          }
+
           return ''
         }
 
@@ -199,7 +218,8 @@ export class MapControl extends EventEmitter {
         html += getHtmlCell(
           'Участники',
           event.get('allies'),
-          event.get('enemies')
+          event.get('enemies'),
+          true
         )
         html += getHtmlCell(
           'Силы сторон (чел.)',
@@ -266,13 +286,6 @@ export class MapControl extends EventEmitter {
 
         let table = `
           <table class="table table-sm table-borderless" id="table-info">
-          <thead>
-              <tr>
-                  <th scope="col"></th>
-                  <th scope="col"></th>
-                  <th scope="col"></th>
-              </tr>
-          </thead>
           <tbody>
           ${getHtmlForFeatureEvent(featureEvent)}
           </tbody></table>`

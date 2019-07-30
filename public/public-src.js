@@ -1088,8 +1088,13 @@ function (_EventEmitter) {
         content += '<h4>' + dateStr + '</h4>';
       }
 
+      var isFirstRow = true;
+
       var getHtmlForFeatureEvent = function getHtmlForFeatureEvent(event) {
         var getHtmlCell = function getHtmlCell(caption, param1, param2) {
+          var isBold = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+          console.log('>>>>', isBold);
+
           var f = function f(value) {
             if (Array.isArray(value)) {
               return value.length > 0 ? value.join(', ').replace(/, /g, '<br/>') : '-';
@@ -1106,15 +1111,21 @@ function (_EventEmitter) {
           var one = f(param1);
           var two = f(param2);
 
+          var getTdWithClassName = function getTdWithClassName(defaultClass, value) {
+            var className = isBold ? defaultClass + ' ' + 'bold-text' : defaultClass;
+            return className.trim() != '' ? "<td class=\"".concat(className, "\">").concat(value, "</td>") : "<td>".concat(value, "</td>");
+          };
+
           if ('-' != one || '-' != two) {
-            return "<tr><td>".concat(caption, "</td><td>").concat(one, "</td><td>").concat(two, "</td></tr>");
+            var tr = "<tr>\n              ".concat(getTdWithClassName('left-align', caption), "\n              ").concat(getTdWithClassName('', one), "\n              ").concat(getTdWithClassName('right-align', two), "\n            </tr>");
+            return tr;
           }
 
           return '';
         };
 
         var html = '';
-        html += getHtmlCell('Участники', event.get('allies'), event.get('enemies'));
+        html += getHtmlCell('Участники', event.get('allies'), event.get('enemies'), true);
         html += getHtmlCell('Силы сторон (чел.)', event.get('ally_troops'), event.get('enem_troops'));
         html += getHtmlCell('Потери (чел.)', event.get('ally_losses'), event.get('enem_losses'));
         html += getHtmlCell('Убитые (чел.)', event.get('ally_deads'), event.get('enem_deads'));
@@ -1137,7 +1148,7 @@ function (_EventEmitter) {
         }
       } else {
         window.map.setActiveEvent(featureEvent);
-        var table = "\n          <table class=\"table table-sm table-borderless\" id=\"table-info\">\n          <thead>\n              <tr>\n                  <th scope=\"col\"></th>\n                  <th scope=\"col\"></th>\n                  <th scope=\"col\"></th>\n              </tr>\n          </thead>\n          <tbody>\n          ".concat(getHtmlForFeatureEvent(featureEvent), "\n          </tbody></table>");
+        var table = "\n          <table class=\"table table-sm table-borderless\" id=\"table-info\">\n          <tbody>\n          ".concat(getHtmlForFeatureEvent(featureEvent), "\n          </tbody></table>");
         content += "<p>".concat(table, "</p>");
         var eventId = featureEvent.get('id');
         var table2 = "\n        <table class=\"table table-sm table-borderless\" id=\"table-control\">\n          <tr><td\n            id=\"showEventContol\"\n            onclick=\"window.map.showActiveEventContour()\"\n            onmouseenter=\"window.map.setCursorPointer(this, true);\"\n            onmouseleave=\"window.map.setCursorPointer(this, false);\">\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C/\u0441\u043A\u0440\u044B\u0442\u044C \u043A\u043E\u043D\u0442\u0443\u0440</td></tr>\n          <tr><td\n            id=\"showMapControl\"\n            onclick=\"window.map.showActiveEventMap()\"\n            onmouseenter=\"window.map.setCursorPointer(this, true);\"\n            onmouseleave=\"window.map.setCursorPointer(this, false);\">\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u043A\u0430\u0440\u0442\u0443</td></tr>\n        </table>";
