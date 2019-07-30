@@ -666,6 +666,12 @@ function startApp() {
 		d3.json(url2, function (error, places) {
 			console.timeEnd("load places");
 			if (error) console.log(error);
+			
+			CookieHelper.setCookie('idInfoCategory',5);
+
+			const idInfoCategory = CookieHelper.getCookie('idInfoCategory');
+
+			console.log("idInfoCategory="+idInfoCategory);
 
 			var ldata = loadedData[5];
 			console.time("add buuble");
