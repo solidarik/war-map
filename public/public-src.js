@@ -1136,8 +1136,12 @@ function (_EventEmitter) {
           content += '<p>' + results + '</p>';
         }
       } else {
+        window.map.setActiveEvent(featureEvent);
         var table = "\n          <table class=\"table table-sm table-borderless\" id=\"table-info\">\n          <thead>\n              <tr>\n                  <th scope=\"col\"></th>\n                  <th scope=\"col\"></th>\n                  <th scope=\"col\"></th>\n              </tr>\n          </thead>\n          <tbody>\n          ".concat(getHtmlForFeatureEvent(featureEvent), "\n          </tbody></table>");
         content += "<p>".concat(table, "</p>");
+        var eventId = featureEvent.get('id');
+        var table2 = "\n        <table class=\"table table-sm table-borderless\" id=\"table-control\">\n          <tr><td\n            onclick=\"window.map.showActiveEventContour()\"\n            onmouseenter=\"window.map.setCursorPointer(this, true)\"\n            onmouseleave=\"window.map.setCursorPointer(this, false)\">\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C/\u0441\u043A\u0440\u044B\u0442\u044C \u043A\u043E\u043D\u0442\u0443\u0440</td></tr>\n          <tr><td\n            onclick=\"window.map.showActiveEventMap()\"\n            onmouseenter=\"window.map.setCursorPointer(this, true)\"\n            onmouseleave=\"window.map.setCursorPointer(this, false)\">\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u043A\u0430\u0440\u0442\u0443</td></tr>\n        </table>";
+        content += table2;
       }
 
       if ('' == content) return;
@@ -1214,6 +1218,29 @@ function (_EventEmitter) {
   }
 
   _createClass(MapControl, [{
+    key: "setActiveEvent",
+    value: function setActiveEvent(featureEvent) {
+      this.activeFeatureEvent = featureEvent;
+      this.isShowContour = false;
+    }
+  }, {
+    key: "showActiveEventMap",
+    value: function showActiveEventMap() {
+      var ft = this.activeFeatureEvent;
+      console.log('showActiveEventMap', ft.get('name'));
+    }
+  }, {
+    key: "setCursorPointer",
+    value: function setCursorPointer(elem, b) {
+      elem.style.cursor = b ? 'pointer' : 'default';
+    }
+  }, {
+    key: "showActiveEventContour",
+    value: function showActiveEventContour() {
+      var ft = this.activeFeatureEvent;
+      console.log('showActiveEventContour', ft.get('name'));
+    }
+  }, {
     key: "setCurrentYearFromServer",
     value: function setCurrentYearFromServer(year) {
       this.changeYear(year);
@@ -1612,6 +1639,7 @@ function (_EventEmitter) {
       this.historyEvents.forEach(function (event, i) {
         0 == i && _this6.showEventMap(event.maps[0]);
         var ft = new ol.Feature({
+          id: event.id,
           name: event.name,
           geometry: new ol.geom.Point(_this6.getCenterOfMap(event.maps[0])),
           size: 20000,
@@ -10656,7 +10684,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -10763,7 +10793,7 @@ function (_EventEmitter) {
         data.events.sort(function (a, b) {});
         var events = data.events.map(function (event) {
           return _objectSpread({}, event, {
-            id: event._id,
+            id: event._name,
             startDate: _this2._getStrDateFromEvent(event.startDate),
             endDate: _this2._getStrDateFromEvent(event.endDate),
             maps: event.maps,
@@ -11020,7 +11050,7 @@ var global = arguments[3];
 var process = require("process");
 var define;
 /*!
- * jQuery JavaScript Library v3.4.0
+ * jQuery JavaScript Library v3.4.1
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -11030,7 +11060,7 @@ var define;
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2019-04-10T19:48Z
+ * Date: 2019-05-01T21:04Z
  */
 ( function( global, factory ) {
 
@@ -11163,7 +11193,7 @@ function toType( obj ) {
 
 
 var
-	version = "3.4.0",
+	version = "3.4.1",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -15519,8 +15549,12 @@ var documentElement = document.documentElement;
 		},
 		composed = { composed: true };
 
+	// Support: IE 9 - 11+, Edge 12 - 18+, iOS 10.0 - 10.2 only
 	// Check attachment across shadow DOM boundaries when possible (gh-3504)
-	if ( documentElement.attachShadow ) {
+	// Support: iOS 10.0-10.2 only
+	// Early iOS 10 versions support `attachShadow` but not `getRootNode`,
+	// leading to errors. We need to check for `getRootNode`.
+	if ( documentElement.getRootNode ) {
 		isAttached = function( elem ) {
 			return jQuery.contains( elem.ownerDocument, elem ) ||
 				elem.getRootNode( composed ) === elem.ownerDocument;
@@ -16380,8 +16414,7 @@ jQuery.event = {
 
 				// Claim the first handler
 				if ( rcheckableType.test( el.type ) &&
-					el.click && nodeName( el, "input" ) &&
-					dataPriv.get( el, "click" ) === undefined ) {
+					el.click && nodeName( el, "input" ) ) {
 
 					// dataPriv.set( el, "click", ... )
 					leverageNative( el, "click", returnTrue );
@@ -16398,8 +16431,7 @@ jQuery.event = {
 
 				// Force setup before triggering a click
 				if ( rcheckableType.test( el.type ) &&
-					el.click && nodeName( el, "input" ) &&
-					dataPriv.get( el, "click" ) === undefined ) {
+					el.click && nodeName( el, "input" ) ) {
 
 					leverageNative( el, "click" );
 				}
@@ -16440,7 +16472,9 @@ function leverageNative( el, type, expectSync ) {
 
 	// Missing expectSync indicates a trigger call, which must force setup through jQuery.event.add
 	if ( !expectSync ) {
-		jQuery.event.add( el, type, returnTrue );
+		if ( dataPriv.get( el, type ) === undefined ) {
+			jQuery.event.add( el, type, returnTrue );
+		}
 		return;
 	}
 
@@ -16455,9 +16489,13 @@ function leverageNative( el, type, expectSync ) {
 			if ( ( event.isTrigger & 1 ) && this[ type ] ) {
 
 				// Interrupt processing of the outer synthetic .trigger()ed event
-				if ( !saved ) {
+				// Saved data should be false in such cases, but might be a leftover capture object
+				// from an async native handler (gh-4350)
+				if ( !saved.length ) {
 
 					// Store arguments for use when handling the inner native event
+					// There will always be at least one argument (an event object), so this array
+					// will not be confused with a leftover capture object.
 					saved = slice.call( arguments );
 					dataPriv.set( this, type, saved );
 
@@ -16470,14 +16508,14 @@ function leverageNative( el, type, expectSync ) {
 					if ( saved !== result || notAsync ) {
 						dataPriv.set( this, type, false );
 					} else {
-						result = undefined;
+						result = {};
 					}
 					if ( saved !== result ) {
 
 						// Cancel the outer synthetic event
 						event.stopImmediatePropagation();
 						event.preventDefault();
-						return result;
+						return result.value;
 					}
 
 				// If this is an inner synthetic event for an event with a bubbling surrogate
@@ -16492,17 +16530,19 @@ function leverageNative( el, type, expectSync ) {
 
 			// If this is a native event triggered above, everything is now in order
 			// Fire an inner synthetic event with the original arguments
-			} else if ( saved ) {
+			} else if ( saved.length ) {
 
 				// ...and capture the result
-				dataPriv.set( this, type, jQuery.event.trigger(
+				dataPriv.set( this, type, {
+					value: jQuery.event.trigger(
 
-					// Support: IE <=9 - 11+
-					// Extend with the prototype to reset the above stopImmediatePropagation()
-					jQuery.extend( saved.shift(), jQuery.Event.prototype ),
-					saved,
-					this
-				) );
+						// Support: IE <=9 - 11+
+						// Extend with the prototype to reset the above stopImmediatePropagation()
+						jQuery.extend( saved[ 0 ], jQuery.Event.prototype ),
+						saved.slice( 1 ),
+						this
+					)
+				} );
 
 				// Abort handling of the native event
 				event.stopImmediatePropagation();

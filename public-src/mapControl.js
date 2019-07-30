@@ -262,6 +262,8 @@ export class MapControl extends EventEmitter {
           content += '<p>' + results + '</p>'
         }
       } else {
+        window.map.setActiveEvent(featureEvent)
+
         let table = `
           <table class="table table-sm table-borderless" id="table-info">
           <thead>
@@ -275,6 +277,20 @@ export class MapControl extends EventEmitter {
           ${getHtmlForFeatureEvent(featureEvent)}
           </tbody></table>`
         content += `<p>${table}</p>`
+
+        const eventId = featureEvent.get('id')
+        let table2 = `
+        <table class="table table-sm table-borderless" id="table-control">
+          <tr><td
+            onclick="window.map.showActiveEventContour()"
+            onmouseenter="window.map.setCursorPointer(this, true)"
+            onmouseleave="window.map.setCursorPointer(this, false)">Показать/скрыть контур</td></tr>
+          <tr><td
+            onclick="window.map.showActiveEventMap()"
+            onmouseenter="window.map.setCursorPointer(this, true)"
+            onmouseleave="window.map.setCursorPointer(this, false)">Показать карту</td></tr>
+        </table>`
+        content += table2
       }
 
       if ('' == content) return
@@ -362,6 +378,25 @@ export class MapControl extends EventEmitter {
 
   static create() {
     return new MapControl()
+  }
+
+  setActiveEvent(featureEvent) {
+    this.activeFeatureEvent = featureEvent
+    this.isShowContour = false
+  }
+
+  showActiveEventMap() {
+    const ft = this.activeFeatureEvent
+    console.log('showActiveEventMap', ft.get('name'))
+  }
+
+  setCursorPointer(elem, b) {
+    elem.style.cursor = b ? 'pointer' : 'default'
+  }
+
+  showActiveEventContour() {
+    const ft = this.activeFeatureEvent
+    console.log('showActiveEventContour', ft.get('name'))
   }
 
   setCurrentYearFromServer(year) {
@@ -733,6 +768,7 @@ export class MapControl extends EventEmitter {
       0 == i && this.showEventMap(event.maps[0])
 
       let ft = new ol.Feature({
+        id: event.id,
         name: event.name,
         geometry: new ol.geom.Point(this.getCenterOfMap(event.maps[0])),
         size: 20000,

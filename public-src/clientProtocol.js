@@ -80,7 +80,7 @@ export class ClientProtocol extends EventEmitter {
       let events = data.events.map(event => {
         return {
           ...event,
-          id: event._id,
+          id: event._name,
           startDate: this._getStrDateFromEvent(event.startDate),
           endDate: this._getStrDateFromEvent(event.endDate),
           maps: event.maps,
