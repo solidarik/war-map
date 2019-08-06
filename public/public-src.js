@@ -1567,6 +1567,7 @@ function (_EventEmitter) {
   }, {
     key: "changeYear",
     value: function changeYear(year) {
+      window.map.popup.hide();
       this.historyEventsSource.clear();
       this.hullSource.clear();
       this.agreementsSource.clear();
