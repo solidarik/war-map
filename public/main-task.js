@@ -83,7 +83,7 @@ function startApp() {
 
     $("#persons-table tr:eq(0) td:first-child span").click();
 
-
+    $.notify("Это хинт!!!");
 
 }
 
