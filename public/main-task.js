@@ -83,7 +83,16 @@ function startApp() {
 
     $("#persons-table tr:eq(0) td:first-child span").click();
 
-    $.notify("Это хинт!!!");
+    $.notify({
+      // options
+      message: '<a href="http://ya.ru">Это оповещение</>' 
+    },{
+      // settings
+      type: 'info',
+      delay: 0,
+      autoHide: false, 
+      clickToHide: false,
+    });
 
 }
 
