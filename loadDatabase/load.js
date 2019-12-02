@@ -4,6 +4,7 @@ const inetHelper = require('../helper/inetHelper')
 const strHelper = require('../helper/strHelper')
 const historyEventsJsonMediator = require('../loadDatabase/historyEventsJsonMediator')
 const agreementsJsonMediator = require('../loadDatabase/agreementsJsonMediator')
+const chronosJsonMediator = require('../loadDatabase/chronosJsonMediator')
 const usersJsonMediator = require('../loadDatabase/usersJsonMediator')
 const dictEngRusJsonMediator = require('../loadDatabase/dictEngRusJsonMediator')
 const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol')
@@ -49,23 +50,32 @@ Promise.resolve(true)
   //   })
   // })
   .then(() => {
-    return dbHelper.clearDb('agreements')
+    return dbHelper.clearDb('chronos')
   })
   .then(() => {
     return dbHelper.saveFilesFromDir({
-      source: 'python/out_agreements',
-      mediator: agreementsJsonMediator
+      source: 'python/out_chronos',
+      mediator: chronosJsonMediator
     })
   })
-  .then(() => {
-    return dbHelper.clearDb('historyEvents')
-  })
-  .then(() => {
-    return dbHelper.saveFilesFromDir({
-      source: 'python/out_battles',
-      mediator: historyEventsJsonMediator
-    })
-  })
+  // .then(() => {
+  //   return dbHelper.clearDb('agreements')
+  // })
+  // .then(() => {
+  //   return dbHelper.saveFilesFromDir({
+  //     source: 'python/out_agreements',
+  //     mediator: agreementsJsonMediator
+  //   })
+  // })
+  // .then(() => {
+  //   return dbHelper.clearDb('historyEvents')
+  // })
+  // .then(() => {
+  //   return dbHelper.saveFilesFromDir({
+  //     source: 'python/out_battles',
+  //     mediator: historyEventsJsonMediator
+  //   })
+  // })
   .then(() => {
     log.success(`Успешная загрузка`)
     dbHelper.free()

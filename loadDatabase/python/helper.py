@@ -14,8 +14,11 @@ import difflib
 import logging
 # endregion
 
-def create_logging(logfile, is_rewrite = True):
-    logFormatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s',datefmt='%Y-%m-%d %H:%M:%S')
+
+def create_logging(logfile, is_rewrite=True):
+    logFormatter = logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S')
     rootLogger = logging.getLogger()
     rootLogger.setLevel(logging.DEBUG)
 
@@ -28,8 +31,10 @@ def create_logging(logfile, is_rewrite = True):
     rootLogger.addHandler(consoleHandler)
     return rootLogger
 
+
 def get_full_path(file_name):
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), file_name)
+
 
 config_file = get_full_path('defaults.cfg')
 
@@ -38,38 +43,26 @@ if os.path.isfile(config_file):
     config.readfp(codecs.open(config_file, 'r', 'utf8'))
 
 __all__ = [
-    'get_config',
-    'get_full_path',
-    'get_year_month_of_prev_month',
-    'get_month_text_of_date',
-    'get_text_of_month',
-    'tuples_to_str',
-    'utf8_to_cp1251',
-    'path_leaf',
-    'get_date_from_filename',
-    'clear_folder',
-    'create_folder',
-    'get_files_by_folder',
-    'extract_archives',
-    'keep_files_by_template',
-    'sortlist_by_length',
-    'sync_files_by_dest',
-    'leave_fresh_files',
-    'remove_items_from_tuples',
-    'add_prefix_to_array',
-    'merge_tuples',
-    'check_exist_english',
-    'remove_spaces'
+    'get_config', 'get_full_path', 'get_year_month_of_prev_month',
+    'get_month_text_of_date', 'get_text_of_month', 'get_month_num',
+    'tuples_to_str', 'utf8_to_cp1251', 'path_leaf', 'get_date_from_filename',
+    'clear_folder', 'create_folder', 'get_files_by_folder', 'extract_archives',
+    'keep_files_by_template', 'sortlist_by_length', 'sync_files_by_dest',
+    'leave_fresh_files', 'remove_items_from_tuples', 'add_prefix_to_array',
+    'merge_tuples', 'check_exist_english', 'remove_spaces'
 ]
 
 # region CONFIG FUNCTIONS
 
+
 def get_config(root, param):
     return config.get(root, param)
+
 
 # endregion
 
 # region DATETIME FUNCTIONS
+
 
 def get_year_month_of_prev_month():
     today = datetime.date.today()
@@ -77,31 +70,40 @@ def get_year_month_of_prev_month():
     lastMonth = first - datetime.timedelta(days=1)
     return lastMonth.year, lastMonth.month
 
+
 def get_month_text_of_date(dt):
     return get_text_of_month(dt.month)
 
+
+def get_month_num(input):
+    months = [
+        'янв', 'февр', 'март', 'апрел', 'ма', 'июн', 'июл', 'август', 'сентяб',
+        'октяб', 'нояб', 'декаб'
+    ]
+
+    num = 1
+    for month in months:
+        if month in input:
+            return num
+        num = num + 1
+
+    return -1
+
+
 def get_text_of_month(num):
 
-    assert(1 <= num and num <= 12)
+    assert (1 <= num and num <= 12)
     months = [
-        'январь',
-        'февраль',
-        'март',
-        'апрель',
-        'май',
-        'июнь',
-        'июль',
-        'август',
-        'сентябрь',
-        'октябрь',
-        'ноябрь',
-        'декабрь'
+        'январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август',
+        'сентябрь', 'октябрь', 'ноябрь', 'декабрь'
     ]
     return months[num - 1]
+
 
 # endregion
 
 # region CONVERT FUNCTIONS
+
 
 def remove_items_from_tuples(src_tuples, remove_tuples):
     res_tuples = []
@@ -115,6 +117,7 @@ def remove_items_from_tuples(src_tuples, remove_tuples):
             res_tuples.append(t)
     return res_tuples
 
+
 def add_prefix_to_array(prefix, tuples):
     res = []
     for t in tuples:
@@ -122,38 +125,44 @@ def add_prefix_to_array(prefix, tuples):
     return res
     #tuples.map(lambda x: prefix + x, tuples)
 
+
 def merge_tuples(tuples1, tuples2):
     for t in tuples1:
         if t not in tuples2:
             tuples2.append(t)
     return tuples2
 
-def tuples_to_str(a_tuple, a_delim = ''):
 
-  if (0 == len(a_tuple)):
-    return '<пусто>'
+def tuples_to_str(a_tuple, a_delim=''):
 
-  res = []
-  for item in a_tuple:
-    if isinstance(item, tuple):
-        res.append(tuples_to_str(item, ', ') + '\n')
-    else:
-        #res.append(str(item).decode('utf8').encode('cp1251'))
-        res.append(str(item))
+    if (0 == len(a_tuple)):
+        return '<пусто>'
 
-  return(a_delim.join(res))
+    res = []
+    for item in a_tuple:
+        if isinstance(item, tuple):
+            res.append(tuples_to_str(item, ', ') + '\n')
+        else:
+            #res.append(str(item).decode('utf8').encode('cp1251'))
+            res.append(str(item))
+
+    return (a_delim.join(res))
+
 
 def utf8_to_cp1251(input):
     return input
     #return input.encode('cp1251').decode('utf8')
 
+
 # endregion
 
 # region FILE FUNCTIONS
 
+
 def path_leaf(path):
     head, tail = ntpath.split(path)
     return tail or ntpath.basename(head)
+
 
 def get_date_from_filename(filename):
 
@@ -171,18 +180,8 @@ def get_date_from_filename(filename):
         if fln: filename = fln.group(1)
 
     months = [
-        'янв',
-        'февр',
-        'март',
-        'апрель',
-        'май',
-        'июнь',
-        'июль',
-        'август',
-        'сентяб',
-        'октяб',
-        'нояб',
-        'декаб'
+        'янв', 'февр', 'март', 'апрель', 'май', 'июнь', 'июль', 'август',
+        'сентяб', 'октяб', 'нояб', 'декаб'
     ]
     sort_months = sortlist_by_length(months[:])
 
@@ -202,11 +201,13 @@ def get_date_from_filename(filename):
 
     return res, err
 
+
 def delete_file(file_path):
     if os.path.isfile(file_path):
         os.unlink(file_path)
 
-def clear_folder(folder, is_recreate = True, is_verbose = False):
+
+def clear_folder(folder, is_recreate=True, is_verbose=False):
 
     if (is_recreate) and (not os.path.exists(folder)):
         create_folder(folder)
@@ -223,6 +224,7 @@ def clear_folder(folder, is_recreate = True, is_verbose = False):
         except Exception as e:
             print("Error deleting files in folder: {}".format(e))
 
+
 def create_folder(folder):
     try:
         os.makedirs(folder)
@@ -230,7 +232,8 @@ def create_folder(folder):
         if e.errno != errno.EEXIST:
             raise
 
-def walklevel(some_dir, level = 0):
+
+def walklevel(some_dir, level=0):
     some_dir = some_dir.rstrip(os.path.sep)
     assert os.path.isdir(some_dir)
     num_sep = some_dir.count(os.path.sep)
@@ -240,7 +243,8 @@ def walklevel(some_dir, level = 0):
         if num_sep + level <= num_sep_this:
             del dirs[:]
 
-def get_files_by_folder(folder, ext = None, level = 0):
+
+def get_files_by_folder(folder, ext=None, level=0):
 
     if not os.path.isdir(folder):
         print("Нет обнаружены файлы или директории в папке {}".format(folder))
@@ -255,14 +259,18 @@ def get_files_by_folder(folder, ext = None, level = 0):
                 if (ext == file_extension):
                     yield os.path.join(path, name)
 
+
 def extract_archives(folder):
     res = True
-    cmd = '"{}" x "$filename$" -aoa -y -bd -o"{}"'.format(get_config('Environment', '7zip'), folder)
+    cmd = '"{}" x "$filename$" -aoa -y -bd -o"{}"'.format(
+        get_config('Environment', '7zip'), folder)
     FNULL = open(os.devnull, 'w')
     for filename in get_files_by_folder(folder, '.7z'):
         spec_cmd = cmd.replace('$filename$', filename)
-        res = res and 0 == subprocess.call(spec_cmd, stdout=FNULL, stderr=subprocess.STDOUT)
+        res = res and 0 == subprocess.call(
+            spec_cmd, stdout=FNULL, stderr=subprocess.STDOUT)
     return res
+
 
 def get_files_by_template(folder, template):
     files = []
@@ -272,6 +280,7 @@ def get_files_by_template(folder, template):
             files.append(filename)
     return files
 
+
 def keep_files_by_template(folder, template):
     pattern = re.compile(template, re.IGNORECASE)
     for filename in get_files_by_folder(folder, None, 10):
@@ -279,7 +288,8 @@ def keep_files_by_template(folder, template):
             os.unlink(filename)
     return True
 
-def print_first_lines(filepath, max_count = 100):
+
+def print_first_lines(filepath, max_count=100):
     cnt = 0
     with open(filepath) as fr:
         line = fr.readline()
@@ -288,10 +298,12 @@ def print_first_lines(filepath, max_count = 100):
             line = fr.readline()
             cnt += 1
 
+
 def get_line_count(filepath):
     return sum(1 for line in open(filepath))
 
-def sync_files_by_dest(src_folder, dest_folder, copy_folder = None):
+
+def sync_files_by_dest(src_folder, dest_folder, copy_folder=None):
 
     if copy_folder is None:
         copy_folder = dest_folder
@@ -312,27 +324,34 @@ def sync_files_by_dest(src_folder, dest_folder, copy_folder = None):
             except IOError as e:
                 print('Error by copied file %s: %s' % (file_name, e.strerror))
 
-def leave_fresh_files(folder, days = 7):
+
+def leave_fresh_files(folder, days=7):
     for dest_file_path in get_files_by_folder(folder):
         now_time = datetime.datetime.now()
-        mod_time = datetime.datetime.fromtimestamp(os.path.getmtime(dest_file_path))
+        mod_time = datetime.datetime.fromtimestamp(
+            os.path.getmtime(dest_file_path))
         diff_time = now_time - mod_time
         diff_day = diff_time.days
 
         if (days < diff_day) and os.path.isfile(dest_file_path):
             os.unlink(dest_file_path)
-            print('Deleted file: %s, day diff: %d' % (dest_file_path, diff_day))
+            print('Deleted file: %s, day diff: %d' %
+                  (dest_file_path, diff_day))
+
 
 # endregion
 
 # region SORTING FUNCTIONS
 
+
 def sortlist_by_length(a):
     return sorted(a, key=len)
+
 
 # endregion
 
 # region Read SqlDbList
+
 
 def get_connections_by_region():
 
@@ -342,7 +361,10 @@ def get_connections_by_region():
         print("File not found: " + filename)
         return res
 
-    lines = [line.rstrip('\n').strip() for line in open(filename, 'r', encoding='windows-1251')]
+    lines = [
+        line.rstrip('\n').strip()
+        for line in open(filename, 'r', encoding='windows-1251')
+    ]
 
     home_region = get_config('Connections', 'region')
     region_pattern = re.compile(r'^\[(.*)\]$')
@@ -370,12 +392,13 @@ def get_connections_by_region():
     return res
 
 
-def get_filtered_connections(conns, filter_str = ''):
+def get_filtered_connections(conns, filter_str=''):
 
     res = []
 
     filter_str = filter_str.replace(',', ' ').replace(';', '')
-    conn_pattern = re.compile(r'^([^=]*)[=]([^:]*)[:](\d*)[:]sn=([^;]*)[;]?.*?$')
+    conn_pattern = re.compile(
+        r'^([^=]*)[=]([^:]*)[:](\d*)[:]sn=([^;]*)[;]?.*?$')
     filters = filter_str.split(' ')
     for conn in conns:
         conn_search = conn_pattern.search(conn)
@@ -387,11 +410,18 @@ def get_filtered_connections(conns, filter_str = ''):
 
             for filter in filters:
                 if ('' == filter_str) or (name.lower() == filter.lower()):
-                    res.append({'name': name, 'host': host, 'port': port, 'service': service})
+                    res.append({
+                        'name': name,
+                        'host': host,
+                        'port': port,
+                        'service': service
+                    })
 
     return res
 
+
 # endregion
+
 
 # region STRING FUNCTIONS
 def trim_left_spaces(str):
@@ -411,7 +441,7 @@ def trim_left_spaces(str):
         if min_left_space_count > left_space_count:
             min_left_space_count = left_space_count
             if (0 == min_left_space_count):
-                return str # return without changes
+                return str  # return without changes
 
     for line in lines:
         if ('' == line[min_left_space_count:]):
@@ -421,23 +451,28 @@ def trim_left_spaces(str):
 
     return res
 
+
 def get_diff_of_strings(str1, str2):
-     for i,s in enumerate(difflib.ndiff(str1, str2)):
+    for i, s in enumerate(difflib.ndiff(str1, str2)):
         if s[0] == ' ': continue
         elif s[0] == '-':
-            print(u'Delete "{}" from position {}'.format(s[-1],i))
-        elif s[0]=='+':
-            print(u'Add "{}" to position {}'.format(s[-1],i))
+            print(u'Delete "{}" from position {}'.format(s[-1], i))
+        elif s[0] == '+':
+            print(u'Add "{}" to position {}'.format(s[-1], i))
+
 
 def get_perc_string(current, count):
     perc = current / count * 100
     return '{}%, {} из {} '.format(round(perc), current, count)
 
+
 def check_exist_english(string):
     return True if re.search(r"[A-Za-z]+", string) else False
 
+
 def remove_spaces(s):
     return "".join(s.split())
+
 
 def get_search_in_regexp(regexp, search_str):
     m = re.search(regexp, search_str)
@@ -447,6 +482,17 @@ def get_search_in_regexp(regexp, search_str):
     except:
         pass
     return ''
+
+
+def get_search_groups_in_regexp(regexp, search_str):
+    m = re.search(regexp, search_str)
+    try:
+        if m:
+            return m.groups()
+    except:
+        pass
+    return ''
+
 
 def remove_new_lines(s):
     return s.replace("  ", " ").replace("\n", " ").replace("\r", " ")

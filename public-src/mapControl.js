@@ -148,7 +148,10 @@ export class MapControl extends EventEmitter {
         featureEvent = feature
         imgUrl = feature.get('imgUrl')
         kind = feature.get('kind')
-        return ['wmw', 'wow', 'politics'].indexOf(feature.get('kind')) >= 0
+        return (
+          ['wmw', 'wow', 'politics', 'chronos'].indexOf(feature.get('kind')) >=
+          0
+        )
       })
 
       if (!featureEvent) return
@@ -156,11 +159,17 @@ export class MapControl extends EventEmitter {
       const isExistUrl = imgUrl !== undefined
 
       let content = `<h3>${featureEvent.get('name')}</h3>`
+      if (featureEvent.get('kind') == 'chronos') {
+        content = `<h3>${featureEvent.get('place')}</h3>`
+      }
+
       const startDate = featureEvent.get('startDate')
       const endDate = featureEvent.get('endDate')
       if (startDate) {
         const dateStr =
-          startDate != endDate ? `${startDate} - ${endDate}` : startDate
+          endDate != undefined && startDate != endDate
+            ? `${startDate} - ${endDate}`
+            : startDate
         content += '<h4>' + dateStr + '</h4>'
       }
 
@@ -281,6 +290,13 @@ export class MapControl extends EventEmitter {
           results = results.replace(/[.,]\s*$/, '')
           content += '<p>' + results + '</p>'
         }
+      } else if ('chronos' === kind) {
+        console.log(featureEvent)
+        let results = featureEvent.get('brief')
+        if (results) {
+          results = results.replace(/[.,]\s*$/, '')
+          content += '<p>' + results + '</p>'
+        }
       } else {
         window.map.setActiveEvent(featureEvent)
 
@@ -362,6 +378,7 @@ export class MapControl extends EventEmitter {
     this.map = map
     this.historyEvents = []
     this.agreements = []
+    this.chronos = []
 
     this.view = view
     this.draw = undefined
@@ -386,6 +403,7 @@ export class MapControl extends EventEmitter {
       // this.addSelectInteraction()
       this.addYearLayer()
       this.addHistoryEventsLayer()
+      this.addChronosLayer()
       this.addAgreementsLayer()
       // this._addButtons();
     }, 10)
@@ -554,6 +572,49 @@ export class MapControl extends EventEmitter {
     return [style]
   }
 
+  chronosStyleFunc(feature, zoom) {
+    // if (zoom > 4.5) {
+    //   return [new ol.style.Style()]
+    // }
+
+    let style = new ol.style.Style({
+      // fill: new ol.style.Fill({
+      //   color: 'rgba(255,255,255,0.5)'
+      // }),
+      // stroke: new ol.style.Stroke({
+      //   width: 2,
+      //   color: 'rgba(40, 40, 40, 0.50)'
+      // }),
+      // text: new ol.style.Text({
+      //   font: '20px helvetica,sans-serif',
+      //   text: zoom > 3 ? feature.get('name') : '',
+      //   fill: new ol.style.Fill({ color: 'black' }),
+      //   stroke: new ol.style.Stroke({
+      //     color: 'white',
+      //     width: 2
+      //   }),
+      //   baseline: 'middle',
+      //   align: 'right',
+      //   offsetX: 100,
+      //   offsetY: 40,
+      //   overflow: 'true',
+      //   // outline: 'black',
+      //   outlineWidth: 0
+      // }),
+      image: new ol.style.Circle({
+        fill: new ol.style.Fill({ color: 'rgba(0,220,0,0.7)' }),
+        // stroke: new ol.style.Stroke({
+        //   width: 2,
+        //   color: 'yellow'
+        // }),
+        // points: 3,
+        radius: 7
+        // angle: 0
+      })
+    })
+    return [style]
+  }
+
   agreementStyleFunc(feature, zoom) {
     // if (zoom > 4.5) {
     //   return [new ol.style.Style()]
@@ -629,6 +690,20 @@ export class MapControl extends EventEmitter {
     })
     this.allHistoryEventsSource = allHistoryEventsSource
     this.map.addLayer(allHistoryEventsLayer)
+  }
+
+  addChronosLayer() {
+    let chronosSource = new ol.source.Vector()
+    let chronosLayer = new ol.layer.Vector({
+      source: chronosSource,
+      style: (feature, _) =>
+        this.chronosStyleFunc(feature, this.view.getZoom()),
+      zIndex: 7,
+      updateWhileAnimating: true,
+      updateWhileInteracting: true
+    })
+    this.chronosSource = chronosSource
+    this.map.addLayer(chronosLayer)
   }
 
   addAgreementsLayer() {
@@ -730,6 +805,7 @@ export class MapControl extends EventEmitter {
     this.historyEventsSource.clear()
     this.hullSource.clear()
     this.agreementsSource.clear()
+    this.chronosSource.clear()
     this.currentYear = year
     this.currentYearForMap = this.currentYear == 1951 ? 1950 : this.currentYear
     this.yearLayer.getSource().refresh()
@@ -763,6 +839,11 @@ export class MapControl extends EventEmitter {
         break
     }
     return geom
+  }
+
+  setChronos(chronos) {
+    this.chronos = chronos
+    this.repaintChronos()
   }
 
   setAgreements(agreements) {
@@ -855,6 +936,29 @@ export class MapControl extends EventEmitter {
       })
 
       this.allHistoryEventsSource.addFeature(ft)
+    })
+  }
+
+  repaintChronos() {
+    this.chronosSource.clear()
+
+    this.chronos.forEach(chrono => {
+      if (chrono.placeCoords && chrono.placeCoords.length) {
+        console.log(chrono.placeCoords)
+        chrono.placeCoords[1] =
+          chrono.placeCoords[1] + chrono.placeCoords[1] / 200 //поправка для слияния нескольких точек в одну
+        console.log(chrono.placeCoords)
+        let ft = new ol.Feature({
+          kind: 'chronos',
+          geometry: new ol.geom.Point(ol.proj.fromLonLat(chrono.placeCoords)),
+          startDate: chrono.startDate,
+          brief: chrono.brief,
+          place: chrono.place,
+          url: chrono.url
+        })
+
+        this.chronosSource.addFeature(ft)
+      }
     })
   }
 
@@ -1283,8 +1387,8 @@ class YearControl extends SuperCustomControl {
     if (!reg.test(year)) return false
 
     let intYear = parseInt(year) + incr
-    if (intYear < 1933) return false
-    if (intYear > 1955) return false
+    if (intYear < 1920) return false
+    if (intYear > 2020) return false
 
     if (oldValue == intYear) return false
 

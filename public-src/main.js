@@ -60,6 +60,10 @@ function startApp() {
     mapControl.setAgreements(agreements)
   })
 
+  protocol.subscribe('refreshChronos', chronos => {
+    mapControl.setChronos(chronos)
+  })
+
   historyEventsControl.subscribe('refreshedEventList', () => {
     $('table tr').click(function() {
       historyEventsControl.rowEventClick($(this))

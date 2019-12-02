@@ -103,8 +103,22 @@ export class ClientProtocol extends EventEmitter {
         }
       })
 
+      console.log('`````chronos`````````', data)
+
+      let chronos = data.chronos.map(chrono => {
+        return {
+          id: chrono._id,
+          place: chrono.place,
+          placeCoords: chrono.placeCoords,
+          startDate: this._getStrDateFromEvent(chrono.startDate),
+          brief: chrono.brief,
+          url: chrono.url
+        }
+      })
+
       this.emit('refreshHistoryEvents', events)
       this.emit('refreshAgreements', agreements)
+      this.emit('refreshChronos', chronos)
     })
   }
 

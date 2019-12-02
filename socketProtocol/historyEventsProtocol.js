@@ -2,6 +2,7 @@ const log = require('../helper/logHelper')
 const ServerProtocol = require('../libs/serverProtocol')
 const HistoryEventsModel = require('../models/historyEventsModel')
 const AgreementsModel = require('../models/agreementsModel')
+const ChronosModel = require('../models/chronosModel')
 
 class HistoryEventsProtocol extends ServerProtocol {
   init() {
@@ -44,7 +45,21 @@ class HistoryEventsProtocol extends ServerProtocol {
             (err, agreements) => {
               res.err = err
               res.agreements = agreements
-              cb(JSON.stringify(res))
+
+              ChronosModel.find(
+                {
+                  startDate: {
+                    $gte: startDate,
+                    $lt: endDate
+                  }
+                },
+                (err, chronos) => {
+                  res.err = err
+                  res.chronos = chronos
+
+                  cb(JSON.stringify(res))
+                }
+              )
             }
           )
         }
