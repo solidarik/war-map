@@ -83,16 +83,26 @@ function startApp() {
 
     $("#persons-table tr:eq(0) td:first-child span").click();
 
-    $.notify({
-      // options
-      message: '<a href="http://ya.ru">Это оповещение</>' 
-    },{
-      // settings
-      type: 'info',
-      delay: 0,
-      autoHide: false, 
-      clickToHide: false,
+    var url = 'data/hints.json';
+
+    d3.json(url, function (error, hints) {
+
+      hints.sort(function() { return .5 - Math.random();});
+
+      $.notify({
+        // options
+        message: hints[0].rusFact+'<br><a href="'+hints[0].url+'">Подробнее...</>' 
+      },{
+        // settings
+        type: 'info',
+        delay: 0,
+        autoHide: false, 
+        clickToHide: false,
+        globalPosition: 'middle right',
+      });
+    
     });
+    
 
 }
 
