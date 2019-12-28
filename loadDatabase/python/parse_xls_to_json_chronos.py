@@ -114,5 +114,5 @@ while i < len(entities):
     file.write('}]')
     file.close()
 
-print("Completed")
+print("Completed read to json files")
 exit(0)
