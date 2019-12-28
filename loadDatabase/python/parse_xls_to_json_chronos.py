@@ -1,6 +1,7 @@
 import xlrd
 import sys
 import os
+from urllib.request import urlopen
 import helper
 print(sys.stdout.encoding)
 
@@ -16,14 +17,24 @@ def get_sheet_value(row, col):
 
 def get_sheet_value_date(row, col):
     date_excel = scheet.cell(row, col).value
+    if type(date_excel) == float:
+        date_excel = int(date_excel)
+    date_excel = str(date_excel).strip()
+    is_only_year = False
+    d = 1
+    m = 1
 
-    date_groups = helper.get_search_groups_in_regexp(
-        '(\d*)[,]\s*(\d+)\s*(\S+)', date_excel)
-    y = int(date_groups[0])
-    d = int(date_groups[1])
-    m = int(helper.get_month_num(date_groups[2]))
+    if len(date_excel) == 4:
+        y = int(date_excel)
+        is_only_year = True
+    else:
+        date_groups = helper.get_search_groups_in_regexp(
+            '(\d*)[,]\s*(\d+)\s*(\S+)', date_excel)
+        y = int(date_groups[0])
+        d = int(date_groups[1])
+        m = int(helper.get_month_num(date_groups[2]))
 
-    return '{:02d}.{:02d}.{}'.format(d, m, y)
+    return '{:02d}.{:02d}.{}'.format(d, m, y), is_only_year
 
 
 def get_sheet_value_arr(row, col, split_char=';'):
@@ -33,7 +44,14 @@ def get_sheet_value_arr(row, col, split_char=';'):
     return val.split(split_char)
 
 
-filename = os.path.dirname(os.path.abspath(__file__)) + '/Хронология.xlsx'
+filedata = urlopen('http://www.historian.by/ww2/chrono.xlsx')
+datatowrite = filedata.read()
+filename = os.path.dirname(
+    os.path.abspath(__file__)) + os.path.sep + 'Хронология.xlsx'
+
+with open(filename, 'wb') as f:
+    f.write(datatowrite)
+
 book = xlrd.open_workbook(filename, encoding_override="cp1251")
 
 scheet = book.sheet_by_index(0)
@@ -43,7 +61,8 @@ entities = []
 for row in range(START_ROW, END_ROW):
     chrono = {}
     chrono['place'] = get_sheet_value(row, col_place)
-    chrono['startDate'] = get_sheet_value_date(row, col_startDate)
+    chrono['startDate'], chrono['isOnlyYear'] = get_sheet_value_date(
+        row, col_startDate)
     chrono['brief'] = get_sheet_value(row, col_brief)
     chrono['url'] = get_sheet_value(row, col_url)
 

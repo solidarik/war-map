@@ -163,16 +163,6 @@ export class MapControl extends EventEmitter {
         content = `<h3>${featureEvent.get('place')}</h3>`
       }
 
-      const startDate = featureEvent.get('startDate')
-      const endDate = featureEvent.get('endDate')
-      if (startDate) {
-        const dateStr =
-          endDate != undefined && startDate != endDate
-            ? `${startDate} - ${endDate}`
-            : startDate
-        content += '<h4>' + dateStr + '</h4>'
-      }
-
       let isFirstRow = true
 
       const getHtmlForFeatureEvent = event => {
@@ -285,13 +275,35 @@ export class MapControl extends EventEmitter {
       }
 
       if ('politics' === kind) {
+        const startDate = featureEvent.get('startDate')
+        const endDate = featureEvent.get('endDate')
+        if (startDate) {
+          const dateStr =
+            endDate != undefined && startDate != endDate
+              ? `${startDate} - ${endDate}`
+              : startDate
+          content += '<h4>' + dateStr + '</h4>'
+        }
+
         let results = featureEvent.get('results')
         if (results) {
           results = results.replace(/[.,]\s*$/, '')
           content += '<p>' + results + '</p>'
         }
       } else if ('chronos' === kind) {
-        console.log(featureEvent)
+        const startDate = featureEvent.get('startDate')
+        const endDate = featureEvent.get('endDate')
+        if (startDate) {
+          let dateStr =
+            endDate != undefined && startDate != endDate
+              ? `${startDate} - ${endDate}`
+              : startDate
+          if (featureEvent.get('isOnlyYear')) {
+            dateStr = dateStr.slice(-4)
+          }
+          content += '<h4>' + dateStr + '</h4>'
+        }
+
         let results = featureEvent.get('brief')
         if (results) {
           results = results.replace(/[.,]\s*$/, '')
@@ -299,6 +311,16 @@ export class MapControl extends EventEmitter {
         }
       } else {
         window.map.setActiveEvent(featureEvent)
+
+        const startDate = featureEvent.get('startDate')
+        const endDate = featureEvent.get('endDate')
+        if (startDate) {
+          const dateStr =
+            endDate != undefined && startDate != endDate
+              ? `${startDate} - ${endDate}`
+              : startDate
+          content += '<h4>' + dateStr + '</h4>'
+        }
 
         let table = `
           <table class="table table-sm table-borderless" id="table-info">
@@ -943,6 +965,7 @@ export class MapControl extends EventEmitter {
     this.chronosSource.clear()
 
     this.chronos.forEach(chrono => {
+      console.log(chrono)
       if (chrono.placeCoords && chrono.placeCoords.length) {
         console.log(chrono.placeCoords)
         chrono.placeCoords[1] =
@@ -952,6 +975,7 @@ export class MapControl extends EventEmitter {
           kind: 'chronos',
           geometry: new ol.geom.Point(ol.proj.fromLonLat(chrono.placeCoords)),
           startDate: chrono.startDate,
+          isOnlyYear: chrono.isOnlyYear,
           brief: chrono.brief,
           place: chrono.place,
           url: chrono.url

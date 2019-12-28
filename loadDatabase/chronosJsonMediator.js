@@ -27,6 +27,7 @@ class ChronosJsonMediator extends SuperJsonMediator {
           const newJson = {
             // _name: name_id,
             startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
+            isOnlyYear: json.isOnlyYear == 'True' ? true : false,
             place: json.place,
             placeCoords: placeCoords ? [placeCoords.lon, placeCoords.lat] : [],
             brief: json.brief,

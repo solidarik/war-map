@@ -7,6 +7,7 @@ var chronosSchema = new mongoose.Schema(
       type: Date,
       required: 'Не задана начальная дата события'
     },
+    isOnlyYear: Boolean,
     endDate: Date,
     kind: String,
     place: String,
@@ -22,6 +23,6 @@ var chronosSchema = new mongoose.Schema(
   }
 )
 
-chronosSchema.statics.publicFields = ['startDate', 'endDate']
+chronosSchema.statics.publicFields = ['startDate', 'endDate', 'isOnlyYear']
 
 module.exports = mongoose.model('chronos', chronosSchema, 'chronos')
