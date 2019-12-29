@@ -22160,5 +22160,20 @@
     "dataCountries": [
 
     ]
+  },
+  {
+    "id": 249,
+    "name": "All World",
+    "name_ru": "Мир",
+    "fips": "AW",
+    "iso2": "AW",
+    "iso3": "AWD",
+    "centroid": [
+		0,
+		0
+	],
+    "dataCountries": [
+
+    ]
   }
 ]
