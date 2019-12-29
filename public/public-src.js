@@ -1085,14 +1085,6 @@ function (_EventEmitter) {
         content = "<h3>".concat(featureEvent.get('place'), "</h3>");
       }
 
-      var startDate = featureEvent.get('startDate');
-      var endDate = featureEvent.get('endDate');
-
-      if (startDate) {
-        var dateStr = endDate != undefined && startDate != endDate ? "".concat(startDate, " - ").concat(endDate) : startDate;
-        content += '<h4>' + dateStr + '</h4>';
-      }
-
       var isFirstRow = true;
 
       var getHtmlForFeatureEvent = function getHtmlForFeatureEvent(event) {
@@ -1145,6 +1137,14 @@ function (_EventEmitter) {
       };
 
       if ('politics' === kind) {
+        var startDate = featureEvent.get('startDate');
+        var endDate = featureEvent.get('endDate');
+
+        if (startDate) {
+          var dateStr = endDate != undefined && startDate != endDate ? "".concat(startDate, " - ").concat(endDate) : startDate;
+          content += '<h4>' + dateStr + '</h4>';
+        }
+
         var results = featureEvent.get('results');
 
         if (results) {
@@ -1152,7 +1152,19 @@ function (_EventEmitter) {
           content += '<p>' + results + '</p>';
         }
       } else if ('chronos' === kind) {
-        console.log(featureEvent);
+        var _startDate = featureEvent.get('startDate');
+
+        var _endDate = featureEvent.get('endDate');
+
+        if (_startDate) {
+          var _dateStr = _endDate != undefined && _startDate != _endDate ? "".concat(_startDate, " - ").concat(_endDate) : _startDate;
+
+          if (featureEvent.get('isOnlyYear')) {
+            _dateStr = _dateStr.slice(-4);
+          }
+
+          content += '<h4>' + _dateStr + '</h4>';
+        }
 
         var _results = featureEvent.get('brief');
 
@@ -1162,6 +1174,17 @@ function (_EventEmitter) {
         }
       } else {
         window.map.setActiveEvent(featureEvent);
+
+        var _startDate2 = featureEvent.get('startDate');
+
+        var _endDate2 = featureEvent.get('endDate');
+
+        if (_startDate2) {
+          var _dateStr2 = _endDate2 != undefined && _startDate2 != _endDate2 ? "".concat(_startDate2, " - ").concat(_endDate2) : _startDate2;
+
+          content += '<h4>' + _dateStr2 + '</h4>';
+        }
+
         var table = "\n          <table class=\"table table-sm table-borderless\" id=\"table-info\">\n          <tbody>\n          ".concat(getHtmlForFeatureEvent(featureEvent), "\n          </tbody></table>");
         content += "<p>".concat(table, "</p>");
         var eventId = featureEvent.get('id');
@@ -1809,6 +1832,8 @@ function (_EventEmitter) {
 
       this.chronosSource.clear();
       this.chronos.forEach(function (chrono) {
+        console.log(chrono);
+
         if (chrono.placeCoords && chrono.placeCoords.length) {
           console.log(chrono.placeCoords);
           chrono.placeCoords[1] = chrono.placeCoords[1] + chrono.placeCoords[1] / 200; //поправка для слияния нескольких точек в одну
@@ -1818,6 +1843,7 @@ function (_EventEmitter) {
             kind: 'chronos',
             geometry: new ol.geom.Point(ol.proj.fromLonLat(chrono.placeCoords)),
             startDate: chrono.startDate,
+            isOnlyYear: chrono.isOnlyYear,
             brief: chrono.brief,
             place: chrono.place,
             url: chrono.url
@@ -10961,6 +10987,7 @@ function (_EventEmitter) {
             place: chrono.place,
             placeCoords: chrono.placeCoords,
             startDate: _this2._getStrDateFromEvent(chrono.startDate),
+            isOnlyYear: chrono.isOnlyYear,
             brief: chrono.brief,
             url: chrono.url
           };

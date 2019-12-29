@@ -1,5 +1,7 @@
 [{
 	"place": "Минск",
-	"startDate": "30.08.2012",
-	"brief": "в Минске закрылось посольство Швеции"
+	"startDate": "19.03.2006",
+	"isOnlyYear": "False",
+	"brief": "в Беларуси прошли президентские выборы",
+	"url": "http://www.rec.gov.by/ru/kalendar-vyborov-i-referendumov"
 }]

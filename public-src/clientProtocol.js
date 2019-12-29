@@ -111,6 +111,7 @@ export class ClientProtocol extends EventEmitter {
           place: chrono.place,
           placeCoords: chrono.placeCoords,
           startDate: this._getStrDateFromEvent(chrono.startDate),
+          isOnlyYear: chrono.isOnlyYear,
           brief: chrono.brief,
           url: chrono.url
         }

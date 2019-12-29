@@ -1,6 +1,7 @@
 [{
 	"place": "Байконур",
 	"startDate": "22.07.2012",
+	"isOnlyYear": "False",
 	"brief": "выведен на орбиту Белорусский космический аппарат",
 	"url": "https://gis.by/ru/tech/bka"
 }]
