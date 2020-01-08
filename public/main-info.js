@@ -54,10 +54,10 @@ loadedData.push({ "id": "13", "EngName": "Cattle stock", "RusName": "Погол�
 loadedData.push({ "id": "14", "EngName": "Livestock of chickens", "RusName": "Поголовье кур", "url": "data/livestock_of_chickens.json", "jsonType": "UFA" });
 loadedData.push({ "id": "15", "EngName": "Stock of sheep", "RusName": "Поголовье овец", "url": "data/stock_of_sheep.json", "jsonType": "UFA" });
 loadedData.push({ "id": "16", "EngName": "Pig population", "RusName": "Поголовье свиней", "url": "data/pig_population.json", "jsonType": "UFA" });
-loadedData.push({ "id": "17", "EngName": "Horse flock", "RusName": "Погольвье лошадей", "url": "data/horse_flock.json", "jsonType": "UFA" });
+loadedData.push({ "id": "17", "EngName": "Horse flock", "RusName": "Поголовье лошадей", "url": "data/horse_flock.json", "jsonType": "UFA" });
 loadedData.push({ "id": "18", "EngName": "Loss of dead soldiers in 1 world", "RusName": "Потери погибшими солдатами в 1 мировой", "url": "data/loss_of_dead_soldiers_in_1_world.json", "jsonType": "UFA" });
 loadedData.push({ "id": "19", "EngName": "The loss of dead soldiers in World 2", "RusName": "Потери погибшими солдатами во 2 мировой", "url": "data/the_loss_of_dead_soldiers_in_world_2.json", "jsonType": "UFA" });
-loadedData.push({ "id": "20", "EngName": "Wheat production", "RusName": "Производсво пшеницы", "url": "data/wheat_production.json", "jsonType": "UFA" });
+loadedData.push({ "id": "20", "EngName": "Wheat production", "RusName": "Производство пшеницы", "url": "data/wheat_production.json", "jsonType": "UFA" });
 loadedData.push({ "id": "21", "EngName": "Buckwheat production", "RusName": "Производство гречихи", "url": "data/buckwheat_production.json", "jsonType": "UFA" });
 loadedData.push({ "id": "22", "EngName": "Grain production", "RusName": "Производство зерна", "url": "data/grain_production.json", "jsonType": "UFA" });
 loadedData.push({ "id": "23", "EngName": "Pulses", "RusName": "Производство зернобобовые", "url": "data/pulses.json", "jsonType": "UFA" });
