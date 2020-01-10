@@ -83,26 +83,83 @@ function startApp() {
 
     $("#persons-table tr:eq(0) td:first-child span").click();
 
-    var url = 'data/hints.json';
+    var urlHints = 'data/hints.json';
 
-    d3.json(url, function (error, hints) {
+    d3.json(urlHints, function (error, hints) {
 
       hints.sort(function() { return .5 - Math.random();});
 
-      $.notify({
-        // options
-        message: hints[0].rusFact+'<br><a href="'+hints[0].url+'">Подробнее...</>' 
-      },{
-        // settings
-        type: 'info',
-        delay: 0,
-        autoHide: false, 
-        clickToHide: false,
-        globalPosition: 'middle right',
-      });
+      // $.notify({
+      //   // options
+      //   message: hints[0].rusFact+'<br><a href="'+hints[0].url+'">Подробнее...</>' 
+      // },{
+      //   // settings
+      //   type: 'info',
+      //   delay: 0,
+      //   autoHide: false, 
+      //   clickToHide: false,
+      //   globalPosition: 'middle right',
+      // });
     
+      $('#Hint').html(hints[0].rusFact+'<br><a href="'+hints[0].url+'">Подробнее...</>');
+
     });
     
+    var urlPersons = 'data/persons.json';
+
+    d3.json(urlPersons, function (error, persons) {
+
+      var dtTemp = new Date();
+      var dt = new Date(dtTemp.getFullYear(),dtTemp.getMonth(),dtTemp.getDate());
+
+      var birthPersons=persons.filter(function(d) { 
+        var dtDateBirth = d.DateBirth; 
+        var datePartsBirth = dtDateBirth.split(".");
+
+        var dtObjectDateBirth = new Date(+datePartsBirth[2], datePartsBirth[1] - 1, +datePartsBirth[0]);
+        
+        //  console.log('dt.toString='+dt.toString());
+        //  console.log('dtObjectDateBirth.toString='+dtObjectDateBirth.toString());
+        //  console.log('dt.getDate()='+dt.getDate());
+        //  console.log('dtObjectDateBirh.getDate()='+dtObjectDateBirth.getDate());
+        //  console.log('dt.getMonth='+dt.getMonth());
+        //  console.log('dtObjectDateBirth.getMonth='+dtObjectDateBirth.getMonth());        
+        return dt.getDate()==dtObjectDateBirth.getDate()&&dt.getMonth()==dtObjectDateBirth.getMonth();
+      });
+    
+      //console.log(birthPersons);
+      $('#100YearsAgo').html('');
+      for(var i =0;i<birthPersons.length;i++) {
+          var k=birthPersons[i];
+          $('#100YearsAgo').html($('#100YearsAgo').html()+'В этот день '+k.DateBirth+' родился '+k.Surname+' '+k.Name+' '+k.MiddleName+'<br><a href="'+k.Source+'">Подробнее...</><br>');
+      }
+      
+      var deathPersons=persons.filter(function(d) { 
+        var dtDateDeath = d.DateDeath; 
+        var datePartsDeath = dtDateDeath.split(".");
+
+        var dtObjectDateDeath = new Date(+datePartsDeath[2], datePartsDeath[1] - 1, +datePartsDeath[0]);
+        
+        // console.log('dt.toString='+dt.toString());
+        // console.log('dtObjectDateBirth.toString='+dtObjectDateBirth.toString());
+        // console.log('dt.getDate()='+dt.getDate());
+        // console.log('dtObjectDateBirth.getDate()='+dtObjectDateBirth.getDate());
+        // console.log('dt.getMonth='+dt.getMonth());
+        // console.log('dtObjectDateBirth.getMonth='+dtObjectDateBirth.getMonth());        
+        return dt.getDate()==dtObjectDateDeath.getDate()&&dt.getMonth()==dtObjectDateDeath.getMonth();
+      });
+     // console.log(eathPersons);
+      
+      for(var i =0;i<deathPersons.length;i++) {
+          var k=deathPersons[i];
+          $('#100YearsAgo').html($('#100YearsAgo').html()+'В этот день '+k.DateBirth+' умер '+k.Surname+' '+k.Name+' '+k.MiddleNmae+'<br><a href="'+k.Source+'">Подробнее...</><br>');
+      }      
+
+      if(deathPersons.length==0&&birthPersons.length==0){
+        $('#100YearsAgo').html('В этот день не было событий');
+      }
+
+    });
 
 }
 
