@@ -10,7 +10,7 @@ const log = require('../helper/logHelper')
 class ChronosJsonMediator extends SuperJsonMediator {
   constructor() {
     super()
-    this.equilFields = ['startDate', 'place']
+    this.equilFields = ['startDate', 'place', 'brief']
     this.model = ChronosModel
   }
 
@@ -34,7 +34,13 @@ class ChronosJsonMediator extends SuperJsonMediator {
             url: json.url
           }
 
-          !placeCoords && console.log('json', newJson)
+          if (placeCoords.length == 0) {
+            reject(
+              `Не удается определить координаты: ${fileHelper.textJson(
+                newJson
+              )}`
+            )
+          }
 
           resolve(newJson)
         })

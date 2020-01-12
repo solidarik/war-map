@@ -55,6 +55,7 @@ Promise.resolve(true)
   .then(() => {
     return dbHelper.saveFilesFromDir({
       source: 'python/out_chronos',
+      procdir: 'python/out_chronos_process',
       mediator: chronosJsonMediator
     })
   })

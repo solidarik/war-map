@@ -1022,7 +1022,7 @@ function (_EventEmitter) {
     });
     /*
     solidarik: Temporarily disabled selectStyle
-      const selectedStyle = new ol.style.Style({
+     const selectedStyle = new ol.style.Style({
       stroke: new ol.style.Stroke({
         color: 'red',
         width: 2
@@ -1031,18 +1031,18 @@ function (_EventEmitter) {
         color: 'rgba(0, 0, 255, 0.1)'
       })
     })
-      const select = new ol.interaction.Select({
+     const select = new ol.interaction.Select({
       condition: ol.events.condition.pointerMove,
       //      style: selectedStyle,
       multi: false
     })
-      map.addInteraction(select)
-      select.on('select', function(evt) {
+     map.addInteraction(select)
+     select.on('select', function(evt) {
       if (evt.selected.length) return
       const feature = evt.selected[0]
-        //window.map.showEventContour(feature.get('eventMap'))
+       //window.map.showEventContour(feature.get('eventMap'))
     })
-      */
+     */
 
     var transparent = [0, 0, 0, 0.01];
     var filltransparent = [0, 0, 0, 0];
@@ -1200,7 +1200,7 @@ function (_EventEmitter) {
       /*
       if (isHit && isExistUrl) {
         window.map.showEventContour(featureEvent.get('eventMap'))
-          $('#imgModalLabel').html(featureEvent.get('name'))
+         $('#imgModalLabel').html(featureEvent.get('name'))
         $('.modal-body').html(`
         <div class="d-flex justify-content-center">
           <div class="spinner-border" role="status">
@@ -1209,7 +1209,7 @@ function (_EventEmitter) {
         </div>
         `)
         $('#imgModal').modal()
-          setTimeout(() => {
+         setTimeout(() => {
           resizeImage(imgUrl, $('.modal-body').width(), canvas => {
             $('.modal-body').html(canvas)
           })
@@ -10850,9 +10850,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 

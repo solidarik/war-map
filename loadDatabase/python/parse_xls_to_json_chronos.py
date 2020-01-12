@@ -29,7 +29,7 @@ def get_sheet_value_date(row, col):
         is_only_year = True
     else:
         date_groups = helper.get_search_groups_in_regexp(
-            '(\d*)[,]\s*(\d+)\s*(\S+)', date_excel)
+            '(\d*)\s*[,]\s*(\d+)\s*(\S+)', date_excel)
         y = int(date_groups[0])
         d = int(date_groups[1])
         m = int(helper.get_month_num(date_groups[2]))
@@ -57,6 +57,7 @@ book = xlrd.open_workbook(filename, encoding_override="cp1251")
 scheet = book.sheet_by_index(0)
 START_ROW = 1
 END_ROW = scheet.nrows
+print(f"Количество строк из Excel: {END_ROW}")
 entities = []
 for row in range(START_ROW, END_ROW):
     chrono = {}
