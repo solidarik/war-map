@@ -62,6 +62,7 @@ class DbHelper {
       let files = []
 
       let source = fileHelper.composePath(input.source)
+      let procdir = fileHelper.composePath(input.procdir)
 
       let dataTypeStr = 'файл'
       if (fileHelper.isDirectory(source)) {
@@ -113,9 +114,7 @@ class DbHelper {
       Promise.all(promises)
         .then(res => {
           log.info(
-            `Количество успешно обработанных элементов: ${countObjects} из ${
-              res.length
-            }`
+            `Количество успешно обработанных элементов: ${countObjects} из ${res.length}`
           )
           resolve(res)
         })
