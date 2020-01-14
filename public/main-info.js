@@ -730,7 +730,7 @@ function startApp() {
 			console.log("idInfoCategory="+idInfoCategory);
 
 			if(typeof idInfoCategory == "undefined"){
-				idInfoCategory = 21;
+				idInfoCategory = 41;
 				console.log("IsUndefined");
 			}
 			console.log("idInfoCategory="+idInfoCategory);
