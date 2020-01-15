@@ -10,19 +10,31 @@ const log = require('../helper/logHelper')
 class ChronosJsonMediator extends SuperJsonMediator {
   constructor() {
     super()
-    this.equilFields = ['startDate', 'place']
+    this.equilFields = ['startDate', 'place', 'brief']
     this.model = ChronosModel
   }
 
-  processJson(json) {
-    return new Promise((resolve, reject) => {
+  checkJsonSync(json) {
+    return (
+      json && json.hasOwnProperty('placeCoords') && json.placeCoords.length > 0
+    )
+  }
+
+  processJsonSync(json) {
+    const p = new Promise(resolve => {
+      if (json.hasOwnProperty('placeCoords')) {
+        return json
+      }
+
       let promises = [
         //dictEngRusProtocol.getEngRusObjectId(json.name),
         inetHelper.getCoordsForCityOrCountry(json.place)
       ]
 
-      Promise.all(promises)
-        .then(placeCoords => {
+      console.log(json.place)
+
+      Promise.all(promises).then(
+        placeCoords => {
           placeCoords = placeCoords[0]
           const newJson = {
             // _name: name_id,
@@ -33,13 +45,13 @@ class ChronosJsonMediator extends SuperJsonMediator {
             brief: json.brief,
             url: json.url
           }
-
-          !placeCoords && console.log('json', newJson)
-
-          resolve(newJson)
-        })
-        .catch(err => reject(`Ошибка в processJson: ${err}`))
-    })
+          return newJson
+        },
+        err => {
+          return { error: `Ошибка в processJson: ${err}` }
+        }
+      )
+    }).then(res => resolve(res))
   }
 }
 

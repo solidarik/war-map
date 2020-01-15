@@ -3,6 +3,7 @@ const fileHelper = require('../helper/fileHelper')
 const mongoose = require('mongoose')
 const config = require('config')
 const chalk = require('chalk')
+const path = require('path')
 
 class DbHelper {
   getLocalDb() {
@@ -62,6 +63,11 @@ class DbHelper {
       let files = []
 
       let source = fileHelper.composePath(input.source)
+      let procdir = fileHelper.composePath(input.procdir)
+      let errdir = fileHelper.composePath(input.errdir)
+
+      fileHelper.clearDirectory(procdir)
+      fileHelper.clearDirectory(errdir)
 
       let dataTypeStr = 'файл'
       if (fileHelper.isDirectory(source)) {
@@ -78,52 +84,59 @@ class DbHelper {
       files.forEach(filePath => {
         console.log(filePath)
         let json = fileHelper.getJsonFromFile(filePath)
+        let filename = fileHelper.getFileNameFromPath(filePath)
+        let procpath = path.join(procdir, filename)
+        let errpath = path.join(errdir, filename)
+
         json.forEach(jsonItem => {
           promises.push(
-            new Promise((resolve, reject) => {
-              let newJsonItem = undefined
+            new Promise(resolve => {
+              let newJsonItem = mediator.processJsonSync(jsonItem)
+              if (!mediator.checkJsonSync(newJsonItem)) {
+                fileHelper.saveJsonToFileSync(newJsonItem, errpath)
+                resolve(new Error('Не прошли проверку json'))
+              }
 
               mediator
-                .processJson(jsonItem, filePath)
-                .then(procJsonItem => {
-                  newJsonItem = procJsonItem
-                  return mediator.isExistObject(procJsonItem)
-                })
+                .isExistObject(procJsonItem)
                 .then(isExistObject => {
-                  if (isExistObject) return true
-
+                  if (isExistObject) resolve(true)
                   return mediator.addObjectToBase(newJsonItem)
                 })
                 .then(res => {
                   countObjects += 1
+                  fileHelper.saveJsonToFileSync(newJsonItem, procpath)
                   resolve(true)
                 })
                 .catch(err => {
-                  let msg = `Ошибка при обработке файла ${fileHelper.getFileNameFromPath(
-                    filePath
-                  )} элемент ${JSON.stringify(jsonItem)}: ${err}`
+                  let msg = `Ошибка при обработке файла ${filename} элемент ${JSON.stringify(
+                    jsonItem
+                  )}: ${err}`
+                  fileHelper.saveJsonToFileSync(newJsonItem, errpath)
                   log.error(msg)
-                  reject(msg)
+                  resolve(new Error(msg))
                 })
             })
           )
         })
       })
       log.info(`Количество входящих элементов, промисов: ${promises.length}`)
-      Promise.all(promises)
-        .then(res => {
+
+      Promise.all(promises).then(
+        res => {
+          res.forEach(r => {
+            countObjects += r instanceof Error ? 0 : 1
+          })
           log.info(
-            `Количество успешно обработанных элементов: ${countObjects} из ${
-              res.length
-            }`
+            `Количество успешно обработанных элементов: ${countObjects} из ${res.length}`
           )
-          resolve(res)
-        })
-        .catch(err => {
-          let msg = `Ошибка в процессе обработки ${err}`
+        },
+        err => {
+          let msg = `Непредвиденная ошибка в процессе обработки ${err}`
           log.error(msg)
           reject(msg)
-        })
+        }
+      )
     })
   }
 
