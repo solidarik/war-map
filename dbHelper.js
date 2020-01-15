@@ -90,53 +90,54 @@ class DbHelper {
 
         json.forEach(jsonItem => {
           promises.push(
-            new Promise(resolve => {
-              let newJsonItem = mediator.processJsonSync(jsonItem)
-              if (!mediator.checkJsonSync(newJsonItem)) {
-                fileHelper.saveJsonToFileSync(newJsonItem, errpath)
-                resolve(new Error('Не прошли проверку json'))
-              }
+            new Promise((resolve, reject) => {
+              let newJsonItem = undefined
 
               mediator
-                .isExistObject(procJsonItem)
+                .processJson(jsonItem, filePath)
+                .then(procJsonItem => {
+                  newJsonItem = procJsonItem
+                  if (!mediator.checkJsonSync(newJsonItem)) {
+                    fileHelper.saveJsonToFile(newJsonItem, errpath)
+                    throw 'Не прошли проверку json'
+                  }
+                  return mediator.isExistObject(procJsonItem)
+                })
                 .then(isExistObject => {
-                  if (isExistObject) resolve(true)
+                  mediator.afterProcessJson(procJsonItem)
+                  if (isExistObject) return true
                   return mediator.addObjectToBase(newJsonItem)
                 })
                 .then(res => {
                   countObjects += 1
-                  fileHelper.saveJsonToFileSync(newJsonItem, procpath)
+                  fileHelper.saveJsonToFile(newJsonItem, procpath)
                   resolve(true)
                 })
                 .catch(err => {
                   let msg = `Ошибка при обработке файла ${filename} элемент ${JSON.stringify(
                     jsonItem
                   )}: ${err}`
-                  fileHelper.saveJsonToFileSync(newJsonItem, errpath)
+                  fileHelper.saveJsonToFile(newJsonItem, errpath)
                   log.error(msg)
-                  resolve(new Error(msg))
+                  reject(msg)
                 })
             })
           )
         })
       })
       log.info(`Количество входящих элементов, промисов: ${promises.length}`)
-
-      Promise.all(promises).then(
-        res => {
-          res.forEach(r => {
-            countObjects += r instanceof Error ? 0 : 1
-          })
+      Promise.all(promises)
+        .then(res => {
           log.info(
             `Количество успешно обработанных элементов: ${countObjects} из ${res.length}`
           )
-        },
-        err => {
-          let msg = `Непредвиденная ошибка в процессе обработки ${err}`
+          resolve(res)
+        })
+        .catch(err => {
+          let msg = `Ошибка в процессе обработки ${err}`
           log.error(msg)
           reject(msg)
-        }
-      )
+        })
     })
   }
 

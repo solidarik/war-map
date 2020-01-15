@@ -15,15 +15,14 @@ class ChronosJsonMediator extends SuperJsonMediator {
   }
 
   checkJsonSync(json) {
-    return (
-      json && json.hasOwnProperty('placeCoords') && json.placeCoords.length > 0
-    )
+    return json.placeCoords.length > 0
   }
 
-  processJsonSync(json) {
-    const p = new Promise(resolve => {
-      if (json.hasOwnProperty('placeCoords')) {
-        return json
+  processJson(json) {
+    return new Promise((resolve, reject) => {
+      if (json.placeCoords) {
+        resolve(json)
+        return
       }
 
       let promises = [
@@ -31,10 +30,8 @@ class ChronosJsonMediator extends SuperJsonMediator {
         inetHelper.getCoordsForCityOrCountry(json.place)
       ]
 
-      console.log(json.place)
-
-      Promise.all(promises).then(
-        placeCoords => {
+      Promise.all(promises)
+        .then(placeCoords => {
           placeCoords = placeCoords[0]
           const newJson = {
             // _name: name_id,
@@ -45,13 +42,15 @@ class ChronosJsonMediator extends SuperJsonMediator {
             brief: json.brief,
             url: json.url
           }
-          return newJson
-        },
-        err => {
-          return { error: `Ошибка в processJson: ${err}` }
-        }
-      )
-    }).then(res => resolve(res))
+
+          resolve(newJson)
+        })
+        .catch(err => reject(`Ошибка в processJson: ${err}`))
+    })
+  }
+
+  afterProcessJson(json) {
+    console.log(json.place, json.placeCoords)
   }
 }
 

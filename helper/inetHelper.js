@@ -90,7 +90,7 @@ class InetHelper {
       }
       return coords ? coords : null
     } catch (error) {
-      console.log('error', error)
+      console.log('error from getCoordsFromWiki', error)
       return null
     }
   }
@@ -277,8 +277,8 @@ class InetHelper {
         })
       ]
 
-      Promise.all(promises)
-        .then(([firstPageId, secondPageId]) => {
+      Promise.all(promises).then(
+        ([firstPageId, secondPageId]) => {
           const pageId = secondPageId ? secondPageId : firstPageId
           resolve(pageId)
 
@@ -297,11 +297,12 @@ class InetHelper {
           //   .catch(err =>
           //     reject(`Не смогли найти глобальный pageId по рус. наводке ${err}`)
           //   )
-        })
-        .catch(err => {
+        },
+        err => {
           console.log('err', err)
           reject(`Не удалось найти wiki-страницу: ${err}`)
-        })
+        }
+      )
     })
   }
 }

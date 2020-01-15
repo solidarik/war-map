@@ -10,6 +10,18 @@ class FileHelper {
     return path.join(this.getRoot(), ...paths)
   }
 
+  clearDirectory(dirPath) {
+    fs.readdir(dirPath, (err, files) => {
+      if (err) throw err
+
+      for (const file of files) {
+        fs.unlink(path.join(dirPath, file), err => {
+          if (err) throw err
+        })
+      }
+    })
+  }
+
   isDirectory(path) {
     var stat = fs.lstatSync(path)
     return stat.isDirectory()
@@ -28,7 +40,7 @@ class FileHelper {
     return JSON.stringify(json, null, 4)
   }
 
-  saveJsonToFile(json, filePath) {
+  saveJsonToFileSync(json, filePath) {
     fs.writeFileSync(filePath, this.textJson(json), {
       encoding: 'UTF8'
     })
