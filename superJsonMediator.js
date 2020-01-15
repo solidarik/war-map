@@ -1,32 +1,26 @@
 class SuperJsonMediator {
   addObjectToBase(json) {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       const obj = new this.model(json)
       obj
         .save()
-        .then(
-          res => resolve(obj['_id'.toString()]),
-          err => reject(err)
-        )
+        .then(res => resolve(obj['_id'.toString()]))
         .catch(err => {
-          reject(err)
+          resolve({ error: `Не удалось добавить объект в БД: ${err}` })
         })
     })
   }
 
-  processJson(json, filePath = '') {
-    return new Promise((resolve, reject) => {
-      let newJson = json
-      try {
-        resolve(newJson)
-      } catch (err) {
-        reject(err)
-      }
+  processJson(json) {
+    return new Promise(resolve => {
+      resolve(json)
     })
   }
 
-  checkJsonSync(json) {
-    return true
+  checkJson(json) {
+    return new Promise(resolve => {
+      resolve(true)
+    })
   }
 
   isExistObject(json) {

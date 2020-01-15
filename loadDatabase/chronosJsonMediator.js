@@ -14,28 +14,17 @@ class ChronosJsonMediator extends SuperJsonMediator {
     this.model = ChronosModel
   }
 
-  checkJsonSync(json) {
-    return (
-      json && json.hasOwnProperty('placeCoords') && json.placeCoords.length > 0
-    )
-  }
-
-  processJsonSync(json) {
-    const p = new Promise(resolve => {
+  processJson(json) {
+    return new Promise(resolve => {
       if (json.hasOwnProperty('placeCoords')) {
-        return json
+        resolve(json)
       }
 
-      let promises = [
-        //dictEngRusProtocol.getEngRusObjectId(json.name),
-        inetHelper.getCoordsForCityOrCountry(json.place)
-      ]
-
-      console.log(json.place)
-
-      Promise.all(promises).then(
-        placeCoords => {
-          placeCoords = placeCoords[0]
+      inetHelper
+        .getCoordsForCityOrCountry(json.place)
+        .then(placeCoords => {
+          if (placeCoords.length == 0)
+            resolve({ error: `Не удалось определить координаты` })
           const newJson = {
             // _name: name_id,
             startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
@@ -45,13 +34,13 @@ class ChronosJsonMediator extends SuperJsonMediator {
             brief: json.brief,
             url: json.url
           }
-          return newJson
-        },
-        err => {
-          return { error: `Ошибка в processJson: ${err}` }
-        }
-      )
-    }).then(res => resolve(res))
+          resolve(newJson)
+        })
+        .catch(err => {
+          console.log(`reject: ${json.place}`)
+          resolve({ error: `Ошибка в processJson: ${err}` })
+        })
+    })
   }
 }
 

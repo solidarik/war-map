@@ -50,12 +50,13 @@ class InetHelper {
 
   async getCoordsForCityOrCountry(name) {
     let coords = null
-    coords = this.getCoordsFromWiki(name)
+    coords = await this.getCoordsFromWiki(name)
     if (coords) return coords
-    coords = this.getCoordsFromWiki(`Столица ${name}`)
+    coords = await this.getCoordsFromWiki(`Столица ${name}`)
     if (coords) return coords
-    coords = this.getCoordsFromWiki(`capital of ${name}`)
-    return coords
+    coords = await this.getCoordsFromWiki(`capital of ${name}`)
+    if (coords) return coords
+    return []
   }
 
   async getCoordsByPageId(pageId, isRus) {
@@ -90,8 +91,7 @@ class InetHelper {
       }
       return coords ? coords : null
     } catch (error) {
-      console.log('error from getCoordsFromWiki', error)
-      return null
+      return false
     }
   }
 
@@ -223,11 +223,11 @@ class InetHelper {
   }
 
   getWikiPageId(stringSearch) {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       const isRus = /[а-яА-ЯЁё]/.test(stringSearch)
 
       const promises = [
-        new Promise((resolve, reject) => {
+        new Promise(resolve => {
           const url = this.composeWikiUrl(
             {
               action: 'query',
@@ -249,11 +249,11 @@ class InetHelper {
               resolve(Object.keys(pages)[0])
             })
             .catch(err => {
-              reject(err)
+              resolve(null)
             })
         }),
 
-        new Promise((resolve, reject) => {
+        new Promise(resolve => {
           const url = this.composeWikiUrl(
             {
               action: 'query',
@@ -272,7 +272,7 @@ class InetHelper {
               resolve(json['query']['search'][0]['pageid'])
             })
             .catch(err => {
-              reject(err)
+              resolve(null)
             })
         })
       ]
@@ -299,8 +299,10 @@ class InetHelper {
           //   )
         },
         err => {
-          console.log('err', err)
-          reject(`Не удалось найти wiki-страницу: ${err}`)
+          console.log(
+            `Не удалось найти wiki-страницу: ${err} для запроса: ${stringSearch}`
+          )
+          resolve(false)
         }
       )
     })

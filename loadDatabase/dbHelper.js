@@ -80,7 +80,6 @@ class DbHelper {
       info(`Начинаем обрабатывать ${dataTypeStr} ${chalk.blue(input.source)}`)
 
       let promises = []
-      let countObjects = 0
       files.forEach(filePath => {
         console.log(filePath)
         let json = fileHelper.getJsonFromFile(filePath)
@@ -91,20 +90,21 @@ class DbHelper {
         json.forEach(jsonItem => {
           promises.push(
             new Promise(resolve => {
-              let newJsonItem = mediator.processJsonSync(jsonItem)
-              if (!mediator.checkJsonSync(newJsonItem)) {
-                fileHelper.saveJsonToFileSync(newJsonItem, errpath)
-                resolve(new Error('Не прошли проверку json'))
-              }
-
+              let newJsonItem = undefined
               mediator
-                .isExistObject(procJsonItem)
+                .processJson(jsonItem)
+                .then(jsonItem => {
+                  if (jsonItem.hasOwnProperty('error')) {
+                    resolve(jsonItem)
+                  }
+                  newJsonItem = jsonItem
+                  return mediator.isExistObject(newJsonItem)
+                })
                 .then(isExistObject => {
                   if (isExistObject) resolve(true)
                   return mediator.addObjectToBase(newJsonItem)
                 })
                 .then(res => {
-                  countObjects += 1
                   fileHelper.saveJsonToFileSync(newJsonItem, procpath)
                   resolve(true)
                 })
@@ -114,7 +114,7 @@ class DbHelper {
                   )}: ${err}`
                   fileHelper.saveJsonToFileSync(newJsonItem, errpath)
                   log.error(msg)
-                  resolve(new Error(msg))
+                  resolve({ error: new Error(msg) })
                 })
             })
           )
@@ -124,12 +124,13 @@ class DbHelper {
 
       Promise.all(promises).then(
         res => {
+          let countObjects = 0
           res.forEach(r => {
-            countObjects += r instanceof Error ? 0 : 1
+            countObjects += r.hasOwnProperty('error') ? 0 : 1
           })
-          log.info(
-            `Количество успешно обработанных элементов: ${countObjects} из ${res.length}`
-          )
+          const status = `Количество успешно обработанных элементов: ${countObjects} из ${res.length}`
+          log.info(status)
+          resolve(status)
         },
         err => {
           let msg = `Непредвиденная ошибка в процессе обработки ${err}`

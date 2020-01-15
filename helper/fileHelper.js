@@ -11,15 +11,22 @@ class FileHelper {
   }
 
   clearDirectory(dirPath) {
-    fs.readdir(dirPath, (err, files) => {
-      if (err) throw err
+    try {
+      try {
+        const stats = fs.statSync(dirPath)
+      } catch (error) {
+        fs.mkdirSync(dirPath, { recursive: true })
+        return true
+      }
 
-      for (const file of files) {
+      fs.readdirSync(dirPath).forEach(file => {
         fs.unlink(path.join(dirPath, file), err => {
           if (err) throw err
         })
-      }
-    })
+      })
+    } catch (error) {
+      throw Error(`Не получилось создать директорию ${dirPath}: ${error}`)
+    }
   }
 
   isDirectory(path) {
