@@ -1411,8 +1411,8 @@ class YearControl extends SuperCustomControl {
     if (!reg.test(year)) return false
 
     let intYear = parseInt(year) + incr
-    if (intYear < 1920) return false
-    if (intYear > 2020) return false
+    if (intYear < 1800) return false
+    if (intYear > 2025) return false
 
     if (oldValue == intYear) return false
 
