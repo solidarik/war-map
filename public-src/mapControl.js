@@ -1407,7 +1407,7 @@ class YearControl extends SuperCustomControl {
   }
 
   _checkYear(year, incr, oldValue = undefined) {
-    var reg = /^[1,2][9,0]\d{2}$/
+    var reg = /^[1,2][8,9,0]\d{2}$/
     if (!reg.test(year)) return false
 
     let intYear = parseInt(year) + incr
