@@ -93,17 +93,22 @@ loadedData.push({ "id": "52", "EngName": "Oil production", "RusName": "Добы�
 loadedData.push({ "id": "53", "EngName": "Coal production", "RusName": "Добыча угля", "url": "data/coal_production.json", "jsonType": "UFA" });
 loadedData.push({ "id": "54", "EngName": "Gas production", "RusName": "Добыча природного газа", "url": "data/gas_production.json", "jsonType": "UFA" });
 loadedData.push({ "id": "55", "EngName": "Power generation", "RusName": "Производство электроэнергии", "url": "data/power_generation.json", "jsonType": "UFA" });
-loadedData.push({ "id": "56", "EngName": "Population (Merged data)", "RusName": "Население", "url": "data/DTO/Population (Merged data).json", "jsonType": "UFA" });
-loadedData.push({ "id": "57", "EngName": "GDP (Merged data)", "RusName": "ВВП", "url": "data/DTO/GDP (Merged data).json", "jsonType": "UFA" });
-loadedData.push({ "id": "58", "EngName": "PerCapita GDP", "RusName": "ВВП на душу", "url": "data/DTO/PerCapita GDP.json", "jsonType": "UFA" });
-loadedData.push({ "id": "59", "EngName": "Oil", "RusName": "Нефть", "url": "data/oil.json", "jsonType": "UFA" });
-loadedData.push({ "id": "60", "EngName": "Industry (including construction), value added (current US$)", "RusName": "Промышленность", "url": "data/DTO/Industry (including construction), value added (current US$).json", "jsonType": "UFA" });
-loadedData.push({ "id": "61", "EngName": "Manufacturing, value added (current US$)", "RusName": "Производство", "url": "data/DTO/Manufacturing, value added (current US$).json", "jsonType": "UFA" });
-loadedData.push({ "id": "62", "EngName": "Agriculture, forestry, and fishing, value added (current US$)", "RusName": "Сельскоехозяйство", "url": "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json", "jsonType": "UFA" });
-loadedData.push({ "id": "63", "EngName": "Cereal production (metric tons)", "RusName": "Производство зерна", "url": "data/DTO/Cereal production (metric tons).json", "jsonType": "UFA" });
-loadedData.push({ "id": "64", "EngName": "Services, value added (current US$)", "RusName": "Сфера услуг", "url": "data/DTO/Services, value added (current US$).json", "jsonType": "UFA" });
-
-
+loadedData.push({ "id": "56", "EngName": "Iron production", "RusName": "Производство чугуна", "url": "data/iron_production.json", "jsonType": "UFA" });
+loadedData.push({ "id": "57", "EngName": "Steel production", "RusName": "Производство стали", "url": "data/steel_production.json", "jsonType": "UFA" });
+loadedData.push({ "id": "58", "EngName": "Cement production", "RusName": "Производство цемента", "url": "data/cement_production.json", "jsonType": "UFA" });
+loadedData.push({ "id": "59", "EngName": "Aluminum production", "RusName": "Производство аллюминия", "url": "data/aluminum_production.json", "jsonType": "UFA" });
+loadedData.push({ "id": "60", "EngName": "Mineral fertilizers", "RusName": "Минеральные удобрения", "url": "data/mineral_fertilizers.json", "jsonType": "UFA" });
+loadedData.push({ "id": "61", "EngName": "Gold mining", "RusName": "Добыча золота", "url": "data/gold_mining.json", "jsonType": "UFA" });
+loadedData.push({ "id": "62", "EngName": "Grain production", "RusName": "Производство зерна", "url": "data/grain_production.json", "jsonType": "UFA" });
+loadedData.push({ "id": "63", "EngName": "Population (Merged data)", "RusName": "Население", "url": "data/DTO/Population (Merged data).json", "jsonType": "UFA" });
+loadedData.push({ "id": "64", "EngName": "GDP (Merged data)", "RusName": "ВВП", "url": "data/DTO/GDP (Merged data).json", "jsonType": "UFA" });
+loadedData.push({ "id": "65", "EngName": "PerCapita GDP", "RusName": "ВВП на душу", "url": "data/DTO/PerCapita GDP.json", "jsonType": "UFA" });
+loadedData.push({ "id": "66", "EngName": "Oil", "RusName": "Нефть", "url": "data/oil.json", "jsonType": "UFA" });
+loadedData.push({ "id": "67", "EngName": "Industry (including construction), value added (current US$)", "RusName": "Промышленность", "url": "data/DTO/Industry (including construction), value added (current US$).json", "jsonType": "UFA" });
+loadedData.push({ "id": "68", "EngName": "Manufacturing, value added (current US$)", "RusName": "Производство", "url": "data/DTO/Manufacturing, value added (current US$).json", "jsonType": "UFA" });
+loadedData.push({ "id": "69", "EngName": "Agriculture, forestry, and fishing, value added (current US$)", "RusName": "Сельскоехозяйство", "url": "data/DTO/Agriculture, forestry, and fishing, value added (current US$).json", "jsonType": "UFA" });
+loadedData.push({ "id": "70", "EngName": "Cereal production (metric tons)", "RusName": "Производство зерна", "url": "data/DTO/Cereal production (metric tons).json", "jsonType": "UFA" });
+loadedData.push({ "id": "71", "EngName": "Services, value added (current US$)", "RusName": "Сфера услуг", "url": "data/DTO/Services, value added (current US$).json", "jsonType": "UFA" });
 
 
 
