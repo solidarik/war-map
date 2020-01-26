@@ -76,10 +76,10 @@ if (!Array.prototype.forEach) {
 //console.log('1');
 function startApp() {
     //console.log('2');
-    var persons = new addPersons("persons-table", "data/tasks.json");
-    persons.clearTable();
+    //var persons = new addPersons("persons-table", "data/tasks.json");
+    //persons.clearTable();
     //console.log('3');
-    persons.fillTable();
+    //persons.fillTable();
 
     $("#persons-table tr:eq(0) td:first-child span").click();
 
