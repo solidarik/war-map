@@ -112,10 +112,6 @@ loadedData.push({ "id": "69", "EngName": "Services, value added (current US$)", 
 
 
 
-
-
-
-
 //loadedData.push({ "id": "9", "EngName": "GDP", "RusName": "ВВП", "url": "data/data_new.json", "jsonType": "SAMARA" });
 
 
@@ -514,8 +510,8 @@ function loadJSON(url, callback) {
 
 
 $(document).ready(function () {
-	addComboBoxFromJson.addBootstrapDropDown(loadedData, "dropDownList", "id", "RusName", onClickDropDown);
-	//addComboBoxFromJson.addBootstrapDropDownSubMenu(loadedData, "dropDownListSubMenu", "id", "RusName", onClickDropDown,"RusGroup");
+	//addComboBoxFromJson.addBootstrapDropDown(loadedData, "dropDownList", "id", "RusName", onClickDropDown);
+	addComboBoxFromJson.addBootstrapDropDownSubMenu(loadedData, "dropDownListSubMenu", "id", "RusName", onClickDropDown,"RusGroup");
 });
 
 
@@ -724,9 +720,9 @@ function startApp() {
 			;
 
 		const zoom = d3.zoom()
-    		.scaleExtent([1, 40])
-    		.translateExtent([[0,0], [width, height]])
-    		.extent([[0, 0], [width, height]])
+			.scaleExtent([1, 8])
+    		//.translateExtent([[0,0], [width, height]])
+    		//.extent([[0, 0], [width, height]])
     		.on("zoom", zoomed);
 
 		svg = d3.select("div#mapContainer").append("svg")
@@ -739,8 +735,8 @@ function startApp() {
 			;
 			
 		function zoomed(){
-			//g.attr("transform", d3.event.transform);
-			svg.attr("transform", d3.event.transform)
+			svg.selectAll('path').attr("transform", d3.event.transform);
+			svg.selectAll("circle").attr("transform", d3.event.transform);
 		};   
 
 		addCountries.addContries(countries.features, svg, projection);

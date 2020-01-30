@@ -26,33 +26,33 @@ block content
 
   div.content(role='content' id='content' dragable='true')
 
-    //- .dropdown
-    //-   button.btn.btn-secondary.dropdown-toggle(type='button' data-toggle='dropdown')
-    //-     | Выберите категорию
-    //-   .dropdown-menu(id='dropDownListSubMenu')
-    //-     a.dropdown-item(href='#') 1-й уровень
-    //-     a.dropdown-item.submenu(href='#') 1-й уровень
-    //-     .dropdown-menu
-    //-       a.dropdown-item(href='#') 2-й уровень
-    //-       a.dropdown-item.submenu(href='#') 2-й уровень
-    //-       .dropdown-menu
-    //-         a.dropdown-item(href='#') 3-й уровень
-    //-         a.dropdown-item(href='#') 3-й уровень
-    //-     a.dropdown-item(href='#') 1-й уровень
-    //-     a.dropdown-item.submenu(href='#') 1-й уровень
-    //-     .dropdown-menu
-    //-       a.dropdown-item(href='#') 2-й уровень
-    //-       a.dropdown-item.submenu(href='#') 2-й уровень
+    .dropdown
+      button.btn.btn-secondary.dropdown-toggle(type='button' data-toggle='dropdown')
+        | Выберите категорию
+      .dropdown-menu(id='dropDownListSubMenu')
+        a.dropdown-item(href='#') 1-й уровень
+        a.dropdown-item.submenu(href='#') 1-й уровень
+        .dropdown-menu
+          a.dropdown-item(href='#') 2-й уровень
+          a.dropdown-item.submenu(href='#') 2-й уровень
+          .dropdown-menu
+            a.dropdown-item(href='#') 3-й уровень
+            a.dropdown-item(href='#') 3-й уровень
+        a.dropdown-item(href='#') 1-й уровень
+        a.dropdown-item.submenu(href='#') 1-й уровень
+        .dropdown-menu
+          a.dropdown-item(href='#') 2-й уровень
+          a.dropdown-item.submenu(href='#') 2-й уровень
 
     div(id='graph-control')
       div(id='cbdd' class='row')
-      .dropdown
-        button#dropdownMenuButton.btn.btn-secondary.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-          | Выберите категорию
-        .dropdown-menu.scrollable-menu(id='dropDownList' aria-labelledby='dropdownMenuButton')
-          a.dropdown-item(href='#') Action
-          a.dropdown-item(href='#') Another action
-          a.dropdown-item(href='#') Something else here
+      //- .dropdown
+      //-   button#dropdownMenuButton.btn.btn-secondary.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+      //-     | Выберите категорию
+      //-   .dropdown-menu.scrollable-menu(id='dropDownList' aria-labelledby='dropdownMenuButton')
+      //-     a.dropdown-item(href='#') Action
+      //-     a.dropdown-item(href='#') Another action
+      //-     a.dropdown-item(href='#') Something else here
 
 
       div(id='nameContainer' class='row text-dark')

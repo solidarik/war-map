@@ -53,10 +53,10 @@ function () {
           groupID = "subMenu" + numberGroup.toString();
           numberGroup++;
 
-          var _a = $('<a />').addClass("dropdown-item submenus").text(d[groupField]).attr('href','#');
+          var _a = $('<a />').addClass("dropdown-item submenu").text(d[groupField]).attr('href','#');
 
           $("#" + divId).append(_a);
-          divSubmenu = $('<div />').addClass("dropdown-menu submenus").attr("id", groupID);
+          divSubmenu = $('<div />').addClass("dropdown-menu submenu").attr("id", groupID);
           $("#" + divId).append(divSubmenu);
         }
 
