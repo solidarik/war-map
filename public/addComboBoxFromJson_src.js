@@ -18,4 +18,32 @@ class addComboBoxFromJson {
             $("#"+divId).append(a);
          });
     }    
+    
+    static addBootstrapDropDownSubMenu(data,divId,valueField,textField,onClickFunction,groupField){
+        $('#'+divId).children().remove(); 
+
+        let group = '';
+        let numberGroup=1;
+        let groupID;
+        let divSubmenu;
+        data.forEach(function (d) {//for(let d in data) {//for(var d = 0; d < json.length; d++) {
+            if(group!=d[groupField]){           
+                group = d[groupField]      
+                groupID= "subMenu"+numberGroup.toString();
+                numberGroup++;
+                let a = $('<a />').addClass("dropdown-item submenu").text(d[groupField]).attr('href','#');
+                $("#"+divId).append(a);
+                divSubmenu = $('<div />').addClass("dropdown-menu submenu").attr("id",groupID)
+                $("#"+divId).append(divSubmenu);
+            }
+            let a = $('<a />').addClass("dropdown-item").text(d[textField]).click(function(){
+                onClickFunction(d);
+            });
+
+            $("#"+groupID).append(a);
+         });
+
+
+    }  
+
 }

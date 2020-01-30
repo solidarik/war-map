@@ -10,6 +10,7 @@
 div#mapContainer{
     width:calc(100%);
     height:calc(100%);
+    overflow: hidden;
   }
   
   path {
@@ -139,4 +140,25 @@ rect:hover {  fill:blue; }
   height: auto;
   max-height: 200px;
   overflow-x: hidden;
+}
+
+/*dropdown*/
+.dropdown-menu .dropdown-menu {
+	top: auto;
+	left: 100%;
+	transform: translateY(-2rem);
+}
+.dropdown-item + .dropdown-menu {
+	display: block;
+	opacity: 0;
+	transition: opacity .3s 1s;
+}
+.dropdown-item.submenu::after {
+	content: '▸';
+	margin-left: 0.5rem;
+}
+.dropdown-item:hover + .dropdown-menu,
+.dropdown-menu:hover {
+	opacity: 1;
+	transition: opacity .3s .1s;
 }
