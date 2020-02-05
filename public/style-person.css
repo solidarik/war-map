@@ -1,7 +1,9 @@
 body {
   display: block;
   overflow-x: hidden;
-  background-color: #e6f7ff;
+  /* background-color: #e6f7ff; */
+  background-image: url(img/paper.jpg);
+  background-size: 100% 100%;
 }
 h5 {
   text-align: center;
@@ -97,10 +99,19 @@ td {
   line-height: 1.5em;
 }
 
-
-
-
 .resized-image{
   width: auto;
-  height: 200px;
+  height: 250px;
+  border-image: url(img/border.png) 25% stretch;
+  border-width: 50px;
+  border-style: solid;
+}
+
+.paper-background{
+  /* background-image: url(img/paper.jpg);
+  background-size: 100% 100%;
+  padding-top: 5%;
+  padding-left: 10%;
+  padding-right: 10%;
+  font-size: 11pt; */
 }
