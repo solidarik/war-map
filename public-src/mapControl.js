@@ -398,6 +398,7 @@ export class MapControl extends EventEmitter {
     })
 
     this.map = map
+    this.legend = undefined
     this.historyEvents = []
     this.agreements = []
     this.chronos = []
@@ -427,6 +428,7 @@ export class MapControl extends EventEmitter {
       this.addHistoryEventsLayer()
       this.addChronosLayer()
       this.addAgreementsLayer()
+      this.addLegend()
       // this._addButtons();
     }, 10)
   }
@@ -740,6 +742,20 @@ export class MapControl extends EventEmitter {
     })
     this.agreementsSource = agreementsSource
     this.map.addLayer(agreementsLayer)
+  }
+
+  addLegend() {
+    this.legend = new ol.control.Legend({
+      title: 'Легенда',
+      collapsed: false
+    })
+    this.map.addControl(this.legend)
+    let legendControl = $('.ol-legend')[0]
+    console.log(legendControl)
+    if (!legendControl) {
+      console.log('hello')
+      legendControl.setAttribute('id', 'events-legend')
+    }
   }
 
   fixMapHeight() {

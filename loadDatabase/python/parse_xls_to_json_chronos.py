@@ -10,6 +10,11 @@ root_folder = 'out_chronos'
 col_place, col_startDate, col_brief, col_url = tuple(range(0, 4, 1))
 
 
+def is_empty_value(row, col):
+    v = scheet.cell(row, col).value
+    return (v == '')
+
+
 def get_sheet_value(row, col):
     v = scheet.cell(row, col).value
     return v.replace('"', '\\"').rstrip().rstrip(',')
@@ -57,17 +62,27 @@ book = xlrd.open_workbook(filename, encoding_override="cp1251")
 scheet = book.sheet_by_index(0)
 START_ROW = 1
 END_ROW = scheet.nrows
-print(f"Количество строк из Excel: {END_ROW}")
+print(f"Input count lines from Excel: {END_ROW}")
 entities = []
 for row in range(START_ROW, END_ROW):
-    chrono = {}
-    chrono['place'] = get_sheet_value(row, col_place)
-    chrono['startDate'], chrono['isOnlyYear'] = get_sheet_value_date(
-        row, col_startDate)
-    chrono['brief'] = get_sheet_value(row, col_brief)
-    chrono['url'] = get_sheet_value(row, col_url)
+    try:
+        chrono = {}
+        if is_empty_value(row, col_place) and is_empty_value(
+                row, col_startDate) and is_empty_value(
+                    row, col_brief) and is_empty_value(row, col_url):
+            print(f'Empty line {row}')
+            continue
 
-    entities.append(chrono)
+        chrono['place'] = get_sheet_value(row, col_place)
+        chrono['startDate'], chrono['isOnlyYear'] = get_sheet_value_date(
+            row, col_startDate)
+        chrono['brief'] = get_sheet_value(row, col_brief)
+        chrono['url'] = get_sheet_value(row, col_url)
+
+        entities.append(chrono)
+    except Exception as e:
+        print(f'Exception input line in row {row}: {chrono}')
+        raise Exception(e)
 
 i = 0
 
@@ -75,7 +90,7 @@ helper.clear_folder(helper.get_full_path(root_folder))
 helper.create_folder(helper.get_full_path(root_folder))
 
 while i < len(entities):
-    agreement = entities[i]
+    item = entities[i]
     i += 1
 
     filename = 'file{}.json'.format(i)
@@ -84,7 +99,7 @@ while i < len(entities):
     file.write('[{')
     file.write('\n')
     try:
-        list_items = agreement.items()
+        list_items = item.items()
 
         # define last key
         for key, value in list_items:

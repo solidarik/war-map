@@ -56,7 +56,7 @@ class DbHelper {
     }, 100)
   }
 
-  saveFilesFromDir(input) {
+  saveFilesFrom(input) {
     return new Promise((resolve, reject) => {
       let mediator = input.mediator
 

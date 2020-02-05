@@ -3,7 +3,10 @@ const inetHelper = require('../helper/inetHelper')
 const fileHelper = require('../helper/fileHelper')
 // const fs = require('fs')
 
-let promises = [inetHelper.getCoordsForCityOrCountry('Плайя-Хирон')]
+let promises = [
+  inetHelper.getCoordsForCityOrCountry('Бразилия'),
+  inetHelper.getCoordsForCityOrCountry('Бразилиа')
+]
 
 let mainPromise = new Promise(resolve => {
   Promise.all(promises).then(

@@ -25,4 +25,4 @@ var chronosSchema = new mongoose.Schema(
 
 chronosSchema.statics.publicFields = ['startDate', 'endDate', 'isOnlyYear']
 
-module.exports = mongoose.model('chronos', chronosSchema, 'chronos')
+module.exports = mongoose.model('chronos', chronosSchema)

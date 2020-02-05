@@ -1233,6 +1233,7 @@ function (_EventEmitter) {
       }
     });
     _this.map = map;
+    _this.legend = undefined;
     _this.historyEvents = [];
     _this.agreements = [];
     _this.chronos = [];
@@ -1262,7 +1263,9 @@ function (_EventEmitter) {
 
       _this.addChronosLayer();
 
-      _this.addAgreementsLayer(); // this._addButtons();
+      _this.addAgreementsLayer();
+
+      _this.addLegend(); // this._addButtons();
 
     }, 10);
     return _this;
@@ -1593,6 +1596,22 @@ function (_EventEmitter) {
       });
       this.agreementsSource = agreementsSource;
       this.map.addLayer(agreementsLayer);
+    }
+  }, {
+    key: "addLegend",
+    value: function addLegend() {
+      this.legend = new ol.control.Legend({
+        title: 'Легенда',
+        collapsed: false
+      });
+      this.map.addControl(this.legend);
+      var legendControl = $('.ol-legend')[0];
+      console.log(legendControl);
+
+      if (!legendControl) {
+        console.log('hello');
+        legendControl.setAttribute('id', 'events-legend');
+      }
     }
   }, {
     key: "fixMapHeight",

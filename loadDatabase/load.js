@@ -5,11 +5,10 @@ const strHelper = require('../helper/strHelper')
 const historyEventsJsonMediator = require('../loadDatabase/historyEventsJsonMediator')
 const agreementsJsonMediator = require('../loadDatabase/agreementsJsonMediator')
 const chronosJsonMediator = require('../loadDatabase/chronosJsonMediator')
+const personsJsonMediator = require('../loadDatabase/chronosJsonMediator')
 const usersJsonMediator = require('../loadDatabase/usersJsonMediator')
 const dictEngRusJsonMediator = require('../loadDatabase/dictEngRusJsonMediator')
 const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol')
-
-console.log(strHelper.compareEngLanguage('СССР белоруссия', 'CCCР'))
 
 // ;(async () => {
 //   const coords = await inetHelper.getCoordsForCityOrCountry('Ньон')
@@ -35,7 +34,7 @@ Promise.resolve(true)
   //   return dbHelper.clearDb('agreements')
   // })
   // .then(() => {
-  //   return dbHelper.saveFilesFromDir({
+  //   return dbHelper.saveFilesFrom({
   //     source: 'data_sources/secretUsers.json',
   //     mediator: usersJsonMediator
   //   })
@@ -44,27 +43,27 @@ Promise.resolve(true)
   //   return dbHelper.clearDb('dictEngRus')
   // })
   // .then(() => {
-  //   return dbHelper.saveFilesFromDir({
+  //   return dbHelper.saveFilesFrom({
   //     source: 'data_sources/engRus.json',
   //     mediator: dictEngRusJsonMediator
   //   })
   // })
-  .then(() => {
-    return dbHelper.clearDb('chronos')
-  })
-  .then(() => {
-    return dbHelper.saveFilesFromDir({
-      source: 'python/out_chronos',
-      procdir: 'python/out_chronos_process',
-      errdir: 'python/out_chronos_errors',
-      mediator: chronosJsonMediator
-    })
-  })
+  // .then(() => {
+  //   return dbHelper.clearDb('chronos')
+  // })
+  // .then(() => {
+  //   return dbHelper.saveFilesFrom({
+  //     source: 'python/out_chronos',
+  //     procdir: 'python/out_chronos_process',
+  //     errdir: 'python/out_chronos_errors',
+  //     mediator: chronosJsonMediator
+  //   })
+  // })
   // .then(() => {
   //   return dbHelper.clearDb('agreements')
   // })
   // .then(() => {
-  //   return dbHelper.saveFilesFromDir({
+  //   return dbHelper.saveFilesFrom({
   //     source: 'python/out_agreements',
   //     mediator: agreementsJsonMediator
   //   })
@@ -73,11 +72,22 @@ Promise.resolve(true)
   //   return dbHelper.clearDb('historyEvents')
   // })
   // .then(() => {
-  //   return dbHelper.saveFilesFromDir({
+  //   return dbHelper.saveFilesFrom({
   //     source: 'python/out_battles',
   //     mediator: historyEventsJsonMediator
   //   })
   // })
+  .then(() => {
+    return dbHelper.clearDb('persons')
+  })
+  .then(() => {
+    return dbHelper.saveFilesFrom({
+      source: '../public/data/persons.json',
+      procdir: 'out/out_person_process',
+      errdir: 'out/out_person_errors',
+      mediator: personsJsonMediator
+    })
+  })
   .then(() => {
     log.success(`Успешная загрузка`)
     dbHelper.free()
