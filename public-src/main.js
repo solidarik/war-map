@@ -64,6 +64,10 @@ function startApp() {
     mapControl.setChronos(chronos)
   })
 
+  protocol.subscribe('refreshPersons', persons => {
+    mapControl.setPersons(persons)
+  })
+
   historyEventsControl.subscribe('refreshedEventList', () => {
     $('table tr').click(function() {
       historyEventsControl.rowEventClick($(this))

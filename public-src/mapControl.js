@@ -149,8 +149,9 @@ export class MapControl extends EventEmitter {
         imgUrl = feature.get('imgUrl')
         kind = feature.get('kind')
         return (
-          ['wmw', 'wow', 'politics', 'chronos'].indexOf(feature.get('kind')) >=
-          0
+          ['wmw', 'wow', 'politics', 'chronos', 'persons'].indexOf(
+            feature.get('kind')
+          ) >= 0
         )
       })
 
@@ -167,8 +168,6 @@ export class MapControl extends EventEmitter {
 
       const getHtmlForFeatureEvent = event => {
         const getHtmlCell = (caption, param1, param2, isBold = false) => {
-          console.log('>>>>', isBold)
-
           const f = value => {
             if (Array.isArray(value)) {
               return value.length > 0
@@ -309,6 +308,25 @@ export class MapControl extends EventEmitter {
           results = results.replace(/[.,]\s*$/, '')
           content += '<p>' + results + '</p>'
         }
+      } else if ('persons' === kind) {
+        const personInfo = featureEvent.get('info')
+        console.log(personInfo)
+        content = `<h3>${personInfo.surname} ${personInfo.name} ${personInfo.middlename}</h3>`
+        const startDate = personInfo.dateBirth
+        const endDate = personInfo.dateDeath
+        if (startDate) {
+          let dateStr =
+            endDate != undefined && startDate != endDate
+              ? `${startDate} - ${endDate}`
+              : startDate
+          content += '<h4>' + dateStr + '</h4>'
+        }
+
+        let results = personInfo.description
+        if (results) {
+          results = results.replace(/[.,]\s*$/, '')
+          content += '<p>' + results + '</p>'
+        }
       } else {
         window.map.setActiveEvent(featureEvent)
 
@@ -402,6 +420,7 @@ export class MapControl extends EventEmitter {
     this.historyEvents = []
     this.agreements = []
     this.chronos = []
+    this.persons = []
 
     this.view = view
     this.draw = undefined
@@ -428,7 +447,8 @@ export class MapControl extends EventEmitter {
       this.addHistoryEventsLayer()
       this.addChronosLayer()
       this.addAgreementsLayer()
-      this.addLegend()
+      this.addPersonsLayer()
+      // this.addLegend()
       // this._addButtons();
     }, 10)
   }
@@ -444,7 +464,6 @@ export class MapControl extends EventEmitter {
 
   showActiveEventMap() {
     const ft = this.activeFeatureEvent
-    console.log('showActiveEventMap', ft.get('name'))
 
     $('#imgModalLabel').html(ft.get('name'))
     $('.modal-body').html(`
@@ -471,7 +490,6 @@ export class MapControl extends EventEmitter {
 
   showActiveEventContour() {
     const ft = this.activeFeatureEvent
-    console.log('showActiveEventContour', ft.get('name'))
 
     this.isShowContour = !this.isShowContour
     this.historyEventsSource.clear()
@@ -597,43 +615,20 @@ export class MapControl extends EventEmitter {
   }
 
   chronosStyleFunc(feature, zoom) {
-    // if (zoom > 4.5) {
-    //   return [new ol.style.Style()]
-    // }
-
     let style = new ol.style.Style({
-      // fill: new ol.style.Fill({
-      //   color: 'rgba(255,255,255,0.5)'
-      // }),
-      // stroke: new ol.style.Stroke({
-      //   width: 2,
-      //   color: 'rgba(40, 40, 40, 0.50)'
-      // }),
-      // text: new ol.style.Text({
-      //   font: '20px helvetica,sans-serif',
-      //   text: zoom > 3 ? feature.get('name') : '',
-      //   fill: new ol.style.Fill({ color: 'black' }),
-      //   stroke: new ol.style.Stroke({
-      //     color: 'white',
-      //     width: 2
-      //   }),
-      //   baseline: 'middle',
-      //   align: 'right',
-      //   offsetX: 100,
-      //   offsetY: 40,
-      //   overflow: 'true',
-      //   // outline: 'black',
-      //   outlineWidth: 0
-      // }),
       image: new ol.style.Circle({
         fill: new ol.style.Fill({ color: 'rgba(0,220,0,0.7)' }),
-        // stroke: new ol.style.Stroke({
-        //   width: 2,
-        //   color: 'yellow'
-        // }),
-        // points: 3,
         radius: 7
-        // angle: 0
+      })
+    })
+    return [style]
+  }
+
+  personsStyleFunc(feature, zoom) {
+    let style = new ol.style.Style({
+      image: new ol.style.Circle({
+        fill: new ol.style.Fill({ color: 'rgba(153,51,255,1)' }),
+        radius: 7
       })
     })
     return [style]
@@ -730,6 +725,20 @@ export class MapControl extends EventEmitter {
     this.map.addLayer(chronosLayer)
   }
 
+  addPersonsLayer() {
+    let personsSource = new ol.source.Vector()
+    let personsLayer = new ol.layer.Vector({
+      source: personsSource,
+      style: (feature, _) =>
+        this.personsStyleFunc(feature, this.view.getZoom()),
+      zIndex: 7,
+      updateWhileAnimating: true,
+      updateWhileInteracting: true
+    })
+    this.personsSource = personsSource
+    this.map.addLayer(personsLayer)
+  }
+
   addAgreementsLayer() {
     let agreementsSource = new ol.source.Vector()
     let agreementsLayer = new ol.layer.Vector({
@@ -751,9 +760,7 @@ export class MapControl extends EventEmitter {
     })
     this.map.addControl(this.legend)
     let legendControl = $('.ol-legend')[0]
-    console.log(legendControl)
     if (!legendControl) {
-      console.log('hello')
       legendControl.setAttribute('id', 'events-legend')
     }
   }
@@ -844,6 +851,7 @@ export class MapControl extends EventEmitter {
     this.hullSource.clear()
     this.agreementsSource.clear()
     this.chronosSource.clear()
+    this.personsSource.clear()
     this.currentYear = year
     this.currentYearForMap = this.currentYear == 1951 ? 1950 : this.currentYear
     this.yearLayer.getSource().refresh()
@@ -892,6 +900,11 @@ export class MapControl extends EventEmitter {
   setHistoryEvents(events) {
     this.historyEvents = events
     this.repaintHistoryEvents()
+  }
+
+  setPersons(persons) {
+    this.persons = persons
+    this.repaintPersons()
   }
 
   getAllCoordsFromMap(map) {
@@ -981,12 +994,9 @@ export class MapControl extends EventEmitter {
     this.chronosSource.clear()
 
     this.chronos.forEach(chrono => {
-      console.log(chrono)
       if (chrono.placeCoords && chrono.placeCoords.length) {
-        console.log(chrono.placeCoords)
         chrono.placeCoords[1] =
           chrono.placeCoords[1] + chrono.placeCoords[1] / 200 //поправка для слияния нескольких точек в одну
-        console.log(chrono.placeCoords)
         let ft = new ol.Feature({
           kind: 'chronos',
           geometry: new ol.geom.Point(ol.proj.fromLonLat(chrono.placeCoords)),
@@ -1020,6 +1030,43 @@ export class MapControl extends EventEmitter {
         })
 
         this.agreementsSource.addFeature(ft)
+      }
+    })
+  }
+
+  repaintPersons() {
+    this.personsSource.clear()
+
+    this.persons.forEach(person => {
+      let info = person
+      if (person.placeDeathCoords && person.placeDeathCoords.length) {
+        person.placeDeathCoords[1] =
+          person.placeDeathCoords[1] - person.placeDeathCoords[1] / 150 //поправка для слияния нескольких точек в одну
+        let ft = new ol.Feature({
+          kind: 'persons',
+          geometry: new ol.geom.Point(
+            ol.proj.fromLonLat(person.placeDeathCoords)
+          ),
+          info: info
+        })
+        this.personsSource.addFeature(ft)
+      }
+
+      if (
+        person.placeAchievementCoords &&
+        person.placeAchievementCoords.length
+      ) {
+        person.placeAchievementCoords[1] =
+          person.placeAchievementCoords[1] -
+          person.placeAchievementCoords[1] / 200 //поправка для слияния нескольких точек в одну
+        let ft = new ol.Feature({
+          kind: 'persons',
+          geometry: new ol.geom.Point(
+            ol.proj.fromLonLat(person.placeAchievementCoords)
+          ),
+          info: info
+        })
+        this.personsSource.addFeature(ft)
       }
     })
   }

@@ -69,7 +69,7 @@ class PersonsJsonMediator extends SuperJsonMediator {
   }
 
   afterProcessJson(json) {
-    console.log(json.place, json.placeCoords)
+    console.log(json.name, json.middlename)
   }
 }
 

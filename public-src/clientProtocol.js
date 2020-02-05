@@ -103,8 +103,6 @@ export class ClientProtocol extends EventEmitter {
         }
       })
 
-      console.log('`````chronos`````````', data)
-
       let chronos = data.chronos.map(chrono => {
         return {
           id: chrono._id,
@@ -117,9 +115,27 @@ export class ClientProtocol extends EventEmitter {
         }
       })
 
+      let persons = data.persons.map(person => {
+        return {
+          id: person._id,
+          surname: person.surname,
+          name: person.name,
+          middlename: person.middlename,
+          dateBirth: this._getStrDateFromEvent(person.dateBirth),
+          dateDeath: this._getStrDateFromEvent(person.dateDeath),
+          description: person.description,
+          fullDescription: person.fullDescription,
+          photoUrl: person.photoUrl,
+          placeAchieventCoords: person.placeAchieventCoords,
+          placeBirthCoords: person.placeBirthCoords,
+          placeDeathCoords: person.placeDeathCoords
+        }
+      })
+
       this.emit('refreshHistoryEvents', events)
       this.emit('refreshAgreements', agreements)
       this.emit('refreshChronos', chronos)
+      this.emit('refreshPersons', persons)
     })
   }
 

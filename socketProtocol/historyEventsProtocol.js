@@ -3,6 +3,7 @@ const ServerProtocol = require('../libs/serverProtocol')
 const HistoryEventsModel = require('../models/historyEventsModel')
 const AgreementsModel = require('../models/agreementsModel')
 const ChronosModel = require('../models/chronosModel')
+const PersonsModel = require('../models/personsModel')
 
 class HistoryEventsProtocol extends ServerProtocol {
   init() {
@@ -57,7 +58,20 @@ class HistoryEventsProtocol extends ServerProtocol {
                   res.err = err
                   res.chronos = chronos
 
-                  cb(JSON.stringify(res))
+                  PersonsModel.find(
+                    {
+                      dateDeath: {
+                        $gte: startDate,
+                        $lt: endDate
+                      }
+                    },
+                    (err, persons) => {
+                      res.err = err
+                      res.persons = persons
+
+                      cb(JSON.stringify(res))
+                    }
+                  )
                 }
               )
             }

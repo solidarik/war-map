@@ -1075,7 +1075,7 @@ function (_EventEmitter) {
         featureEvent = feature;
         imgUrl = feature.get('imgUrl');
         kind = feature.get('kind');
-        return ['wmw', 'wow', 'politics', 'chronos'].indexOf(feature.get('kind')) >= 0;
+        return ['wmw', 'wow', 'politics', 'chronos', 'persons'].indexOf(feature.get('kind')) >= 0;
       });
       if (!featureEvent) return;
       var isExistUrl = imgUrl !== undefined;
@@ -1090,7 +1090,6 @@ function (_EventEmitter) {
       var getHtmlForFeatureEvent = function getHtmlForFeatureEvent(event) {
         var getHtmlCell = function getHtmlCell(caption, param1, param2) {
           var isBold = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-          console.log('>>>>', isBold);
 
           var f = function f(value) {
             if (Array.isArray(value)) {
@@ -1172,17 +1171,36 @@ function (_EventEmitter) {
           _results = _results.replace(/[.,]\s*$/, '');
           content += '<p>' + _results + '</p>';
         }
-      } else {
-        window.map.setActiveEvent(featureEvent);
-
-        var _startDate2 = featureEvent.get('startDate');
-
-        var _endDate2 = featureEvent.get('endDate');
+      } else if ('persons' === kind) {
+        var personInfo = featureEvent.get('info');
+        console.log(personInfo);
+        content = "<h3>".concat(personInfo.surname, " ").concat(personInfo.name, " ").concat(personInfo.middlename, "</h3>");
+        var _startDate2 = personInfo.dateBirth;
+        var _endDate2 = personInfo.dateDeath;
 
         if (_startDate2) {
           var _dateStr2 = _endDate2 != undefined && _startDate2 != _endDate2 ? "".concat(_startDate2, " - ").concat(_endDate2) : _startDate2;
 
           content += '<h4>' + _dateStr2 + '</h4>';
+        }
+
+        var _results2 = personInfo.description;
+
+        if (_results2) {
+          _results2 = _results2.replace(/[.,]\s*$/, '');
+          content += '<p>' + _results2 + '</p>';
+        }
+      } else {
+        window.map.setActiveEvent(featureEvent);
+
+        var _startDate3 = featureEvent.get('startDate');
+
+        var _endDate3 = featureEvent.get('endDate');
+
+        if (_startDate3) {
+          var _dateStr3 = _endDate3 != undefined && _startDate3 != _endDate3 ? "".concat(_startDate3, " - ").concat(_endDate3) : _startDate3;
+
+          content += '<h4>' + _dateStr3 + '</h4>';
         }
 
         var table = "\n          <table class=\"table table-sm table-borderless\" id=\"table-info\">\n          <tbody>\n          ".concat(getHtmlForFeatureEvent(featureEvent), "\n          </tbody></table>");
@@ -1237,6 +1255,7 @@ function (_EventEmitter) {
     _this.historyEvents = [];
     _this.agreements = [];
     _this.chronos = [];
+    _this.persons = [];
     _this.view = view;
     _this.draw = undefined;
     _this.snap = undefined;
@@ -1265,7 +1284,8 @@ function (_EventEmitter) {
 
       _this.addAgreementsLayer();
 
-      _this.addLegend(); // this._addButtons();
+      _this.addPersonsLayer(); // this.addLegend()
+      // this._addButtons();
 
     }, 10);
     return _this;
@@ -1281,7 +1301,6 @@ function (_EventEmitter) {
     key: "showActiveEventMap",
     value: function showActiveEventMap() {
       var ft = this.activeFeatureEvent;
-      console.log('showActiveEventMap', ft.get('name'));
       $('#imgModalLabel').html(ft.get('name'));
       $('.modal-body').html("\n    <div class=\"d-flex justify-content-center\">\n      <div class=\"spinner-border\" role=\"status\">\n        <span class=\"sr-only\">Loading...</span>\n      </div>\n    </div>\n    ");
       $('#imgModal').modal();
@@ -1302,7 +1321,6 @@ function (_EventEmitter) {
     key: "showActiveEventContour",
     value: function showActiveEventContour() {
       var ft = this.activeFeatureEvent;
-      console.log('showActiveEventContour', ft.get('name'));
       this.isShowContour = !this.isShowContour;
       this.historyEventsSource.clear();
       this.hullSource.clear();
@@ -1437,44 +1455,25 @@ function (_EventEmitter) {
   }, {
     key: "chronosStyleFunc",
     value: function chronosStyleFunc(feature, zoom) {
-      // if (zoom > 4.5) {
-      //   return [new ol.style.Style()]
-      // }
       var style = new ol.style.Style({
-        // fill: new ol.style.Fill({
-        //   color: 'rgba(255,255,255,0.5)'
-        // }),
-        // stroke: new ol.style.Stroke({
-        //   width: 2,
-        //   color: 'rgba(40, 40, 40, 0.50)'
-        // }),
-        // text: new ol.style.Text({
-        //   font: '20px helvetica,sans-serif',
-        //   text: zoom > 3 ? feature.get('name') : '',
-        //   fill: new ol.style.Fill({ color: 'black' }),
-        //   stroke: new ol.style.Stroke({
-        //     color: 'white',
-        //     width: 2
-        //   }),
-        //   baseline: 'middle',
-        //   align: 'right',
-        //   offsetX: 100,
-        //   offsetY: 40,
-        //   overflow: 'true',
-        //   // outline: 'black',
-        //   outlineWidth: 0
-        // }),
         image: new ol.style.Circle({
           fill: new ol.style.Fill({
             color: 'rgba(0,220,0,0.7)'
           }),
-          // stroke: new ol.style.Stroke({
-          //   width: 2,
-          //   color: 'yellow'
-          // }),
-          // points: 3,
-          radius: 7 // angle: 0
-
+          radius: 7
+        })
+      });
+      return [style];
+    }
+  }, {
+    key: "personsStyleFunc",
+    value: function personsStyleFunc(feature, zoom) {
+      var style = new ol.style.Style({
+        image: new ol.style.Circle({
+          fill: new ol.style.Fill({
+            color: 'rgba(153,51,255,1)'
+          }),
+          radius: 7
         })
       });
       return [style];
@@ -1580,15 +1579,33 @@ function (_EventEmitter) {
       this.map.addLayer(chronosLayer);
     }
   }, {
+    key: "addPersonsLayer",
+    value: function addPersonsLayer() {
+      var _this5 = this;
+
+      var personsSource = new ol.source.Vector();
+      var personsLayer = new ol.layer.Vector({
+        source: personsSource,
+        style: function style(feature, _) {
+          return _this5.personsStyleFunc(feature, _this5.view.getZoom());
+        },
+        zIndex: 7,
+        updateWhileAnimating: true,
+        updateWhileInteracting: true
+      });
+      this.personsSource = personsSource;
+      this.map.addLayer(personsLayer);
+    }
+  }, {
     key: "addAgreementsLayer",
     value: function addAgreementsLayer() {
-      var _this5 = this;
+      var _this6 = this;
 
       var agreementsSource = new ol.source.Vector();
       var agreementsLayer = new ol.layer.Vector({
         source: agreementsSource,
         style: function style(feature, _) {
-          return _this5.agreementStyleFunc(feature, _this5.view.getZoom());
+          return _this6.agreementStyleFunc(feature, _this6.view.getZoom());
         },
         zIndex: 7,
         updateWhileAnimating: true,
@@ -1606,10 +1623,8 @@ function (_EventEmitter) {
       });
       this.map.addControl(this.legend);
       var legendControl = $('.ol-legend')[0];
-      console.log(legendControl);
 
       if (!legendControl) {
-        console.log('hello');
         legendControl.setAttribute('id', 'events-legend');
       }
     }
@@ -1676,13 +1691,13 @@ function (_EventEmitter) {
   }, {
     key: "addYearControl",
     value: function addYearControl() {
-      var _this6 = this;
+      var _this7 = this;
 
       this.map.addControl(new YearControl({
         caption: 'Выбрать год событий',
         year: this.currentYear,
         handler: function handler(year) {
-          _this6.changeYear(year);
+          _this7.changeYear(year);
         }
       }));
     }
@@ -1694,6 +1709,7 @@ function (_EventEmitter) {
       this.hullSource.clear();
       this.agreementsSource.clear();
       this.chronosSource.clear();
+      this.personsSource.clear();
       this.currentYear = year;
       this.currentYearForMap = this.currentYear == 1951 ? 1950 : this.currentYear;
       this.yearLayer.getSource().refresh();
@@ -1757,6 +1773,12 @@ function (_EventEmitter) {
       this.repaintHistoryEvents();
     }
   }, {
+    key: "setPersons",
+    value: function setPersons(persons) {
+      this.persons = persons;
+      this.repaintPersons();
+    }
+  }, {
     key: "getAllCoordsFromMap",
     value: function getAllCoordsFromMap(map) {
       var all_coords = [];
@@ -1790,7 +1812,7 @@ function (_EventEmitter) {
   }, {
     key: "repaintHistoryEvents",
     value: function repaintHistoryEvents() {
-      var _this7 = this;
+      var _this8 = this;
 
       this.allHistoryEventsSource.clear();
       this.allHistoryEventsSource.clear();
@@ -1799,7 +1821,7 @@ function (_EventEmitter) {
         var ft = new ol.Feature({
           id: event.id,
           name: event.name,
-          geometry: new ol.geom.Point(_this7.getCenterOfMap(event.maps[0])),
+          geometry: new ol.geom.Point(_this8.getCenterOfMap(event.maps[0])),
           size: 20000,
           isWinnerUSSR: _strHelper.default.compareEngLanguage(event.winner, 'CCCР'),
           kind: event.kind,
@@ -1841,23 +1863,19 @@ function (_EventEmitter) {
           enem_submarines_lost: event.enem_submarines_lost
         });
 
-        _this7.allHistoryEventsSource.addFeature(ft);
+        _this8.allHistoryEventsSource.addFeature(ft);
       });
     }
   }, {
     key: "repaintChronos",
     value: function repaintChronos() {
-      var _this8 = this;
+      var _this9 = this;
 
       this.chronosSource.clear();
       this.chronos.forEach(function (chrono) {
-        console.log(chrono);
-
         if (chrono.placeCoords && chrono.placeCoords.length) {
-          console.log(chrono.placeCoords);
           chrono.placeCoords[1] = chrono.placeCoords[1] + chrono.placeCoords[1] / 200; //поправка для слияния нескольких точек в одну
 
-          console.log(chrono.placeCoords);
           var ft = new ol.Feature({
             kind: 'chronos',
             geometry: new ol.geom.Point(ol.proj.fromLonLat(chrono.placeCoords)),
@@ -1868,14 +1886,14 @@ function (_EventEmitter) {
             url: chrono.url
           });
 
-          _this8.chronosSource.addFeature(ft);
+          _this9.chronosSource.addFeature(ft);
         }
       });
     }
   }, {
     key: "repaintAgreements",
     value: function repaintAgreements() {
-      var _this9 = this;
+      var _this10 = this;
 
       this.agreementsSource.clear();
       this.agreements.forEach(function (agreement) {
@@ -1890,7 +1908,41 @@ function (_EventEmitter) {
             source: agreement.source
           });
 
-          _this9.agreementsSource.addFeature(ft);
+          _this10.agreementsSource.addFeature(ft);
+        }
+      });
+    }
+  }, {
+    key: "repaintPersons",
+    value: function repaintPersons() {
+      var _this11 = this;
+
+      this.personsSource.clear();
+      this.persons.forEach(function (person) {
+        var info = person;
+
+        if (person.placeDeathCoords && person.placeDeathCoords.length) {
+          person.placeDeathCoords[1] = person.placeDeathCoords[1] - person.placeDeathCoords[1] / 150; //поправка для слияния нескольких точек в одну
+
+          var ft = new ol.Feature({
+            kind: 'persons',
+            geometry: new ol.geom.Point(ol.proj.fromLonLat(person.placeDeathCoords)),
+            info: info
+          });
+
+          _this11.personsSource.addFeature(ft);
+        }
+
+        if (person.placeAchievementCoords && person.placeAchievementCoords.length) {
+          person.placeAchievementCoords[1] = person.placeAchievementCoords[1] - person.placeAchievementCoords[1] / 200; //поправка для слияния нескольких точек в одну
+
+          var _ft = new ol.Feature({
+            kind: 'persons',
+            geometry: new ol.geom.Point(ol.proj.fromLonLat(person.placeAchievementCoords)),
+            info: info
+          });
+
+          _this11.personsSource.addFeature(_ft);
         }
       });
     }
@@ -1949,7 +2001,7 @@ function (_EventEmitter) {
           }
         }
 
-        var _ft = new ol.Feature({
+        var _ft2 = new ol.Feature({
           uid: 100,
           name: 'test',
           geometry: this.createGeom({
@@ -1958,9 +2010,9 @@ function (_EventEmitter) {
           })
         });
 
-        _ft.setStyle(new ol.style.Style(style));
+        _ft2.setStyle(new ol.style.Style(style));
 
-        this.historyEventsSource.addFeature(_ft);
+        this.historyEventsSource.addFeature(_ft2);
       }
 
       var hull_indexes = (0, _monotoneConvexHull2d.default)(all_coords);
@@ -1986,7 +2038,7 @@ function (_EventEmitter) {
   }, {
     key: "_addButtons",
     value: function _addButtons() {
-      var _this10 = this;
+      var _this12 = this;
 
       this.map.addControl(new CustomControl({
         caption: 'Выбрать объект',
@@ -1994,11 +2046,11 @@ function (_EventEmitter) {
         icon: 'mdi mdi-cursor-default-outline',
         default: true,
         handler: function handler(btn) {
-          _this10._setActiveButton(btn);
+          _this12._setActiveButton(btn);
 
-          _this10.map.removeInteraction(_this10.draw);
+          _this12.map.removeInteraction(_this12.draw);
 
-          _this10.map.removeInteraction(_this10.snap);
+          _this12.map.removeInteraction(_this12.snap);
         }
       }));
       this.map.addControl(new CustomControl({
@@ -2006,7 +2058,7 @@ function (_EventEmitter) {
         class: 'box-control',
         icon: 'mdi mdi-import',
         handler: function handler(btn) {
-          _this10._setActiveButton(btn);
+          _this12._setActiveButton(btn);
 
           document.getElementById('fileImport').click();
         }
@@ -2180,15 +2232,15 @@ function (_SuperCustomControl) {
   _inherits(CustomControl, _SuperCustomControl);
 
   function CustomControl(inputParams) {
-    var _this11;
+    var _this13;
 
     _classCallCheck(this, CustomControl);
 
-    _this11 = _possibleConstructorReturn(this, _getPrototypeOf(CustomControl).call(this, inputParams));
+    _this13 = _possibleConstructorReturn(this, _getPrototypeOf(CustomControl).call(this, inputParams));
     var caption = get(inputParams, 'caption');
     var hint = get(inputParams, 'hint') || caption;
     var button = document.createElement('button');
-    button.innerHTML = _this11.getBSIconHTML(get(inputParams, 'icon'));
+    button.innerHTML = _this13.getBSIconHTML(get(inputParams, 'icon'));
     button.className = get(inputParams, 'class');
     button.title = hint;
     var parentDiv = $('#custom-control')[0];
@@ -2200,8 +2252,8 @@ function (_SuperCustomControl) {
     }
 
     parentDiv.appendChild(button);
-    _this11.element = parentDiv;
-    ol.control.Control.call(_assertThisInitialized(_this11), {
+    _this13.element = parentDiv;
+    ol.control.Control.call(_assertThisInitialized(_this13), {
       label: caption,
       hint: hint,
       tipLabel: caption,
@@ -2225,7 +2277,7 @@ function (_SuperCustomControl) {
       handler(button);
     }
 
-    return _this11;
+    return _this13;
   }
 
   return CustomControl;
@@ -2237,42 +2289,42 @@ function (_SuperCustomControl2) {
   _inherits(YearControl, _SuperCustomControl2);
 
   function YearControl(inputParams) {
-    var _this12;
+    var _this14;
 
     _classCallCheck(this, YearControl);
 
-    _this12 = _possibleConstructorReturn(this, _getPrototypeOf(YearControl).call(this, inputParams));
+    _this14 = _possibleConstructorReturn(this, _getPrototypeOf(YearControl).call(this, inputParams));
     var caption = inputParams.caption;
     var hint = inputParams.hint || caption;
-    _this12.year = inputParams.year;
-    _this12.handler = inputParams.handler;
+    _this14.year = inputParams.year;
+    _this14.handler = inputParams.handler;
     var yearInput = document.createElement('input');
     yearInput.className = 'input-without-focus';
     yearInput.title = hint;
     yearInput.setAttribute('id', 'year-input');
-    yearInput.value = _this12.year;
+    yearInput.value = _this14.year;
     yearInput.addEventListener('keyup', function (event) {
       if (event.keyCode == 13) {
-        _this12._inputKeyUp();
+        _this14._inputKeyUp();
 
         event.preventDefault();
       }
     });
-    _this12.yearInput = yearInput;
+    _this14.yearInput = yearInput;
     var yearLeftButton = document.createElement('button');
-    yearLeftButton.innerHTML = _this12.getBSIconHTML('mdi mdi-step-backward-2');
+    yearLeftButton.innerHTML = _this14.getBSIconHTML('mdi mdi-step-backward-2');
     yearLeftButton.title = 'Предыдущий год';
     yearLeftButton.setAttribute('id', 'year-left-button');
     yearLeftButton.addEventListener('click', function () {
-      _this12._leftButtonClick();
+      _this14._leftButtonClick();
     }, false); // yearLeftButton.addEventListener('touchstart', () => { this._leftButtonClick(); }, false);
 
     var yearRightButton = document.createElement('button');
-    yearRightButton.innerHTML = _this12.getBSIconHTML('mdi mdi-step-forward-2');
+    yearRightButton.innerHTML = _this14.getBSIconHTML('mdi mdi-step-forward-2');
     yearRightButton.title = 'Следующий год';
     yearRightButton.setAttribute('id', 'year-right-button');
     yearRightButton.addEventListener('click', function () {
-      _this12._rightButtonClick();
+      _this14._rightButtonClick();
     }, false); // yearRightButton.addEventListener('touchstart', () => { this._rightButtonClick(); }, false);
 
     var parentDiv = document.createElement('div');
@@ -2281,15 +2333,15 @@ function (_SuperCustomControl2) {
     parentDiv.appendChild(yearLeftButton);
     parentDiv.appendChild(yearInput);
     parentDiv.appendChild(yearRightButton);
-    _this12.element = parentDiv;
-    ol.control.Control.call(_assertThisInitialized(_this12), {
+    _this14.element = parentDiv;
+    ol.control.Control.call(_assertThisInitialized(_this14), {
       label: 'test',
       hint: 'test',
       tipLabel: caption,
       element: parentDiv // target: get(inputParams, "target")
 
     });
-    return _this12;
+    return _this14;
   }
 
   _createClass(YearControl, [{
@@ -10999,7 +11051,6 @@ function (_EventEmitter) {
             source: agreement.source
           };
         });
-        console.log('`````chronos`````````', data);
         var chronos = data.chronos.map(function (chrono) {
           return {
             id: chrono._id,
@@ -11011,12 +11062,30 @@ function (_EventEmitter) {
             url: chrono.url
           };
         });
+        var persons = data.persons.map(function (person) {
+          return {
+            id: person._id,
+            surname: person.surname,
+            name: person.name,
+            middlename: person.middlename,
+            dateBirth: _this2._getStrDateFromEvent(person.dateBirth),
+            dateDeath: _this2._getStrDateFromEvent(person.dateDeath),
+            description: person.description,
+            fullDescription: person.fullDescription,
+            photoUrl: person.photoUrl,
+            placeAchieventCoords: person.placeAchieventCoords,
+            placeBirthCoords: person.placeBirthCoords,
+            placeDeathCoords: person.placeDeathCoords
+          };
+        });
 
         _this2.emit('refreshHistoryEvents', events);
 
         _this2.emit('refreshAgreements', agreements);
 
         _this2.emit('refreshChronos', chronos);
+
+        _this2.emit('refreshPersons', persons);
       });
     }
   }], [{
@@ -21921,6 +21990,9 @@ function startApp() {
   });
   protocol.subscribe('refreshChronos', function (chronos) {
     mapControl.setChronos(chronos);
+  });
+  protocol.subscribe('refreshPersons', function (persons) {
+    mapControl.setPersons(persons);
   });
   historyEventsControl.subscribe('refreshedEventList', function () {
     (0, _jquery.default)('table tr').click(function () {
