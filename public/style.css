@@ -609,3 +609,7 @@ input.form-control {
   color: #ccc;
   cursor: pointer;
 }
+
+.content-description {
+  margin-bottom: 5px;
+}

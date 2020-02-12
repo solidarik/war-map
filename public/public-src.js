@@ -1188,7 +1188,7 @@ function (_EventEmitter) {
 
         if (_results2) {
           _results2 = _results2.replace(/[.,]\s*$/, '');
-          content += '<p>' + _results2 + '</p>';
+          content += '<p class="content-description">' + _results2 + '</p>';
         }
 
         content += '<span class="small-silver-text"><a href="' + personInfo.srcUrl + '" target="_blank">Источник</a></span>';

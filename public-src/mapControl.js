@@ -325,7 +325,7 @@ export class MapControl extends EventEmitter {
         let results = personInfo.description
         if (results) {
           results = results.replace(/[.,]\s*$/, '')
-          content += '<p>' + results + '</p>'
+          content += '<p class="content-description">' + results + '</p>'
         }
 
         content +=
