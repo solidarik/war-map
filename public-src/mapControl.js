@@ -453,7 +453,7 @@ export class MapControl extends EventEmitter {
       this.addChronosLayer()
       this.addAgreementsLayer()
       this.addPersonsLayer()
-      // this.addLegend()
+      this.addLegend()
       // this._addButtons();
     }, 10)
   }
@@ -758,16 +758,43 @@ export class MapControl extends EventEmitter {
     this.map.addLayer(agreementsLayer)
   }
 
+  getFeatureStyle(feature) {
+    var st = []
+    // Shadow style
+    st.push(this.chronosStyleFunc[0])
+    return st
+  }
+
+  repaintLegend() {
+    if (0 < this.chronosSource.getFeatures().length) {
+      console.log('add chronos')
+      const f0 = this.chronosSource.getFeatures()[0]
+      this.legend.addRow({
+        title: 'Политические события',
+        feature: f0
+      })
+    }
+    console.log('repaint legend')
+  }
+
   addLegend() {
     this.legend = new ol.control.Legend({
       title: 'Легенда',
-      collapsed: false
+      collapsed: false,
+      style: [this.chronosStyleFunc, this.eventStyleFunc]
     })
     this.map.addControl(this.legend)
-    let legendControl = $('.ol-legend')[0]
-    if (!legendControl) {
-      legendControl.setAttribute('id', 'events-legend')
-    }
+    this.legend.on('select', function(e) {
+      if (e.index >= 0)
+        console.log('You click on row: ' + e.title + ' (' + e.index + ')')
+      else console.log('You click on the title: ' + e.title)
+    })
+    setTimeout(() => {
+      const legendControl = $('.ol-legend')[0]
+      if (legendControl) {
+        legendControl.setAttribute('id', 'events-legend')
+      }
+    }, 10)
   }
 
   fixMapHeight() {
@@ -892,24 +919,16 @@ export class MapControl extends EventEmitter {
     return geom
   }
 
-  setChronos(chronos) {
-    this.chronos = chronos
+  refreshInfo(info) {
+    this.chronos = info.chronos
+    this.agreements = info.agreements
+    this.historyEvents = info.events
+    this.persons = info.persons
     this.repaintChronos()
-  }
-
-  setAgreements(agreements) {
-    this.agreements = agreements
     this.repaintAgreements()
-  }
-
-  setHistoryEvents(events) {
-    this.historyEvents = events
     this.repaintHistoryEvents()
-  }
-
-  setPersons(persons) {
-    this.persons = persons
     this.repaintPersons()
+    this.repaintLegend()
   }
 
   getAllCoordsFromMap(map) {

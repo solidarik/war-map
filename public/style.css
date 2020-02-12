@@ -317,15 +317,18 @@ body {
   background-color: rgba(40, 40, 40, 0.5);
 }
 
-#events-legend {
+/* #events-legend {
   position: absolute;
-  top: 50px;
-  right: 20px;
-  width: 200px;
-  height: 100px;
+  top: 8px;
+  right: 15px;
   border-radius: 3px;
-  background-image: url(../images/legend.png);
-  background-repeat: no-repeat;
+} */
+
+.ol-control.ol-legend {
+  top: 0.5em;
+  right: 0.5em;
+  bottom: auto !important;
+  left: auto !important;
 }
 
 table {

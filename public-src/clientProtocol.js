@@ -133,10 +133,12 @@ export class ClientProtocol extends EventEmitter {
         }
       })
 
-      this.emit('refreshHistoryEvents', events)
-      this.emit('refreshAgreements', agreements)
-      this.emit('refreshChronos', chronos)
-      this.emit('refreshPersons', persons)
+      this.emit('refreshInfo', {
+        events: events,
+        agreements: agreements,
+        chronos: chronos,
+        persons: persons
+      })
     })
   }
 
