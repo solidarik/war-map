@@ -603,3 +603,9 @@ input.form-control {
 .bold-text {
   font-weight: bold;
 }
+
+.small-silver-text {
+  font-size: 10px;
+  color: #ccc;
+  cursor: pointer;
+}

@@ -1190,6 +1190,8 @@ function (_EventEmitter) {
           _results2 = _results2.replace(/[.,]\s*$/, '');
           content += '<p>' + _results2 + '</p>';
         }
+
+        content += '<span class="small-silver-text"><a href="' + personInfo.srcUrl + '" target="_blank">Источник</a></span>';
       } else {
         window.map.setActiveEvent(featureEvent);
 
@@ -11075,7 +11077,8 @@ function (_EventEmitter) {
             photoUrl: person.photoUrl,
             placeAchieventCoords: person.placeAchieventCoords,
             placeBirthCoords: person.placeBirthCoords,
-            placeDeathCoords: person.placeDeathCoords
+            placeDeathCoords: person.placeDeathCoords,
+            srcUrl: person.srcUrl
           };
         });
 

@@ -128,7 +128,8 @@ export class ClientProtocol extends EventEmitter {
           photoUrl: person.photoUrl,
           placeAchieventCoords: person.placeAchieventCoords,
           placeBirthCoords: person.placeBirthCoords,
-          placeDeathCoords: person.placeDeathCoords
+          placeDeathCoords: person.placeDeathCoords,
+          srcUrl: person.srcUrl
         }
       })
 

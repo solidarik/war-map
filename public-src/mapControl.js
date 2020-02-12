@@ -327,6 +327,11 @@ export class MapControl extends EventEmitter {
           results = results.replace(/[.,]\s*$/, '')
           content += '<p>' + results + '</p>'
         }
+
+        content +=
+          '<span class="small-silver-text"><a href="' +
+          personInfo.srcUrl +
+          '" target="_blank">Источник</a></span>'
       } else {
         window.map.setActiveEvent(featureEvent)
 
