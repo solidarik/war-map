@@ -539,8 +539,9 @@ export class MapControl extends EventEmitter {
     //   return [new ol.style.Style()]
     // }
 
-    const allyTroops = this.getNumber(feature.get('ally_troops'))
-    const enemTroops = this.getNumber(feature.get('enem_troops'))
+    const info = feature.get('info')
+    const allyTroops = this.getNumber(info.ally_troops)
+    const enemTroops = this.getNumber(info.enem_troops)
     let starSize = 4
 
     const starSizes = [
@@ -945,6 +946,7 @@ export class MapControl extends EventEmitter {
         isWinnerUSSR: strHelper.compareEngLanguage(event.winner, 'CCCР'),
         kind: event.kind,
         info: info,
+        imgUrl: event.imgUrl,
         eventMap: event.maps[0],
         filename: event.filename
       })

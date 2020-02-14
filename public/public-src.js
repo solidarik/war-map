@@ -1371,8 +1371,9 @@ function (_EventEmitter) {
       // if (zoom > 4.5) {
       //   return [new ol.style.Style()]
       // }
-      var allyTroops = this.getNumber(feature.get('ally_troops'));
-      var enemTroops = this.getNumber(feature.get('enem_troops'));
+      var info = feature.get('info');
+      var allyTroops = this.getNumber(info.ally_troops);
+      var enemTroops = this.getNumber(info.enem_troops);
       var starSize = 4;
       var starSizes = [{
         count: 2500,
@@ -1831,6 +1832,7 @@ function (_EventEmitter) {
           isWinnerUSSR: _strHelper.default.compareEngLanguage(event.winner, 'CCCР'),
           kind: event.kind,
           info: info,
+          imgUrl: event.imgUrl,
           eventMap: event.maps[0],
           filename: event.filename
         });
