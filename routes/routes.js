@@ -10,7 +10,8 @@ ensureAuthenticated = async function(ctx, next) {
   ctx.body = ctx.render('login')
 }
 
-router.get('/', require('./page-about'))
+//router.get('/', require('./page-about'))
+router.get('/', require('./page-events'))
 router.get('/login', require('./login').get)
 router.post('/login', require('./login').post)
 //router.get('/index', ensureAuthenticated, require('./page-index'))

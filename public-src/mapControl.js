@@ -6,6 +6,9 @@ import strHelper from '../helper/strHelper'
 
 const kremlinLocation = new ol.proj.fromLonLat([37.617499, 55.752023]) // moscow kremlin
 
+const min_year = 1918
+const max_year = 1965
+
 function resizeImage(url, fixWidth, callback) {
   var sourceImage = new Image()
 
@@ -157,11 +160,12 @@ export class MapControl extends EventEmitter {
 
       if (!featureEvent) return
 
+      const info = featureEvent.get('info')
       const isExistUrl = imgUrl !== undefined
 
-      let content = `<h3>${featureEvent.get('name')}</h3>`
-      if (featureEvent.get('kind') == 'chronos') {
-        content = `<h3>${featureEvent.get('place')}</h3>`
+      let content = `<h3>${info.name}</h3>`
+      if (info.kind == 'chronos') {
+        content = `<h3>${info.place}</h3>`
       }
 
       let isFirstRow = true
@@ -213,69 +217,56 @@ export class MapControl extends EventEmitter {
         }
 
         let html = ''
-        html += getHtmlCell(
-          'Участники',
-          event.get('allies'),
-          event.get('enemies'),
-          true
-        )
+        html += getHtmlCell('Участники', info.allies, info.enemies, true)
         html += getHtmlCell(
           'Силы сторон (чел.)',
-          event.get('ally_troops'),
-          event.get('enem_troops')
+          info.ally_troops,
+          info.enem_troops
         )
-        html += getHtmlCell(
-          'Потери (чел.)',
-          event.get('ally_losses'),
-          event.get('enem_losses')
-        )
-        html += getHtmlCell(
-          'Убитые (чел.)',
-          event.get('ally_deads'),
-          event.get('enem_deads')
-        )
+        html += getHtmlCell('Потери (чел.)', info.ally_losses, info.enem_losses)
+        html += getHtmlCell('Убитые (чел.)', info.ally_deads, info.enem_deads)
         html += getHtmlCell(
           'Пленные (чел.)',
-          event.get('ally_prisoners'),
-          event.get('enem_prisoners')
+          info.ally_prisoners,
+          info.enem_prisoners
         )
         html += getHtmlCell(
           'Раненые (чел.)',
-          event.get('ally_woundeds'),
-          event.get('enem_woundeds')
+          info.ally_woundeds,
+          info.enem_woundeds
         )
         html += getHtmlCell(
           'Пропавшие без вести (чел.)',
-          event.get('ally_missing'),
-          event.get('enem_missing')
+          info.ally_missing,
+          info.enem_missing
         )
         html += getHtmlCell(
           'Танков (шт.)',
-          event.get('ally_tanks_cnt'),
-          event.get('enem_tanks_cnt')
+          info.ally_tanks_cnt,
+          info.enem_tanks_cnt
         )
         html += getHtmlCell(
           'Самолетов (шт.)',
-          event.get('ally_airplans_cnt'),
-          event.get('enem_airplans_cnt')
+          info.ally_airplans_cnt,
+          info.enem_airplans_cnt
         )
         html += getHtmlCell(
           'Кораблей (шт.)',
-          event.get('ally_ships_cnt'),
-          event.get('enem_ships_cnt')
+          info.ally_ships_cnt,
+          info.enem_ships_cnt
         )
         html += getHtmlCell(
           'Подводных лодок (шт.)',
-          event.get('ally_submarines_cnt'),
-          event.get('enem_submarines_cnt')
+          info.ally_submarines_cnt,
+          info.enem_submarines_cnt
         )
 
         return html
       }
 
       if ('politics' === kind) {
-        const startDate = featureEvent.get('startDate')
-        const endDate = featureEvent.get('endDate')
+        const startDate = info.startDate
+        const endDate = info.endDate
         if (startDate) {
           const dateStr =
             endDate != undefined && startDate != endDate
@@ -284,36 +275,34 @@ export class MapControl extends EventEmitter {
           content += '<h4>' + dateStr + '</h4>'
         }
 
-        let results = featureEvent.get('results')
+        let results = info.results
         if (results) {
           results = results.replace(/[.,]\s*$/, '')
           content += '<p>' + results + '</p>'
         }
       } else if ('chronos' === kind) {
-        const startDate = featureEvent.get('startDate')
-        const endDate = featureEvent.get('endDate')
+        const startDate = info.startDate
+        const endDate = info.endDate
         if (startDate) {
           let dateStr =
             endDate != undefined && startDate != endDate
               ? `${startDate} - ${endDate}`
               : startDate
-          if (featureEvent.get('isOnlyYear')) {
+          if (info.isOnlyYear) {
             dateStr = dateStr.slice(-4)
           }
           content += '<h4>' + dateStr + '</h4>'
         }
 
-        let results = featureEvent.get('brief')
+        let results = info.brief
         if (results) {
           results = results.replace(/[.,]\s*$/, '')
           content += '<p>' + results + '</p>'
         }
       } else if ('persons' === kind) {
-        const personInfo = featureEvent.get('info')
-        console.log(personInfo)
-        content = `<h3>${personInfo.surname} ${personInfo.name} ${personInfo.middlename}</h3>`
-        const startDate = personInfo.dateBirth
-        const endDate = personInfo.dateDeath
+        content = `<h3>${info.surname} ${info.name} ${info.middlename}</h3>`
+        const startDate = info.dateBirth
+        const endDate = info.dateDeath
         if (startDate) {
           let dateStr =
             endDate != undefined && startDate != endDate
@@ -322,21 +311,16 @@ export class MapControl extends EventEmitter {
           content += '<h4>' + dateStr + '</h4>'
         }
 
-        let results = personInfo.description
+        let results = info.description
         if (results) {
           results = results.replace(/[.,]\s*$/, '')
           content += '<p class="content-description">' + results + '</p>'
         }
-
-        content +=
-          '<span class="small-silver-text"><a href="' +
-          personInfo.srcUrl +
-          '" target="_blank">Источник</a></span>'
       } else {
         window.map.setActiveEvent(featureEvent)
 
-        const startDate = featureEvent.get('startDate')
-        const endDate = featureEvent.get('endDate')
+        const startDate = info.startDate
+        const endDate = info.endDate
         if (startDate) {
           const dateStr =
             endDate != undefined && startDate != endDate
@@ -352,7 +336,7 @@ export class MapControl extends EventEmitter {
           </tbody></table>`
         content += `<p>${table}</p>`
 
-        const eventId = featureEvent.get('id')
+        const eventId = info.id
         let table2 = `
         <table class="table table-sm table-borderless" id="table-control">
           <tr><td
@@ -371,15 +355,22 @@ export class MapControl extends EventEmitter {
 
       if ('' == content) return
 
+      if (0 < info.srcUrl.length) {
+        content +=
+          '<span class="small-silver-text"><a href="' +
+          info.srcUrl +
+          '" target="_blank">Источник</a></span>'
+      }
+
       const coords = featureEvent.getGeometry().getFirstCoordinate()
       window.map.popup.show(coords, content)
 
       /* Show Big Image */
       /*
       if (isHit && isExistUrl) {
-        window.map.showEventContour(featureEvent.get('eventMap'))
+        window.map.showEventContour(info.eventMap)
 
-        $('#imgModalLabel').html(featureEvent.get('name'))
+        $('#imgModalLabel').html(info.name)
         $('.modal-body').html(`
         <div class="d-flex justify-content-center">
           <div class="spinner-border" role="status">
@@ -945,7 +936,7 @@ export class MapControl extends EventEmitter {
     this.allHistoryEventsSource.clear()
     this.historyEvents.forEach((event, i) => {
       //0 == i && this.showEventContour(event.maps[0])
-
+      let info = event
       let ft = new ol.Feature({
         id: event.id,
         name: event.name,
@@ -953,42 +944,9 @@ export class MapControl extends EventEmitter {
         size: 20000,
         isWinnerUSSR: strHelper.compareEngLanguage(event.winner, 'CCCР'),
         kind: event.kind,
-        imgUrl: event.imgUrl,
-        winner: event.winner,
+        info: info,
         eventMap: event.maps[0],
-        filename: event.filename,
-        startDate: event.startDate,
-        endDate: event.endDate,
-        allies: event.allies,
-        enemies: event.enemies,
-        ally_troops: event.ally_troops,
-        ally_tanks_cnt: event.ally_tanks_cnt,
-        ally_airplans_cnt: event.ally_airplans_cnt,
-        ally_ships_cnt: event.ally_ships_cnt,
-        ally_submarines_cnt: event.ally_submarines_cnt,
-        ally_losses: event.ally_losses,
-        ally_deads: event.ally_deads,
-        ally_prisoners: event.ally_prisoners,
-        ally_woundeds: event.ally_woundeds,
-        ally_missing: event.ally_missing,
-        ally_tanks_lost: event.ally_tanks_lost,
-        ally_airplans_lost: event.ally_airplans_lost,
-        ally_ships_lost: event.ally_ships_lost,
-        ally_submarines_lost: event.ally_submarines_lost,
-        enem_troops: event.enem_troops,
-        enem_tanks_cnt: event.enem_tanks_cnt,
-        enem_airplans_cnt: event.enem_airplans_cnt,
-        enem_ships_cnt: event.enem_ships_cnt,
-        enem_submarines_cnt: event.enem_submarines_cnt,
-        enem_losses: event.enem_losses,
-        enem_deads: event.enem_deads,
-        enem_prisoners: event.enem_prisoners,
-        enem_woundeds: event.enem_woundeds,
-        enem_missing: event.enem_missing,
-        enem_tanks_lost: event.enem_tanks_lost,
-        enem_airplans_lost: event.enem_airplans_lost,
-        enem_ships_lost: event.enem_ships_lost,
-        enem_submarines_lost: event.enem_submarines_lost
+        filename: event.filename
       })
 
       this.allHistoryEventsSource.addFeature(ft)
@@ -999,17 +957,14 @@ export class MapControl extends EventEmitter {
     this.chronosSource.clear()
 
     this.chronos.forEach(chrono => {
+      let info = chrono
       if (chrono.placeCoords && chrono.placeCoords.length) {
         chrono.placeCoords[1] =
           chrono.placeCoords[1] + chrono.placeCoords[1] / 200 //поправка для слияния нескольких точек в одну
         let ft = new ol.Feature({
           kind: 'chronos',
           geometry: new ol.geom.Point(ol.proj.fromLonLat(chrono.placeCoords)),
-          startDate: chrono.startDate,
-          isOnlyYear: chrono.isOnlyYear,
-          brief: chrono.brief,
-          place: chrono.place,
-          url: chrono.url
+          info: info
         })
 
         this.chronosSource.addFeature(ft)
@@ -1021,6 +976,7 @@ export class MapControl extends EventEmitter {
     this.agreementsSource.clear()
 
     this.agreements.forEach(agreement => {
+      let info = agreement
       if (agreement.placeCoords && agreement.placeCoords.length) {
         let ft = new ol.Feature({
           name: agreement.kind,
@@ -1028,10 +984,7 @@ export class MapControl extends EventEmitter {
           geometry: new ol.geom.Point(
             ol.proj.fromLonLat(agreement.placeCoords)
           ),
-          startDate: agreement.startDate,
-          endDate: agreement.endDate,
-          results: agreement.results,
-          source: agreement.source
+          info: info
         })
 
         this.agreementsSource.addFeature(ft)
@@ -1381,6 +1334,14 @@ class CustomControl extends SuperCustomControl {
 }
 
 class YearControl extends SuperCustomControl {
+  static get min_year() {
+    return min_year
+  }
+
+  static get max_year() {
+    return max_year
+  }
+
   constructor(inputParams) {
     super(inputParams)
 
@@ -1479,8 +1440,8 @@ class YearControl extends SuperCustomControl {
     if (!reg.test(year)) return false
 
     let intYear = parseInt(year) + incr
-    if (intYear < 1800) return false
-    if (intYear > 2025) return false
+    if (intYear < YearControl.min_year) return false
+    if (intYear > YearControl.max_year) return false
 
     if (oldValue == intYear) return false
 

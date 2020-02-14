@@ -12,6 +12,7 @@ var historyEventsSchema = new mongoose.Schema(
     kind: String,
     pageId: Number,
     imgUrl: String,
+    srcUrl: String,
     enemies: [],
     allies: [],
     winner: String,

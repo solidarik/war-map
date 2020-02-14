@@ -32,7 +32,7 @@ class ChronosJsonMediator extends SuperJsonMediator {
             place: json.place,
             placeCoords: placeCoords ? [placeCoords.lon, placeCoords.lat] : [],
             brief: json.brief,
-            url: json.url
+            srcUrl: json.srcUrl
           }
           resolve(newJson)
         })

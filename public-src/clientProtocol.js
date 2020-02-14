@@ -99,7 +99,7 @@ export class ClientProtocol extends EventEmitter {
           player2: agreement.player2,
           results: agreement.results,
           imgUrl: agreement.imgUrl,
-          source: agreement.source
+          srcUrl: agreement.srcUrl
         }
       })
 
@@ -111,7 +111,7 @@ export class ClientProtocol extends EventEmitter {
           startDate: this._getStrDateFromEvent(chrono.startDate),
           isOnlyYear: chrono.isOnlyYear,
           brief: chrono.brief,
-          url: chrono.url
+          srcUrl: chrono.srcUrl
         }
       })
 

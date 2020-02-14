@@ -34,7 +34,8 @@ class AgreementsJsonMediator extends SuperJsonMediator {
             player1: json.player1,
             player2: json.player2,
             results: json.results,
-            imgUrl: json.imgUrl
+            imgUrl: json.imgUrl,
+            srcUrl: json.srcUrl
           }
 
           !placeCoords && console.log('json', newJson)

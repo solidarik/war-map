@@ -10,20 +10,27 @@ col_features, col_name, col_startDate, col_endDate = tuple(range(0, 4, 1))
 col_allies, col_enemies = tuple(range(4, 6, 1))
 
 col_ally_troops = 6
-col_ally_tanks_cnt, col_ally_airplans_cnt, col_ally_ships_cnt, col_ally_submarines_cnt = tuple(range(7, 11, 1))
-col_ally_losses, col_ally_deads, col_ally_prisoners, col_ally_woundeds, col_ally_missing = tuple(range(11, 16, 1))
-col_ally_tanks_lost, col_ally_airplans_lost, col_ally_ships_lost, col_ally_submarines_lost = tuple(range(16, 20, 1))
+col_ally_tanks_cnt, col_ally_airplans_cnt, col_ally_ships_cnt, col_ally_submarines_cnt = tuple(
+    range(7, 11, 1))
+col_ally_losses, col_ally_deads, col_ally_prisoners, col_ally_woundeds, col_ally_missing = tuple(
+    range(11, 16, 1))
+col_ally_tanks_lost, col_ally_airplans_lost, col_ally_ships_lost, col_ally_submarines_lost = tuple(
+    range(16, 20, 1))
 
 col_enem_troops = 20
-col_enem_tanks_cnt, col_enem_airplans_cnt, col_enem_ships_cnt, col_enem_submarines_cnt = tuple(range(21, 25, 1))
-col_enem_losses, col_enem_deads, col_enem_prisoners, col_enem_woundeds, col_enem_missing = tuple(range(25, 30, 1))
-col_enem_tanks_lost, col_enem_airplans_lost, col_enem_ships_lost, col_enem_submarines_lost = tuple(range(30, 34, 1))
+col_enem_tanks_cnt, col_enem_airplans_cnt, col_enem_ships_cnt, col_enem_submarines_cnt = tuple(
+    range(21, 25, 1))
+col_enem_losses, col_enem_deads, col_enem_prisoners, col_enem_woundeds, col_enem_missing = tuple(
+    range(25, 30, 1))
+col_enem_tanks_lost, col_enem_airplans_lost, col_enem_ships_lost, col_enem_submarines_lost = tuple(
+    range(30, 34, 1))
 
 col_winner = 34
 col_comment = 35
 col_detailing = 36
-col_source_url = 37
+col_srcUrl = 37
 col_imgUrl = 38
+
 
 def get_sheet_value(row, col):
     return scheet.cell(row, col).value
@@ -35,11 +42,12 @@ def get_sheet_value_date(row, col):
     return '{:02d}.{:02d}.{}'.format(d, m, y)
 
 
-def get_sheet_value_arr(row, col, split_char = ';'):
+def get_sheet_value_arr(row, col, split_char=';'):
     val = scheet.cell(row, col).value
     if ('' == val):
         return []
     return val.split(split_char)
+
 
 filename = os.path.dirname(os.path.abspath(__file__)) + '/Битвы 3-8.xlsx'
 book = xlrd.open_workbook(filename, encoding_override="cp1251")
@@ -59,7 +67,8 @@ for sheetnum in range(0, 2):
         battle['kind'] = 'wow' if sheetnum == 0 else 'wmw'
         battle['features'] = get_sheet_value_arr(row, col_features)
         if ('geojson' not in ', '.join(battle['features'])):
-            battle['features'] = list(map(lambda x: x + '.geojson', battle['features']))
+            battle['features'] = list(
+                map(lambda x: x + '.geojson', battle['features']))
         battle['name'] = get_sheet_value(row, col_name)
         battle['startDate'] = get_sheet_value_date(row, col_startDate)
         battle['endDate'] = get_sheet_value_date(row, col_endDate)
@@ -67,36 +76,44 @@ for sheetnum in range(0, 2):
         battle['enemies'] = get_sheet_value(row, col_enemies)
         battle['ally_troops'] = get_sheet_value(row, col_ally_troops)
         battle['ally_tanks_cnt'] = get_sheet_value(row, col_ally_tanks_cnt)
-        battle['ally_airplans_cnt'] = get_sheet_value(row, col_ally_airplans_cnt)
+        battle['ally_airplans_cnt'] = get_sheet_value(row,
+                                                      col_ally_airplans_cnt)
         battle['ally_ships_cnt'] = get_sheet_value(row, col_ally_ships_cnt)
-        battle['ally_submarines_cnt'] = get_sheet_value(row, col_ally_submarines_cnt)
+        battle['ally_submarines_cnt'] = get_sheet_value(
+            row, col_ally_submarines_cnt)
         battle['ally_losses'] = get_sheet_value(row, col_ally_losses)
         battle['ally_deads'] = get_sheet_value(row, col_ally_deads)
         battle['ally_prisoners'] = get_sheet_value(row, col_ally_prisoners)
         battle['ally_woundeds'] = get_sheet_value(row, col_ally_woundeds)
         battle['ally_missing'] = get_sheet_value(row, col_ally_missing)
         battle['ally_tanks_lost'] = get_sheet_value(row, col_ally_tanks_lost)
-        battle['ally_airplans_lost'] = get_sheet_value(row, col_ally_airplans_lost)
+        battle['ally_airplans_lost'] = get_sheet_value(row,
+                                                       col_ally_airplans_lost)
         battle['ally_ships_lost'] = get_sheet_value(row, col_ally_ships_lost)
-        battle['ally_submarines_lost'] = get_sheet_value(row, col_ally_submarines_lost)
+        battle['ally_submarines_lost'] = get_sheet_value(
+            row, col_ally_submarines_lost)
         battle['enem_troops'] = get_sheet_value(row, col_enem_troops)
         battle['enem_tanks_cnt'] = get_sheet_value(row, col_enem_tanks_cnt)
-        battle['enem_airplans_cnt'] = get_sheet_value(row, col_enem_airplans_cnt)
+        battle['enem_airplans_cnt'] = get_sheet_value(row,
+                                                      col_enem_airplans_cnt)
         battle['enem_ships_cnt'] = get_sheet_value(row, col_enem_ships_cnt)
-        battle['enem_submarines_cnt'] = get_sheet_value(row, col_enem_submarines_cnt)
+        battle['enem_submarines_cnt'] = get_sheet_value(
+            row, col_enem_submarines_cnt)
         battle['enem_losses'] = get_sheet_value(row, col_enem_losses)
         battle['enem_deads'] = get_sheet_value(row, col_enem_deads)
         battle['enem_prisoners'] = get_sheet_value(row, col_enem_prisoners)
         battle['enem_woundeds'] = get_sheet_value(row, col_enem_woundeds)
         battle['enem_missing'] = get_sheet_value(row, col_enem_missing)
         battle['enem_tanks_lost'] = get_sheet_value(row, col_enem_tanks_lost)
-        battle['enem_airplans_lost'] = get_sheet_value(row, col_enem_airplans_lost)
+        battle['enem_airplans_lost'] = get_sheet_value(row,
+                                                       col_enem_airplans_lost)
         battle['enem_ships_lost'] = get_sheet_value(row, col_enem_ships_lost)
-        battle['enem_submarines_lost'] = get_sheet_value(row, col_enem_submarines_lost)
+        battle['enem_submarines_lost'] = get_sheet_value(
+            row, col_enem_submarines_lost)
         battle['winner'] = get_sheet_value(row, col_winner)
         battle['comment'] = get_sheet_value(row, col_comment)
         battle['detailing'] = get_sheet_value(row, col_detailing)
-        battle['source_url'] = get_sheet_value(row, col_source_url)
+        battle['srcUrl'] = get_sheet_value(row, col_srcUrl)
         battle['imgUrl'] = get_sheet_value(row, col_imgUrl)
         entities.append(battle)
 
@@ -127,7 +144,10 @@ for sheetnum in range(0, 2):
                 text = ''
                 if (isinstance(value, list)):
                     if (0 < len(', '.join(value))):
-                        text = '"{}": [{}]'.format(key, ', '.join(list(map(lambda x: '"' + x + '"', value))))
+                        text = '"{}": [{}]'.format(
+                            key,
+                            ', '.join(list(map(lambda x: '"' + x + '"',
+                                               value))))
                 elif (value != ''):
                     text = '"{}": "{}"'.format(key, value)
 

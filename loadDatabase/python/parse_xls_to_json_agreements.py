@@ -8,7 +8,8 @@ root_folder = 'out_agreements'
 
 col_kind, col_place, col_startDate, col_endDate = tuple(range(0, 4, 1))
 col_player1, col_player2 = tuple(range(4, 6, 1))
-col_results, col_source, col_img = tuple(range(6, 9, 1))
+col_results, col_source = tuple(range(6, 8, 1))
+
 
 def get_sheet_value(row, col):
     v = scheet.cell(row, col).value
@@ -21,13 +22,15 @@ def get_sheet_value_date(row, col):
     return '{:02d}.{:02d}.{}'.format(d, m, y)
 
 
-def get_sheet_value_arr(row, col, split_char = ';'):
+def get_sheet_value_arr(row, col, split_char=';'):
     val = scheet.cell(row, col).value
     if ('' == val):
         return []
     return val.split(split_char)
 
-filename = os.path.dirname(os.path.abspath(__file__)) + '/Международные отношения 2-0.xlsx'
+
+filename = os.path.dirname(
+    os.path.abspath(__file__)) + '/Международные отношения 2-0.xlsx'
 book = xlrd.open_workbook(filename, encoding_override="cp1251")
 
 scheet = book.sheet_by_index(0)
@@ -43,8 +46,7 @@ for row in range(START_ROW, END_ROW):
     agreement['player1'] = get_sheet_value(row, col_player1)
     agreement['player2'] = get_sheet_value(row, col_player2)
     agreement['results'] = get_sheet_value(row, col_results)
-    agreement['source'] = get_sheet_value(row, col_source)
-    agreement['img'] = get_sheet_value(row, col_img)
+    agreement['srcUrl'] = get_sheet_value(row, col_source)
 
     entities.append(agreement)
 
@@ -77,7 +79,9 @@ while i < len(entities):
             text = ''
             if (isinstance(value, list)):
                 if (0 < len(', '.join(value))):
-                    text = '"{}": [{}]'.format(key, ', '.join(list(map(lambda x: '"' + x + '"', value))))
+                    text = '"{}": [{}]'.format(
+                        key,
+                        ', '.join(list(map(lambda x: '"' + x + '"', value))))
             elif (value != ''):
                 text = '"{}": "{}"'.format(key, value)
 
@@ -91,7 +95,6 @@ while i < len(entities):
 
     file.write('}]')
     file.close()
-
 
 print("Completed")
 exit(0)

@@ -15,7 +15,7 @@ var agreementsSchema = new mongoose.Schema(
     player1: String,
     player2: String,
     results: String,
-    imgUrl: String
+    srcUrl: String
   },
   {
     timestamps: false

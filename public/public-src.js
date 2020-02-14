@@ -945,6 +945,9 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 var kremlinLocation = new ol.proj.fromLonLat([37.617499, 55.752023]); // moscow kremlin
 
+var min_year = 1918;
+var max_year = 1965;
+
 function resizeImage(url, fixWidth, callback) {
   var sourceImage = new Image();
 
@@ -1078,11 +1081,12 @@ function (_EventEmitter) {
         return ['wmw', 'wow', 'politics', 'chronos', 'persons'].indexOf(feature.get('kind')) >= 0;
       });
       if (!featureEvent) return;
+      var info = featureEvent.get('info');
       var isExistUrl = imgUrl !== undefined;
-      var content = "<h3>".concat(featureEvent.get('name'), "</h3>");
+      var content = "<h3>".concat(info.name, "</h3>");
 
-      if (featureEvent.get('kind') == 'chronos') {
-        content = "<h3>".concat(featureEvent.get('place'), "</h3>");
+      if (info.kind == 'chronos') {
+        content = "<h3>".concat(info.place, "</h3>");
       }
 
       var isFirstRow = true;
@@ -1121,62 +1125,59 @@ function (_EventEmitter) {
         };
 
         var html = '';
-        html += getHtmlCell('Участники', event.get('allies'), event.get('enemies'), true);
-        html += getHtmlCell('Силы сторон (чел.)', event.get('ally_troops'), event.get('enem_troops'));
-        html += getHtmlCell('Потери (чел.)', event.get('ally_losses'), event.get('enem_losses'));
-        html += getHtmlCell('Убитые (чел.)', event.get('ally_deads'), event.get('enem_deads'));
-        html += getHtmlCell('Пленные (чел.)', event.get('ally_prisoners'), event.get('enem_prisoners'));
-        html += getHtmlCell('Раненые (чел.)', event.get('ally_woundeds'), event.get('enem_woundeds'));
-        html += getHtmlCell('Пропавшие без вести (чел.)', event.get('ally_missing'), event.get('enem_missing'));
-        html += getHtmlCell('Танков (шт.)', event.get('ally_tanks_cnt'), event.get('enem_tanks_cnt'));
-        html += getHtmlCell('Самолетов (шт.)', event.get('ally_airplans_cnt'), event.get('enem_airplans_cnt'));
-        html += getHtmlCell('Кораблей (шт.)', event.get('ally_ships_cnt'), event.get('enem_ships_cnt'));
-        html += getHtmlCell('Подводных лодок (шт.)', event.get('ally_submarines_cnt'), event.get('enem_submarines_cnt'));
+        html += getHtmlCell('Участники', info.allies, info.enemies, true);
+        html += getHtmlCell('Силы сторон (чел.)', info.ally_troops, info.enem_troops);
+        html += getHtmlCell('Потери (чел.)', info.ally_losses, info.enem_losses);
+        html += getHtmlCell('Убитые (чел.)', info.ally_deads, info.enem_deads);
+        html += getHtmlCell('Пленные (чел.)', info.ally_prisoners, info.enem_prisoners);
+        html += getHtmlCell('Раненые (чел.)', info.ally_woundeds, info.enem_woundeds);
+        html += getHtmlCell('Пропавшие без вести (чел.)', info.ally_missing, info.enem_missing);
+        html += getHtmlCell('Танков (шт.)', info.ally_tanks_cnt, info.enem_tanks_cnt);
+        html += getHtmlCell('Самолетов (шт.)', info.ally_airplans_cnt, info.enem_airplans_cnt);
+        html += getHtmlCell('Кораблей (шт.)', info.ally_ships_cnt, info.enem_ships_cnt);
+        html += getHtmlCell('Подводных лодок (шт.)', info.ally_submarines_cnt, info.enem_submarines_cnt);
         return html;
       };
 
       if ('politics' === kind) {
-        var startDate = featureEvent.get('startDate');
-        var endDate = featureEvent.get('endDate');
+        var startDate = info.startDate;
+        var endDate = info.endDate;
 
         if (startDate) {
           var dateStr = endDate != undefined && startDate != endDate ? "".concat(startDate, " - ").concat(endDate) : startDate;
           content += '<h4>' + dateStr + '</h4>';
         }
 
-        var results = featureEvent.get('results');
+        var results = info.results;
 
         if (results) {
           results = results.replace(/[.,]\s*$/, '');
           content += '<p>' + results + '</p>';
         }
       } else if ('chronos' === kind) {
-        var _startDate = featureEvent.get('startDate');
-
-        var _endDate = featureEvent.get('endDate');
+        var _startDate = info.startDate;
+        var _endDate = info.endDate;
 
         if (_startDate) {
           var _dateStr = _endDate != undefined && _startDate != _endDate ? "".concat(_startDate, " - ").concat(_endDate) : _startDate;
 
-          if (featureEvent.get('isOnlyYear')) {
+          if (info.isOnlyYear) {
             _dateStr = _dateStr.slice(-4);
           }
 
           content += '<h4>' + _dateStr + '</h4>';
         }
 
-        var _results = featureEvent.get('brief');
+        var _results = info.brief;
 
         if (_results) {
           _results = _results.replace(/[.,]\s*$/, '');
           content += '<p>' + _results + '</p>';
         }
       } else if ('persons' === kind) {
-        var personInfo = featureEvent.get('info');
-        console.log(personInfo);
-        content = "<h3>".concat(personInfo.surname, " ").concat(personInfo.name, " ").concat(personInfo.middlename, "</h3>");
-        var _startDate2 = personInfo.dateBirth;
-        var _endDate2 = personInfo.dateDeath;
+        content = "<h3>".concat(info.surname, " ").concat(info.name, " ").concat(info.middlename, "</h3>");
+        var _startDate2 = info.dateBirth;
+        var _endDate2 = info.dateDeath;
 
         if (_startDate2) {
           var _dateStr2 = _endDate2 != undefined && _startDate2 != _endDate2 ? "".concat(_startDate2, " - ").concat(_endDate2) : _startDate2;
@@ -1184,20 +1185,16 @@ function (_EventEmitter) {
           content += '<h4>' + _dateStr2 + '</h4>';
         }
 
-        var _results2 = personInfo.description;
+        var _results2 = info.description;
 
         if (_results2) {
           _results2 = _results2.replace(/[.,]\s*$/, '');
           content += '<p class="content-description">' + _results2 + '</p>';
         }
-
-        content += '<span class="small-silver-text"><a href="' + personInfo.srcUrl + '" target="_blank">Источник</a></span>';
       } else {
         window.map.setActiveEvent(featureEvent);
-
-        var _startDate3 = featureEvent.get('startDate');
-
-        var _endDate3 = featureEvent.get('endDate');
+        var _startDate3 = info.startDate;
+        var _endDate3 = info.endDate;
 
         if (_startDate3) {
           var _dateStr3 = _endDate3 != undefined && _startDate3 != _endDate3 ? "".concat(_startDate3, " - ").concat(_endDate3) : _startDate3;
@@ -1207,20 +1204,25 @@ function (_EventEmitter) {
 
         var table = "\n          <table class=\"table table-sm table-borderless\" id=\"table-info\">\n          <tbody>\n          ".concat(getHtmlForFeatureEvent(featureEvent), "\n          </tbody></table>");
         content += "<p>".concat(table, "</p>");
-        var eventId = featureEvent.get('id');
+        var eventId = info.id;
         var table2 = "\n        <table class=\"table table-sm table-borderless\" id=\"table-control\">\n          <tr><td\n            id=\"showEventContol\"\n            onclick=\"window.map.showActiveEventContour()\"\n            onmouseenter=\"window.map.setCursorPointer(this, true);\"\n            onmouseleave=\"window.map.setCursorPointer(this, false);\">\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C/\u0441\u043A\u0440\u044B\u0442\u044C \u043A\u043E\u043D\u0442\u0443\u0440</td></tr>\n          <tr><td\n            id=\"showMapControl\"\n            onclick=\"window.map.showActiveEventMap()\"\n            onmouseenter=\"window.map.setCursorPointer(this, true);\"\n            onmouseleave=\"window.map.setCursorPointer(this, false);\">\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u043A\u0430\u0440\u0442\u0443</td></tr>\n        </table>";
         content += table2;
       }
 
       if ('' == content) return;
+
+      if (0 < info.srcUrl.length) {
+        content += '<span class="small-silver-text"><a href="' + info.srcUrl + '" target="_blank">Источник</a></span>';
+      }
+
       var coords = featureEvent.getGeometry().getFirstCoordinate();
       window.map.popup.show(coords, content);
       /* Show Big Image */
 
       /*
       if (isHit && isExistUrl) {
-        window.map.showEventContour(featureEvent.get('eventMap'))
-          $('#imgModalLabel').html(featureEvent.get('name'))
+        window.map.showEventContour(info.eventMap)
+          $('#imgModalLabel').html(info.name)
         $('.modal-body').html(`
         <div class="d-flex justify-content-center">
           <div class="spinner-border" role="status">
@@ -1820,6 +1822,7 @@ function (_EventEmitter) {
       this.allHistoryEventsSource.clear();
       this.historyEvents.forEach(function (event, i) {
         //0 == i && this.showEventContour(event.maps[0])
+        var info = event;
         var ft = new ol.Feature({
           id: event.id,
           name: event.name,
@@ -1827,42 +1830,9 @@ function (_EventEmitter) {
           size: 20000,
           isWinnerUSSR: _strHelper.default.compareEngLanguage(event.winner, 'CCCР'),
           kind: event.kind,
-          imgUrl: event.imgUrl,
-          winner: event.winner,
+          info: info,
           eventMap: event.maps[0],
-          filename: event.filename,
-          startDate: event.startDate,
-          endDate: event.endDate,
-          allies: event.allies,
-          enemies: event.enemies,
-          ally_troops: event.ally_troops,
-          ally_tanks_cnt: event.ally_tanks_cnt,
-          ally_airplans_cnt: event.ally_airplans_cnt,
-          ally_ships_cnt: event.ally_ships_cnt,
-          ally_submarines_cnt: event.ally_submarines_cnt,
-          ally_losses: event.ally_losses,
-          ally_deads: event.ally_deads,
-          ally_prisoners: event.ally_prisoners,
-          ally_woundeds: event.ally_woundeds,
-          ally_missing: event.ally_missing,
-          ally_tanks_lost: event.ally_tanks_lost,
-          ally_airplans_lost: event.ally_airplans_lost,
-          ally_ships_lost: event.ally_ships_lost,
-          ally_submarines_lost: event.ally_submarines_lost,
-          enem_troops: event.enem_troops,
-          enem_tanks_cnt: event.enem_tanks_cnt,
-          enem_airplans_cnt: event.enem_airplans_cnt,
-          enem_ships_cnt: event.enem_ships_cnt,
-          enem_submarines_cnt: event.enem_submarines_cnt,
-          enem_losses: event.enem_losses,
-          enem_deads: event.enem_deads,
-          enem_prisoners: event.enem_prisoners,
-          enem_woundeds: event.enem_woundeds,
-          enem_missing: event.enem_missing,
-          enem_tanks_lost: event.enem_tanks_lost,
-          enem_airplans_lost: event.enem_airplans_lost,
-          enem_ships_lost: event.enem_ships_lost,
-          enem_submarines_lost: event.enem_submarines_lost
+          filename: event.filename
         });
 
         _this8.allHistoryEventsSource.addFeature(ft);
@@ -1875,17 +1845,15 @@ function (_EventEmitter) {
 
       this.chronosSource.clear();
       this.chronos.forEach(function (chrono) {
+        var info = chrono;
+
         if (chrono.placeCoords && chrono.placeCoords.length) {
           chrono.placeCoords[1] = chrono.placeCoords[1] + chrono.placeCoords[1] / 200; //поправка для слияния нескольких точек в одну
 
           var ft = new ol.Feature({
             kind: 'chronos',
             geometry: new ol.geom.Point(ol.proj.fromLonLat(chrono.placeCoords)),
-            startDate: chrono.startDate,
-            isOnlyYear: chrono.isOnlyYear,
-            brief: chrono.brief,
-            place: chrono.place,
-            url: chrono.url
+            info: info
           });
 
           _this9.chronosSource.addFeature(ft);
@@ -1899,15 +1867,14 @@ function (_EventEmitter) {
 
       this.agreementsSource.clear();
       this.agreements.forEach(function (agreement) {
+        var info = agreement;
+
         if (agreement.placeCoords && agreement.placeCoords.length) {
           var ft = new ol.Feature({
             name: agreement.kind,
             kind: 'politics',
             geometry: new ol.geom.Point(ol.proj.fromLonLat(agreement.placeCoords)),
-            startDate: agreement.startDate,
-            endDate: agreement.endDate,
-            results: agreement.results,
-            source: agreement.source
+            info: info
           });
 
           _this10.agreementsSource.addFeature(ft);
@@ -2290,6 +2257,18 @@ var YearControl =
 function (_SuperCustomControl2) {
   _inherits(YearControl, _SuperCustomControl2);
 
+  _createClass(YearControl, null, [{
+    key: "min_year",
+    get: function get() {
+      return min_year;
+    }
+  }, {
+    key: "max_year",
+    get: function get() {
+      return max_year;
+    }
+  }]);
+
   function YearControl(inputParams) {
     var _this14;
 
@@ -2383,8 +2362,8 @@ function (_SuperCustomControl2) {
       var reg = /^[1,2][8,9,0]\d{2}$/;
       if (!reg.test(year)) return false;
       var intYear = parseInt(year) + incr;
-      if (intYear < 1800) return false;
-      if (intYear > 2025) return false;
+      if (intYear < YearControl.min_year) return false;
+      if (intYear > YearControl.max_year) return false;
       if (oldValue == intYear) return false;
       return true;
     }
@@ -11050,7 +11029,7 @@ function (_EventEmitter) {
             player2: agreement.player2,
             results: agreement.results,
             imgUrl: agreement.imgUrl,
-            source: agreement.source
+            srcUrl: agreement.srcUrl
           };
         });
         var chronos = data.chronos.map(function (chrono) {
@@ -11061,7 +11040,7 @@ function (_EventEmitter) {
             startDate: _this2._getStrDateFromEvent(chrono.startDate),
             isOnlyYear: chrono.isOnlyYear,
             brief: chrono.brief,
-            url: chrono.url
+            srcUrl: chrono.srcUrl
           };
         });
         var persons = data.persons.map(function (person) {

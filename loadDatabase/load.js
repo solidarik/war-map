@@ -31,9 +31,6 @@ Promise.resolve(true)
   //   return dbHelper.clearDb('users')
   // })
   // .then(() => {
-  //   return dbHelper.clearDb('agreements')
-  // })
-  // .then(() => {
   //   return dbHelper.saveFilesFrom({
   //     source: 'data_sources/secretUsers.json',
   //     mediator: usersJsonMediator
@@ -48,46 +45,50 @@ Promise.resolve(true)
   //     mediator: dictEngRusJsonMediator
   //   })
   // })
-  // .then(() => {
-  //   return dbHelper.clearDb('chronos')
-  // })
-  // .then(() => {
-  //   return dbHelper.saveFilesFrom({
-  //     source: 'python/out_chronos',
-  //     procdir: 'python/out_chronos_process',
-  //     errdir: 'python/out_chronos_errors',
-  //     mediator: chronosJsonMediator
-  //   })
-  // })
-  // .then(() => {
-  //   return dbHelper.clearDb('agreements')
-  // })
-  // .then(() => {
-  //   return dbHelper.saveFilesFrom({
-  //     source: 'python/out_agreements',
-  //     mediator: agreementsJsonMediator
-  //   })
-  // })
-  // .then(() => {
-  //   return dbHelper.clearDb('historyEvents')
-  // })
-  // .then(() => {
-  //   return dbHelper.saveFilesFrom({
-  //     source: 'python/out_battles',
-  //     mediator: historyEventsJsonMediator
-  //   })
-  // })
   .then(() => {
-    return dbHelper.clearDb('persons')
+    return dbHelper.clearDb('chronos')
   })
   .then(() => {
     return dbHelper.saveFilesFrom({
-      source: '../public/data/persons.json',
-      procdir: 'out/out_person_process',
-      errdir: 'out/out_person_errors',
-      mediator: personsJsonMediator
+      source: 'python/out_chronos',
+      procdir: 'python/out_chronos_process',
+      errdir: 'python/out_chronos_errors',
+      mediator: chronosJsonMediator
     })
   })
+  .then(() => {
+    return dbHelper.clearDb('agreements')
+  })
+  .then(() => {
+    return dbHelper.saveFilesFrom({
+      source: 'python/out_agreements',
+      procdir: 'python/out_agreements_process',
+      errdir: 'python/out_agreements_errors',
+      mediator: agreementsJsonMediator
+    })
+  })
+  .then(() => {
+    return dbHelper.clearDb('historyEvents')
+  })
+  .then(() => {
+    return dbHelper.saveFilesFrom({
+      source: 'python/out_battles',
+      procdir: 'python/out_battles_process',
+      errdir: 'python/out_battles_errors',
+      mediator: historyEventsJsonMediator
+    })
+  })
+  // .then(() => {
+  //   return dbHelper.clearDb('persons')
+  // })
+  // .then(() => {
+  //   return dbHelper.saveFilesFrom({
+  //     source: '../public/data/persons.json',
+  //     procdir: 'out/out_person_process',
+  //     errdir: 'out/out_person_errors',
+  //     mediator: personsJsonMediator
+  //   })
+  // })
   .then(() => {
     log.success(`Успешная загрузка`)
     dbHelper.free()

@@ -12,7 +12,7 @@ var chronosSchema = new mongoose.Schema(
     kind: String,
     place: String,
     placeCoords: [],
-    url: String,
+    srcUrl: String,
     brief: {
       type: String,
       required: 'Нет описания события'
