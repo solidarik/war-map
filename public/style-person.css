@@ -101,9 +101,9 @@ td {
 
 .resized-image{
   width: auto;
-  height: 250px;
+  height: 290px;
   border-image: url(img/border.png) 25% stretch;
-  border-width: 50px;
+  border-width: 40px;
   border-style: solid;
 }
 

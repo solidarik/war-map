@@ -17,9 +17,9 @@ class addPersons {
         //console.log("clicked " + $(thisTr).attr('id'));
         var id = parseInt($(thisTr).attr("id"));
         $('#FIO').html(thisThis.data[id].Surname+" "+thisThis.data[id].Name+" "+thisThis.data[id].MiddleName);
-        $('#LifeTime').html("Дата место рождения - "+thisThis.data[id].DateBirth + " " + thisThis.data[id].PlaceBirth);
+        $('#LifeTime').html("Дата и место рождения - "+thisThis.data[id].DateBirth + " " + thisThis.data[id].PlaceBirth);
         $('#AchievementPlace').html("Место активности - " + thisThis.data[id].PlaceAchievement);
-        $('#DeathTime').html("Дата место смерти - " + thisThis.data[id].DateDeath + " " + thisThis.data[id].PlaceDeath);
+        $('#DeathTime').html("Дата и место смерти - " + thisThis.data[id].DateDeath + " " + thisThis.data[id].PlaceDeath);
         $('#imgPerson').src=thisThis.data[id].PhotoUrl;
         $('#imgPerson').attr('src',thisThis.data[id].PhotoUrl);
         $('#description').html(thisThis.data[id].Description + " <a target='_blank' rel='noopener noreferrer' href='"+thisThis.data[id].Source+"'>"+"Подробнее...</a>");

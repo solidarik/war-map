@@ -22126,6 +22126,8 @@
     "iso2": "OW",
     "iso3": "OWD",
     "centroid": [
+	  0,
+	  0
     ],
     "dataCountries": [
 
