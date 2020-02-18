@@ -164,8 +164,15 @@ export class MapControl extends EventEmitter {
       const isExistUrl = imgUrl !== undefined
 
       let content = `<h3>${info.name}</h3>`
-      if (kind == 'chronos') {
-        content = `<h3>${info.place}</h3>`
+      switch (kind) {
+        case 'chronos':
+          content = `<h3>${info.place}</h3>`
+          break
+        case 'politics':
+          content = `<h3>${info.place}</h3>`
+          break
+        default:
+          break
       }
 
       let isFirstRow = true
@@ -534,6 +541,47 @@ export class MapControl extends EventEmitter {
     return isNaN ? 0 : tryFloat
   }
 
+  legendHistoryEventsStyleFunc() {
+    const starSize = 10
+    let style = new ol.style.Style({
+      // fill: new ol.style.Fill({
+      //   color: 'rgba(255,255,255,0.5)'
+      // }),
+      // stroke: new ol.style.Stroke({
+      //   width: 2,
+      //   color: 'rgba(40, 40, 40, 0.50)'
+      // }),
+      // text: new ol.style.Text({
+      //   font: '14px helvetica,sans-serif',
+      //   text: zoom > 3 ? feature.get('name') : '',
+      //   fill: new ol.style.Fill({ color: 'red' }),
+      //   stroke: new ol.style.Stroke({
+      //     color: 'white',
+      //     width: 2
+      //   }),
+      //   baseline: 'middle',
+      //   align: 'right',
+      //   offsetX: 100,
+      //   offsetY: 40,
+      //   overflow: 'true',
+      //   // outline: 'black',
+      //   outlineWidth: 0
+      // }),
+      image: new ol.style.RegularShape({
+        fill: new ol.style.Fill({ color: 'rgba(255,0,0,0.6)' }),
+        // stroke: new ol.style.Stroke({
+        //   width: 0,
+        //   color: 'gray'
+        // }),
+        points: 5,
+        radius: starSize + 2,
+        radius2: Math.floor(starSize / 2),
+        angle: -50
+      })
+    })
+    return [style]
+  }
+
   historyEventsStyleFunc(feature, zoom) {
     // if (zoom > 4.5) {
     //   return [new ol.style.Style()]
@@ -754,9 +802,10 @@ export class MapControl extends EventEmitter {
     while (this.legend.getLength() != 0) {
       this.legend.removeRow(0)
     }
+    this.legend.show()
     if (0 < this.allHistoryEventsSource.getFeatures().length) {
       const f0 = this.allHistoryEventsSource.getFeatures()[0]
-      f0.setStyle(this.historyEventsStyleFunc()[0])
+      f0.setStyle(this.legendHistoryEventsStyleFunc()[0])
       this.legend.addRow({
         title: 'Военные события',
         feature: f0,
@@ -790,7 +839,6 @@ export class MapControl extends EventEmitter {
         typeGeom: f0.getGeometry().getType()
       })
     }
-    console.log('repaint legend')
   }
 
   addLegend() {
@@ -1040,7 +1088,6 @@ export class MapControl extends EventEmitter {
       let info = agreement
       if (agreement.placeCoords && agreement.placeCoords.length) {
         let ft = new ol.Feature({
-          name: agreement.kind,
           kind: 'politics',
           geometry: new ol.geom.Point(
             ol.proj.fromLonLat(agreement.placeCoords)
