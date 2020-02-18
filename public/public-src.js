@@ -1365,8 +1365,8 @@ function (_EventEmitter) {
       return isNaN ? 0 : tryFloat;
     }
   }, {
-    key: "eventStyleFunc",
-    value: function eventStyleFunc(feature, zoom) {
+    key: "historyEventsStyleFunc",
+    value: function historyEventsStyleFunc(feature, zoom) {
       // if (zoom > 4.5) {
       //   return [new ol.style.Style()]
       // }
@@ -1554,7 +1554,7 @@ function (_EventEmitter) {
       var allHistoryEventsLayer = new ol.layer.Vector({
         source: allHistoryEventsSource,
         style: function style(f, _) {
-          return _this3.eventStyleFunc(f, _this3.view.getZoom());
+          return _this3.historyEventsStyleFunc(f, _this3.view.getZoom());
         },
         zIndex: 6,
         updateWhileAnimating: true,
@@ -1618,22 +1618,55 @@ function (_EventEmitter) {
       this.map.addLayer(agreementsLayer);
     }
   }, {
-    key: "getFeatureStyle",
-    value: function getFeatureStyle(feature) {
-      var st = []; // Shadow style
-
-      st.push(this.chronosStyleFunc[0]);
-      return st;
-    }
-  }, {
     key: "repaintLegend",
     value: function repaintLegend() {
+      while (this.legend.getLength() != 0) {
+        this.legend.removeRow(0);
+      }
+
+      if (0 < this.allHistoryEventsSource.getFeatures().length) {
+        var f0 = this.allHistoryEventsSource.getFeatures()[0];
+        f0.setStyle(this.historyEventsStyleFunc()[0]);
+        this.legend.addRow({
+          title: 'Военные события',
+          feature: f0,
+          typeGeom: f0.getGeometry().getType()
+        });
+      }
+
       if (0 < this.chronosSource.getFeatures().length) {
-        console.log('add chronos');
-        var f0 = this.chronosSource.getFeatures()[0];
+        var _f = this.chronosSource.getFeatures()[0];
+
+        _f.setStyle(this.chronosStyleFunc()[0]);
+
+        this.legend.addRow({
+          title: 'Прочие события',
+          feature: _f,
+          typeGeom: _f.getGeometry().getType()
+        });
+      }
+
+      if (0 < this.agreementsSource.getFeatures().length) {
+        var _f2 = this.agreementsSource.getFeatures()[0];
+
+        _f2.setStyle(this.agreementStyleFunc()[0]);
+
         this.legend.addRow({
           title: 'Политические события',
-          feature: f0
+          feature: _f2,
+          typeGeom: _f2.getGeometry().getType()
+        });
+      }
+
+      if (0 < this.personsSource.getFeatures().length) {
+        var _f3 = this.personsSource.getFeatures()[0];
+
+        _f3.setStyle(this.personsStyleFunc()[0]);
+
+        this.legend.addRow({
+          title: 'Персоналии',
+          feature: _f3,
+          typeGeom: _f3.getGeometry().getType()
         });
       }
 
@@ -1644,12 +1677,35 @@ function (_EventEmitter) {
     value: function addLegend() {
       this.legend = new ol.control.Legend({
         title: 'Легенда',
-        collapsed: false,
-        style: [this.chronosStyleFunc, this.eventStyleFunc]
+        collapsed: false
       });
       this.map.addControl(this.legend);
       this.legend.on('select', function (e) {
-        if (e.index >= 0) console.log('You click on row: ' + e.title + ' (' + e.index + ')');else console.log('You click on the title: ' + e.title);
+        if (e.index >= 0) {
+          console.log('You click on row: ' + e.title + ' (' + e.index + ')');
+          this.removeRow(e.index);
+        } else console.log('You click on the title: ' + e.title);
+
+        switch (e.title) {
+          case 'Прочие события':
+            window.map.chronosSource.clear();
+            break;
+
+          case 'Военные события':
+            window.map.allHistoryEventsSource.clear();
+            break;
+
+          case 'Политические события':
+            window.map.agreementsSource.clear();
+            break;
+
+          case 'Персоналии':
+            window.map.personsSource.clear();
+            break;
+
+          default:
+            break;
+        }
       });
       setTimeout(function () {
         var legendControl = $('.ol-legend')[0];
@@ -1903,7 +1959,8 @@ function (_EventEmitter) {
             isOnlyYear: chrono.isOnlyYear,
             brief: chrono.brief,
             place: chrono.place,
-            url: chrono.url
+            url: chrono.url,
+            style: _this9.chronosStyleFunc
           });
 
           _this9.chronosSource.addFeature(ft);

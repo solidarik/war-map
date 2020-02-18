@@ -543,7 +543,7 @@ export class MapControl extends EventEmitter {
     return isNaN ? 0 : tryFloat
   }
 
-  eventStyleFunc(feature, zoom) {
+  historyEventsStyleFunc(feature, zoom) {
     // if (zoom > 4.5) {
     //   return [new ol.style.Style()]
     // }
@@ -707,7 +707,7 @@ export class MapControl extends EventEmitter {
     let allHistoryEventsSource = new ol.source.Vector()
     let allHistoryEventsLayer = new ol.layer.Vector({
       source: allHistoryEventsSource,
-      style: (f, _) => this.eventStyleFunc(f, this.view.getZoom()),
+      style: (f, _) => this.historyEventsStyleFunc(f, this.view.getZoom()),
       zIndex: 6,
       updateWhileAnimating: true,
       updateWhileInteracting: true
@@ -758,20 +758,44 @@ export class MapControl extends EventEmitter {
     this.map.addLayer(agreementsLayer)
   }
 
-  getFeatureStyle(feature) {
-    var st = []
-    // Shadow style
-    st.push(this.chronosStyleFunc[0])
-    return st
-  }
-
   repaintLegend() {
+    while (this.legend.getLength() != 0) {
+      this.legend.removeRow(0)
+    }
+    if (0 < this.allHistoryEventsSource.getFeatures().length) {
+      const f0 = this.allHistoryEventsSource.getFeatures()[0]
+      f0.setStyle(this.historyEventsStyleFunc()[0])
+      this.legend.addRow({
+        title: 'Военные события',
+        feature: f0,
+        typeGeom: f0.getGeometry().getType()
+      })
+    }
     if (0 < this.chronosSource.getFeatures().length) {
-      console.log('add chronos')
       const f0 = this.chronosSource.getFeatures()[0]
+      f0.setStyle(this.chronosStyleFunc()[0])
+      this.legend.addRow({
+        title: 'Прочие события',
+        feature: f0,
+        typeGeom: f0.getGeometry().getType()
+      })
+    }
+    if (0 < this.agreementsSource.getFeatures().length) {
+      const f0 = this.agreementsSource.getFeatures()[0]
+      f0.setStyle(this.agreementStyleFunc()[0])
       this.legend.addRow({
         title: 'Политические события',
-        feature: f0
+        feature: f0,
+        typeGeom: f0.getGeometry().getType()
+      })
+    }
+    if (0 < this.personsSource.getFeatures().length) {
+      const f0 = this.personsSource.getFeatures()[0]
+      f0.setStyle(this.personsStyleFunc()[0])
+      this.legend.addRow({
+        title: 'Персоналии',
+        feature: f0,
+        typeGeom: f0.getGeometry().getType()
       })
     }
     console.log('repaint legend')
@@ -780,14 +804,30 @@ export class MapControl extends EventEmitter {
   addLegend() {
     this.legend = new ol.control.Legend({
       title: 'Легенда',
-      collapsed: false,
-      style: [this.chronosStyleFunc, this.eventStyleFunc]
+      collapsed: false
     })
     this.map.addControl(this.legend)
     this.legend.on('select', function(e) {
-      if (e.index >= 0)
+      if (e.index >= 0) {
         console.log('You click on row: ' + e.title + ' (' + e.index + ')')
-      else console.log('You click on the title: ' + e.title)
+        this.removeRow(e.index)
+      } else console.log('You click on the title: ' + e.title)
+      switch (e.title) {
+        case 'Прочие события':
+          window.map.chronosSource.clear()
+          break
+        case 'Военные события':
+          window.map.allHistoryEventsSource.clear()
+          break
+        case 'Политические события':
+          window.map.agreementsSource.clear()
+          break
+        case 'Персоналии':
+          window.map.personsSource.clear()
+          break
+        default:
+          break
+      }
     })
     setTimeout(() => {
       const legendControl = $('.ol-legend')[0]
@@ -1028,7 +1068,8 @@ export class MapControl extends EventEmitter {
           isOnlyYear: chrono.isOnlyYear,
           brief: chrono.brief,
           place: chrono.place,
-          url: chrono.url
+          url: chrono.url,
+          style: this.chronosStyleFunc
         })
 
         this.chronosSource.addFeature(ft)
