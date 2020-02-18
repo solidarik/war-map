@@ -77,7 +77,7 @@ for row in range(START_ROW, END_ROW):
         chrono['startDate'], chrono['isOnlyYear'] = get_sheet_value_date(
             row, col_startDate)
         chrono['brief'] = get_sheet_value(row, col_brief)
-        chrono['url'] = get_sheet_value(row, col_url)
+        chrono['srcUrl'] = get_sheet_value(row, col_url)
 
         entities.append(chrono)
     except Exception as e:

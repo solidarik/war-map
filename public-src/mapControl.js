@@ -6,7 +6,7 @@ import strHelper from '../helper/strHelper'
 
 const kremlinLocation = new ol.proj.fromLonLat([37.617499, 55.752023]) // moscow kremlin
 
-const min_year = 1918
+const min_year = 1914
 const max_year = 1965
 
 function resizeImage(url, fixWidth, callback) {
@@ -164,7 +164,7 @@ export class MapControl extends EventEmitter {
       const isExistUrl = imgUrl !== undefined
 
       let content = `<h3>${info.name}</h3>`
-      if (info.kind == 'chronos') {
+      if (kind == 'chronos') {
         content = `<h3>${info.place}</h3>`
       }
 
@@ -355,7 +355,7 @@ export class MapControl extends EventEmitter {
 
       if ('' == content) return
 
-      if (0 < info.srcUrl.length) {
+      if (info.srcUrl && 0 < info.srcUrl.length) {
         content +=
           '<span class="small-silver-text"><a href="' +
           info.srcUrl +

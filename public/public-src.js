@@ -945,7 +945,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 var kremlinLocation = new ol.proj.fromLonLat([37.617499, 55.752023]); // moscow kremlin
 
-var min_year = 1918;
+var min_year = 1914;
 var max_year = 1965;
 
 function resizeImage(url, fixWidth, callback) {
@@ -1085,7 +1085,7 @@ function (_EventEmitter) {
       var isExistUrl = imgUrl !== undefined;
       var content = "<h3>".concat(info.name, "</h3>");
 
-      if (info.kind == 'chronos') {
+      if (kind == 'chronos') {
         content = "<h3>".concat(info.place, "</h3>");
       }
 
@@ -1211,7 +1211,7 @@ function (_EventEmitter) {
 
       if ('' == content) return;
 
-      if (0 < info.srcUrl.length) {
+      if (info.srcUrl && 0 < info.srcUrl.length) {
         content += '<span class="small-silver-text"><a href="' + info.srcUrl + '" target="_blank">Источник</a></span>';
       }
 
