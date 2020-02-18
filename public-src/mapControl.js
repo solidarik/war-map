@@ -444,7 +444,7 @@ export class MapControl extends EventEmitter {
       this.addChronosLayer()
       this.addAgreementsLayer()
       this.addPersonsLayer()
-      // this.addLegend()
+      this.addLegend()
       // this._addButtons();
     }, 10)
   }
@@ -534,7 +534,7 @@ export class MapControl extends EventEmitter {
     return isNaN ? 0 : tryFloat
   }
 
-  eventStyleFunc(feature, zoom) {
+  historyEventsStyleFunc(feature, zoom) {
     // if (zoom > 4.5) {
     //   return [new ol.style.Style()]
     // }
@@ -699,7 +699,7 @@ export class MapControl extends EventEmitter {
     let allHistoryEventsSource = new ol.source.Vector()
     let allHistoryEventsLayer = new ol.layer.Vector({
       source: allHistoryEventsSource,
-      style: (f, _) => this.eventStyleFunc(f, this.view.getZoom()),
+      style: (f, _) => this.historyEventsStyleFunc(f, this.view.getZoom()),
       zIndex: 6,
       updateWhileAnimating: true,
       updateWhileInteracting: true
@@ -750,16 +750,83 @@ export class MapControl extends EventEmitter {
     this.map.addLayer(agreementsLayer)
   }
 
+  repaintLegend() {
+    while (this.legend.getLength() != 0) {
+      this.legend.removeRow(0)
+    }
+    if (0 < this.allHistoryEventsSource.getFeatures().length) {
+      const f0 = this.allHistoryEventsSource.getFeatures()[0]
+      f0.setStyle(this.historyEventsStyleFunc()[0])
+      this.legend.addRow({
+        title: 'Военные события',
+        feature: f0,
+        typeGeom: f0.getGeometry().getType()
+      })
+    }
+    if (0 < this.chronosSource.getFeatures().length) {
+      const f0 = this.chronosSource.getFeatures()[0]
+      f0.setStyle(this.chronosStyleFunc()[0])
+      this.legend.addRow({
+        title: 'Прочие события',
+        feature: f0,
+        typeGeom: f0.getGeometry().getType()
+      })
+    }
+    if (0 < this.agreementsSource.getFeatures().length) {
+      const f0 = this.agreementsSource.getFeatures()[0]
+      f0.setStyle(this.agreementStyleFunc()[0])
+      this.legend.addRow({
+        title: 'Политические события',
+        feature: f0,
+        typeGeom: f0.getGeometry().getType()
+      })
+    }
+    if (0 < this.personsSource.getFeatures().length) {
+      const f0 = this.personsSource.getFeatures()[0]
+      f0.setStyle(this.personsStyleFunc()[0])
+      this.legend.addRow({
+        title: 'Персоналии',
+        feature: f0,
+        typeGeom: f0.getGeometry().getType()
+      })
+    }
+    console.log('repaint legend')
+  }
+
   addLegend() {
     this.legend = new ol.control.Legend({
       title: 'Легенда',
       collapsed: false
     })
     this.map.addControl(this.legend)
-    let legendControl = $('.ol-legend')[0]
-    if (!legendControl) {
-      legendControl.setAttribute('id', 'events-legend')
-    }
+    this.legend.on('select', function(e) {
+      if (e.index >= 0) {
+        console.log('You click on row: ' + e.title + ' (' + e.index + ')')
+        this.removeRow(e.index)
+      } else console.log('You click on the title: ' + e.title)
+      switch (e.title) {
+        case 'Прочие события':
+          window.map.chronosSource.clear()
+          break
+        case 'Военные события':
+          window.map.allHistoryEventsSource.clear()
+          break
+        case 'Политические события':
+          window.map.agreementsSource.clear()
+          break
+        case 'Персоналии':
+          window.map.personsSource.clear()
+          break
+        default:
+          break
+      }
+    })
+    setTimeout(() => {
+      const legendControl = $('.ol-legend')[0]
+      if (legendControl) {
+        legendControl.setAttribute('id', 'events-legend')
+      }
+    }, 10)
   }
 
   fixMapHeight() {
@@ -884,24 +951,16 @@ export class MapControl extends EventEmitter {
     return geom
   }
 
-  setChronos(chronos) {
-    this.chronos = chronos
+  refreshInfo(info) {
+    this.chronos = info.chronos
+    this.agreements = info.agreements
+    this.historyEvents = info.events
+    this.persons = info.persons
     this.repaintChronos()
-  }
-
-  setAgreements(agreements) {
-    this.agreements = agreements
     this.repaintAgreements()
-  }
-
-  setHistoryEvents(events) {
-    this.historyEvents = events
     this.repaintHistoryEvents()
-  }
-
-  setPersons(persons) {
-    this.persons = persons
     this.repaintPersons()
+    this.repaintLegend()
   }
 
   getAllCoordsFromMap(map) {

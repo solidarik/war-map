@@ -1288,8 +1288,9 @@ function (_EventEmitter) {
 
       _this.addAgreementsLayer();
 
-      _this.addPersonsLayer(); // this.addLegend()
-      // this._addButtons();
+      _this.addPersonsLayer();
+
+      _this.addLegend(); // this._addButtons();
 
     }, 10);
     return _this;
@@ -1366,8 +1367,8 @@ function (_EventEmitter) {
       return isNaN ? 0 : tryFloat;
     }
   }, {
-    key: "eventStyleFunc",
-    value: function eventStyleFunc(feature, zoom) {
+    key: "historyEventsStyleFunc",
+    value: function historyEventsStyleFunc(feature, zoom) {
       // if (zoom > 4.5) {
       //   return [new ol.style.Style()]
       // }
@@ -1556,7 +1557,7 @@ function (_EventEmitter) {
       var allHistoryEventsLayer = new ol.layer.Vector({
         source: allHistoryEventsSource,
         style: function style(f, _) {
-          return _this3.eventStyleFunc(f, _this3.view.getZoom());
+          return _this3.historyEventsStyleFunc(f, _this3.view.getZoom());
         },
         zIndex: 6,
         updateWhileAnimating: true,
@@ -1620,6 +1621,61 @@ function (_EventEmitter) {
       this.map.addLayer(agreementsLayer);
     }
   }, {
+    key: "repaintLegend",
+    value: function repaintLegend() {
+      while (this.legend.getLength() != 0) {
+        this.legend.removeRow(0);
+      }
+
+      if (0 < this.allHistoryEventsSource.getFeatures().length) {
+        var f0 = this.allHistoryEventsSource.getFeatures()[0];
+        f0.setStyle(this.historyEventsStyleFunc()[0]);
+        this.legend.addRow({
+          title: 'Военные события',
+          feature: f0,
+          typeGeom: f0.getGeometry().getType()
+        });
+      }
+
+      if (0 < this.chronosSource.getFeatures().length) {
+        var _f = this.chronosSource.getFeatures()[0];
+
+        _f.setStyle(this.chronosStyleFunc()[0]);
+
+        this.legend.addRow({
+          title: 'Прочие события',
+          feature: _f,
+          typeGeom: _f.getGeometry().getType()
+        });
+      }
+
+      if (0 < this.agreementsSource.getFeatures().length) {
+        var _f2 = this.agreementsSource.getFeatures()[0];
+
+        _f2.setStyle(this.agreementStyleFunc()[0]);
+
+        this.legend.addRow({
+          title: 'Политические события',
+          feature: _f2,
+          typeGeom: _f2.getGeometry().getType()
+        });
+      }
+
+      if (0 < this.personsSource.getFeatures().length) {
+        var _f3 = this.personsSource.getFeatures()[0];
+
+        _f3.setStyle(this.personsStyleFunc()[0]);
+
+        this.legend.addRow({
+          title: 'Персоналии',
+          feature: _f3,
+          typeGeom: _f3.getGeometry().getType()
+        });
+      }
+
+      console.log('repaint legend');
+    }
+  }, {
     key: "addLegend",
     value: function addLegend() {
       this.legend = new ol.control.Legend({
@@ -1627,11 +1683,40 @@ function (_EventEmitter) {
         collapsed: false
       });
       this.map.addControl(this.legend);
-      var legendControl = $('.ol-legend')[0];
+      this.legend.on('select', function (e) {
+        if (e.index >= 0) {
+          console.log('You click on row: ' + e.title + ' (' + e.index + ')');
+          this.removeRow(e.index);
+        } else console.log('You click on the title: ' + e.title);
 
-      if (!legendControl) {
-        legendControl.setAttribute('id', 'events-legend');
-      }
+        switch (e.title) {
+          case 'Прочие события':
+            window.map.chronosSource.clear();
+            break;
+
+          case 'Военные события':
+            window.map.allHistoryEventsSource.clear();
+            break;
+
+          case 'Политические события':
+            window.map.agreementsSource.clear();
+            break;
+
+          case 'Персоналии':
+            window.map.personsSource.clear();
+            break;
+
+          default:
+            break;
+        }
+      });
+      setTimeout(function () {
+        var legendControl = $('.ol-legend')[0];
+
+        if (legendControl) {
+          legendControl.setAttribute('id', 'events-legend');
+        }
+      }, 10);
     }
   }, {
     key: "fixMapHeight",
@@ -1760,28 +1845,17 @@ function (_EventEmitter) {
       return geom;
     }
   }, {
-    key: "setChronos",
-    value: function setChronos(chronos) {
-      this.chronos = chronos;
+    key: "refreshInfo",
+    value: function refreshInfo(info) {
+      this.chronos = info.chronos;
+      this.agreements = info.agreements;
+      this.historyEvents = info.events;
+      this.persons = info.persons;
       this.repaintChronos();
-    }
-  }, {
-    key: "setAgreements",
-    value: function setAgreements(agreements) {
-      this.agreements = agreements;
       this.repaintAgreements();
-    }
-  }, {
-    key: "setHistoryEvents",
-    value: function setHistoryEvents(events) {
-      this.historyEvents = events;
       this.repaintHistoryEvents();
-    }
-  }, {
-    key: "setPersons",
-    value: function setPersons(persons) {
-      this.persons = persons;
       this.repaintPersons();
+      this.repaintLegend();
     }
   }, {
     key: "getAllCoordsFromMap",
@@ -11063,13 +11137,12 @@ function (_EventEmitter) {
           };
         });
 
-        _this2.emit('refreshHistoryEvents', events);
-
-        _this2.emit('refreshAgreements', agreements);
-
-        _this2.emit('refreshChronos', chronos);
-
-        _this2.emit('refreshPersons', persons);
+        _this2.emit('refreshInfo', {
+          events: events,
+          agreements: agreements,
+          chronos: chronos,
+          persons: persons
+        });
       });
     }
   }], [{
@@ -21965,18 +22038,9 @@ function startApp() {
 
   var historyEventsControl = _historyEventsControl.HistoryEventsControl.create();
 
-  protocol.subscribe('refreshHistoryEvents', function (events) {
-    mapControl.setHistoryEvents(events);
-    historyEventsControl.showEvents(events);
-  });
-  protocol.subscribe('refreshAgreements', function (agreements) {
-    mapControl.setAgreements(agreements);
-  });
-  protocol.subscribe('refreshChronos', function (chronos) {
-    mapControl.setChronos(chronos);
-  });
-  protocol.subscribe('refreshPersons', function (persons) {
-    mapControl.setPersons(persons);
+  protocol.subscribe('refreshInfo', function (info) {
+    mapControl.refreshInfo(info);
+    historyEventsControl.showEvents(info.events);
   });
   historyEventsControl.subscribe('refreshedEventList', function () {
     (0, _jquery.default)('table tr').click(function () {
