@@ -945,7 +945,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 var kremlinLocation = new ol.proj.fromLonLat([37.617499, 55.752023]); // moscow kremlin
 
-var min_year = 1918;
+var min_year = 1914;
 var max_year = 1965;
 
 function resizeImage(url, fixWidth, callback) {
@@ -1085,8 +1085,17 @@ function (_EventEmitter) {
       var isExistUrl = imgUrl !== undefined;
       var content = "<h3>".concat(info.name, "</h3>");
 
-      if (info.kind == 'chronos') {
-        content = "<h3>".concat(info.place, "</h3>");
+      switch (kind) {
+        case 'chronos':
+          content = "<h3>".concat(info.place, "</h3>");
+          break;
+
+        case 'politics':
+          content = "<h3>".concat(info.place, "</h3>");
+          break;
+
+        default:
+          break;
       }
 
       var isFirstRow = true;
@@ -1211,7 +1220,7 @@ function (_EventEmitter) {
 
       if ('' == content) return;
 
-      if (0 < info.srcUrl.length) {
+      if (info.srcUrl && 0 < info.srcUrl.length) {
         content += '<span class="small-silver-text"><a href="' + info.srcUrl + '" target="_blank">Источник</a></span>';
       }
 
@@ -1365,6 +1374,50 @@ function (_EventEmitter) {
       var tryFloat = parseFloat(value);
       var isNaN = typeof Number.isNaN !== 'undefined' ? Number.isNaN(tryFloat) : tryFloat !== tryFloat ? true : false;
       return isNaN ? 0 : tryFloat;
+    }
+  }, {
+    key: "legendHistoryEventsStyleFunc",
+    value: function legendHistoryEventsStyleFunc() {
+      var starSize = 10;
+      var style = new ol.style.Style({
+        // fill: new ol.style.Fill({
+        //   color: 'rgba(255,255,255,0.5)'
+        // }),
+        // stroke: new ol.style.Stroke({
+        //   width: 2,
+        //   color: 'rgba(40, 40, 40, 0.50)'
+        // }),
+        // text: new ol.style.Text({
+        //   font: '14px helvetica,sans-serif',
+        //   text: zoom > 3 ? feature.get('name') : '',
+        //   fill: new ol.style.Fill({ color: 'red' }),
+        //   stroke: new ol.style.Stroke({
+        //     color: 'white',
+        //     width: 2
+        //   }),
+        //   baseline: 'middle',
+        //   align: 'right',
+        //   offsetX: 100,
+        //   offsetY: 40,
+        //   overflow: 'true',
+        //   // outline: 'black',
+        //   outlineWidth: 0
+        // }),
+        image: new ol.style.RegularShape({
+          fill: new ol.style.Fill({
+            color: 'rgba(255,0,0,0.6)'
+          }),
+          // stroke: new ol.style.Stroke({
+          //   width: 0,
+          //   color: 'gray'
+          // }),
+          points: 5,
+          radius: starSize + 2,
+          radius2: Math.floor(starSize / 2),
+          angle: -50
+        })
+      });
+      return [style];
     }
   }, {
     key: "historyEventsStyleFunc",
@@ -1627,9 +1680,11 @@ function (_EventEmitter) {
         this.legend.removeRow(0);
       }
 
+      this.legend.show();
+
       if (0 < this.allHistoryEventsSource.getFeatures().length) {
         var f0 = this.allHistoryEventsSource.getFeatures()[0];
-        f0.setStyle(this.historyEventsStyleFunc()[0]);
+        f0.setStyle(this.legendHistoryEventsStyleFunc()[0]);
         this.legend.addRow({
           title: 'Военные события',
           feature: f0,
@@ -1672,8 +1727,6 @@ function (_EventEmitter) {
           typeGeom: _f3.getGeometry().getType()
         });
       }
-
-      console.log('repaint legend');
     }
   }, {
     key: "addLegend",
@@ -1947,7 +2000,6 @@ function (_EventEmitter) {
 
         if (agreement.placeCoords && agreement.placeCoords.length) {
           var ft = new ol.Feature({
-            name: agreement.kind,
             kind: 'politics',
             geometry: new ol.geom.Point(ol.proj.fromLonLat(agreement.placeCoords)),
             info: info
@@ -11098,6 +11150,7 @@ function (_EventEmitter) {
           return {
             id: agreement._id,
             kind: agreement.kind,
+            place: agreement.place,
             placeCoords: agreement.placeCoords,
             startDate: _this2._getStrDateFromEvent(agreement.startDate),
             endDate: _this2._getStrDateFromEvent(agreement.endDate),

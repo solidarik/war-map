@@ -56,28 +56,28 @@ Promise.resolve(true)
       mediator: chronosJsonMediator
     })
   })
-  .then(() => {
-    return dbHelper.clearDb('agreements')
-  })
-  .then(() => {
-    return dbHelper.saveFilesFrom({
-      source: 'python/out_agreements',
-      procdir: 'python/out_agreements_process',
-      errdir: 'python/out_agreements_errors',
-      mediator: agreementsJsonMediator
-    })
-  })
-  .then(() => {
-    return dbHelper.clearDb('historyEvents')
-  })
-  .then(() => {
-    return dbHelper.saveFilesFrom({
-      source: 'python/out_battles',
-      procdir: 'python/out_battles_process',
-      errdir: 'python/out_battles_errors',
-      mediator: historyEventsJsonMediator
-    })
-  })
+  // .then(() => {
+  //   return dbHelper.clearDb('agreements')
+  // })
+  // .then(() => {
+  //   return dbHelper.saveFilesFrom({
+  //     source: 'python/out_agreements',
+  //     procdir: 'python/out_agreements_process',
+  //     errdir: 'python/out_agreements_errors',
+  //     mediator: agreementsJsonMediator
+  //   })
+  // })
+  // .then(() => {
+  //   return dbHelper.clearDb('historyEvents')
+  // })
+  // .then(() => {
+  //   return dbHelper.saveFilesFrom({
+  //     source: 'python/out_battles',
+  //     procdir: 'python/out_battles_process',
+  //     errdir: 'python/out_battles_errors',
+  //     mediator: historyEventsJsonMediator
+  //   })
+  // })
   // .then(() => {
   //   return dbHelper.clearDb('persons')
   // })

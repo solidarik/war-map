@@ -92,6 +92,7 @@ export class ClientProtocol extends EventEmitter {
         return {
           id: agreement._id,
           kind: agreement.kind,
+          place: agreement.place,
           placeCoords: agreement.placeCoords,
           startDate: this._getStrDateFromEvent(agreement.startDate),
           endDate: this._getStrDateFromEvent(agreement.endDate),
