@@ -162,3 +162,8 @@ rect:hover {  fill:blue; }
  {
   display: block;
 }  
+
+.right{
+  position: absolute;
+  right: 0px;
+}

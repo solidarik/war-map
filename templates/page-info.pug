@@ -7,6 +7,9 @@ block head
   script(src='/libs/d3.min.js')
   script(src='/libs/jquery.min.js')
 
+  link(rel='stylesheet' href='/libs/bootstrap-toggle.min.css')
+  script(src='/libs/bootstrap-toggle.min.js')
+
   script(src='/addImageInPage.js')
   script(src='/addMapInfoDiagramm.js')
   script(src='/flagCircleInMap.js')
@@ -25,24 +28,34 @@ block content
   +header('info')
 
   div.content(role='content' id='content' dragable='true')
-
-    .dropdown
-      button.btn.btn-secondary.dropdown-toggle(type='button' data-toggle='dropdown')
-        | Выберите категорию
-      .dropdown-menu(id='dropDownListSubMenu')
-        a.dropdown-item(href='#') 1-й уровень
-        a.dropdown-item.submenu(href='#') 1-й уровень
-        .dropdown-menu
-          a.dropdown-item(href='#') 2-й уровень
-          a.dropdown-item.submenu(href='#') 2-й уровень
-          .dropdown-menu
-            a.dropdown-item(href='#') 3-й уровень
-            a.dropdown-item(href='#') 3-й уровень
-        a.dropdown-item(href='#') 1-й уровень
-        a.dropdown-item.submenu(href='#') 1-й уровень
-        .dropdown-menu
-          a.dropdown-item(href='#') 2-й уровень
-          a.dropdown-item.submenu(href='#') 2-й уровень
+    div(class='row')
+      div(class='col-6')
+        .dropdown
+          button.btn.btn-secondary.dropdown-toggle(type='button' data-toggle='dropdown')
+            | Выберите категорию
+          .dropdown-menu(id='dropDownListSubMenu')
+            a.dropdown-item(href='#') 1-й уровень
+            a.dropdown-item.submenu(href='#') 1-й уровень
+            .dropdown-menu
+              a.dropdown-item(href='#') 2-й уровень
+              a.dropdown-item.submenu(href='#') 2-й уровень
+              .dropdown-menu
+                a.dropdown-item(href='#') 3-й уровень
+                a.dropdown-item(href='#') 3-й уровень
+            a.dropdown-item(href='#') 1-й уровень
+            a.dropdown-item.submenu(href='#') 1-й уровень
+            .dropdown-menu
+              a.dropdown-item(href='#') 2-й уровень
+              a.dropdown-item.submenu(href='#') 2-й уровень
+      //- input(type="checkbox" data-toggle="toggle")
+      div(class='col-6')
+        .btn-group.btn-group-toggle(data-toggle='buttons' class='right')
+          label.btn.btn-secondary.active
+            input#option1(type='radio', name='options', checked='')
+            |  1914-1965
+          label.btn.btn-secondary
+            input#option2(type='radio', name='options')
+            |  Вся история 
 
     div(id='graph-control')
       div(id='cbdd' class='row')
