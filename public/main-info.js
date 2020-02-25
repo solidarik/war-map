@@ -455,7 +455,7 @@ var svg
 var projection
 var width
 var height
-
+var zoom
 var onClickDropDown = function(d) {
   var div
   if (document.getElementById('tooltip') !== null) {
@@ -466,11 +466,18 @@ var onClickDropDown = function(d) {
     d3.select('#mapContainerInfoSvg').remove()
   }
 
+
   //console.log('option1='+$('#option1').prop('checked'));
   //console.log('option2='+$('#option2').prop('checked'));
 
-  CookieHelper.setCookie('idInfoCategory', parseInt(d.id))
-  buildBubble(d, svg, projection, width)
+  CookieHelper.setCookie('idInfoCategory', parseInt(d.id));
+  buildBubble(d, svg, projection, width);
+  $('#option1').closest('label').off('click').click(function() { 
+    buildBubble(d, svg, projection, width);
+  });
+  $('#option2').closest('label').off('click').click(function() { 
+    buildBubble(d, svg, projection, width);
+  });
 }
 
 function loadJSON(url, callback) {
@@ -742,19 +749,35 @@ function buildBubble(ldata, svg, projection, width) {
   //   addSlider.addSlider('vis', width, ldata.listYear, updateFunction)
   //   console.timeEnd('addSlider')
   // }
+  // svg.selectAll('path').attr('transform', zoom.transform);
+  // svg.selectAll('circle').attr('transform', zoom.transform);
+  //svg.call(zoom);
+  svg.call(zoom.transform, d3.zoomIdentity);
 }
 
 var url = 'data/countries.json'
 var url2 = 'data/data_new.json'
 var url3 = 'data/loadData.json'
 
+function zoomed() {
+  var t = d3.event.transform;
+
+  t.x = d3.min([t.x, 0]);
+  t.y = d3.min([t.y, 0]);
+  t.x = d3.max([t.x, (1-t.k) * width]);
+  t.y = d3.max([t.y, (1-t.k) * height]);
+
+  svg.selectAll('path').attr('transform', t);
+  svg.selectAll('circle').attr('transform', t);
+}
+
 function startApp() {
  
   d3.json(url3, function(error, ld) {
-    console.log("loadedData end");
-    console.log(ld);
+    // console.log("loadedData end");
+    // console.log(ld);
     loadedData = ld;
-    console.log(JSON.stringify(loadedData));
+    // console.log(JSON.stringify(loadedData));
     addComboBoxFromJson.addBootstrapDropDownSubMenu(
       loadedData,
       'dropDownListSubMenu',
@@ -800,7 +823,7 @@ function startApp() {
         .translate([width / 2, height / 2]) // ensure centred in group
       //.translate([0,0])// ensure centred in group
 
-      const zoom = d3
+      zoom = d3
         .zoom()
         .scaleExtent([1, 8])
         //.translateExtent([[0,0], [width, height]])
@@ -817,10 +840,7 @@ function startApp() {
         // }))
         .call(zoom)
 
-      function zoomed() {
-        svg.selectAll('path').attr('transform', d3.event.transform)
-        svg.selectAll('circle').attr('transform', d3.event.transform)
-      }
+
 
       addCountries.addContries(countries.features, svg, projection)
       console.timeEnd('add countries')
@@ -850,7 +870,13 @@ function startApp() {
         ldata = ldata[0]
         console.log(ldata)
         console.time('add buuble')
-        buildBubble(ldata, svg, projection, width)
+        buildBubble(ldata, svg, projection, width);
+        $('#option1').closest('label').off('click').click(function() { 
+          buildBubble(ldata, svg, projection, width);
+        });
+        $('#option2').closest('label').off('click').click(function() { 
+          buildBubble(ldata, svg, projection, width);
+        });
         console.timeEnd('add buuble')
 
         console.time('add image')
