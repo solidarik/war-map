@@ -37,6 +37,7 @@
     "co-busboy": "latest",
     "config": "latest",
     "convex-hull": "latest",
+    "cron": "^1.8.2",
     "d3-geo-projection": "latest",
     "d3v4": "latest",
     "jquery": "latest",
@@ -67,7 +68,8 @@
     "socket.io": "latest",
     "socket.io-emitter": "latest",
     "socket.io-redis": "latest",
-    "winston": "latest"
+    "winston": "latest",
+    "xlsx": "^0.15.5"
   },
   "devDependencies": {
     "@babel/core": "latest",

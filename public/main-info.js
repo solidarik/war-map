@@ -499,6 +499,33 @@ $(document).ready(function() {
 })
 
 function buildBubble(ldata, svg, projection, width) {
+
+  var opts = {
+    lines: 13, // The number of lines to draw
+    length: 38, // The length of each line
+    width: 17, // The line thickness
+    radius: 45, // The radius of the inner circle
+    scale: 1, // Scales overall size of the spinner
+    corners: 1, // Corner roundness (0..1)
+    color: '#ABAA94', // CSS color or array of colors
+    fadeColor: 'transparent', // CSS color or array of colors
+    speed: 1, // Rounds per second
+    rotate: 0, // The rotation offset
+    animation: 'spinner-line-fade-quick', // The CSS animation name for the lines
+    direction: 1, // 1: clockwise, -1: counterclockwise
+    zIndex: 2e9, // The z-index (defaults to 2000000000)
+    className: 'spinner', // The CSS class to assign to the spinner
+    top: '50%', // Top position relative to parent
+    left: '50%', // Left position relative to parent
+    shadow: '0 0 1px transparent', // Box-shadow for the lines
+    position: 'absolute' // Element positioning
+  };
+  
+  
+  var target = document.getElementById('graph-control');
+  
+  var spinner = new Spin.Spinner(opts).spin(target);
+
   document.getElementById('nameContainer').innerHTML = ''
   document.getElementById('nameContainer').innerHTML =
     '<h4>' + ldata.RusName + '</h4>'
@@ -606,6 +633,7 @@ function buildBubble(ldata, svg, projection, width) {
           // 	mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
           // }
           //console.log("ldata.dataFromFile=" + JSON.stringify(ldata.dataFromFile));
+          svg.call(zoom.transform, d3.zoomIdentity);
           var flagCircleInMapLoc = new flagCircleInMap(
             curDataYearFilter,
             svg,
@@ -630,6 +658,7 @@ function buildBubble(ldata, svg, projection, width) {
           // } else if (ldata.jsonType == "SAMARA") {
           // 	mxval = flagCircleInMap.getMaxValue(ldata.dataFromFile);
           // }
+          svg.call(zoom.transform, d3.zoomIdentity);
           var curDataYearFilter = addSlider.filterByYear(
             ldata.dataFromFile,
             listYear[h2]
@@ -650,6 +679,7 @@ function buildBubble(ldata, svg, projection, width) {
       console.time('addSlider')
       addSlider.addSlider('vis', width, listYear, updateFunction)
       console.timeEnd('addSlider')
+      spinner.stop();
     });
   // } else {
   //   console.time('filte by year')
@@ -804,11 +834,11 @@ function startApp() {
         width = parseInt(d3.select('#mapContainer').style('width')) - 30
         height = Math.round((width * 4) / 7.1) //parseInt(d3.select("#mapContainer").style("height"));
       }
-      console.log(
-        'd3.select("#mapContainer").style("width")=' +
-          d3.select('#mapContainer').style('width')
-      )
-      console.log('width=' + width)
+      // console.log(
+      //   'd3.select("#mapContainer").style("width")=' +
+      //     d3.select('#mapContainer').style('width')
+      // )
+      // console.log('width=' + width)
       // console.log("height"+height);
       // console.log("height-264"+(height-264));
       // console.log("document.body.clientHeight"+document.body.clientHeight);
@@ -853,13 +883,13 @@ function startApp() {
 
         var idInfoCategory = CookieHelper.getCookie('idInfoCategory')
 
-        console.log('idInfoCategory=' + idInfoCategory)
+        //console.log('idInfoCategory=' + idInfoCategory)
 
         if (typeof idInfoCategory == 'undefined') {
           idInfoCategory = 1
-          console.log('IsUndefined')
+          //console.log('IsUndefined')
         }
-        console.log('idInfoCategory=' + idInfoCategory)
+        //console.log('idInfoCategory=' + idInfoCategory)
         //arr.filter(function(item){
         //	return item.type == "ar";
         //})
@@ -868,8 +898,8 @@ function startApp() {
           return d.id == idInfoCategory
         })
         ldata = ldata[0]
-        console.log(ldata)
-        console.time('add buuble')
+        //console.log(ldata)
+        //console.time('add buuble')
         buildBubble(ldata, svg, projection, width);
         $('#option1').closest('label').off('click').click(function() { 
           buildBubble(ldata, svg, projection, width);
