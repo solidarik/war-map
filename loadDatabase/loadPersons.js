@@ -36,7 +36,7 @@ class LoadPersons {
                 console.log(err);
             } else {
                 var obj = JSON.parse(data); //now it an object
-                var workbook = XLSX.readFile('./public/data/person.xlsx', { cellDates: true, dateNF: 'dd/mm/yyyy' });// ./assets is where your relative path directory where excel file is, if your excuting js file and excel file in same directory just igore that part
+                var workbook = XLSX.readFile('./public/data/persons.xlsx', { cellDates: true, dateNF: 'dd/mm/yyyy' });// ./assets is where your relative path directory where excel file is, if your excuting js file and excel file in same directory just igore that part
                 var sheet_name_list = workbook.SheetNames; // SheetNames is an ordered list of the sheets in the workbook
                 //console.log(sheet_name_list);
                 data = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { dateNF: "YYYY-MM-DD" }); //if you have multiple sheets
