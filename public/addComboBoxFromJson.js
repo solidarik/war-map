@@ -8,9 +8,7 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var addComboBoxFromJson =
-/*#__PURE__*/
-function () {
+var addComboBoxFromJson = /*#__PURE__*/function () {
   function addComboBoxFromJson() {
     _classCallCheck(this, addComboBoxFromJson);
   }
@@ -45,16 +43,17 @@ function () {
       var group = '';
       var numberGroup = 1;
       var groupID;
-      var divSubmenu;
-      //var dta = JSON.parse(data);
-      data.forEach(function (d) {
-        //for(let d in data) {//for(var d = 0; d < json.length; d++) {
+      var divSubmenu; //data.forEach(function (d) {for(let d in data) {//for(var d = 0; d < json.length; d++) {
+
+      for (var i = 0; i < data.length; i++) {
+        var d = data[i];
+
         if (group != d[groupField]) {
           group = d[groupField];
           groupID = "subMenu" + numberGroup.toString();
           numberGroup++;
 
-          var _a = $('<a />').addClass("dropdown-item submenu").text(d[groupField]).attr('href','#');
+          var _a = $('<a />').addClass("dropdown-item submenu").text(d[groupField]).attr('href', '#');
 
           $("#" + divId).append(_a);
           divSubmenu = $('<div />').addClass("dropdown-menu submenu").attr("id", groupID);
@@ -65,7 +64,8 @@ function () {
           onClickFunction(d);
         });
         $("#" + groupID).append(a);
-      });
+      } //);
+
     }
   }]);
 
