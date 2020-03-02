@@ -804,6 +804,7 @@ function zoomed() {
 function startApp() {
  
   d3.json(url3, function(error, ld) {
+    if (error) console.log(error)
     // console.log("loadedData end");
     // console.log(ld);
     loadedData = ld;
@@ -907,7 +908,7 @@ function startApp() {
         $('#option2').closest('label').off('click').click(function() { 
           buildBubble(ldata, svg, projection, width);
         });
-        console.timeEnd('add buuble')
+        //console.timeEnd('add buuble')
 
         console.time('add image')
         var addImageInPage = new AddImageInPage(
