@@ -46,6 +46,7 @@ function () {
       var numberGroup = 1;
       var groupID;
       var divSubmenu;
+      //var dta = JSON.parse(data);
       data.forEach(function (d) {
         //for(let d in data) {//for(var d = 0; d < json.length; d++) {
         if (group != d[groupField]) {
