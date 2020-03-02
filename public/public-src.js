@@ -1676,6 +1676,8 @@ function (_EventEmitter) {
   }, {
     key: "repaintLegend",
     value: function repaintLegend() {
+      if (!this.legend) return;
+
       while (this.legend.getLength() != 0) {
         this.legend.removeRow(0);
       }

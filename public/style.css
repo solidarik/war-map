@@ -537,6 +537,7 @@ input.form-control {
   max-width: 300px;
   min-width: 100px;
   min-height: 1em;
+  background-color: white;
 }
 /* Image on popup */
 .ol-popup img {
