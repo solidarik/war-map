@@ -36,7 +36,7 @@ class LoadPersons {
                 console.log(err);
             } else {
                  try{
-                    var obj = JSON.parse(data); //now it an object
+                    var obj = [];//JSON.parse(data); //now it an object
                     var workbook = XLSX.readFile('./public/data/persons.xlsx', { cellDates: true, dateNF: 'dd/mm/yyyy' });// ./assets is where your relative path directory where excel file is, if your excuting js file and excel file in same directory just igore that part
                     var sheet_name_list = workbook.SheetNames; // SheetNames is an ordered list of the sheets in the workbook
                     //console.log(sheet_name_list);
@@ -44,7 +44,7 @@ class LoadPersons {
                     var i = 1;
     
                     for (var key in data) {
-                        if (i >= 38) {
+                        if (i >= -1) {
                             var vIsInventor = "";
                             var vSurname = "";
                             var vName = "";
@@ -143,6 +143,19 @@ class LoadPersons {
                         i++;
                     }
     
+                    obj.sort((a, b) => {
+                        const bandA = a.Surname.toUpperCase();
+                        const bandB = b.Surname.toUpperCase();
+                      
+                        let comparison = 0;
+                        if (bandA > bandB) {
+                          comparison = 1;
+                        } else if (bandA < bandB) {
+                          comparison = -1;
+                        }
+                        return comparison;
+                    });
+
                     var json = JSON.stringify(obj); //convert it back to json
                     //console.log(json);
                     fs.writeFile('./public/data/persons.json', json, 'utf8', function (err) {

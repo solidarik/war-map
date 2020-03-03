@@ -526,8 +526,8 @@ function buildBubble(ldata, svg, projection, width) {
   
   var target = document.getElementById('graph-control');
   
-  var spinner = new Spin.Spinner(opts).spin(target);
-
+  //var spinner = new Spin.Spinner(opts).spin(target);
+  $.spin('true');   
   document.getElementById('nameContainer').innerHTML = ''
   document.getElementById('nameContainer').innerHTML =
     '<h4>' + ldata.RusName + '</h4>'
@@ -681,7 +681,8 @@ function buildBubble(ldata, svg, projection, width) {
       console.time('addSlider')
       addSlider.addSlider('vis', width, listYear, updateFunction)
       console.timeEnd('addSlider')
-      spinner.stop();
+      //spinner.stop();
+      $.spin('false');
     });
   // } else {
   //   console.time('filte by year')
