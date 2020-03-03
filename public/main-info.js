@@ -457,6 +457,8 @@ var width
 var height
 var zoom
 var onClickDropDown = function(d) {
+  console.log("onClickDropDown"+JSON.stringify(d));
+  
   var div
   if (document.getElementById('tooltip') !== null) {
     div = d3.select('div#tooltip')
@@ -787,7 +789,7 @@ function buildBubble(ldata, svg, projection, width) {
 
 var url = 'data/countries.json'
 var url2 = 'data/data_new.json'
-var url3 = '/data/loadData.json'
+var url3 = 'data/loadData.json'
 
 function zoomed() {
   var t = d3.event.transform;
@@ -801,21 +803,15 @@ function zoomed() {
   svg.selectAll('circle').attr('transform', t);
 }
 
-function doSomethingWithData(error,jsondata) {
-  if (error) console.log(error);
-  console.log(jsondata);
-}
 
 function startApp() {
   
-  d3.json(url3, doSomethingWithData);
-
-  d3.json(url3, function(error, ld) {
+ d3.json(url3, function(error, ld) {
     if (error) console.log(error);
-    console.log(ld);
+    // console.log("ld="+JSON.stringify(ld));
     // console.log("loadedData end");
     // console.log(ld);
-    loadedData = ld.kl;
+    loadedData = ld;
     // console.log(JSON.stringify(loadedData));
     addComboBoxFromJson.addBootstrapDropDownSubMenu(
       loadedData,

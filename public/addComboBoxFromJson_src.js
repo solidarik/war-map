@@ -26,9 +26,9 @@ class addComboBoxFromJson {
         let numberGroup=1;
         let groupID;
         let divSubmenu;
-        //data.forEach(function (d) {for(let d in data) {//for(var d = 0; d < json.length; d++) {
+        //data.forEach(function (d) {//for(let d in data) {//for(var d = 0; d < json.length; d++) {
         for(var i = 0; i < data.length; i++) {
-            d=data[i];
+            var d = data[i];
             if(group!=d[groupField]){           
                 group = d[groupField]      
                 groupID= "subMenu"+numberGroup.toString();
@@ -39,14 +39,12 @@ class addComboBoxFromJson {
                 $("#"+divId).append(divSubmenu);
             }
             let a = $('<a />').addClass("dropdown-item").text(d[textField]).click(function(){
-                onClickFunction(d);
+                onClickFunction(JSON.parse(JSON.stringify(d)));
             });
 
             $("#"+groupID).append(a);
          }
          //);
-
-
     }  
 
 }

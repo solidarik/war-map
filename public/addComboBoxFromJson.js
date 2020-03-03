@@ -43,7 +43,7 @@ var addComboBoxFromJson = /*#__PURE__*/function () {
       var group = '';
       var numberGroup = 1;
       var groupID;
-      var divSubmenu; //data.forEach(function (d) {for(let d in data) {//for(var d = 0; d < json.length; d++) {
+      var divSubmenu; //data.forEach(function (d) {//for(let d in data) {//for(var d = 0; d < json.length; d++) {
 
       for (var i = 0; i < data.length; i++) {
         var d = data[i];
@@ -60,8 +60,10 @@ var addComboBoxFromJson = /*#__PURE__*/function () {
           $("#" + divId).append(divSubmenu);
         }
 
+        const cloneD = JSON.parse(JSON.stringify(d));
+
         var a = $('<a />').addClass("dropdown-item").text(d[textField]).click(function () {
-          onClickFunction(d);
+          onClickFunction(cloneD);
         });
         $("#" + groupID).append(a);
       } //);
