@@ -76,7 +76,7 @@ if (!Array.prototype.forEach) {
 //console.log('1');
 function startApp() {
     //console.log('2');
-    var persons = new addPersons("persons-table", "data/persons.json");
+    var persons = new addPersons("persons-table", "data/persons_old.json");
     persons.clearTable();
     //console.log('3');
     persons.fillTable();

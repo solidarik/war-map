@@ -44,11 +44,11 @@ protocolClasses.forEach(handler => {
 
 app.socket = serverSocket(server, protocolFunctions)
 
-var cron = require('cron');
-var lp = require('./loadDatabase/loadPersons.js');
-var cronJob = cron.job("0 0 */12 * * *", function(){
-    // perform operation e.g. GET request http.get() etc.
-    lp.download("http://www.historian.by/ww2/person.xlsx","./public/data/persons.xlsx",lp.parseExcel);
-    console.info('cron job completed');
-}); 
-cronJob.start();
+// var cron = require('cron');
+// var lp = require('./loadDatabase/loadPersons.js');
+// var cronJob = cron.job("0 0 */12 * * *", function(){
+//     // perform operation e.g. GET request http.get() etc.
+//     lp.download("http://www.historian.by/ww2/person.xlsx","./public/data/persons.xlsx",lp.parseExcel);
+//     console.info('cron job completed');
+// }); 
+// cronJob.start();

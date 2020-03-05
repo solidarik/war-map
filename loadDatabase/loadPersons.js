@@ -61,65 +61,66 @@ class LoadPersons {
                             var vPlaceAchievement = "";
                             var vFullDescription = "";
                             var vLink = "";
-                            if (typeof data[key]['Изобретатель'] !== 'undefined' && data[key]['Изобретатель']) {
-                                vIsInventor = data[key]['Изобретатель'];
+                            var dataArr = Object.values(data[key]);
+                            if (typeof dataArr[0] !== 'undefined' && dataArr[0]) {
+                                vIsInventor = dataArr[0];
                             }
-                            if (typeof data[key]['Фамилия'] !== 'undefined' && data[key]['Фамилия']) {
-                                vSurname = data[key]['Фамилия'];
+                            if (typeof dataArr[1] !== 'undefined' && dataArr[1]) {
+                                vSurname = dataArr[1];
                             }
-                            if (typeof data[key]['Имя'] !== 'undefined' && data[key]['Имя']) {
-                                vName = data[key]['Имя'];
+                            if (typeof dataArr[2] !== 'undefined' && dataArr[2]) {
+                                vName = dataArr[2];
                             }
-                            if (typeof data[key]['Отчество'] !== 'undefined' && data[key]['Отчество']) {
-                                vMiddleName = data[key]['Отчество'];
+                            if (typeof dataArr[3] !== 'undefined' && dataArr[3]) {
+                                vMiddleName = dataArr[3];
                             }
-                            if (typeof data[key]['Дата рож'] !== 'undefined' && data[key]['Дата рож']) {
-                                if (data[key]['Дата рож'] instanceof Date) {
-                                    vDateBirth = formatDate(data[key]['Дата рож']);
+                            if (typeof dataArr[4] !== 'undefined' && dataArr[4]) {
+                                if (dataArr[4] instanceof Date) {
+                                    vDateBirth = formatDate(dataArr[4]);
                                 } else {
-                                    vDateBirth = data[key]['Дата рож'];
+                                    vDateBirth = dataArr[4];
                                 }
                             }
-                            if (typeof data[key]['Место рожд'] !== 'undefined' && data[key]['Место рожд']) {
-                                vPlaceBirth = data[key]['Место рожд'];
+                            if (typeof dataArr[5] !== 'undefined' && dataArr[5]) {
+                                vPlaceBirth = dataArr[5];
                             }
-                            if (typeof data[key]['Сфера деятельности'] !== 'undefined' && data[key]['Сфера деятельности']) {
-                                vFieldActivity = data[key]['Сфера деятельности'];
+                            if (typeof dataArr[6] !== 'undefined' && dataArr[6]) {
+                                vFieldActivity = dataArr[6];
                             }
-                            if (typeof data[key]['Описание подвига'] !== 'undefined' && data[key]['Описание подвига']) {
-                                vDescription = data[key]['Описание подвига'];
+                            if (typeof dataArr[7] !== 'undefined' && dataArr[7]) {
+                                vDescription = dataArr[7];
                             }
-                            if (typeof data[key]['Источник'] !== 'undefined' && data[key]['Источник']) {
-                                vSource = data[key]['Источник'];
+                            if (typeof dataArr[8] !== 'undefined' && dataArr[8]) {
+                                vSource = dataArr[8];
                             }
-                            if (typeof data[key]['Ссылка на фото'] !== 'undefined' && data[key]['Ссылка на фото']) {
-                                vPhotoUrl = data[key]['Ссылка на фото'];
+                            if (typeof dataArr[9] !== 'undefined' && dataArr[9]) {
+                                vPhotoUrl = dataArr[9];
                             }
-                            if (typeof data[key]['Дата смерти'] !== 'undefined' && data[key]['Дата смерти']) {
-                                if (data[key]['Дата смерти'] instanceof Date) {
-                                    vDateDeath = formatDate(data[key]['Дата смерти']);
+                            if (typeof dataArr[10] !== 'undefined' && dataArr[10]) {
+                                if (dataArr[10] instanceof Date) {
+                                    vDateDeath = formatDate(dataArr[10]);
                                 } else {
-                                    vDateDeath = data[key]['Дата смерти'];
+                                    vDateDeath = dataArr[10];
                                 }
                             }
-                            if (typeof data[key]['Похоронен'] !== 'undefined' && data[key]['Похоронен']) {
-                                vPlaceDeath = data[key]['Похоронен'];
+                            if (typeof dataArr[11] !== 'undefined' && dataArr[11]) {
+                                vPlaceDeath = dataArr[11];
                             }
-                            if (typeof data[key]['Дата подвига'] !== 'undefined' && data[key]['Дата подвига']) {
-                                if (data[key]['Дата подвига'] instanceof Date) {
-                                    vDateAchievement = this.formatDate(data[key]['Дата подвига']);
+                            if (typeof dataArr[12] !== 'undefined' && dataArr[12]) {
+                                if (dataArr[12] instanceof Date) {
+                                    vDateAchievement = this.formatDate(dataArr[12]);
                                 } else {
-                                    vDateAchievement = data[key]['Дата подвига'];
+                                    vDateAchievement = dataArr[12];
                                 }
                             }
-                            if (typeof data[key]['Место подвига'] !== 'undefined' && data[key]['Место подвига']) {
-                                vPlaceAchievement = data[key]['Место подвига'];
+                            if (typeof dataArr[13] !== 'undefined' && dataArr[13]) {
+                                vPlaceAchievement = dataArr[13];
                             }
-                            if (typeof data[key]['Описание'] !== 'undefined' && data[key]['Описание']) {
-                                vFullDescription = data[key]['Описание'];
+                            if (typeof dataArr[14] !== 'undefined' && dataArr[14]) {
+                                vFullDescription = dataArr[14];
                             }
-                            if (typeof data[key]['Ссылка ни изобретение / подвиг / вооружение'] !== 'undefined' && data[key]['Ссылка ни изобретение / подвиг / вооружение']) {
-                                vLink = data[key]['Ссылка ни изобретение / подвиг / вооружение'];
+                            if (typeof dataArr[15] !== 'undefined' && dataArr[15]) {
+                                vLink = dataArr[15];
                             }
                             obj.push({
                                 IsInventor: vIsInventor,
