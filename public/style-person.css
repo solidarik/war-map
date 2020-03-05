@@ -80,6 +80,7 @@ blockquote{
   position: sticky;
   top: 0;
   background-color: rgba(40, 40, 40, 0.8);
+  cursor: url('img/arrows.png'), auto;	
 }
 
 table {
