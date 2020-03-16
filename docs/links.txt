@@ -1,0 +1,8 @@
+landing page
+https://mdbootstrap.com/education/bootstrap/landing-page-lesson-1/
+
+react-input-range (можно двигать за середину)
+https://github.com/davidchin/react-input-range
+
+react-range (можно двигать клавиатурой)
+https://github.com/tajo/react-range

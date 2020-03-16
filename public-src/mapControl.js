@@ -909,9 +909,7 @@ export class MapControl extends EventEmitter {
   }
 
   getMedian(values) {
-    values.sort(function(a, b) {
-      return a - b
-    })
+    values.sort((a, b) => a - b)
 
     var half = Math.floor(values.length / 2)
 
@@ -932,17 +930,7 @@ export class MapControl extends EventEmitter {
 
     if (z == 0 || z > 6) return
 
-    let url =
-      'http://cdn.geacron.com' +
-      '/tiles/area/' +
-      anow +
-      '/Z' +
-      z +
-      '/' +
-      y +
-      '/' +
-      x +
-      '.png'
+    let url = `http://cdn.geacron.com/tiles/area/${anow}/Z${z}/${y}/${x}.png`
     return url
   }
 

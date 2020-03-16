@@ -1830,7 +1830,7 @@ function (_EventEmitter) {
       var x = tileCoord[1];
       var y = -tileCoord[2] - 1;
       if (z == 0 || z > 6) return;
-      var url = 'http://cdn.geacron.com' + '/tiles/area/' + anow + '/Z' + z + '/' + y + '/' + x + '.png';
+      var url = "http://cdn.geacron.com/tiles/area/".concat(anow, "/Z").concat(z, "/").concat(y, "/").concat(x, ".png");
       return url;
     }
   }, {

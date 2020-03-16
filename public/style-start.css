@@ -1,7 +1,8 @@
 /*@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,200italic);*/
+
 body {
   background: #eee;
-  /*font-family: 'Source Sans Pro', sans-serif;*/
+  /* font-family: 'Source Sans Pro', sans-serif; */
   display: block;
   position: relative;
   overflow-x: hidden;
@@ -21,6 +22,25 @@ body::after {
   z-index: -1;
 }
 
+.mask {
+  color: whitesmoke;
+  text-align: justify;
+  margin: 50px 0;
+}
+
+.mask-span {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+  font-size: 30px;
+}
+
+@media screen and (max-width: 1400px) {
+  .mask-span {
+    font-size: 20px;
+  }
+}
+
 .container {
   max-width: 800px;
   margin: 10px auto;
@@ -33,6 +53,7 @@ body::after {
   color: silver;
   font-style: italic;
   line-height: 30px;
+  text-align: justify;
 }
 
 .text-center {
