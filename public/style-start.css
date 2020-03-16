@@ -24,7 +24,6 @@ body::after {
 
 .mask {
   color: whitesmoke;
-  text-align: justify;
   margin: 50px 0;
 }
 
@@ -53,7 +52,6 @@ body::after {
   color: silver;
   font-style: italic;
   line-height: 30px;
-  text-align: justify;
 }
 
 .text-center {
