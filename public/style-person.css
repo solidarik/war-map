@@ -116,3 +116,7 @@ td {
   padding-right: 10%;
   font-size: 11pt; */
 }
+
+.right{
+  float: right;
+}

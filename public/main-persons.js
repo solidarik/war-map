@@ -73,16 +73,24 @@ if (!Array.prototype.forEach) {
 }
 
 //////////////////////////////////////////////////
-//console.log('1');
 function startApp() {
-    //console.log('2');
     var persons = new addPersons("persons-table", "data/persons_old.json");
     persons.clearTable();
-    //console.log('3');
     persons.fillTable();
-
     $("#persons-table tr:eq(0) td:first-child span").click();
-
+   
+    $('#option1').closest('label').off('click').click(function() { 
+      var persons = new addPersons("persons-table", "data/persons_old.json");
+      persons.clearTable();
+      persons.fillTable();
+      $("#persons-table tr:eq(0) td:first-child span").click();
+    });
+    $('#option2').closest('label').off('click').click(function() { 
+      var persons = new addPersons("persons-table", "data/persons.json");
+      persons.clearTable();
+      persons.fillTable();
+      $("#persons-table tr:eq(0) td:first-child span").click();
+    });
 
 
 

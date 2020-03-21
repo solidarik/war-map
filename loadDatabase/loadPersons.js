@@ -18,16 +18,32 @@ function formatDate(date) {
 
 class LoadPersons {
     download(url, dest, cb) {
-        var file = fs.createWriteStream(dest);
-        var request = http.get(url, function (response) {
-            response.pipe(file);
-            file.on('finish', function () {
-                file.close(cb);  // close() is async, call cb after close completes.
+        try
+        {
+            var file = fs.createWriteStream(dest);
+            var request = http.get(url, function (response) {
+                try{
+                    response.pipe(file);
+                    file.on('finish', function () {
+                        try{
+                            file.close(cb);  // close() is async, call cb after close completes.
+                        }
+                        catch(e){
+                            console.log(e)
+                        }
+                    });
+                }
+                catch(e){
+                    console.log(e)
+                }
+            }).on('error', function (err) { // Handle errors
+                fs.unlink(dest); // Delete the file async. (But we don't check the result)
+                if (cb) console.log(err.message)
             });
-        }).on('error', function (err) { // Handle errors
-            fs.unlink(dest); // Delete the file async. (But we don't check the result)
-            if (cb) cb(err.message);
-        });
+        }
+        catch(e){
+            console.log(e);
+        }
     };
 
     parseExcel() {
@@ -40,7 +56,7 @@ class LoadPersons {
                     var workbook = XLSX.readFile('./public/data/persons.xlsx', { cellDates: true, dateNF: 'dd/mm/yyyy' });// ./assets is where your relative path directory where excel file is, if your excuting js file and excel file in same directory just igore that part
                     var sheet_name_list = workbook.SheetNames; // SheetNames is an ordered list of the sheets in the workbook
                     //console.log(sheet_name_list);
-                    data = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { dateNF: "YYYY-MM-DD" }); //if you have multiple sheets
+                    data = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { dateNF: "YYYY-MM-DD" ,raw: true, defval:null}); //if you have multiple sheets
                     var i = 1;
     
                     for (var key in data) {
@@ -62,65 +78,73 @@ class LoadPersons {
                             var vFullDescription = "";
                             var vLink = "";
                             var dataArr = Object.values(data[key]);
-                            if (typeof dataArr[0] !== 'undefined' && dataArr[0]) {
-                                vIsInventor = dataArr[0];
+                            var z;
+                            // if(dataArr[0]=='Да'||dataArr[0]=='да'||dataArr[0]=='Нет'||dataArr[0]=='нет'){
+                            //     z=1
+                            // }
+                            // else{
+                            //     z=0
+                            // }
+                            z=0
+                            if (typeof dataArr[0+z] !== 'undefined' && dataArr[0+z]) {
+                                vIsInventor = dataArr[0+z];
                             }
-                            if (typeof dataArr[1] !== 'undefined' && dataArr[1]) {
-                                vSurname = dataArr[1];
+                            if (typeof dataArr[1+z] !== 'undefined' && dataArr[1+z]) {
+                                vSurname = dataArr[1+z];
                             }
-                            if (typeof dataArr[2] !== 'undefined' && dataArr[2]) {
-                                vName = dataArr[2];
+                            if (typeof dataArr[2+z] !== 'undefined' && dataArr[2+z]) {
+                                vName = dataArr[2+z];
                             }
-                            if (typeof dataArr[3] !== 'undefined' && dataArr[3]) {
-                                vMiddleName = dataArr[3];
+                            if (typeof dataArr[3+z] !== 'undefined' && dataArr[3+z]) {
+                                vMiddleName = dataArr[3+z];
                             }
-                            if (typeof dataArr[4] !== 'undefined' && dataArr[4]) {
-                                if (dataArr[4] instanceof Date) {
-                                    vDateBirth = formatDate(dataArr[4]);
+                            if (typeof dataArr[4+z] !== 'undefined' && dataArr[4+z]) {
+                                if (dataArr[4+z] instanceof Date) {
+                                    vDateBirth = formatDate(dataArr[4+z]);
                                 } else {
-                                    vDateBirth = dataArr[4];
+                                    vDateBirth = dataArr[4+z];
                                 }
                             }
-                            if (typeof dataArr[5] !== 'undefined' && dataArr[5]) {
-                                vPlaceBirth = dataArr[5];
+                            if (typeof dataArr[5+z] !== 'undefined' && dataArr[5+z]) {
+                                vPlaceBirth = dataArr[5+z];
                             }
-                            if (typeof dataArr[6] !== 'undefined' && dataArr[6]) {
-                                vFieldActivity = dataArr[6];
+                            if (typeof dataArr[6+z] !== 'undefined' && dataArr[6+z]) {
+                                vFieldActivity = dataArr[6+z];
                             }
-                            if (typeof dataArr[7] !== 'undefined' && dataArr[7]) {
-                                vDescription = dataArr[7];
+                            if (typeof dataArr[7+z] !== 'undefined' && dataArr[7+z]) {
+                                vDescription = dataArr[7+z];
                             }
-                            if (typeof dataArr[8] !== 'undefined' && dataArr[8]) {
-                                vSource = dataArr[8];
+                            if (typeof dataArr[8+z] !== 'undefined' && dataArr[8+z]) {
+                                vSource = dataArr[8+z];
                             }
-                            if (typeof dataArr[9] !== 'undefined' && dataArr[9]) {
-                                vPhotoUrl = dataArr[9];
+                            if (typeof dataArr[9+z] !== 'undefined' && dataArr[9+z]) {
+                                vPhotoUrl = dataArr[9+z];
                             }
-                            if (typeof dataArr[10] !== 'undefined' && dataArr[10]) {
-                                if (dataArr[10] instanceof Date) {
-                                    vDateDeath = formatDate(dataArr[10]);
+                            if (typeof dataArr[10+z] !== 'undefined' && dataArr[10+z]) {
+                                if (dataArr[10+z] instanceof Date) {
+                                    vDateDeath = formatDate(dataArr[10+z]);
                                 } else {
-                                    vDateDeath = dataArr[10];
+                                    vDateDeath = dataArr[10+z];
                                 }
                             }
-                            if (typeof dataArr[11] !== 'undefined' && dataArr[11]) {
-                                vPlaceDeath = dataArr[11];
+                            if (typeof dataArr[11+z] !== 'undefined' && dataArr[11+z]) {
+                                vPlaceDeath = dataArr[11+z];
                             }
-                            if (typeof dataArr[12] !== 'undefined' && dataArr[12]) {
-                                if (dataArr[12] instanceof Date) {
-                                    vDateAchievement = this.formatDate(dataArr[12]);
+                            if (typeof dataArr[12+z] !== 'undefined' && dataArr[12+z]) {
+                                if (dataArr[12+z] instanceof Date) {
+                                    vDateAchievement = this.formatDate(dataArr[12+z]);
                                 } else {
-                                    vDateAchievement = dataArr[12];
+                                    vDateAchievement = dataArr[12+z];
                                 }
                             }
-                            if (typeof dataArr[13] !== 'undefined' && dataArr[13]) {
-                                vPlaceAchievement = dataArr[13];
+                            if (typeof dataArr[13+z] !== 'undefined' && dataArr[13+z]) {
+                                vPlaceAchievement = dataArr[13+z];
                             }
-                            if (typeof dataArr[14] !== 'undefined' && dataArr[14]) {
-                                vFullDescription = dataArr[14];
+                            if (typeof dataArr[14+z] !== 'undefined' && dataArr[14+z]) {
+                                vFullDescription = dataArr[14+z];
                             }
-                            if (typeof dataArr[15] !== 'undefined' && dataArr[15]) {
-                                vLink = dataArr[15];
+                            if (typeof dataArr[15+z] !== 'undefined' && dataArr[15+z]) {
+                                vLink = dataArr[15+z];
                             }
                             obj.push({
                                 IsInventor: vIsInventor,
@@ -160,12 +184,12 @@ class LoadPersons {
                     var json = JSON.stringify(obj); //convert it back to json
                     //console.log(json);
                     fs.writeFile('./public/data/persons.json', json, 'utf8', function (err) {
-                        if (err) throw err;
+                        if (err)  console.log('Error write persons.json');
                         console.log('complete');
                     }); // write it back 
                 }
                 catch(e){
-                    console.log(err);
+                    console.log(e);
                 }
             }
         });

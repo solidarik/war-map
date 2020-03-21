@@ -22,6 +22,15 @@ block head
 block content
     +header('person')
     div.content(role='content' id='content' dragable='true')
+        div(class='row')
+            div(class='col-12')
+                .btn-group.btn-group-toggle(data-toggle='buttons' class='right')
+                    label.btn.btn-secondary.active
+                        input#option1(type='radio', name='options', checked='')
+                        |  Заполненно
+                    label.btn.btn-secondary
+                        input#option2(type='radio', name='options')
+                        |  Ярослав       
         .row.person-cont
             .col-md-6
                 .row.img.image-cont
@@ -29,7 +38,8 @@ block content
                 .row.details.detail-cont
                     .col-lg-12
                         blockquote
-                            h5(id='FIO') Сергей Владимирович Ильюшин
+                            h5(id='FIO') 
+                                //-Сергей Владимирович Ильюшин
                             small
                                 cite(id='LifeTime' title='Дата и место рождения')
                                     //- | 18 (30) марта 1894 
