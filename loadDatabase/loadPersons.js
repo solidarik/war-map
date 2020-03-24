@@ -132,7 +132,7 @@ class LoadPersons {
                             }
                             if (typeof dataArr[12+z] !== 'undefined' && dataArr[12+z]) {
                                 if (dataArr[12+z] instanceof Date) {
-                                    vDateAchievement = this.formatDate(dataArr[12+z]);
+                                    vDateAchievement = formatDate(dataArr[12+z]);
                                 } else {
                                     vDateAchievement = dataArr[12+z];
                                 }
