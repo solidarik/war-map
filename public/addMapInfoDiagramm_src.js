@@ -48,6 +48,43 @@ class AddMapInfoDiagramm {
             height = Math.round(this.height) - margin.top - margin.bottom;
         }
 
+        //add -1 when not in 14-65
+        for(var i=1914;i<1966;i++){
+            var df = this.data.filter(
+                function(d){ return parseInt(d.date) == i }
+            );
+
+            if(df.length==0){
+                var e = {};
+                e.iso3=this.data[0].iso3;
+                e.iso2=this.data[0].iso2;
+                e.rusCountry=this.data[0].rusCountry;
+                e.engCountry=this.data[0].engCountry;
+                e.rusCity=this.data[0].rusCity;
+                e.engCity=this.data[0].engCity;
+                e.rusIndicator=this.data[0].rusIndicator;
+                e.engIndicator=this.data[0].engIndicator;
+                e.date=i.toString();
+                e.rusUnit=this.data[0].rusUnit;
+                e.engUnit=this.data[0].engUnit;
+                e.value=0.0;
+                e.rusSource="";
+                e.engSource="";
+                e.sourceURL="";
+                e.engComment=""
+                e.centroid==this.data[0].centroid;
+                
+                this.data.push(e);
+            }
+            //break;
+        }
+        this.data.sort(function(a,b){
+            if(a.date > b.date)  
+                return 1;  
+            else if(a.date < b.date)  
+                return -1;  
+            return 0; 
+        });
             //console.log("this.width="+this.width);
             //console.log("this.height="+this.height);
 
