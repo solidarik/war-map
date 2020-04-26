@@ -1,0 +1,209 @@
+extends layout
+block head
+
+  script(src='/libs/jquery.min.js')
+  script(src='/libs/jquery.rwdImageMaps.min.js')
+  script(src='/libs/jquery.maphilight.min.js')
+
+  link(rel='stylesheet' href='/libs/bootstrap-toggle.min.css')
+  script(src='/libs/bootstrap-toggle.min.js')
+
+  link(rel='stylesheet' href='/style-ships.css')
+  script(src='/main-ships.js')
+
+block content
+    +header('armament')
+
+    div.content(role='content' id='content' dragable='true') 
+        div(class='row title-cat')
+            div(class='col-12 title-cat')
+            | Корабли
+        div(class='row')
+            div(class='col-6 text_cat')
+                .row.img.image-cont
+                    img.image-center.img-rounded.resized-image(id='imgPerson' src='img/ships/Prince_of_Wales.jpg' alt='' )
+                div(class='row')
+                    | Страна -
+                    p(id='country')
+                        | Великобритания
+                div(class='row')
+                    | Кораблей в серии - 
+                    p(id='country')
+                        | 5
+                div(class='row')
+                    | Тип корабля - 
+                    p(id='country')
+                        | Линкор
+                div(class='row')
+                    | Название - 
+                    p(id='country')
+                        | Кинг Джордж V
+                div(class='row')
+                    | Разработчик - 
+                    p(id='country')
+                        | «Виккерс-Армстронг»
+                div(class='row')
+                    | Место строительства - 
+                    p(id='country')
+                        | Ньюкасл
+                div(class='row')
+                    | Дата выпуска - 
+                    p(id='country')
+                        | 1939
+                div(class='row')
+                    | Дата окончания эксплуатации - 
+                    p(id='country')
+                        | 1958
+                div(class='row')
+                    | Водоизмещение, т - 
+                    p(id='country')
+                        | 36727
+                div(class='row')
+                    | Место основного сражения - 
+                    p(id='country')
+                        | 690 миль на СЗ от Бреста (фр)
+                div(class='row')
+                    | Дата основного сражения
+                    p(id='country')                    
+                        | 1941
+                div(class='row')
+                    | Результат основного сражения - 
+                    p(id='country')
+                        | Победа над германским рейсером Бисмарк
+                div(class='row')
+                    | Основной колибр - 
+                    p(id='country')
+                        | 356
+                div(class='row')
+                    | Число пушек - 
+                    p(id='country')
+                        | 10
+                div(class='row')
+                    | Экипаж - 
+                    p(id='country')
+                        | 1422
+                div(class='row')
+                    | Дальность хода, тыс. км - 
+                    p(id='country')
+                        | 25,9
+                div(class='row')
+                    | Мощность двигателя, л.с. - 
+                    p(id='country')
+                        | 110000
+                div(class='row')
+                    | Длина, м - 
+                    p(id='country')
+                        | 213
+                div(class='row')
+                    | Броня бортов, мм - 
+                    p(id='country')
+                        | 356
+                div(class='row')
+                    | Скорость, узлы - 
+                    p(id='country')
+                        | 28,5
+                div(class='row')
+                    | Дальность стрельбы, км - 
+                    p(id='country')
+                        | 35,3
+                div(class='row')
+                    | Источник - 
+                    p(id='country')
+                        | https://ru.wikipedia.org/wiki/Линейные_корабли_типа_«Кинг_Джордж_V»_(1939)#«Хау»_2
+                div(class='row')
+                    | Примечание - 
+                    p(id='country')
+            div(class='col-6 text_cat')
+                .row.img.image-cont
+                    img.image-center.img-rounded.resized-image(id='imgPerson' src='img/ships/Prince_of_Wales.jpg' alt='' )
+                div(class='row')
+                    | Страна -
+                    p(id='country')
+                        | Великобритания
+                div(class='row')
+                    | Кораблей в серии - 
+                    p(id='country')
+                        | 5
+                div(class='row')
+                    | Тип корабля - 
+                    p(id='country')
+                        | Линкор
+                div(class='row')
+                    | Название - 
+                    p(id='country')
+                        | Кинг Джордж V
+                div(class='row')
+                    | Разработчик - 
+                    p(id='country')
+                        | «Виккерс-Армстронг»
+                div(class='row')
+                    | Место строительства - 
+                    p(id='country')
+                        | Ньюкасл
+                div(class='row')
+                    | Дата выпуска - 
+                    p(id='country')
+                        | 1939
+                div(class='row')
+                    | Дата окончания эксплуатации - 
+                    p(id='country')
+                        | 1958
+                div(class='row')
+                    | Водоизмещение, т - 
+                    p(id='country')
+                        | 36727
+                div(class='row')
+                    | Место основного сражения - 
+                    p(id='country')
+                        | 690 миль на СЗ от Бреста (фр)
+                div(class='row')
+                    | Дата основного сражения
+                    p(id='country')                    
+                        | 1941
+                div(class='row')
+                    | Результат основного сражения - 
+                    p(id='country')
+                        | Победа над германским рейсером Бисмарк
+                div(class='row')
+                    | Основной колибр - 
+                    p(id='country')
+                        | 356
+                div(class='row')
+                    | Число пушек - 
+                    p(id='country')
+                        | 10
+                div(class='row')
+                    | Экипаж - 
+                    p(id='country')
+                        | 1422
+                div(class='row')
+                    | Дальность хода, тыс. км - 
+                    p(id='country')
+                        | 25,9
+                div(class='row')
+                    | Мощность двигателя, л.с. - 
+                    p(id='country')
+                        | 110000
+                div(class='row')
+                    | Длина, м - 
+                    p(id='country')
+                        | 213
+                div(class='row')
+                    | Броня бортов, мм - 
+                    p(id='country')
+                        | 356
+                div(class='row')
+                    | Скорость, узлы - 
+                    p(id='country')
+                        | 28,5
+                div(class='row')
+                    | Дальность стрельбы, км - 
+                    p(id='country')
+                        | 35,3
+                div(class='row')
+                    | Источник - 
+                    p(id='country')
+                        | https://ru.wikipedia.org/wiki/Линейные_корабли_типа_«Кинг_Джордж_V»_(1939)#«Хау»_2
+                div(class='row')
+                    | Примечание - 
+                    p(id='country')            

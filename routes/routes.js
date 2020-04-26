@@ -21,6 +21,8 @@ router.get('/person', require('./page-person'))
 router.get('/task', require('./page-task'))
 router.get('/info', require('./page-info'))
 router.get('/events', require('./page-events'))
+router.get('/armament', require('./page-armament'))
+router.get('/ships', require('./page-ships'))
 router.get('/logout', require('./logout').get)
 
 module.exports = router.routes()

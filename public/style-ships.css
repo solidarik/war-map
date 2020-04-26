@@ -1,0 +1,28 @@
+ .image-center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.resized-image{
+    width: auto;
+    height: 200px;
+    border-image: url(img/border.png) 25% stretch;
+    border-width: 40px;
+    border-style: solid;
+  }
+
+  .title-cat{
+      margin-left: 0px;
+      margin-right: 0px;
+      font-size: 16pt;
+      font-weight: bold;
+      text-align: center;
+      display: block;
+  }
+
+  .text_cat{
+    margin-left: 0px;
+    margin-right: 0px;
+    display: block;
+  } 
