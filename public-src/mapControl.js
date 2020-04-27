@@ -12,7 +12,7 @@ const max_year = 1965
 function resizeImage(url, fixWidth, callback) {
   var sourceImage = new Image()
 
-  sourceImage.onload = function() {
+  sourceImage.onload = function () {
     // Create a canvas with the desired dimensions
     var canvas = document.createElement('canvas')
 
@@ -44,34 +44,34 @@ export class MapControl extends EventEmitter {
     let rasterLayer = new ol.layer.Tile({
       opacity: 1,
       zIndex: 0,
-      source: new ol.source.OSM()
+      source: new ol.source.OSM(),
     })
 
     let view = new ol.View({
       center: new ol.proj.fromLonLat([56.004, 54.695]), // ufa place
       // center: kremlinLocation,
-      zoom: 3
+      zoom: 3,
       // projection: 'EPSG:4326'
     })
 
     this.popup = new ol.Overlay.Popup({
       popupClass: 'default shadow', //"tooltips", "warning" "black" "default", "tips", "shadow",
       closeBox: false,
-      onshow: function() {
+      onshow: function () {
         // console.log('You opened the box')
       },
-      onclose: function() {
+      onclose: function () {
         // console.log('You close the box')
       },
       positioning: 'auto',
       autoPan: true,
-      autoPanAnimation: { duration: 250 }
+      autoPanAnimation: { duration: 250 },
     })
 
     const map = new ol.Map({
       interactions: ol.interaction.defaults({
         altShiftDragRotate: false,
-        pinchRotate: false
+        pinchRotate: false,
       }),
       controls: ol.control
         .defaults({ attribution: false, zoom: false })
@@ -81,7 +81,7 @@ export class MapControl extends EventEmitter {
       layers: [rasterLayer],
       overlays: [this.popup],
       target: 'map',
-      view: view
+      view: view,
     })
 
     /*
@@ -122,14 +122,14 @@ export class MapControl extends EventEmitter {
           radius: 10,
           radius2: 5,
           points: 5,
-          fill: new ol.style.Fill({ color: transparent })
+          fill: new ol.style.Fill({ color: transparent }),
         }),
         stroke: new ol.style.Stroke({ color: transparent, width: 1 }),
-        fill: new ol.style.Fill({ color: filltransparent })
-      })
+        fill: new ol.style.Fill({ color: filltransparent }),
+      }),
     ]
 
-    map.on('click', function(evt) {
+    map.on('click', function (evt) {
       window.map.popup.hide()
 
       let coordinates = evt.coordinate
@@ -144,7 +144,7 @@ export class MapControl extends EventEmitter {
       let imgUrl = undefined
       let featureEvent = undefined
       let kind = undefined
-      const isHit = map.forEachFeatureAtPixel(evt.pixel, function(
+      const isHit = map.forEachFeatureAtPixel(evt.pixel, function (
         feature,
         layer
       ) {
@@ -177,9 +177,9 @@ export class MapControl extends EventEmitter {
 
       let isFirstRow = true
 
-      const getHtmlForFeatureEvent = event => {
+      const getHtmlForFeatureEvent = (event) => {
         const getHtmlCell = (caption, param1, param2, isBold = false) => {
-          const f = value => {
+          const f = (value) => {
             if (Array.isArray(value)) {
               return value.length > 0
                 ? value.join(', ').replace(/, /g, '<br/>')
@@ -396,13 +396,13 @@ export class MapControl extends EventEmitter {
       */
     })
 
-    map.on('moveend', evt => {
+    map.on('moveend', (evt) => {
       var map = evt.map
       //   console.log(map.getView().getZoom());
     })
 
-    map.on('pointermove', function(evt) {
-      const isHit = map.forEachFeatureAtPixel(evt.pixel, function(
+    map.on('pointermove', function (evt) {
+      const isHit = map.forEachFeatureAtPixel(evt.pixel, function (
         feature,
         layer
       ) {
@@ -437,7 +437,7 @@ export class MapControl extends EventEmitter {
       left: -20037508.3,
       top: -20037508.3,
       right: 20037508.3,
-      bottom: 20037508.3
+      bottom: 20037508.3,
     }
     this.maxResolution = 156543.0339
     this.tileSize = { w: 256, h: 256 }
@@ -479,7 +479,7 @@ export class MapControl extends EventEmitter {
     $('#imgModal').modal()
 
     setTimeout(() => {
-      resizeImage(ft.get('imgUrl'), $('.modal-body').width(), canvas => {
+      resizeImage(ft.get('imgUrl'), $('.modal-body').width(), (canvas) => {
         $('.modal-body').html(canvas)
       })
     }, 1000)
@@ -521,8 +521,8 @@ export class MapControl extends EventEmitter {
             pixelRatio,
             projection
           )
-        }
-      })
+        },
+      }),
     })
 
     this.yearLayer = yearLayer
@@ -576,8 +576,8 @@ export class MapControl extends EventEmitter {
         points: 5,
         radius: starSize + 2,
         radius2: Math.floor(starSize / 2),
-        angle: -50
-      })
+        angle: -50,
+      }),
     })
     return [style]
   }
@@ -600,7 +600,7 @@ export class MapControl extends EventEmitter {
       { count: 200000, size: 14 },
       { count: 500000, size: 16 },
       { count: 1000000, size: 18 },
-      { count: 10000000000, size: 20 }
+      { count: 10000000000, size: 20 },
     ]
 
     if (allyTroops + enemTroops > 0) {
@@ -653,8 +653,8 @@ export class MapControl extends EventEmitter {
         points: 5,
         radius: starSize + 2,
         radius2: Math.floor(starSize / 2),
-        angle: -50
-      })
+        angle: -50,
+      }),
     })
     return [style]
   }
@@ -663,8 +663,8 @@ export class MapControl extends EventEmitter {
     let style = new ol.style.Style({
       image: new ol.style.Circle({
         fill: new ol.style.Fill({ color: 'rgba(0,220,0,0.7)' }),
-        radius: 7
-      })
+        radius: 7,
+      }),
     })
     return [style]
   }
@@ -673,8 +673,8 @@ export class MapControl extends EventEmitter {
     let style = new ol.style.Style({
       image: new ol.style.Circle({
         fill: new ol.style.Fill({ color: 'rgba(153,51,255,1)' }),
-        radius: 7
-      })
+        radius: 7,
+      }),
     })
     return [style]
   }
@@ -715,9 +715,9 @@ export class MapControl extends EventEmitter {
         //   color: 'yellow'
         // }),
         // points: 3,
-        radius: 7
+        radius: 7,
         // angle: 0
-      })
+      }),
     })
     return [style]
   }
@@ -728,7 +728,7 @@ export class MapControl extends EventEmitter {
       source: historyEventsSource,
       zIndex: 1,
       updateWhileAnimating: true,
-      updateWhileInteracting: true
+      updateWhileInteracting: true,
     })
     this.historyEventsSource = historyEventsSource
     this.map.addLayer(historyEventsLayer)
@@ -739,7 +739,7 @@ export class MapControl extends EventEmitter {
       source: hullSource,
       zIndex: 100,
       updateWithAnimating: true,
-      updateWhileInteracting: true
+      updateWhileInteracting: true,
     })
     this.hullSource = hullSource
     this.map.addLayer(hullLayer)
@@ -750,7 +750,7 @@ export class MapControl extends EventEmitter {
       style: (f, _) => this.historyEventsStyleFunc(f, this.view.getZoom()),
       zIndex: 6,
       updateWhileAnimating: true,
-      updateWhileInteracting: true
+      updateWhileInteracting: true,
     })
     this.allHistoryEventsSource = allHistoryEventsSource
     this.map.addLayer(allHistoryEventsLayer)
@@ -764,7 +764,7 @@ export class MapControl extends EventEmitter {
         this.chronosStyleFunc(feature, this.view.getZoom()),
       zIndex: 7,
       updateWhileAnimating: true,
-      updateWhileInteracting: true
+      updateWhileInteracting: true,
     })
     this.chronosSource = chronosSource
     this.map.addLayer(chronosLayer)
@@ -778,7 +778,7 @@ export class MapControl extends EventEmitter {
         this.personsStyleFunc(feature, this.view.getZoom()),
       zIndex: 7,
       updateWhileAnimating: true,
-      updateWhileInteracting: true
+      updateWhileInteracting: true,
     })
     this.personsSource = personsSource
     this.map.addLayer(personsLayer)
@@ -792,7 +792,7 @@ export class MapControl extends EventEmitter {
         this.agreementStyleFunc(feature, this.view.getZoom()),
       zIndex: 7,
       updateWhileAnimating: true,
-      updateWhileInteracting: true
+      updateWhileInteracting: true,
     })
     this.agreementsSource = agreementsSource
     this.map.addLayer(agreementsLayer)
@@ -808,18 +808,18 @@ export class MapControl extends EventEmitter {
       const f0 = this.allHistoryEventsSource.getFeatures()[0]
       f0.setStyle(this.legendHistoryEventsStyleFunc()[0])
       this.legend.addRow({
-        title: 'Военные события',
+        title: 'ВОВ',
         feature: f0,
-        typeGeom: f0.getGeometry().getType()
+        typeGeom: f0.getGeometry().getType(),
       })
     }
     if (0 < this.chronosSource.getFeatures().length) {
       const f0 = this.chronosSource.getFeatures()[0]
       f0.setStyle(this.chronosStyleFunc()[0])
       this.legend.addRow({
-        title: 'Прочие события',
+        title: 'ВМВ',
         feature: f0,
-        typeGeom: f0.getGeometry().getType()
+        typeGeom: f0.getGeometry().getType(),
       })
     }
     if (0 < this.agreementsSource.getFeatures().length) {
@@ -828,7 +828,7 @@ export class MapControl extends EventEmitter {
       this.legend.addRow({
         title: 'Политические события',
         feature: f0,
-        typeGeom: f0.getGeometry().getType()
+        typeGeom: f0.getGeometry().getType(),
       })
     }
     if (0 < this.personsSource.getFeatures().length) {
@@ -837,7 +837,7 @@ export class MapControl extends EventEmitter {
       this.legend.addRow({
         title: 'Персоналии',
         feature: f0,
-        typeGeom: f0.getGeometry().getType()
+        typeGeom: f0.getGeometry().getType(),
       })
     }
   }
@@ -845,19 +845,19 @@ export class MapControl extends EventEmitter {
   addLegend() {
     this.legend = new ol.control.Legend({
       title: 'Легенда',
-      collapsed: false
+      collapsed: false,
     })
     this.map.addControl(this.legend)
-    this.legend.on('select', function(e) {
+    this.legend.on('select', function (e) {
       if (e.index >= 0) {
         console.log('You click on row: ' + e.title + ' (' + e.index + ')')
         this.removeRow(e.index)
       } else console.log('You click on the title: ' + e.title)
       switch (e.title) {
-        case 'Прочие события':
+        case 'ВМВ':
           window.map.chronosSource.clear()
           break
-        case 'Военные события':
+        case 'ВОВ':
           window.map.allHistoryEventsSource.clear()
           break
         case 'Политические события':
@@ -901,7 +901,7 @@ export class MapControl extends EventEmitter {
   getMedianXY(coords) {
     var valuesX = []
     var valuesY = []
-    coords.forEach(coord => {
+    coords.forEach((coord) => {
       valuesX.push(coord[0])
       valuesY.push(coord[1])
     })
@@ -939,9 +939,9 @@ export class MapControl extends EventEmitter {
       new YearControl({
         caption: 'Выбрать год событий',
         year: this.currentYear,
-        handler: year => {
+        handler: (year) => {
           this.changeYear(year)
-        }
+        },
       })
     )
   }
@@ -1044,7 +1044,7 @@ export class MapControl extends EventEmitter {
         info: info,
         imgUrl: event.imgUrl,
         eventMap: event.maps[0],
-        filename: event.filename
+        filename: event.filename,
       })
 
       this.allHistoryEventsSource.addFeature(ft)
@@ -1054,7 +1054,7 @@ export class MapControl extends EventEmitter {
   repaintChronos() {
     this.chronosSource.clear()
 
-    this.chronos.forEach(chrono => {
+    this.chronos.forEach((chrono) => {
       let info = chrono
       if (chrono.placeCoords && chrono.placeCoords.length) {
         chrono.placeCoords[1] =
@@ -1062,7 +1062,7 @@ export class MapControl extends EventEmitter {
         let ft = new ol.Feature({
           kind: 'chronos',
           geometry: new ol.geom.Point(ol.proj.fromLonLat(chrono.placeCoords)),
-          info: info
+          info: info,
         })
 
         this.chronosSource.addFeature(ft)
@@ -1073,7 +1073,7 @@ export class MapControl extends EventEmitter {
   repaintAgreements() {
     this.agreementsSource.clear()
 
-    this.agreements.forEach(agreement => {
+    this.agreements.forEach((agreement) => {
       let info = agreement
       if (agreement.placeCoords && agreement.placeCoords.length) {
         let ft = new ol.Feature({
@@ -1081,7 +1081,7 @@ export class MapControl extends EventEmitter {
           geometry: new ol.geom.Point(
             ol.proj.fromLonLat(agreement.placeCoords)
           ),
-          info: info
+          info: info,
         })
 
         this.agreementsSource.addFeature(ft)
@@ -1092,9 +1092,13 @@ export class MapControl extends EventEmitter {
   repaintPersons() {
     this.personsSource.clear()
 
-    this.persons.forEach(person => {
+    this.persons.forEach((person) => {
       let info = person
-      if (person.placeDeathCoords && person.placeDeathCoords.length) {
+      if (
+        person.placeDeathCoords &&
+        person.placeDeathCoords.length &&
+        person.placeDeathCoords[0]
+      ) {
         person.placeDeathCoords[1] =
           person.placeDeathCoords[1] - person.placeDeathCoords[1] / 150 //поправка для слияния нескольких точек в одну
         let ft = new ol.Feature({
@@ -1102,7 +1106,7 @@ export class MapControl extends EventEmitter {
           geometry: new ol.geom.Point(
             ol.proj.fromLonLat(person.placeDeathCoords)
           ),
-          info: info
+          info: info,
         })
         this.personsSource.addFeature(ft)
       }
@@ -1119,7 +1123,7 @@ export class MapControl extends EventEmitter {
           geometry: new ol.geom.Point(
             ol.proj.fromLonLat(person.placeAchievementCoords)
           ),
-          info: info
+          info: info,
         })
         this.personsSource.addFeature(ft)
       }
@@ -1148,7 +1152,7 @@ export class MapControl extends EventEmitter {
       let style = {}
       if (style_prop.fill) {
         style.fill = new ol.style.Fill({
-          color: this.hexToRgbA(style_prop.fill, style_prop['fill-opacity'])
+          color: this.hexToRgbA(style_prop.fill, style_prop['fill-opacity']),
         })
       }
       if (style_prop.stroke) {
@@ -1157,7 +1161,7 @@ export class MapControl extends EventEmitter {
             style_prop.stroke,
             style_prop['stroke-opacity']
           ),
-          width: style_prop['stroke-width']
+          width: style_prop['stroke-width'],
         })
       }
       var coords = []
@@ -1179,7 +1183,7 @@ export class MapControl extends EventEmitter {
       let ft = new ol.Feature({
         uid: 100,
         name: 'test',
-        geometry: this.createGeom({ kind: geom.type, coords: coords })
+        geometry: this.createGeom({ kind: geom.type, coords: coords }),
       })
       ft.setStyle(new ol.style.Style(style))
       this.historyEventsSource.addFeature(ft)
@@ -1187,7 +1191,7 @@ export class MapControl extends EventEmitter {
 
     let hull_indexes = convexHull(all_coords)
     let hull_coords = []
-    hull_indexes.forEach(idx => {
+    hull_indexes.forEach((idx) => {
       hull_coords.push(all_coords[idx])
     })
 
@@ -1196,7 +1200,7 @@ export class MapControl extends EventEmitter {
     let ft = new ol.Feature({
       uid: 1000,
       name: 'test2',
-      geometry: polygon
+      geometry: polygon,
     })
     this.hullSource.addFeature(ft)
 
@@ -1213,11 +1217,11 @@ export class MapControl extends EventEmitter {
         class: 'pointer-control',
         icon: 'mdi mdi-cursor-default-outline',
         default: true,
-        handler: btn => {
+        handler: (btn) => {
           this._setActiveButton(btn)
           this.map.removeInteraction(this.draw)
           this.map.removeInteraction(this.snap)
-        }
+        },
       })
     )
 
@@ -1226,10 +1230,10 @@ export class MapControl extends EventEmitter {
         caption: 'Импортировать объекты из geojson-файла',
         class: 'box-control',
         icon: 'mdi mdi-import',
-        handler: btn => {
+        handler: (btn) => {
           this._setActiveButton(btn)
           document.getElementById('fileImport').click()
-        }
+        },
       })
     )
   }
@@ -1246,22 +1250,22 @@ export class MapControl extends EventEmitter {
   _getStyleFunction(feature, resolution) {
     var stroke = new ol.style.Stroke({
       color: '#ff0000',
-      width: 1
+      width: 1,
     })
 
     var fill = new ol.style.Fill({
-      color: 'rgba(255, 255, 0, 0.2)'
+      color: 'rgba(255, 255, 0, 0.2)',
     })
 
     var imageStyle = new ol.style.Circle({
       radius: 5,
       fill: new ol.style.Fill({
-        color: 'red'
+        color: 'red',
       }),
       stroke: new ol.style.Stroke({
         color: 'black',
-        width: 1
-      })
+        width: 1,
+      }),
     })
 
     var textColor = 'red'
@@ -1270,18 +1274,18 @@ export class MapControl extends EventEmitter {
       case 'germany':
         stroke = new ol.style.Stroke({
           color: '#000000',
-          width: 1
+          width: 1,
         })
 
         imageStyle = new ol.style.Circle({
           radius: 5,
           fill: new ol.style.Fill({
-            color: 'black'
+            color: 'black',
           }),
           stroke: new ol.style.Stroke({
             color: 'black',
-            width: 1
-          })
+            width: 1,
+          }),
         })
 
         textColor = 'black'
@@ -1304,8 +1308,8 @@ export class MapControl extends EventEmitter {
         color: textColor,
         outline: 'black',
         outlineWidth: 0,
-        maxreso: 20000
-      })
+        maxreso: 20000,
+      }),
     })
   }
 
@@ -1341,7 +1345,7 @@ export class MapControl extends EventEmitter {
       placement: placement,
       maxAngle: maxAngle,
       overflow: overflow,
-      rotation: rotation
+      rotation: rotation,
     })
   }
 
@@ -1401,7 +1405,7 @@ class CustomControl extends SuperCustomControl {
       label: caption,
       hint: hint,
       tipLabel: caption,
-      element: parentDiv
+      element: parentDiv,
       // target: get(inputParams, "target")
     })
 
@@ -1452,7 +1456,7 @@ class YearControl extends SuperCustomControl {
     yearInput.title = hint
     yearInput.setAttribute('id', 'year-input')
     yearInput.value = this.year
-    yearInput.addEventListener('keyup', event => {
+    yearInput.addEventListener('keyup', (event) => {
       if (event.keyCode == 13) {
         this._inputKeyUp()
         event.preventDefault()
@@ -1501,7 +1505,7 @@ class YearControl extends SuperCustomControl {
       label: 'test',
       hint: 'test',
       tipLabel: caption,
-      element: parentDiv
+      element: parentDiv,
       // target: get(inputParams, "target")
     })
   }
