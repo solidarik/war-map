@@ -13,7 +13,6 @@ class addPersons {
     }
 
     rowTableClickHandler(thisThis,thisTr) {
-        
         //console.log("clicked " + $(thisTr).attr('id'));
         var id = parseInt($(thisTr).attr("id"));
         $('#FIO').html(thisThis.data[id].Surname+" "+thisThis.data[id].Name+" "+thisThis.data[id].MiddleName);

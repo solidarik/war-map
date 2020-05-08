@@ -11,18 +11,18 @@ block head
   script(src='/libs/bootstrap-toggle.min.js')
 
   script(src='/addComboBoxFromJson.js')
-  script(src='/addShips.js')
+  script(src='/addAircrafts.js')
 
-  link(rel='stylesheet' href='/style-ships.css')
-  script(src='/main-ships.js')
+  link(rel='stylesheet' href='/style-aircrafts.css')
+  script(src='/main-aircrafts.js')
 
 block content
     +header('armament')
 
-    div.content.bg(role='content' id='content' dragable='true' class='bg')  
+    div.content.bg(role='content' id='content' dragable='true' class='bg') 
         div(class='row title-cat')
             div(class='col-12 title-cat')
-            | Корабли
+            | Самолеты
         div(class='row')
             div(class='col-6 text_cat')
                 div(class='row')            
@@ -42,4 +42,4 @@ block content
                             a.dropdown-item(href='#') 1-й уровень
                             a.dropdown-item(href='#') 1-й уровень 
                 div(id="secondElement")           
-
+                   

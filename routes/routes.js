@@ -23,6 +23,8 @@ router.get('/info', require('./page-info'))
 router.get('/events', require('./page-events'))
 router.get('/armament', require('./page-armament'))
 router.get('/ships', require('./page-ships'))
+router.get('/aircrafts', require('./page-aircrafts'))
+router.get('/tanks', require('./page-tanks'))
 router.get('/logout', require('./logout').get)
 
 module.exports = router.routes()

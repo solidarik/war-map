@@ -8,19 +8,19 @@ function startApp() {
 }
 
 var onClickDropDownFirst = function(d) {
-    addShips.addShip("firstElement",d);
+    addTanks.addTank("firstElement",d);
     var b = document.getElementById("firstDropDown").getElementsByTagName("button")[0];
-    b.innerHTML=d.Name;
+    b.innerHTML=d.Brand;
 }
 var onClickDropDownSecond = function(d) {
-    addShips.addShip("secondElement",d);
+    addTanks.addTank("secondElement",d);
     var b = document.getElementById("secondDropDown").getElementsByTagName("button")[0];
-    b.innerHTML=d.Name;    
+    b.innerHTML=d.Brand;    
 }
 
 $(document).ready(function () {
 
-    var url = "data/ships.json";
+    var url = "data/tanks.json";
 
     d3.json(url, function(error, data) {
         if (error) console.log(error);
@@ -28,14 +28,14 @@ $(document).ready(function () {
           data,
           'dropDownListSubMenuFirst',
           'ID',
-          'Name',
+          'Brand',
           onClickDropDownFirst
         );
         addComboBoxFromJson.addBootstrapDropDown(
             data,
             'dropDownListSubMenuSecond',
             'ID',
-            'Name',
+            'Brand',
             onClickDropDownSecond
           );
           onClickDropDownFirst(data[0]);
