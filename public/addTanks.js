@@ -69,7 +69,7 @@ var addTanks = /*#__PURE__*/function () {
       newNode.classList.add("row");
       div.appendChild(newNode);
       newNode = document.createElement('div');
-      newNode.innerHTML = "Длинна, м - <p id='Length_m'>" + tankData.Length_m + "</p>";
+      newNode.innerHTML = "Длина, м - <p id='Length_m'>" + tankData.Length_m + "</p>";
       newNode.classList.add("row");
       div.appendChild(newNode);
       newNode = document.createElement('div');

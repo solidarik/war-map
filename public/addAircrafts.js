@@ -69,7 +69,7 @@ var addAircrafts = /*#__PURE__*/function () {
       newNode.classList.add("row");
       div.appendChild(newNode);
       newNode = document.createElement('div');
-      newNode.innerHTML = "Длинна, м - <p id='Length_m'>" + aircraftData.Length_m + "</p>";
+      newNode.innerHTML = "Длина, м - <p id='Length_m'>" + aircraftData.Length_m + "</p>";
       newNode.classList.add("row");
       div.appendChild(newNode);
       newNode = document.createElement('div');
