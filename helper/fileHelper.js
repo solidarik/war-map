@@ -19,8 +19,8 @@ class FileHelper {
         return true
       }
 
-      fs.readdirSync(dirPath).forEach(file => {
-        fs.unlink(path.join(dirPath, file), err => {
+      fs.readdirSync(dirPath).forEach((file) => {
+        fs.unlink(path.join(dirPath, file), (err) => {
           if (err) throw err
         })
       })
@@ -32,6 +32,10 @@ class FileHelper {
   isDirectory(path) {
     var stat = fs.lstatSync(path)
     return stat.isDirectory()
+  }
+
+  isFileExists(path) {
+    return fs.existsSync(path)
   }
 
   getFileNameFromPath(filePath) {
@@ -49,13 +53,13 @@ class FileHelper {
 
   saveJsonToFileSync(json, filePath) {
     fs.writeFileSync(filePath, this.textJson(json), {
-      encoding: 'UTF8'
+      encoding: 'UTF8',
     })
   }
 
   getFilesFromDir(dataDir, fileType = '.json') {
     let set = new Set()
-    fs.readdirSync(dataDir).forEach(fileName => {
+    fs.readdirSync(dataDir).forEach((fileName) => {
       let filePath = path.join(dataDir, fileName)
       if (fileType === path.extname(filePath)) {
         set.add(filePath)

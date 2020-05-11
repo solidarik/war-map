@@ -6,6 +6,7 @@ window.app = {}
 var app = window.app
 
 function fixMapHeight() {
+  console.log('fixMapHeight')
   var mapHeight = $(window).height() - 1
   var navbar = $("nav[data-role='navbar']:visible:visible")
   var mapDiv = $("div[data-role='map']:visible:visible")
@@ -37,38 +38,37 @@ window.onresize = fixMapHeight //changeWindowSize
 
 function startApp() {
   let protocol = ClientProtocol.create()
-
   let mapControl = MapControl.create()
 
-  protocol.subscribe('setCurrentYear', year => {
+  protocol.subscribe('setCurrentYear', (year) => {
     mapControl.setCurrentYearFromServer(year)
   })
 
-  mapControl.subscribe('changeYear', year => {
+  mapControl.subscribe('changeYear', (year) => {
     fixMiniMapVisible(true)
     protocol.getHistoryEventsByYear(year)
   })
 
   let historyEventsControl = HistoryEventsControl.create()
 
-  protocol.subscribe('refreshInfo', info => {
+  protocol.subscribe('refreshInfo', (info) => {
     mapControl.refreshInfo(info)
     historyEventsControl.showEvents(info.events)
   })
 
   historyEventsControl.subscribe('refreshedEventList', () => {
-    $('table tr').click(function() {
+    $('table tr').click(function () {
       historyEventsControl.rowEventClick($(this))
       return false
     })
 
-    $('table tr td span').click(function() {
+    $('table tr td span').click(function () {
       historyEventsControl.mapEventClick($(this))
       return false
     })
   })
 
-  historyEventsControl.subscribe('activatedEvent', data => {
+  historyEventsControl.subscribe('activatedEvent', (data) => {
     mapControl.setCurrentEventMap(data.map)
     fixMiniMapVisible()
   })

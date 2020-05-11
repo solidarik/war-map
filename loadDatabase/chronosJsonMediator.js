@@ -15,16 +15,16 @@ class ChronosJsonMediator extends SuperJsonMediator {
   }
 
   processJson(json) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (json.hasOwnProperty('placeCoords')) {
         resolve(json)
       }
 
       inetHelper
         .getCoordsForCityOrCountry(json.place)
-        .then(placeCoords => {
+        .then((placeCoords) => {
           if (placeCoords.length == 0)
-            resolve({ error: `Не удалось определить координаты` })
+            resolve({ error: `не удалось определить координаты` })
           const newJson = {
             // _name: name_id,
             startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
@@ -32,13 +32,12 @@ class ChronosJsonMediator extends SuperJsonMediator {
             place: json.place,
             placeCoords: placeCoords ? [placeCoords.lon, placeCoords.lat] : [],
             brief: json.brief,
-            srcUrl: json.srcUrl
+            srcUrl: json.srcUrl,
           }
           resolve(newJson)
         })
-        .catch(err => {
-          console.log(`reject: ${json.place}`)
-          resolve({ error: `Ошибка в processJson: ${err}` })
+        .catch((err) => {
+          resolve({ error: `ошибка в processJson: ${err}` })
         })
     })
   }

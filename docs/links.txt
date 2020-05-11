@@ -6,3 +6,21 @@ https://github.com/davidchin/react-input-range
 
 react-range (можно двигать клавиатурой)
 https://github.com/tajo/react-range
+
+jquery only range slider ion range-slider
+http://ionden.com/a/plugins/ion.rangeSlider/demo_advanced.html
+https://github.com/IonDen/ion.rangeSlider/
+
+
+airbnb-slider
+https://github.com/airbnb/rheostat
+
+react-slider
+https://codesandbox.io/s/voos8
+
+react-slider
+https://samhogg.github.io/histoslider/?selectedKind=Histoslider&selectedStory=More%20data&full=0&addons=1&stories=1&panelRight=0&addonPanel=storybook%2Factions%2Factions-panel
+
+vuejs-slider
+https://codesandbox.io/s/vue-histogram-slider-b7m0e?fontsize=14
+https://github.com/oguzhaninan/vue-histogram-slider

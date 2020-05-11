@@ -8,9 +8,10 @@ var personsSchema = new mongoose.Schema(
     middlename: String,
     dateBirth: {
       type: Date,
-      required: 'Не задана начальная дата события'
+      required: 'Не задана начальная дата события',
     },
     dateDeath: Date,
+    dateAchievement: Date,
     description: String,
     fullDescription: String,
     srcUrl: String,
@@ -21,10 +22,10 @@ var personsSchema = new mongoose.Schema(
     placeBirth: String,
     placeBirthCoords: [],
     placeDeath: String,
-    placeDeathCoords: []
+    placeDeathCoords: [],
   },
   {
-    timestamps: false
+    timestamps: false,
   }
 )
 

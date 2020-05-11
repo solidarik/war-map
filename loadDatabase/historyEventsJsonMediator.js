@@ -17,14 +17,14 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
 
   getPlacesFromJson(json) {
     return new Promise((resolve, reject) => {
-      let promicesName = json.map(item =>
+      let promicesName = json.map((item) =>
         dictEngRusProtocol.getEngRusObjectId(item.name)
       )
       Promise.all(promicesName)
-        .then(objNames => {
+        .then((objNames) => {
           return objNames
         })
-        .then(objNames => {
+        .then((objNames) => {
           let places = []
           for (let i = 0; i < json.length; i++) {
             let place = {}
@@ -35,7 +35,7 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
           }
           resolve(places)
         })
-        .catch(err => reject(`Ошибка в getPlacesFromJson: ${err}`))
+        .catch((err) => reject(`ошибка в getPlacesFromJson: ${err}`))
     })
   }
 
@@ -67,7 +67,7 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
       //       }
       //       resolve(allies);
       //     })
-      //     .catch(err => reject(`Ошибка в getAlliesFromJson: ${err}`));
+      //     .catch(err => reject(`ошибка в getAlliesFromJson: ${err}`));
     })
   }
 
@@ -78,14 +78,14 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
       let promises = [
         dictEngRusProtocol.getEngRusObjectId(json.name), //name_id
         this.getAlliesFromJson(json.allies), //allies
-        this.getAlliesFromJson(json.enemies) //enemies
+        this.getAlliesFromJson(json.enemies), //enemies
       ]
 
       var maps = []
       var corvexes = []
       if (!Array.isArray(json.features)) json.features = [json.features]
 
-      json.features.forEach(featureFile => {
+      json.features.forEach((featureFile) => {
         let featurePath = fileHelper.composePath('новые карты', featureFile)
         console.log('>>>> featurePath', featurePath)
         corvexes.push(this.getCorvexFromPath(featurePath))
@@ -93,7 +93,7 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
       })
 
       Promise.all(promises)
-        .then(res => {
+        .then((res) => {
           let [name_id, allies, enemies] = res
 
           const newJson = {
@@ -105,12 +105,12 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
             enemies: enemies,
             filename: fileHelper.getFileNameFromPath(filePath),
             maps: maps,
-            corvexes: corvexes
+            corvexes: corvexes,
           }
 
           resolve(newJson)
         })
-        .catch(err => reject(`Ошибка в processJson: ${err}`))
+        .catch((err) => reject(`ошибка в processJson: ${err}`))
     })
   }
 }

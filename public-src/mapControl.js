@@ -4,10 +4,16 @@ import { EventEmitter } from './eventEmitter'
 import convexHull from 'monotone-convex-hull-2d'
 import strHelper from '../helper/strHelper'
 
-const kremlinLocation = new ol.proj.fromLonLat([37.617499, 55.752023]) // moscow kremlin
-
 const min_year = 1914
 const max_year = 1965
+
+window.onpopstate = (event) => {
+  const map = window.map
+  event.state
+    ? map.readViewFromState.call(window.map, event.state)
+    : map.readViewFromPermalink.call(window.map)
+  window.map.updateView.call(window.map)
+}
 
 function resizeImage(url, fixWidth, callback) {
   var sourceImage = new Image()
@@ -39,18 +45,39 @@ function resizeImage(url, fixWidth, callback) {
 
 export class MapControl extends EventEmitter {
   constructor() {
-    super()
+    super() //first must
 
-    let rasterLayer = new ol.layer.Tile({
-      opacity: 1,
+    // let rasterLayer = new ol.layer.Tile({
+    //   opacity: 1,
+    //   zIndex: 0,
+    //   source: new ol.source.OSM()
+    // })
+
+    var rasterLayer = new ol.layer.Tile({
+      preload: 5,
       zIndex: 0,
-      source: new ol.source.OSM(),
+      //      source: new ol.source.OSM(),
+      source: new ol.source.XYZ({
+        tileUrlFunction: (tileCoord, pixelRatio, projection) => {
+          return this.getYandexLayerUrl.call(
+            this,
+            tileCoord,
+            pixelRatio,
+            projection
+          )
+        },
+      }),
     })
 
+    this.readViewFromPermalink()
+    this.shouldUpdate = true
+
     let view = new ol.View({
-      center: new ol.proj.fromLonLat([56.004, 54.695]), // ufa place
+      center: this.center
+        ? this.center
+        : new ol.proj.fromLonLat([56.004, 54.695]), // ufa place
       // center: kremlinLocation,
-      zoom: 3,
+      zoom: this.zoom ? this.zoom : 3,
       // projection: 'EPSG:4326'
     })
 
@@ -128,6 +155,129 @@ export class MapControl extends EventEmitter {
         fill: new ol.style.Fill({ color: filltransparent }),
       }),
     ]
+
+    // Style for the clusters
+    var styleCache = {}
+    function getStyle(feature, resolution) {
+      var size = feature.get('features').length
+      var style = styleCache[size]
+      if (!style) {
+        var color = size > 10 ? '192,0,0' : size > 5 ? '255,128,0' : '0,128,0'
+        var radius = Math.max(8, Math.min(size * 0.75, 20))
+        var dash = (2 * Math.PI * radius) / 6
+        var dash = [0, dash, dash, dash, dash, dash, dash]
+        style = styleCache[size] = new ol.style.Style({
+          image: new ol.style.Circle({
+            radius: radius,
+            stroke: new ol.style.Stroke({
+              color: 'rgba(' + color + ',0.5)',
+              width: 15,
+              lineDash: dash,
+              lineCap: 'butt',
+            }),
+            fill: new ol.style.Fill({
+              color: 'rgba(' + color + ',1)',
+            }),
+          }),
+          text: new ol.style.Text({
+            text: size.toString(),
+            //font: 'bold 12px comic sans ms',
+            //textBaseline: 'top',
+            fill: new ol.style.Fill({
+              color: '#fff',
+            }),
+          }),
+        })
+      }
+      return style
+    }
+
+    // Cluster Source
+    let clusterSource = new ol.source.Cluster({
+      distance: 40,
+      source: new ol.source.Vector(),
+    })
+    map.addLayer(
+      new ol.layer.AnimatedCluster({
+        name: 'Cluster',
+        source: clusterSource,
+        animationDuration: 700,
+        style: getStyle,
+      })
+    )
+
+    this.clusterSource = clusterSource
+
+    // Style for selection
+    var img = new ol.style.Circle({
+      radius: 5,
+      stroke: new ol.style.Stroke({
+        color: 'rgba(0,255,255,1)',
+        width: 1,
+      }),
+      fill: new ol.style.Fill({
+        color: 'rgba(0,255,255,0.3)',
+      }),
+    })
+    var style0 = new ol.style.Style({
+      image: img,
+    })
+    var style1 = new ol.style.Style({
+      image: img,
+      // Draw a link beetween points (or not)
+      stroke: new ol.style.Stroke({
+        color: '#fff',
+        width: 1,
+      }),
+    })
+    // Select interaction to spread cluster out and select features
+    var selectCluster = new ol.interaction.SelectCluster({
+      // Point radius: to calculate distance between the features
+      pointRadius: 7,
+      animate: true,
+      // Feature style when it springs apart
+      featureStyle: function () {
+        return [style1]
+      },
+      // selectCluster: false,	// disable cluster selection
+      // Style to draw cluster when selected
+      style: function (f, res) {
+        var cluster = f.get('features')
+        if (cluster.length > 1) {
+          var s = [getStyle(f, res)]
+          return s
+        } else {
+          return [
+            new ol.style.Style({
+              image: new ol.style.Circle({
+                stroke: new ol.style.Stroke({
+                  color: 'rgba(0,0,192,0.5)',
+                  width: 2,
+                }),
+                fill: new ol.style.Fill({ color: 'rgba(0,0,192,0.3)' }),
+                radius: 5,
+              }),
+            }),
+          ]
+        }
+      },
+    })
+    map.addInteraction(selectCluster)
+
+    // On selected => get feature in cluster and show info
+    selectCluster.getFeatures().on(['add'], function (e) {
+      var c = e.element.get('features')
+      if (c.length == 1) {
+        console.log('One feature selected... id ' + c[0].get('id'))
+      } else {
+        console.log(`Cluster $(c.length) features`)
+      }
+    })
+    // selectCluster.getFeatures().on(['remove'], function (e) {
+    //   console.log('')
+    // })
+
+    /* solidarik temprorariry disable click function
 
     map.on('click', function (evt) {
       window.map.popup.hide()
@@ -373,7 +523,7 @@ export class MapControl extends EventEmitter {
       window.map.popup.show(coords, content)
 
       /* Show Big Image */
-      /*
+    /*
       if (isHit && isExistUrl) {
         window.map.showEventContour(info.eventMap)
 
@@ -394,29 +544,31 @@ export class MapControl extends EventEmitter {
         }, 1000)
       }
       */
+    //})
+
+    map.on('moveend', () => {
+      window.map.savePermalink.call(window.map)
     })
 
-    map.on('moveend', (evt) => {
-      var map = evt.map
-      //   console.log(map.getView().getZoom());
-    })
+    // map.on('pointermove', function (evt) {
+    //   const isHit = map.forEachFeatureAtPixel(evt.pixel, function (
+    //     feature,
+    //     layer
+    //   ) {
+    //     if (feature === undefined || feature.get('kind') === undefined)
+    //       return false
+    //     return (
+    //       ['wmw', 'wow', 'politics', 'chronos'].indexOf(feature.get('kind')) >=
+    //       0
+    //     )
+    //   })
 
-    map.on('pointermove', function (evt) {
-      const isHit = map.forEachFeatureAtPixel(evt.pixel, function (
-        feature,
-        layer
-      ) {
-        if (feature === undefined || feature.get('kind') === undefined)
-          return false
-        return ['wmw', 'wow', 'politics'].indexOf(feature.get('kind')) >= 0
-      })
-
-      if (isHit) {
-        this.getTargetElement().style.cursor = 'pointer'
-      } else {
-        this.getTargetElement().style.cursor = ''
-      }
-    })
+    //   if (isHit) {
+    //     this.getTargetElement().style.cursor = 'pointer'
+    //   } else {
+    //     this.getTargetElement().style.cursor = ''
+    //   }
+    // })
 
     this.map = map
     this.legend = undefined
@@ -451,7 +603,7 @@ export class MapControl extends EventEmitter {
       this.addChronosLayer()
       this.addAgreementsLayer()
       this.addPersonsLayer()
-      this.addLegend()
+      //this.addLegend()
       // this._addButtons();
     }, 10)
   }
@@ -660,10 +812,20 @@ export class MapControl extends EventEmitter {
   }
 
   chronosStyleFunc(feature, zoom) {
+    const svg =
+      '<svg width="24" height="24" version="1.1" xmlns="http://www.w3.org/2000/svg">' +
+      '<path d="M19.74,7.68l1-1L19.29,5.29l-1,1a10,10,0,1,0,1.42,1.42ZM12,22a8,8,0,1,1,8-8A8,8,0,0,1,12,22Z"/>' +
+      '<rect x="7" y="1" width="10" height="2"/><polygon points="13 14 13 8 11 8 11 16 18 16 18 14 13 14"/>' +
+      '</svg>'
     let style = new ol.style.Style({
-      image: new ol.style.Circle({
-        fill: new ol.style.Fill({ color: 'rgba(0,220,0,0.7)' }),
+      image: new ol.style.Icon({
+        //src: 'data:image/svg+xml;utf8,' + svg,
+        src: 'images/map_timer.png',
+        color: '#ff0000',
+        fill: new ol.style.Fill({ color: 'rgba(153,51,255,1)' }),
+        scale: 1,
         radius: 7,
+        opacity: 1,
       }),
     })
     return [style]
@@ -882,6 +1044,57 @@ export class MapControl extends EventEmitter {
     this.map.updateSize()
   }
 
+  updateView() {
+    // this.view.setCenter(this.center)
+    // this.view.setZoom(this.zoom)
+    this.view.animate({
+      center: this.center,
+      zoom: this.zoom,
+      duration: 300,
+    })
+  }
+
+  readViewFromState(state) {
+    this.centere = state.center
+    this.zoom = state.zoom
+    this.shouldUpdate = false
+  }
+
+  readViewFromPermalink() {
+    if (window.location.hash !== '') {
+      // try to restore center, zoom-level from the URL
+      var hash = window.location.hash.replace('#map=', '')
+      var parts = hash.split('/')
+      if (parts.length === 3) {
+        this.zoom = parseInt(parts[0], 10)
+        this.center = [parseFloat(parts[1]), parseFloat(parts[2])]
+      }
+      this.shouldUpdate = false
+    }
+  }
+
+  savePermalink() {
+    if (!this.shouldUpdate) {
+      // do not update the URL when the view was changed in the 'popstate' handler
+      this.shouldUpdate = true
+      return
+    }
+
+    const center = this.view.getCenter()
+    const hash =
+      '#map=' +
+      Math.round(this.view.getZoom()) +
+      '/' +
+      Math.round(center[0] * 100) / 100 +
+      '/' +
+      Math.round(center[1] * 100) / 100
+    const state = {
+      zoom: this.view.getZoom(),
+      center: this.view.getCenter(),
+    }
+    window.history.pushState(state, 'map', hash)
+  }
+
   getCenterCoord(ft) {
     let geom = ft.getGeometry()
     switch (geom.getType()) {
@@ -931,6 +1144,15 @@ export class MapControl extends EventEmitter {
     if (z == 0 || z > 6) return
 
     let url = `http://cdn.geacron.com/tiles/area/${anow}/Z${z}/${y}/${x}.png`
+    return url
+  }
+
+  getYandexLayerUrl(tileCoord, pixelRatio, projection) {
+    let z = tileCoord[0]
+    let x = tileCoord[1]
+    let y = -tileCoord[2] - 1
+
+    let url = `http://vec01.maps.yandex.net/tiles?l=map&v=4.55.2&z=${z}&x=${x}&y=${y}&scale=2&lang=ru_RU`
     return url
   }
 
@@ -993,10 +1215,10 @@ export class MapControl extends EventEmitter {
     this.agreements = info.agreements
     this.historyEvents = info.events
     this.persons = info.persons
-    this.repaintChronos()
-    this.repaintAgreements()
+    //this.repaintChronos()
+    //this.repaintAgreements()
     this.repaintHistoryEvents()
-    this.repaintPersons()
+    //this.repaintPersons()
     this.repaintLegend()
   }
 
@@ -1029,11 +1251,11 @@ export class MapControl extends EventEmitter {
 
   repaintHistoryEvents() {
     this.allHistoryEventsSource.clear()
-
-    this.allHistoryEventsSource.clear()
+    this.clusterSource.getSource().clear()
     this.historyEvents.forEach((event, i) => {
       //0 == i && this.showEventContour(event.maps[0])
       let info = event
+
       let ft = new ol.Feature({
         id: event.id,
         name: event.name,
@@ -1046,8 +1268,10 @@ export class MapControl extends EventEmitter {
         eventMap: event.maps[0],
         filename: event.filename,
       })
+      ft.set('id', event.id)
 
-      this.allHistoryEventsSource.addFeature(ft)
+      //this.allHistoryEventsSource.addFeature(ft)
+      this.clusterSource.getSource().addFeature(ft)
     })
   }
 

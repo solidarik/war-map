@@ -13,21 +13,22 @@ module.exports = {
       keepAlive: 1,
       poolSize: 5,
       useNewUrlParser: true,
-      useCreateIndex: true
-    }
+      useCreateIndex: true,
+      useUnifiedTopology: true,
+    },
   },
   crypto: {
     hash: {
       length: 128,
       // may be slow(!): iterations = 12000 take ~60ms to generate strong password
-      iterations: process.env.NODE_ENV == 'production' ? 12000 : 12000
-    }
+      iterations: process.env.NODE_ENV == 'production' ? 12000 : 12000,
+    },
   },
   template: {
     // template.root uses config.root
-    root: defer(function(cfg) {
+    root: defer(function (cfg) {
       return path.join(cfg.root, 'templates')
-    })
+    }),
   },
-  root: process.cwd()
+  root: process.cwd(),
 }

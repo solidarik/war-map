@@ -1,22 +1,33 @@
 const log = require('../helper/logHelper')
+const fileHelper = require('../helper/fileHelper')
 const config = require('config')
 const chalk = require('chalk')
-const request = require('request')
+const axios = require('axios')
 
 class InetHelper {
   constructor() {}
 
+  loadCoords(filename) {
+    this.coords = fileHelper.isFileExists(filename)
+      ? fileHelper.getJsonFromFile(filename)
+      : {}
+  }
+
+  saveCoords(filename) {
+    fileHelper.saveJsonToFileSync(this.coords, filename)
+  }
+
   getDataFromUrl(url) {
     return new Promise((resolve, reject) => {
-      request(url, (err, res, body) => {
-        if (err) {
-          reject(err)
-          error(err)
-          return
-        }
-        resolve(body)
-        return body
-      })
+      axios
+        .get(url)
+        .then((response) => {
+          resolve(response.data)
+        })
+        .catch((error) => {
+          log.error(`Error! axios was broken: ${error}`)
+          reject(error)
+        })
     })
   }
 
@@ -49,14 +60,37 @@ class InetHelper {
   }
 
   async getCoordsForCityOrCountry(name) {
+    if (!name) {
+      return undefined
+    }
+
+    let isExistCoords = false
+    const isRus = /[а-яА-ЯЁё]/.test(name)
     let coords = null
-    coords = await this.getCoordsFromWiki(name)
-    if (coords) return coords
-    coords = await this.getCoordsFromWiki(`Столица ${name}`)
-    if (coords) return coords
-    coords = await this.getCoordsFromWiki(`capital of ${name}`)
-    if (coords) return coords
-    return []
+    try {
+      if (this.coords[name]) {
+        isExistCoords = true
+        return this.coords[name]
+      }
+      coords = await this.getCoordsFromWiki(name)
+      if (coords) return coords
+
+      // if (isRus) {
+      //   coords = await this.getCoordsFromWiki(`столица ${name}`)
+      //   if (coords) return coords
+      // } else {
+      //   coords = await this.getCoordsFromWiki(`capital of ${name}`)
+      //   if (coords) return coords
+      // }
+      return null
+    } catch (error) {
+      throw error
+    } finally {
+      if (!isExistCoords && coords) {
+        this.coords[name] = coords
+        log.info(`новая координата ${JSON.stringify(coords)} для места ${name}`)
+      }
+    }
   }
 
   async getCoordsByPageId(pageId, isRus) {
@@ -65,12 +99,11 @@ class InetHelper {
         action: 'query',
         prop: 'coordinates',
         format: 'json',
-        pageids: pageId
+        pageids: pageId,
       },
       isRus
     )
-    const body = await this.getDataFromUrl(url)
-    const json = JSON.parse(body)
+    const json = await this.getDataFromUrl(url)
     const coords = json['query']['pages'][pageId]['coordinates']
     return coords && coords.length > 0
       ? { lon: coords[0].lon, lat: coords[0].lat }
@@ -78,20 +111,28 @@ class InetHelper {
   }
 
   async getCoordsFromWiki(name) {
+    let coords = undefined
     try {
       const isRus = /[а-яА-ЯЁё]/.test(name)
 
       let pageId = await this.getWikiPageId(name)
-      let coords = await this.getCoordsByPageId(pageId, isRus)
+      if (!pageId) {
+        throw `не удалось найти страницу Wiki для имени ${name}`
+      }
 
-      //try eng language
+      coords = await this.getCoordsByPageId(pageId, isRus)
+      //try eng language page
       if (!coords) {
         pageId = await this.getWikiEngPageId(pageId, isRus)
+        if (!pageId) {
+          throw `не удалось найти координаты страницу Wiki для eng-имени ${name}`
+        }
         coords = await this.getCoordsByPageId(pageId, false)
       }
       return coords ? coords : null
     } catch (error) {
-      return false
+      log.error(`ошибка получения координат ${name}: ${error}`)
+      return null
     }
   }
 
@@ -103,31 +144,30 @@ class InetHelper {
           prop: 'info',
           inprop: 'url',
           format: 'json',
-          pageids: pageId
+          pageids: pageId,
         },
         isRus
       )
 
       this.getDataFromUrl(url)
-        .then(body => {
-          let json = JSON.parse(body)
+        .then((json) => {
           let title = json['query']['pages'][pageId]['title']
           resolve(title)
         })
-        .catch(err => reject(err))
+        .catch((err) => reject(err))
     })
   }
 
   getRusNameFromWiki(engName) {
     return new Promise((resolve, reject) => {
       this.getWikiPageId(engName)
-        .then(pageId => {
+        .then((pageId) => {
           return this.getLangTitleFromPageId(pageId, 'ru')
         })
-        .then(rusName => {
+        .then((rusName) => {
           resolve(rusName)
         })
-        .catch(err => {
+        .catch((err) => {
           reject(err)
         })
     })
@@ -154,17 +194,16 @@ class InetHelper {
           prop: 'info',
           inprop: 'url',
           format: 'json',
-          pageids: pageId
+          pageids: pageId,
         },
         isRus
       )
 
       this.getDataFromUrl(url)
-        .then(body => {
-          let json = JSON.parse(body)
+        .then((json) => {
           resolve(json['query']['pages'][pageId]['fullurl'])
         })
-        .catch(err => {
+        .catch((err) => {
           reject(err)
         })
     })
@@ -175,16 +214,15 @@ class InetHelper {
       let url = this.composeWikiUrl({
         action: 'query',
         format: 'json',
-        titles: encodeURI(engTitle)
+        titles: encodeURI(engTitle),
       })
 
       this.getDataFromUrl(url)
-        .then(body => {
-          let json = JSON.parse(body)
+        .then((json) => {
           let pages = json['query']['pages']
           resolve(Object.keys(pages)[0])
         })
-        .catch(err => reject(`Ошибка в getPageIdFromEngTitle ${err}`))
+        .catch((err) => reject(`ошибка в getPageIdFromEngTitle ${err}`))
     })
   }
 
@@ -198,20 +236,19 @@ class InetHelper {
           llprop: 'url',
           lllang: lang,
           format: 'json',
-          pageids: pageId
+          pageids: pageId,
         },
         isRus
       )
 
       this.getDataFromUrl(url)
-        .then(body => {
-          let json = JSON.parse(body)
+        .then((json) => {
           let title = json['query']['pages'][pageId]['langlinks'][0]['*']
           resolve(title)
           //let langUrl = json['query']['pages'][pageId]['langlinks'][0]['url'];
           //resolve(decodeURI(/[^/]*$/.exec(langUrl)[0]));
         })
-        .catch(err => {
+        .catch((err) => {
           reject(err)
         })
     })
@@ -223,11 +260,11 @@ class InetHelper {
   }
 
   getWikiPageId(stringSearch) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const isRus = /[а-яА-ЯЁё]/.test(stringSearch)
 
       const promises = [
-        new Promise(resolve => {
+        new Promise((resolve) => {
           const url = this.composeWikiUrl(
             {
               action: 'query',
@@ -237,23 +274,26 @@ class InetHelper {
               ppprop: 'displaytitle',
               gpssearch: encodeURI(stringSearch),
               gpsnamespace: 0,
-              gpslimit: 6
+              gpslimit: 6,
             },
             isRus
           )
 
           this.getDataFromUrl(url)
-            .then(body => {
-              const json = JSON.parse(body)
+            .then((json) => {
+              //если используется другая библиотека может понадобится JSON.parse
               const pages = json['query']['pages']
               resolve(Object.keys(pages)[0])
             })
-            .catch(err => {
+            .catch((error) => {
+              log.error(
+                `ошибка при получении данных для ${stringSearch} по url ${url}: ${error}`
+              )
               resolve(null)
             })
         }),
 
-        new Promise(resolve => {
+        new Promise((resolve) => {
           const url = this.composeWikiUrl(
             {
               action: 'query',
@@ -261,20 +301,23 @@ class InetHelper {
               srlimit: 1,
               srprop: 'size',
               format: 'json',
-              srsearch: encodeURI(stringSearch)
+              srsearch: encodeURI(stringSearch),
             },
             isRus
           )
 
           this.getDataFromUrl(url)
-            .then(body => {
-              const json = JSON.parse(body)
+            .then((json) => {
+              //если используется другая библиотека может понадобится JSON.parse
               resolve(json['query']['search'][0]['pageid'])
             })
-            .catch(err => {
-              resolve(null)
+            .catch((error) => {
+              log.error(
+                `ошибка при получении данных для ${stringSearch} по url ${url}: ${error}`
+              )
+              resolve(false)
             })
-        })
+        }),
       ]
 
       Promise.all(promises).then(
@@ -298,7 +341,7 @@ class InetHelper {
           //     reject(`Не смогли найти глобальный pageId по рус. наводке ${err}`)
           //   )
         },
-        err => {
+        (err) => {
           console.log(
             `Не удалось найти wiki-страницу: ${err} для запроса: ${stringSearch}`
           )
@@ -309,4 +352,10 @@ class InetHelper {
   }
 }
 
-module.exports = new InetHelper()
+InetHelper.getInstance = function () {
+  if (global.singleton_instance === undefined)
+    global.singleton_instance = new InetHelper()
+  return global.singleton_instance
+}
+
+module.exports = InetHelper.getInstance()

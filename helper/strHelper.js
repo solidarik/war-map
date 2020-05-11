@@ -17,6 +17,28 @@ class StrHelper {
       0 <= this.strToEngSymbols(input).indexOf(this.strToEngSymbols(template))
     )
   }
+
+  static shrinkStringBeforeDelim(input, delim = ',') {
+    const indexOf = input.indexOf(delim)
+    return indexOf > 0 ? input.substr(0, indexOf) : input
+  }
+
+  static ignoreEqualsValue(input) {
+    return input.replace(/[(][^)]*[)]/g, '')
+  }
+
+  static ignoreSpaces(input) {
+    return input.replace(/\s/g, '')
+  }
+
+  static getTwoStringByLastDelim(input, delim = '.') {
+    const lastIndexOf = input.lastIndexOf(delim)
+    const ret = [
+      input.substr(0, lastIndexOf).trim(),
+      input.substr(lastIndexOf + 1, input.length).trim(),
+    ]
+    return ret
+  }
 }
 
 module.exports = StrHelper

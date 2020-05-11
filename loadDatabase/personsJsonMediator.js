@@ -1,5 +1,7 @@
 const PersonsModel = require('../models/personsModel')
 const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol')
+const strHelper = require('../helper/strHelper')
+const dateHelper = require('../helper/dateHelper')
 const geoHelper = require('../helper/geoHelper')
 const inetHelper = require('../helper/inetHelper')
 const fileHelper = require('../helper/fileHelper')
@@ -25,14 +27,20 @@ class PersonsJsonMediator extends SuperJsonMediator {
         return
       }
 
+      json.PlaceAchievement = strHelper.shrinkStringBeforeDelim(
+        json.PlaceAchievement
+      )
+      json.PlaceBirth = strHelper.shrinkStringBeforeDelim(json.PlaceBirth)
+      json.PlaceDeath = strHelper.shrinkStringBeforeDelim(json.PlaceDeath)
+
       let promises = [
         inetHelper.getCoordsForCityOrCountry(json.PlaceAchievement),
         inetHelper.getCoordsForCityOrCountry(json.PlaceBirth),
-        inetHelper.getCoordsForCityOrCountry(json.PlaceDeath)
+        inetHelper.getCoordsForCityOrCountry(json.PlaceDeath),
       ]
 
       Promise.all(promises)
-        .then(coords => {
+        .then((coords) => {
           const placeAchievementCoords = coords[0]
           const placeBirthCoords = coords[1]
           const placeDeathCoords = coords[2]
@@ -41,8 +49,9 @@ class PersonsJsonMediator extends SuperJsonMediator {
             surname: json.Surname,
             name: json.Name,
             middlename: json.MiddleName,
-            dateBirth: moment.utc(json.DateBirth, 'DD.MM.YYYY'),
-            dateDeath: moment.utc(json.DateDeath, 'DD.MM.YYYY'),
+            dateBirth: dateHelper.ignoreAlterDate(json.DateBirth),
+            dateDeath: dateHelper.ignoreAlterDate(json.DateDeath),
+            dateAchievement: dateHelper.ignoreAlterDate(json.DateAchievement),
             description: json.Description,
             fullDescription: json.FullDescription,
             srcUrl: json.Source,
@@ -59,12 +68,12 @@ class PersonsJsonMediator extends SuperJsonMediator {
             placeDeath: json.PlaceDeath,
             placeDeathCoords: placeDeathCoords
               ? [placeDeathCoords.lon, placeDeathCoords.lat]
-              : []
+              : [],
           }
 
           resolve(newJson)
         })
-        .catch(err => reject(`Ошибка в processJson: ${err}`))
+        .catch((err) => reject(`ошибка в processJson: ${err}`))
     })
   }
 

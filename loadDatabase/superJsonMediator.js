@@ -4,8 +4,8 @@ class SuperJsonMediator {
       const obj = new this.model(json)
       obj
         .save()
-        .then(res => resolve(obj['_id'.toString()]))
-        .catch(err => {
+        .then((res) => resolve(obj['_id'.toString()]))
+        .catch((err) => {
           reject(err)
         })
     })
@@ -22,14 +22,14 @@ class SuperJsonMediator {
   isExistObject(json) {
     return new Promise((resolve, reject) => {
       let findJson = {}
-      this.equilFields.forEach(element => {
+      this.equilFields.forEach((element) => {
         findJson[element] = json[element]
       })
 
       this.model.findOne(findJson, (err, res) => {
         if (err) {
           console.log(err)
-          reject(`Ошибка в isExistObject: не удалось найти объект ${err}`)
+          reject(`ошибка в isExistObject: не удалось найти объект ${err}`)
         }
 
         res ? resolve(res) : resolve(false)

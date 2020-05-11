@@ -7,7 +7,7 @@
     "node": "8.10.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha -c",
     "parcel": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js",
     "watch": "nodemon -w public-src -x npm run parcel",
     "dev": "nodemon index.js"
@@ -33,11 +33,12 @@
   "homepage": "https://github.com/solidarik/war-map#readme",
   "dependencies": {
     "@material-ui/core": "latest",
+    "axios": "latest",
     "chalk": "latest",
     "co-busboy": "latest",
     "config": "latest",
     "convex-hull": "latest",
-    "cron": "^1.8.2",
+    "cron": "latest",
     "d3-geo-projection": "latest",
     "d3v4": "latest",
     "jquery": "latest",
@@ -69,12 +70,13 @@
     "socket.io-emitter": "latest",
     "socket.io-redis": "latest",
     "winston": "latest",
-    "xlsx": "^0.15.5"
+    "xlsx": "latest"
   },
   "devDependencies": {
     "@babel/core": "latest",
     "@babel/plugin-proposal-class-properties": "latest",
     "@babel/plugin-proposal-object-rest-spread": "latest",
+    "mocha": "^7.1.2",
     "parcel-bundler": "latest"
   },
   "browserslist": [

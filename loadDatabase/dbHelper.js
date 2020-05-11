@@ -21,16 +21,16 @@ class DbHelper {
       const modelDirectory = fileHelper.composePath('../models/')
       let modelFiles = fileHelper.getFilesFromDir(modelDirectory, '.js')
       let promises = []
-      modelFiles.forEach(modelFilePath => {
+      modelFiles.forEach((modelFilePath) => {
         if ('' == filter || modelFilePath.includes(filter)) {
           promises.push(
             new Promise((resolve, reject) => {
               let model = require(modelFilePath)
-              model.deleteMany({}, err => {
+              model.deleteMany({}, (err) => {
                 if (err) reject(err)
 
                 resolve(true)
-                info(`Removed collection: ${modelFilePath}`)
+                info(`removed collection: ${modelFilePath}`)
               })
             })
           )
@@ -38,8 +38,8 @@ class DbHelper {
       })
 
       Promise.all(promises)
-        .then(res => resolve(true))
-        .catch(err => reject(err))
+        .then((res) => resolve(true))
+        .catch((err) => reject(err))
     })
   }
 
@@ -77,39 +77,39 @@ class DbHelper {
         files.push(source)
       }
 
-      info(`Начинаем обрабатывать ${dataTypeStr} ${chalk.blue(input.source)}`)
+      info(`начинаем обрабатывать ${dataTypeStr} ${chalk.cyan(input.source)}`)
 
       let promises = []
-      files.forEach(filePath => {
-        console.log(filePath)
+
+      files.forEach((filePath) => {
         let json = fileHelper.getJsonFromFile(filePath)
         let filename = fileHelper.getFileNameFromPath(filePath)
         let procpath = path.join(procdir, filename)
         let errpath = path.join(errdir, filename)
 
-        json.forEach(jsonItem => {
+        json.forEach((jsonItem) => {
           promises.push(
-            new Promise(resolve => {
+            new Promise((resolve) => {
               let newJsonItem = undefined
               mediator
                 .processJson(jsonItem)
-                .then(jsonItem => {
+                .then((jsonItem) => {
                   if (jsonItem.hasOwnProperty('error')) {
-                    resolve(jsonItem)
+                    throw `ошибка на предварительном этапе обработки ${jsonItem.error}`
                   }
                   newJsonItem = jsonItem
                   return mediator.isExistObject(newJsonItem)
                 })
-                .then(isExistObject => {
+                .then((isExistObject) => {
                   if (isExistObject) resolve(true)
                   return mediator.addObjectToBase(newJsonItem)
                 })
-                .then(res => {
+                .then((res) => {
                   fileHelper.saveJsonToFileSync(newJsonItem, procpath)
                   resolve(true)
                 })
-                .catch(err => {
-                  let msg = `Ошибка при обработке файла ${filename} элемент ${JSON.stringify(
+                .catch((err) => {
+                  let msg = `ошибка при обработке файла ${filename} элемент ${JSON.stringify(
                     jsonItem
                   )}: ${err}`
                   fileHelper.saveJsonToFileSync(newJsonItem, errpath)
@@ -120,22 +120,27 @@ class DbHelper {
           )
         })
       })
-      log.info(`Количество входящих элементов, промисов: ${promises.length}`)
+      log.info(`количество входящих элементов, промисов: ${promises.length}`)
 
       Promise.all(promises).then(
-        res => {
+        (res) => {
           let countObjects = 0
-          res.forEach(r => {
+          res.forEach((r) => {
             countObjects += r.hasOwnProperty('error') ? 0 : 1
           })
-          const status = `Количество успешно обработанных элементов: ${countObjects} из ${res.length}`
+          const status = `количество успешно обработанных элементов: ${countObjects} из ${res.length}`
           log.info(status)
+          if (countObjects == res.length) {
+            log.info(chalk.green('успешная загрузка'))
+          } else {
+            log.warn('не все файлы были обработаны успешно')
+          }
           resolve(status)
         },
-        err => {
-          let msg = `Непредвиденная ошибка в процессе обработки ${err}`
+        (err) => {
+          let msg = `непредвиденная ошибка в процессе обработки ${err}`
           log.error(msg)
-          reject(msg)
+          resolve(msg)
         }
       )
     })
@@ -155,7 +160,7 @@ class DbHelper {
           iso: item['ISO3'],
           eng: item['NAME'],
           region: item['REGION'],
-          subregion: item['SUBREGION']
+          subregion: item['SUBREGION'],
         }
         log.info('iso: ' + item['ISO3'])
         log.info(JSON.stringify(item))
@@ -168,15 +173,15 @@ class DbHelper {
     const firstSource = new DictSourcesModel({
       sourceCode: 'samara_json',
       sourceNameRus: 'Данные, предоставленные коллегами из Самары',
-      sourceNameEng: 'Data from Samara colleagues'
+      sourceNameEng: 'Data from Samara colleagues',
     })
 
     let query = DictSourcesModel.findOne({
-      sourceCode: firstSource.sourceCode
+      sourceCode: firstSource.sourceCode,
     })
-    query.then(doc => {
+    query.then((doc) => {
       if (!doc) {
-        firstSource.save(err => {
+        firstSource.save((err) => {
           if (!err) success('object created')
           else error('object did not create', err)
         })

@@ -899,6 +899,31 @@ var StrHelper = /*#__PURE__*/function () {
     value: function compareEngLanguage(input, template) {
       return 0 <= this.strToEngSymbols(input).indexOf(this.strToEngSymbols(template));
     }
+  }, {
+    key: "shrinkStringBeforeDelim",
+    value: function shrinkStringBeforeDelim(input) {
+      var delim = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';
+      var indexOf = input.indexOf(delim);
+      return indexOf > 0 ? input.substr(0, indexOf) : input;
+    }
+  }, {
+    key: "ignoreEqualsValue",
+    value: function ignoreEqualsValue(input) {
+      return input.replace(/[(][^)]*[)]/g, '');
+    }
+  }, {
+    key: "ignoreSpaces",
+    value: function ignoreSpaces(input) {
+      return input.replace(/\s/g, '');
+    }
+  }, {
+    key: "getTwoStringByLastDelim",
+    value: function getTwoStringByLastDelim(input) {
+      var delim = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '.';
+      var lastIndexOf = input.lastIndexOf(delim);
+      var ret = [input.substr(0, lastIndexOf).trim(), input.substr(lastIndexOf + 1, input.length).trim()];
+      return ret;
+    }
   }]);
 
   return StrHelper;
@@ -933,7 +958,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
@@ -943,10 +968,14 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var kremlinLocation = new ol.proj.fromLonLat([37.617499, 55.752023]); // moscow kremlin
-
 var min_year = 1914;
 var max_year = 1965;
+
+window.onpopstate = function (event) {
+  var map = window.map;
+  event.state ? map.readViewFromState.call(window.map, event.state) : map.readViewFromPermalink.call(window.map);
+  window.map.updateView.call(window.map);
+};
 
 function resizeImage(url, fixWidth, callback) {
   var sourceImage = new Image();
@@ -981,17 +1010,32 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
 
     _classCallCheck(this, MapControl);
 
-    _this = _super.call(this);
+    _this = _super.call(this); //first must
+    // let rasterLayer = new ol.layer.Tile({
+    //   opacity: 1,
+    //   zIndex: 0,
+    //   source: new ol.source.OSM()
+    // })
+
     var rasterLayer = new ol.layer.Tile({
-      opacity: 1,
+      preload: 5,
       zIndex: 0,
-      source: new ol.source.OSM()
+      //      source: new ol.source.OSM(),
+      source: new ol.source.XYZ({
+        tileUrlFunction: function tileUrlFunction(tileCoord, pixelRatio, projection) {
+          return _this.getYandexLayerUrl.call(_assertThisInitialized(_this), tileCoord, pixelRatio, projection);
+        }
+      })
     });
+
+    _this.readViewFromPermalink();
+
+    _this.shouldUpdate = true;
     var view = new ol.View({
-      center: new ol.proj.fromLonLat([56.004, 54.695]),
+      center: _this.center ? _this.center : new ol.proj.fromLonLat([56.004, 54.695]),
       // ufa place
       // center: kremlinLocation,
-      zoom: 3 // projection: 'EPSG:4326'
+      zoom: _this.zoom ? _this.zoom : 3 // projection: 'EPSG:4326'
 
     });
     _this.popup = new ol.Overlay.Popup({
@@ -1025,7 +1069,7 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
     });
     /*
     solidarik: Temporarily disabled selectStyle
-     const selectedStyle = new ol.style.Style({
+      const selectedStyle = new ol.style.Style({
       stroke: new ol.style.Stroke({
         color: 'red',
         width: 2
@@ -1034,18 +1078,18 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
         color: 'rgba(0, 0, 255, 0.1)'
       })
     })
-     const select = new ol.interaction.Select({
+      const select = new ol.interaction.Select({
       condition: ol.events.condition.pointerMove,
       //      style: selectedStyle,
       multi: false
     })
-     map.addInteraction(select)
-     select.on('select', function(evt) {
+      map.addInteraction(select)
+      select.on('select', function(evt) {
       if (evt.selected.length) return
       const feature = evt.selected[0]
-       //window.map.showEventContour(feature.get('eventMap'))
+        //window.map.showEventContour(feature.get('eventMap'))
     })
-     */
+      */
 
     var transparent = [0, 0, 0, 0.01];
     var filltransparent = [0, 0, 0, 0];
@@ -1065,173 +1109,353 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       fill: new ol.style.Fill({
         color: filltransparent
       })
-    })];
-    map.on('click', function (evt) {
-      window.map.popup.hide();
-      var coordinates = evt.coordinate;
-      var lonLatCoords = new ol.proj.toLonLat(coordinates);
-      console.log('clicked on map with coordinates: ' + coordinates + '; WGS: ' + lonLatCoords);
-      var imgUrl = undefined;
-      var featureEvent = undefined;
-      var kind = undefined;
-      var isHit = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
-        featureEvent = feature;
-        imgUrl = feature.get('imgUrl');
-        kind = feature.get('kind');
-        return ['wmw', 'wow', 'politics', 'chronos', 'persons'].indexOf(feature.get('kind')) >= 0;
-      });
-      if (!featureEvent) return;
-      var info = featureEvent.get('info');
-      var isExistUrl = imgUrl !== undefined;
-      var content = "<h3>".concat(info.name, "</h3>");
+    })]; // Style for the clusters
 
+    var styleCache = {};
+
+    function getStyle(feature, resolution) {
+      var size = feature.get('features').length;
+      var style = styleCache[size];
+
+      if (!style) {
+        var color = size > 10 ? '192,0,0' : size > 5 ? '255,128,0' : '0,128,0';
+        var radius = Math.max(8, Math.min(size * 0.75, 20));
+        var dash = 2 * Math.PI * radius / 6;
+        var dash = [0, dash, dash, dash, dash, dash, dash];
+        style = styleCache[size] = new ol.style.Style({
+          image: new ol.style.Circle({
+            radius: radius,
+            stroke: new ol.style.Stroke({
+              color: 'rgba(' + color + ',0.5)',
+              width: 15,
+              lineDash: dash,
+              lineCap: 'butt'
+            }),
+            fill: new ol.style.Fill({
+              color: 'rgba(' + color + ',1)'
+            })
+          }),
+          text: new ol.style.Text({
+            text: size.toString(),
+            //font: 'bold 12px comic sans ms',
+            //textBaseline: 'top',
+            fill: new ol.style.Fill({
+              color: '#fff'
+            })
+          })
+        });
+      }
+
+      return style;
+    } // Cluster Source
+
+
+    var clusterSource = new ol.source.Cluster({
+      distance: 40,
+      source: new ol.source.Vector()
+    });
+    map.addLayer(new ol.layer.AnimatedCluster({
+      name: 'Cluster',
+      source: clusterSource,
+      animationDuration: 700,
+      style: getStyle
+    }));
+    _this.clusterSource = clusterSource; // Style for selection
+
+    var img = new ol.style.Circle({
+      radius: 5,
+      stroke: new ol.style.Stroke({
+        color: 'rgba(0,255,255,1)',
+        width: 1
+      }),
+      fill: new ol.style.Fill({
+        color: 'rgba(0,255,255,0.3)'
+      })
+    });
+    var style0 = new ol.style.Style({
+      image: img
+    });
+    var style1 = new ol.style.Style({
+      image: img,
+      // Draw a link beetween points (or not)
+      stroke: new ol.style.Stroke({
+        color: '#fff',
+        width: 1
+      })
+    }); // Select interaction to spread cluster out and select features
+
+    var selectCluster = new ol.interaction.SelectCluster({
+      // Point radius: to calculate distance between the features
+      pointRadius: 7,
+      animate: true,
+      // Feature style when it springs apart
+      featureStyle: function featureStyle() {
+        return [style1];
+      },
+      // selectCluster: false,	// disable cluster selection
+      // Style to draw cluster when selected
+      style: function style(f, res) {
+        var cluster = f.get('features');
+
+        if (cluster.length > 1) {
+          var s = [getStyle(f, res)];
+          return s;
+        } else {
+          return [new ol.style.Style({
+            image: new ol.style.Circle({
+              stroke: new ol.style.Stroke({
+                color: 'rgba(0,0,192,0.5)',
+                width: 2
+              }),
+              fill: new ol.style.Fill({
+                color: 'rgba(0,0,192,0.3)'
+              }),
+              radius: 5
+            })
+          })];
+        }
+      }
+    });
+    map.addInteraction(selectCluster); // On selected => get feature in cluster and show info
+
+    selectCluster.getFeatures().on(['add'], function (e) {
+      var c = e.element.get('features');
+
+      if (c.length == 1) {
+        console.log('One feature selected... id ' + c[0].get('id'));
+      } else {
+        console.log("Cluster $(c.length) features");
+      }
+    }); // selectCluster.getFeatures().on(['remove'], function (e) {
+    //   console.log('')
+    // })
+
+    /* solidarik temprorariry disable click function
+      map.on('click', function (evt) {
+      window.map.popup.hide()
+        let coordinates = evt.coordinate
+      let lonLatCoords = new ol.proj.toLonLat(coordinates)
+      console.log(
+        'clicked on map with coordinates: ' +
+          coordinates +
+          '; WGS: ' +
+          lonLatCoords
+      )
+        let imgUrl = undefined
+      let featureEvent = undefined
+      let kind = undefined
+      const isHit = map.forEachFeatureAtPixel(evt.pixel, function (
+        feature,
+        layer
+      ) {
+        featureEvent = feature
+        imgUrl = feature.get('imgUrl')
+        kind = feature.get('kind')
+        return (
+          ['wmw', 'wow', 'politics', 'chronos', 'persons'].indexOf(
+            feature.get('kind')
+          ) >= 0
+        )
+      })
+        if (!featureEvent) return
+        const info = featureEvent.get('info')
+      const isExistUrl = imgUrl !== undefined
+        let content = `<h3>${info.name}</h3>`
       switch (kind) {
         case 'chronos':
-          content = "<h3>".concat(info.place, "</h3>");
-          break;
-
+          content = `<h3>${info.place}</h3>`
+          break
         case 'politics':
-          content = "<h3>".concat(info.place, "</h3>");
-          break;
-
+          content = `<h3>${info.place}</h3>`
+          break
         default:
-          break;
+          break
       }
-
-      var isFirstRow = true;
-
-      var getHtmlForFeatureEvent = function getHtmlForFeatureEvent(event) {
-        var getHtmlCell = function getHtmlCell(caption, param1, param2) {
-          var isBold = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-
-          var f = function f(value) {
+        let isFirstRow = true
+        const getHtmlForFeatureEvent = (event) => {
+        const getHtmlCell = (caption, param1, param2, isBold = false) => {
+          const f = (value) => {
             if (Array.isArray(value)) {
-              return value.length > 0 ? value.join(', ').replace(/, /g, '<br/>') : '-';
+              return value.length > 0
+                ? value.join(', ').replace(/, /g, '<br/>')
+                : '-'
             } else {
-              if (value == undefined) return '-';
-              var tryFloat = parseFloat(value);
-
-              var _isNaN = typeof Number.isNaN !== 'undefined' ? Number.isNaN(tryFloat) : tryFloat !== tryFloat ? true : false;
-
-              return _isNaN ? value.replace(/, /g, '<br />') : tryFloat.toString();
+              if (value == undefined) return '-'
+              const tryFloat = parseFloat(value)
+              const isNaN =
+                typeof Number.isNaN !== 'undefined'
+                  ? Number.isNaN(tryFloat)
+                  : tryFloat !== tryFloat
+                  ? true
+                  : false
+              return isNaN
+                ? value.replace(/, /g, '<br />')
+                : tryFloat.toString()
             }
-          };
-
-          var one = f(param1);
-          var two = f(param2);
-
-          var getTdWithClassName = function getTdWithClassName(defaultClass, value) {
-            var className = isBold ? defaultClass + ' ' + 'bold-text' : defaultClass;
-            return className.trim() != '' ? "<td class=\"".concat(className, "\">").concat(value, "</td>") : "<td>".concat(value, "</td>");
-          };
-
-          if ('-' != one || '-' != two) {
-            var tr = "<tr>\n              ".concat(getTdWithClassName('left-align', caption), "\n              ").concat(getTdWithClassName('', one), "\n              ").concat(getTdWithClassName('right-align', two), "\n            </tr>");
-            return tr;
           }
-
-          return '';
-        };
-
-        var html = '';
-        html += getHtmlCell('Участники', info.allies, info.enemies, true);
-        html += getHtmlCell('Силы сторон (чел.)', info.ally_troops, info.enem_troops);
-        html += getHtmlCell('Потери (чел.)', info.ally_losses, info.enem_losses);
-        html += getHtmlCell('Убитые (чел.)', info.ally_deads, info.enem_deads);
-        html += getHtmlCell('Пленные (чел.)', info.ally_prisoners, info.enem_prisoners);
-        html += getHtmlCell('Раненые (чел.)', info.ally_woundeds, info.enem_woundeds);
-        html += getHtmlCell('Пропавшие без вести (чел.)', info.ally_missing, info.enem_missing);
-        html += getHtmlCell('Танков (шт.)', info.ally_tanks_cnt, info.enem_tanks_cnt);
-        html += getHtmlCell('Самолетов (шт.)', info.ally_airplans_cnt, info.enem_airplans_cnt);
-        html += getHtmlCell('Кораблей (шт.)', info.ally_ships_cnt, info.enem_ships_cnt);
-        html += getHtmlCell('Подводных лодок (шт.)', info.ally_submarines_cnt, info.enem_submarines_cnt);
-        return html;
-      };
-
-      if ('politics' === kind) {
-        var startDate = info.startDate;
-        var endDate = info.endDate;
-
-        if (startDate) {
-          var dateStr = endDate != undefined && startDate != endDate ? "".concat(startDate, " - ").concat(endDate) : startDate;
-          content += '<h4>' + dateStr + '</h4>';
+            const one = f(param1)
+          const two = f(param2)
+            const getTdWithClassName = (defaultClass, value) => {
+            const className = isBold
+              ? defaultClass + ' ' + 'bold-text'
+              : defaultClass
+            return className.trim() != ''
+              ? `<td class="${className}">${value}</td>`
+              : `<td>${value}</td>`
+          }
+            if ('-' != one || '-' != two) {
+            let tr = `<tr>
+              ${getTdWithClassName('left-align', caption)}
+              ${getTdWithClassName('', one)}
+              ${getTdWithClassName('right-align', two)}
+            </tr>`
+            return tr
+          }
+            return ''
         }
-
-        var results = info.results;
-
+          let html = ''
+        html += getHtmlCell('Участники', info.allies, info.enemies, true)
+        html += getHtmlCell(
+          'Силы сторон (чел.)',
+          info.ally_troops,
+          info.enem_troops
+        )
+        html += getHtmlCell('Потери (чел.)', info.ally_losses, info.enem_losses)
+        html += getHtmlCell('Убитые (чел.)', info.ally_deads, info.enem_deads)
+        html += getHtmlCell(
+          'Пленные (чел.)',
+          info.ally_prisoners,
+          info.enem_prisoners
+        )
+        html += getHtmlCell(
+          'Раненые (чел.)',
+          info.ally_woundeds,
+          info.enem_woundeds
+        )
+        html += getHtmlCell(
+          'Пропавшие без вести (чел.)',
+          info.ally_missing,
+          info.enem_missing
+        )
+        html += getHtmlCell(
+          'Танков (шт.)',
+          info.ally_tanks_cnt,
+          info.enem_tanks_cnt
+        )
+        html += getHtmlCell(
+          'Самолетов (шт.)',
+          info.ally_airplans_cnt,
+          info.enem_airplans_cnt
+        )
+        html += getHtmlCell(
+          'Кораблей (шт.)',
+          info.ally_ships_cnt,
+          info.enem_ships_cnt
+        )
+        html += getHtmlCell(
+          'Подводных лодок (шт.)',
+          info.ally_submarines_cnt,
+          info.enem_submarines_cnt
+        )
+          return html
+      }
+        if ('politics' === kind) {
+        const startDate = info.startDate
+        const endDate = info.endDate
+        if (startDate) {
+          const dateStr =
+            endDate != undefined && startDate != endDate
+              ? `${startDate} - ${endDate}`
+              : startDate
+          content += '<h4>' + dateStr + '</h4>'
+        }
+          let results = info.results
         if (results) {
-          results = results.replace(/[.,]\s*$/, '');
-          content += '<p>' + results + '</p>';
+          results = results.replace(/[.,]\s*$/, '')
+          content += '<p>' + results + '</p>'
         }
       } else if ('chronos' === kind) {
-        var _startDate = info.startDate;
-        var _endDate = info.endDate;
-
-        if (_startDate) {
-          var _dateStr = _endDate != undefined && _startDate != _endDate ? "".concat(_startDate, " - ").concat(_endDate) : _startDate;
-
+        const startDate = info.startDate
+        const endDate = info.endDate
+        if (startDate) {
+          let dateStr =
+            endDate != undefined && startDate != endDate
+              ? `${startDate} - ${endDate}`
+              : startDate
           if (info.isOnlyYear) {
-            _dateStr = _dateStr.slice(-4);
+            dateStr = dateStr.slice(-4)
           }
-
-          content += '<h4>' + _dateStr + '</h4>';
+          content += '<h4>' + dateStr + '</h4>'
         }
-
-        var _results = info.brief;
-
-        if (_results) {
-          _results = _results.replace(/[.,]\s*$/, '');
-          content += '<p>' + _results + '</p>';
+          let results = info.brief
+        if (results) {
+          results = results.replace(/[.,]\s*$/, '')
+          content += '<p>' + results + '</p>'
         }
       } else if ('persons' === kind) {
-        content = "<h3>".concat(info.surname, " ").concat(info.name, " ").concat(info.middlename, "</h3>");
-        var _startDate2 = info.dateBirth;
-        var _endDate2 = info.dateDeath;
-
-        if (_startDate2) {
-          var _dateStr2 = _endDate2 != undefined && _startDate2 != _endDate2 ? "".concat(_startDate2, " - ").concat(_endDate2) : _startDate2;
-
-          content += '<h4>' + _dateStr2 + '</h4>';
+        content = `<h3>${info.surname} ${info.name} ${info.middlename}</h3>`
+        const startDate = info.dateBirth
+        const endDate = info.dateDeath
+        if (startDate) {
+          let dateStr =
+            endDate != undefined && startDate != endDate
+              ? `${startDate} - ${endDate}`
+              : startDate
+          content += '<h4>' + dateStr + '</h4>'
         }
-
-        var _results2 = info.description;
-
-        if (_results2) {
-          _results2 = _results2.replace(/[.,]\s*$/, '');
-          content += '<p class="content-description">' + _results2 + '</p>';
+          let results = info.description
+        if (results) {
+          results = results.replace(/[.,]\s*$/, '')
+          content += '<p class="content-description">' + results + '</p>'
         }
       } else {
-        window.map.setActiveEvent(featureEvent);
-        var _startDate3 = info.startDate;
-        var _endDate3 = info.endDate;
-
-        if (_startDate3) {
-          var _dateStr3 = _endDate3 != undefined && _startDate3 != _endDate3 ? "".concat(_startDate3, " - ").concat(_endDate3) : _startDate3;
-
-          content += '<h4>' + _dateStr3 + '</h4>';
+        window.map.setActiveEvent(featureEvent)
+          const startDate = info.startDate
+        const endDate = info.endDate
+        if (startDate) {
+          const dateStr =
+            endDate != undefined && startDate != endDate
+              ? `${startDate} - ${endDate}`
+              : startDate
+          content += '<h4>' + dateStr + '</h4>'
         }
-
-        var table = "\n          <table class=\"table table-sm table-borderless\" id=\"table-info\">\n          <tbody>\n          ".concat(getHtmlForFeatureEvent(featureEvent), "\n          </tbody></table>");
-        content += "<p>".concat(table, "</p>");
-        var eventId = info.id;
-        var table2 = "\n        <table class=\"table table-sm table-borderless\" id=\"table-control\">\n          <tr><td\n            id=\"showEventContol\"\n            onclick=\"window.map.showActiveEventContour()\"\n            onmouseenter=\"window.map.setCursorPointer(this, true);\"\n            onmouseleave=\"window.map.setCursorPointer(this, false);\">\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C/\u0441\u043A\u0440\u044B\u0442\u044C \u043A\u043E\u043D\u0442\u0443\u0440</td></tr>\n          <tr><td\n            id=\"showMapControl\"\n            onclick=\"window.map.showActiveEventMap()\"\n            onmouseenter=\"window.map.setCursorPointer(this, true);\"\n            onmouseleave=\"window.map.setCursorPointer(this, false);\">\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u043A\u0430\u0440\u0442\u0443</td></tr>\n        </table>";
-        content += table2;
+          let table = `
+          <table class="table table-sm table-borderless" id="table-info">
+          <tbody>
+          ${getHtmlForFeatureEvent(featureEvent)}
+          </tbody></table>`
+        content += `<p>${table}</p>`
+          const eventId = info.id
+        let table2 = `
+        <table class="table table-sm table-borderless" id="table-control">
+          <tr><td
+            id="showEventContol"
+            onclick="window.map.showActiveEventContour()"
+            onmouseenter="window.map.setCursorPointer(this, true);"
+            onmouseleave="window.map.setCursorPointer(this, false);">Показать/скрыть контур</td></tr>
+          <tr><td
+            id="showMapControl"
+            onclick="window.map.showActiveEventMap()"
+            onmouseenter="window.map.setCursorPointer(this, true);"
+            onmouseleave="window.map.setCursorPointer(this, false);">Показать карту</td></tr>
+        </table>`
+        content += table2
       }
-
-      if ('' == content) return;
-
-      if (info.srcUrl && 0 < info.srcUrl.length) {
-        content += '<span class="small-silver-text"><a href="' + info.srcUrl + '" target="_blank">Источник</a></span>';
+        if ('' == content) return
+        if (info.srcUrl && 0 < info.srcUrl.length) {
+        content +=
+          '<span class="small-silver-text"><a href="' +
+          info.srcUrl +
+          '" target="_blank">Источник</a></span>'
       }
+        const coords = featureEvent.getGeometry().getFirstCoordinate()
+      window.map.popup.show(coords, content)
+        /* Show Big Image */
 
-      var coords = featureEvent.getGeometry().getFirstCoordinate();
-      window.map.popup.show(coords, content);
-      /* Show Big Image */
-
-      /*
+    /*
       if (isHit && isExistUrl) {
         window.map.showEventContour(info.eventMap)
-         $('#imgModalLabel').html(info.name)
+          $('#imgModalLabel').html(info.name)
         $('.modal-body').html(`
         <div class="d-flex justify-content-center">
           <div class="spinner-border" role="status">
@@ -1240,29 +1464,36 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
         </div>
         `)
         $('#imgModal').modal()
-         setTimeout(() => {
+          setTimeout(() => {
           resizeImage(imgUrl, $('.modal-body').width(), canvas => {
             $('.modal-body').html(canvas)
           })
         }, 1000)
       }
       */
-    });
-    map.on('moveend', function (evt) {
-      var map = evt.map; //   console.log(map.getView().getZoom());
-    });
-    map.on('pointermove', function (evt) {
-      var isHit = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
-        if (feature === undefined || feature.get('kind') === undefined) return false;
-        return ['wmw', 'wow', 'politics'].indexOf(feature.get('kind')) >= 0;
-      });
+    //})
 
-      if (isHit) {
-        this.getTargetElement().style.cursor = 'pointer';
-      } else {
-        this.getTargetElement().style.cursor = '';
-      }
-    });
+    map.on('moveend', function () {
+      window.map.savePermalink.call(window.map);
+    }); // map.on('pointermove', function (evt) {
+    //   const isHit = map.forEachFeatureAtPixel(evt.pixel, function (
+    //     feature,
+    //     layer
+    //   ) {
+    //     if (feature === undefined || feature.get('kind') === undefined)
+    //       return false
+    //     return (
+    //       ['wmw', 'wow', 'politics', 'chronos'].indexOf(feature.get('kind')) >=
+    //       0
+    //     )
+    //   })
+    //   if (isHit) {
+    //     this.getTargetElement().style.cursor = 'pointer'
+    //   } else {
+    //     this.getTargetElement().style.cursor = ''
+    //   }
+    // })
+
     _this.map = map;
     _this.legend = undefined;
     _this.historyEvents = [];
@@ -1297,9 +1528,8 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
 
       _this.addAgreementsLayer();
 
-      _this.addPersonsLayer();
-
-      _this.addLegend(); // this._addButtons();
+      _this.addPersonsLayer(); //this.addLegend()
+      // this._addButtons();
 
     }, 10);
     return _this;
@@ -1514,12 +1744,18 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "chronosStyleFunc",
     value: function chronosStyleFunc(feature, zoom) {
+      var svg = '<svg width="24" height="24" version="1.1" xmlns="http://www.w3.org/2000/svg">' + '<path d="M19.74,7.68l1-1L19.29,5.29l-1,1a10,10,0,1,0,1.42,1.42ZM12,22a8,8,0,1,1,8-8A8,8,0,0,1,12,22Z"/>' + '<rect x="7" y="1" width="10" height="2"/><polygon points="13 14 13 8 11 8 11 16 18 16 18 14 13 14"/>' + '</svg>';
       var style = new ol.style.Style({
-        image: new ol.style.Circle({
+        image: new ol.style.Icon({
+          //src: 'data:image/svg+xml;utf8,' + svg,
+          src: 'images/map_timer.png',
+          color: '#ff0000',
           fill: new ol.style.Fill({
-            color: 'rgba(0,220,0,0.7)'
+            color: 'rgba(153,51,255,1)'
           }),
-          radius: 7
+          scale: 1,
+          radius: 7,
+          opacity: 1
         })
       });
       return [style];
@@ -1779,6 +2015,57 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       this.map.updateSize();
     }
   }, {
+    key: "updateView",
+    value: function updateView() {
+      // this.view.setCenter(this.center)
+      // this.view.setZoom(this.zoom)
+      this.view.animate({
+        center: this.center,
+        zoom: this.zoom,
+        duration: 300
+      });
+    }
+  }, {
+    key: "readViewFromState",
+    value: function readViewFromState(state) {
+      this.centere = state.center;
+      this.zoom = state.zoom;
+      this.shouldUpdate = false;
+    }
+  }, {
+    key: "readViewFromPermalink",
+    value: function readViewFromPermalink() {
+      if (window.location.hash !== '') {
+        // try to restore center, zoom-level from the URL
+        var hash = window.location.hash.replace('#map=', '');
+        var parts = hash.split('/');
+
+        if (parts.length === 3) {
+          this.zoom = parseInt(parts[0], 10);
+          this.center = [parseFloat(parts[1]), parseFloat(parts[2])];
+        }
+
+        this.shouldUpdate = false;
+      }
+    }
+  }, {
+    key: "savePermalink",
+    value: function savePermalink() {
+      if (!this.shouldUpdate) {
+        // do not update the URL when the view was changed in the 'popstate' handler
+        this.shouldUpdate = true;
+        return;
+      }
+
+      var center = this.view.getCenter();
+      var hash = '#map=' + Math.round(this.view.getZoom()) + '/' + Math.round(center[0] * 100) / 100 + '/' + Math.round(center[1] * 100) / 100;
+      var state = {
+        zoom: this.view.getZoom(),
+        center: this.view.getCenter()
+      };
+      window.history.pushState(state, 'map', hash);
+    }
+  }, {
     key: "getCenterCoord",
     value: function getCenterCoord(ft) {
       var geom = ft.getGeometry();
@@ -1831,6 +2118,15 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       var y = -tileCoord[2] - 1;
       if (z == 0 || z > 6) return;
       var url = "http://cdn.geacron.com/tiles/area/".concat(anow, "/Z").concat(z, "/").concat(y, "/").concat(x, ".png");
+      return url;
+    }
+  }, {
+    key: "getYandexLayerUrl",
+    value: function getYandexLayerUrl(tileCoord, pixelRatio, projection) {
+      var z = tileCoord[0];
+      var x = tileCoord[1];
+      var y = -tileCoord[2] - 1;
+      var url = "http://vec01.maps.yandex.net/tiles?l=map&v=4.55.2&z=".concat(z, "&x=").concat(x, "&y=").concat(y, "&scale=2&lang=ru_RU");
       return url;
     }
   }, {
@@ -1905,11 +2201,11 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       this.chronos = info.chronos;
       this.agreements = info.agreements;
       this.historyEvents = info.events;
-      this.persons = info.persons;
-      this.repaintChronos();
-      this.repaintAgreements();
-      this.repaintHistoryEvents();
-      this.repaintPersons();
+      this.persons = info.persons; //this.repaintChronos()
+      //this.repaintAgreements()
+
+      this.repaintHistoryEvents(); //this.repaintPersons()
+
       this.repaintLegend();
     }
   }, {
@@ -1949,7 +2245,7 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       var _this8 = this;
 
       this.allHistoryEventsSource.clear();
-      this.allHistoryEventsSource.clear();
+      this.clusterSource.getSource().clear();
       this.historyEvents.forEach(function (event, i) {
         //0 == i && this.showEventContour(event.maps[0])
         var info = event;
@@ -1965,8 +2261,9 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
           eventMap: event.maps[0],
           filename: event.filename
         });
+        ft.set('id', event.id); //this.allHistoryEventsSource.addFeature(ft)
 
-        _this8.allHistoryEventsSource.addFeature(ft);
+        _this8.clusterSource.getSource().addFeature(ft);
       });
     }
   }, {
@@ -12111,7 +12408,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
@@ -12207,7 +12504,7 @@ var ClientProtocol = /*#__PURE__*/function (_EventEmitter) {
         var data = JSON.parse(msg);
         data.events.sort(function (a, b) {});
         var events = data.events.map(function (event) {
-          return _objectSpread({}, event, {
+          return _objectSpread(_objectSpread({}, event), {}, {
             id: event._name,
             startDate: _this2._getStrDateFromEvent(event.startDate),
             endDate: _this2._getStrDateFromEvent(event.endDate),
@@ -12300,7 +12597,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
@@ -12501,7 +12798,7 @@ var global = arguments[3];
 var process = require("process");
 var define;
 /*!
- * jQuery JavaScript Library v3.5.0
+ * jQuery JavaScript Library v3.5.1
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -12511,7 +12808,7 @@ var define;
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2020-04-10T15:07Z
+ * Date: 2020-05-04T22:49Z
  */
 ( function( global, factory ) {
 
@@ -12649,7 +12946,7 @@ function toType( obj ) {
 
 
 var
-	version = "3.5.0",
+	version = "3.5.1",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -16746,7 +17043,7 @@ Data.prototype = {
 
 		// If not, create one
 		if ( !value ) {
-			value = Object.create( null );
+			value = {};
 
 			// We can accept data for non-element nodes in modern browsers,
 			// but we should not, see #8335.
@@ -23395,6 +23692,7 @@ window.app = {};
 var app = window.app;
 
 function fixMapHeight() {
+  console.log('fixMapHeight');
   var mapHeight = (0, _jquery.default)(window).height() - 1;
   var navbar = (0, _jquery.default)("nav[data-role='navbar']:visible:visible");
   var mapDiv = (0, _jquery.default)("div[data-role='map']:visible:visible");

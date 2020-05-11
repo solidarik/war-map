@@ -1,0 +1,32 @@
+///////////////////
+//Leaflet
+///////////////////
+
+class MyComp extends React.Component {
+  state = {
+    inBrowser: false,
+  };
+
+  componentDidMount() {
+    this.setState({ inBrowser: true });
+  }
+
+  render() {
+    if (!this.state.inBrowser) {
+      return null;
+    }
+
+    return <YourRegularComponent />;
+  }
+}
+
+////////////////////
+//Mapbox
+////////////////////
+import dynamic from 'next/dynamic';
+
+const DynamicComponentWithNoSSR = dynamic(() => import('../components/Map'), {
+    ssr: false
+});
+
+export default () => <DynamicComponentWithNoSSR />;

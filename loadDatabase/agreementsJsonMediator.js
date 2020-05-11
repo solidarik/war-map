@@ -18,11 +18,11 @@ class AgreementsJsonMediator extends SuperJsonMediator {
     return new Promise((resolve, reject) => {
       let promises = [
         //dictEngRusProtocol.getEngRusObjectId(json.name),
-        inetHelper.getCoordsForCityOrCountry(json.place)
+        inetHelper.getCoordsForCityOrCountry(json.place),
       ]
 
       Promise.all(promises)
-        .then(placeCoords => {
+        .then((placeCoords) => {
           placeCoords = placeCoords[0]
           const newJson = {
             // _name: name_id,
@@ -35,14 +35,14 @@ class AgreementsJsonMediator extends SuperJsonMediator {
             player2: json.player2,
             results: json.results,
             imgUrl: json.imgUrl,
-            srcUrl: json.srcUrl
+            srcUrl: json.srcUrl,
           }
 
           !placeCoords && console.log('json', newJson)
 
           resolve(newJson)
         })
-        .catch(err => reject(`Ошибка в processJson: ${err}`))
+        .catch((err) => reject(`ошибка в processJson: ${err}`))
     })
   }
 }
