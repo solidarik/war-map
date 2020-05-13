@@ -39,6 +39,31 @@ class StrHelper {
     ]
     return ret
   }
+
+  hexToRgbA(hex, opacity) {
+    var c
+    if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+      c = hex.substring(1).split('')
+      if (c.length == 3) {
+        c = [c[0], c[0], c[1], c[1], c[2], c[2]]
+      }
+      c = '0x' + c.join('')
+      return [(c >> 16) & 255, (c >> 8) & 255, c & 255, opacity || 0]
+    }
+    throw new Error(`Bad Hex ${hex}`)
+  }
+
+  getNumber(value) {
+    if (value == undefined) return 0
+    const tryFloat = parseFloat(value)
+    const isNaN =
+      typeof Number.isNaN !== 'undefined'
+        ? Number.isNaN(tryFloat)
+        : tryFloat !== tryFloat
+        ? true
+        : false
+    return isNaN ? 0 : tryFloat
+  }
 }
 
 module.exports = StrHelper

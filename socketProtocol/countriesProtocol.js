@@ -1,4 +1,3 @@
-const log = require('../helper/logHelper')
 const ServerProtocol = require('../libs/serverProtocol')
 const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol')
 let countriesModel = require('../models/countriesModel')

@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 var agreementsSchema = new mongoose.Schema(
   {
     _name: mongoose.Schema.ObjectId,
+    pageId: Number,
     startDate: {
       type: Date,
       required: 'Не задана начальная дата события'

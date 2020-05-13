@@ -25,10 +25,12 @@ body {
   overflow: hidden;
   height: 40px;
   padding: 0 5px;
-  background-image: url(../images/header_texture2.png);
+  color: white;
+  background: rgba(40, 40, 40, 0.8) !important;
+  /* background-image: url(../images/header_texture2.png);
   background-size: auto 100%;
   background-repeat: repeat-x;
-  background-position: left top;
+  background-position: left top; */
 }
 
 .nav > li {

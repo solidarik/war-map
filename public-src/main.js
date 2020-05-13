@@ -1,9 +1,7 @@
 import { MapControl } from './mapControl'
 import { ClientProtocol } from './clientProtocol'
-import { HistoryEventsControl } from './historyEventsControl'
 import $ from 'jquery'
 window.app = {}
-var app = window.app
 
 function fixMapHeight() {
   console.log('fixMapHeight')
@@ -16,67 +14,30 @@ function fixMapHeight() {
   if (window.map) window.map.fixMapHeight()
 }
 
-function fixMiniMapVisible(isHide) {
-  return
-  let elem = $('#event-image-div')
-  if (isHide) {
-    $('#event-image-div')[0].innerHTML = ''
-    elem.hide()
-    return
-  }
-
-  var viewWidth = $(window).width()
-  350 < viewWidth ? elem.show() : elem.hide()
-}
-
 function changeWindowSize() {
   fixMapHeight()
-  //fixMiniMapVisible();
 }
 
 window.onresize = fixMapHeight //changeWindowSize
 
 function startApp() {
-  let protocol = ClientProtocol.create()
-  let mapControl = MapControl.create()
+  const protocol = ClientProtocol.create()
+  const mapControl = MapControl.create()
 
   protocol.subscribe('setCurrentYear', (year) => {
+    console.log(`year from server ${year}`)
     mapControl.setCurrentYearFromServer(year)
   })
 
-  mapControl.subscribe('changeYear', (year) => {
-    fixMiniMapVisible(true)
-    protocol.getHistoryEventsByYear(year)
-  })
-
-  let historyEventsControl = HistoryEventsControl.create()
-
   protocol.subscribe('refreshInfo', (info) => {
     mapControl.refreshInfo(info)
-    historyEventsControl.showEvents(info.events)
   })
 
-  historyEventsControl.subscribe('refreshedEventList', () => {
-    $('table tr').click(function () {
-      historyEventsControl.rowEventClick($(this))
-      return false
-    })
-
-    $('table tr td span').click(function () {
-      historyEventsControl.mapEventClick($(this))
-      return false
-    })
-  })
-
-  historyEventsControl.subscribe('activatedEvent', (data) => {
-    mapControl.setCurrentEventMap(data.map)
-    fixMiniMapVisible()
+  mapControl.subscribe('changeYear', (year) => {
+    protocol.getDataByYear(year)
   })
 
   window.map = mapControl
-
-  // var something = document.getElementById('content');
-  // something.style.cursor = 'pointer';
 
   $(
     document.getElementsByClassName(

@@ -1,18 +1,18 @@
-const HistoryEventsModel = require('../models/historyEventsModel')
+const BattleModel = require('../models/battlesModel')
 const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol')
 const geoHelper = require('../helper/geoHelper')
-const inetHelper = require('../helper/inetHelper')
+const strHelper = require('../helper/strHelper')
 const fileHelper = require('../helper/fileHelper')
 const SuperJsonMediator = require('./superJsonMediator')
 const moment = require('moment')
 const log = require('../helper/logHelper')
 const convexHull = require('monotone-convex-hull-2d')
 
-class HistoryEventsJsonMediator extends SuperJsonMediator {
+class BattlesJsonMediator extends SuperJsonMediator {
   constructor() {
     super()
     this.equilFields = ['startDate', '_name']
-    this.model = HistoryEventsModel
+    this.model = BattleModel
   }
 
   getPlacesFromJson(json) {
@@ -71,7 +71,36 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
     })
   }
 
-  getCorvexFromPath(path) {}
+  getAllCoordsFromMap(map) {
+    let all_coords = []
+
+    for (let i = 0; i < map.features.length; i++) {
+      let geom = map.features[i].geometry
+      if (geom.type === 'Point') {
+        all_coords.push(geoHelper.fromLonLat(geom.coordinates))
+      } else {
+        let srcCoords =
+          geom.type === 'Polygon' ? geom.coordinates[0] : geom.coordinates
+        for (let j = 0; j < srcCoords.length; j++) {
+          all_coords.push(geoHelper.fromLonLat(srcCoords[j]))
+        }
+      }
+    }
+    return all_coords
+  }
+
+  getCenterOfCoords(all_coords) {
+    return geoHelper.getMedianXY(all_coords)
+  }
+
+  getHullCoords(all_coords) {
+    const hullIndexes = convexHull(all_coords)
+    let hullCoords = []
+    hullIndexes.forEach((idx) => {
+      hullCoords.push(all_coords[idx])
+    })
+    return hullCoords
+  }
 
   processJson(json, filePath = '') {
     return new Promise((resolve, reject) => {
@@ -81,16 +110,16 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
         this.getAlliesFromJson(json.enemies), //enemies
       ]
 
-      var maps = []
-      var corvexes = []
+      let maps = []
       if (!Array.isArray(json.features)) json.features = [json.features]
 
       json.features.forEach((featureFile) => {
-        let featurePath = fileHelper.composePath('новые карты', featureFile)
-        console.log('>>>> featurePath', featurePath)
-        corvexes.push(this.getCorvexFromPath(featurePath))
-        maps.push(fileHelper.getJsonFromFile(featurePath))
+        const featurePath = fileHelper.composePath('новые карты', featureFile)
+        const map = fileHelper.getJsonFromFile(featurePath)
+        maps.push(map)
       })
+
+      const all_coords = this.getAllCoordsFromMap(maps[0])
 
       Promise.all(promises)
         .then((res) => {
@@ -101,11 +130,15 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
             _name: name_id,
             startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
             endDate: moment.utc(json.endDate, 'DD.MM.YYYY'),
-            allies: allies,
-            enemies: enemies,
+            isWinnerUSSR: strHelper.compareEngLanguage(json.winner, 'CCCР'),
+            isWinnerGermany: strHelper.compareEngLanguage(
+              json.winner,
+              'Германия'
+            ),
+            point: this.getCenterOfCoords(all_coords),
+            hullCoords: this.getHullCoords(all_coords),
             filename: fileHelper.getFileNameFromPath(filePath),
             maps: maps,
-            corvexes: corvexes,
           }
 
           resolve(newJson)
@@ -115,4 +148,4 @@ class HistoryEventsJsonMediator extends SuperJsonMediator {
   }
 }
 
-module.exports = new HistoryEventsJsonMediator()
+module.exports = new BattlesJsonMediator()

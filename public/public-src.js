@@ -180,756 +180,6 @@ var EventEmitter = /*#__PURE__*/function () {
 }();
 
 exports.EventEmitter = EventEmitter;
-},{}],"MnnT":[function(require,module,exports) {
-"use strict"
-
-module.exports = twoProduct
-
-var SPLITTER = +(Math.pow(2, 27) + 1.0)
-
-function twoProduct(a, b, result) {
-  var x = a * b
-
-  var c = SPLITTER * a
-  var abig = c - a
-  var ahi = c - abig
-  var alo = a - ahi
-
-  var d = SPLITTER * b
-  var bbig = d - b
-  var bhi = d - bbig
-  var blo = b - bhi
-
-  var err1 = x - (ahi * bhi)
-  var err2 = err1 - (alo * bhi)
-  var err3 = err2 - (ahi * blo)
-
-  var y = alo * blo - err3
-
-  if(result) {
-    result[0] = y
-    result[1] = x
-    return result
-  }
-
-  return [ y, x ]
-}
-},{}],"Q8bh":[function(require,module,exports) {
-"use strict"
-
-module.exports = linearExpansionSum
-
-//Easy case: Add two scalars
-function scalarScalar(a, b) {
-  var x = a + b
-  var bv = x - a
-  var av = x - bv
-  var br = b - bv
-  var ar = a - av
-  var y = ar + br
-  if(y) {
-    return [y, x]
-  }
-  return [x]
-}
-
-function linearExpansionSum(e, f) {
-  var ne = e.length|0
-  var nf = f.length|0
-  if(ne === 1 && nf === 1) {
-    return scalarScalar(e[0], f[0])
-  }
-  var n = ne + nf
-  var g = new Array(n)
-  var count = 0
-  var eptr = 0
-  var fptr = 0
-  var abs = Math.abs
-  var ei = e[eptr]
-  var ea = abs(ei)
-  var fi = f[fptr]
-  var fa = abs(fi)
-  var a, b
-  if(ea < fa) {
-    b = ei
-    eptr += 1
-    if(eptr < ne) {
-      ei = e[eptr]
-      ea = abs(ei)
-    }
-  } else {
-    b = fi
-    fptr += 1
-    if(fptr < nf) {
-      fi = f[fptr]
-      fa = abs(fi)
-    }
-  }
-  if((eptr < ne && ea < fa) || (fptr >= nf)) {
-    a = ei
-    eptr += 1
-    if(eptr < ne) {
-      ei = e[eptr]
-      ea = abs(ei)
-    }
-  } else {
-    a = fi
-    fptr += 1
-    if(fptr < nf) {
-      fi = f[fptr]
-      fa = abs(fi)
-    }
-  }
-  var x = a + b
-  var bv = x - a
-  var y = b - bv
-  var q0 = y
-  var q1 = x
-  var _x, _bv, _av, _br, _ar
-  while(eptr < ne && fptr < nf) {
-    if(ea < fa) {
-      a = ei
-      eptr += 1
-      if(eptr < ne) {
-        ei = e[eptr]
-        ea = abs(ei)
-      }
-    } else {
-      a = fi
-      fptr += 1
-      if(fptr < nf) {
-        fi = f[fptr]
-        fa = abs(fi)
-      }
-    }
-    b = q0
-    x = a + b
-    bv = x - a
-    y = b - bv
-    if(y) {
-      g[count++] = y
-    }
-    _x = q1 + x
-    _bv = _x - q1
-    _av = _x - _bv
-    _br = x - _bv
-    _ar = q1 - _av
-    q0 = _ar + _br
-    q1 = _x
-  }
-  while(eptr < ne) {
-    a = ei
-    b = q0
-    x = a + b
-    bv = x - a
-    y = b - bv
-    if(y) {
-      g[count++] = y
-    }
-    _x = q1 + x
-    _bv = _x - q1
-    _av = _x - _bv
-    _br = x - _bv
-    _ar = q1 - _av
-    q0 = _ar + _br
-    q1 = _x
-    eptr += 1
-    if(eptr < ne) {
-      ei = e[eptr]
-    }
-  }
-  while(fptr < nf) {
-    a = fi
-    b = q0
-    x = a + b
-    bv = x - a
-    y = b - bv
-    if(y) {
-      g[count++] = y
-    } 
-    _x = q1 + x
-    _bv = _x - q1
-    _av = _x - _bv
-    _br = x - _bv
-    _ar = q1 - _av
-    q0 = _ar + _br
-    q1 = _x
-    fptr += 1
-    if(fptr < nf) {
-      fi = f[fptr]
-    }
-  }
-  if(q0) {
-    g[count++] = q0
-  }
-  if(q1) {
-    g[count++] = q1
-  }
-  if(!count) {
-    g[count++] = 0.0  
-  }
-  g.length = count
-  return g
-}
-},{}],"cdAY":[function(require,module,exports) {
-"use strict"
-
-module.exports = fastTwoSum
-
-function fastTwoSum(a, b, result) {
-	var x = a + b
-	var bv = x - a
-	var av = x - bv
-	var br = b - bv
-	var ar = a - av
-	if(result) {
-		result[0] = ar + br
-		result[1] = x
-		return result
-	}
-	return [ar+br, x]
-}
-},{}],"jbtT":[function(require,module,exports) {
-"use strict"
-
-var twoProduct = require("two-product")
-var twoSum = require("two-sum")
-
-module.exports = scaleLinearExpansion
-
-function scaleLinearExpansion(e, scale) {
-  var n = e.length
-  if(n === 1) {
-    var ts = twoProduct(e[0], scale)
-    if(ts[0]) {
-      return ts
-    }
-    return [ ts[1] ]
-  }
-  var g = new Array(2 * n)
-  var q = [0.1, 0.1]
-  var t = [0.1, 0.1]
-  var count = 0
-  twoProduct(e[0], scale, q)
-  if(q[0]) {
-    g[count++] = q[0]
-  }
-  for(var i=1; i<n; ++i) {
-    twoProduct(e[i], scale, t)
-    var pq = q[1]
-    twoSum(pq, t[0], q)
-    if(q[0]) {
-      g[count++] = q[0]
-    }
-    var a = t[1]
-    var b = q[1]
-    var x = a + b
-    var bv = x - a
-    var y = b - bv
-    q[1] = x
-    if(y) {
-      g[count++] = y
-    }
-  }
-  if(q[1]) {
-    g[count++] = q[1]
-  }
-  if(count === 0) {
-    g[count++] = 0.0
-  }
-  g.length = count
-  return g
-}
-},{"two-product":"MnnT","two-sum":"cdAY"}],"fBvs":[function(require,module,exports) {
-"use strict"
-
-module.exports = robustSubtract
-
-//Easy case: Add two scalars
-function scalarScalar(a, b) {
-  var x = a + b
-  var bv = x - a
-  var av = x - bv
-  var br = b - bv
-  var ar = a - av
-  var y = ar + br
-  if(y) {
-    return [y, x]
-  }
-  return [x]
-}
-
-function robustSubtract(e, f) {
-  var ne = e.length|0
-  var nf = f.length|0
-  if(ne === 1 && nf === 1) {
-    return scalarScalar(e[0], -f[0])
-  }
-  var n = ne + nf
-  var g = new Array(n)
-  var count = 0
-  var eptr = 0
-  var fptr = 0
-  var abs = Math.abs
-  var ei = e[eptr]
-  var ea = abs(ei)
-  var fi = -f[fptr]
-  var fa = abs(fi)
-  var a, b
-  if(ea < fa) {
-    b = ei
-    eptr += 1
-    if(eptr < ne) {
-      ei = e[eptr]
-      ea = abs(ei)
-    }
-  } else {
-    b = fi
-    fptr += 1
-    if(fptr < nf) {
-      fi = -f[fptr]
-      fa = abs(fi)
-    }
-  }
-  if((eptr < ne && ea < fa) || (fptr >= nf)) {
-    a = ei
-    eptr += 1
-    if(eptr < ne) {
-      ei = e[eptr]
-      ea = abs(ei)
-    }
-  } else {
-    a = fi
-    fptr += 1
-    if(fptr < nf) {
-      fi = -f[fptr]
-      fa = abs(fi)
-    }
-  }
-  var x = a + b
-  var bv = x - a
-  var y = b - bv
-  var q0 = y
-  var q1 = x
-  var _x, _bv, _av, _br, _ar
-  while(eptr < ne && fptr < nf) {
-    if(ea < fa) {
-      a = ei
-      eptr += 1
-      if(eptr < ne) {
-        ei = e[eptr]
-        ea = abs(ei)
-      }
-    } else {
-      a = fi
-      fptr += 1
-      if(fptr < nf) {
-        fi = -f[fptr]
-        fa = abs(fi)
-      }
-    }
-    b = q0
-    x = a + b
-    bv = x - a
-    y = b - bv
-    if(y) {
-      g[count++] = y
-    }
-    _x = q1 + x
-    _bv = _x - q1
-    _av = _x - _bv
-    _br = x - _bv
-    _ar = q1 - _av
-    q0 = _ar + _br
-    q1 = _x
-  }
-  while(eptr < ne) {
-    a = ei
-    b = q0
-    x = a + b
-    bv = x - a
-    y = b - bv
-    if(y) {
-      g[count++] = y
-    }
-    _x = q1 + x
-    _bv = _x - q1
-    _av = _x - _bv
-    _br = x - _bv
-    _ar = q1 - _av
-    q0 = _ar + _br
-    q1 = _x
-    eptr += 1
-    if(eptr < ne) {
-      ei = e[eptr]
-    }
-  }
-  while(fptr < nf) {
-    a = fi
-    b = q0
-    x = a + b
-    bv = x - a
-    y = b - bv
-    if(y) {
-      g[count++] = y
-    } 
-    _x = q1 + x
-    _bv = _x - q1
-    _av = _x - _bv
-    _br = x - _bv
-    _ar = q1 - _av
-    q0 = _ar + _br
-    q1 = _x
-    fptr += 1
-    if(fptr < nf) {
-      fi = -f[fptr]
-    }
-  }
-  if(q0) {
-    g[count++] = q0
-  }
-  if(q1) {
-    g[count++] = q1
-  }
-  if(!count) {
-    g[count++] = 0.0  
-  }
-  g.length = count
-  return g
-}
-},{}],"GDiG":[function(require,module,exports) {
-"use strict"
-
-var twoProduct = require("two-product")
-var robustSum = require("robust-sum")
-var robustScale = require("robust-scale")
-var robustSubtract = require("robust-subtract")
-
-var NUM_EXPAND = 5
-
-var EPSILON     = 1.1102230246251565e-16
-var ERRBOUND3   = (3.0 + 16.0 * EPSILON) * EPSILON
-var ERRBOUND4   = (7.0 + 56.0 * EPSILON) * EPSILON
-
-function cofactor(m, c) {
-  var result = new Array(m.length-1)
-  for(var i=1; i<m.length; ++i) {
-    var r = result[i-1] = new Array(m.length-1)
-    for(var j=0,k=0; j<m.length; ++j) {
-      if(j === c) {
-        continue
-      }
-      r[k++] = m[i][j]
-    }
-  }
-  return result
-}
-
-function matrix(n) {
-  var result = new Array(n)
-  for(var i=0; i<n; ++i) {
-    result[i] = new Array(n)
-    for(var j=0; j<n; ++j) {
-      result[i][j] = ["m", j, "[", (n-i-1), "]"].join("")
-    }
-  }
-  return result
-}
-
-function sign(n) {
-  if(n & 1) {
-    return "-"
-  }
-  return ""
-}
-
-function generateSum(expr) {
-  if(expr.length === 1) {
-    return expr[0]
-  } else if(expr.length === 2) {
-    return ["sum(", expr[0], ",", expr[1], ")"].join("")
-  } else {
-    var m = expr.length>>1
-    return ["sum(", generateSum(expr.slice(0, m)), ",", generateSum(expr.slice(m)), ")"].join("")
-  }
-}
-
-function determinant(m) {
-  if(m.length === 2) {
-    return [["sum(prod(", m[0][0], ",", m[1][1], "),prod(-", m[0][1], ",", m[1][0], "))"].join("")]
-  } else {
-    var expr = []
-    for(var i=0; i<m.length; ++i) {
-      expr.push(["scale(", generateSum(determinant(cofactor(m, i))), ",", sign(i), m[0][i], ")"].join(""))
-    }
-    return expr
-  }
-}
-
-function orientation(n) {
-  var pos = []
-  var neg = []
-  var m = matrix(n)
-  var args = []
-  for(var i=0; i<n; ++i) {
-    if((i&1)===0) {
-      pos.push.apply(pos, determinant(cofactor(m, i)))
-    } else {
-      neg.push.apply(neg, determinant(cofactor(m, i)))
-    }
-    args.push("m" + i)
-  }
-  var posExpr = generateSum(pos)
-  var negExpr = generateSum(neg)
-  var funcName = "orientation" + n + "Exact"
-  var code = ["function ", funcName, "(", args.join(), "){var p=", posExpr, ",n=", negExpr, ",d=sub(p,n);\
-return d[d.length-1];};return ", funcName].join("")
-  var proc = new Function("sum", "prod", "scale", "sub", code)
-  return proc(robustSum, twoProduct, robustScale, robustSubtract)
-}
-
-var orientation3Exact = orientation(3)
-var orientation4Exact = orientation(4)
-
-var CACHED = [
-  function orientation0() { return 0 },
-  function orientation1() { return 0 },
-  function orientation2(a, b) { 
-    return b[0] - a[0]
-  },
-  function orientation3(a, b, c) {
-    var l = (a[1] - c[1]) * (b[0] - c[0])
-    var r = (a[0] - c[0]) * (b[1] - c[1])
-    var det = l - r
-    var s
-    if(l > 0) {
-      if(r <= 0) {
-        return det
-      } else {
-        s = l + r
-      }
-    } else if(l < 0) {
-      if(r >= 0) {
-        return det
-      } else {
-        s = -(l + r)
-      }
-    } else {
-      return det
-    }
-    var tol = ERRBOUND3 * s
-    if(det >= tol || det <= -tol) {
-      return det
-    }
-    return orientation3Exact(a, b, c)
-  },
-  function orientation4(a,b,c,d) {
-    var adx = a[0] - d[0]
-    var bdx = b[0] - d[0]
-    var cdx = c[0] - d[0]
-    var ady = a[1] - d[1]
-    var bdy = b[1] - d[1]
-    var cdy = c[1] - d[1]
-    var adz = a[2] - d[2]
-    var bdz = b[2] - d[2]
-    var cdz = c[2] - d[2]
-    var bdxcdy = bdx * cdy
-    var cdxbdy = cdx * bdy
-    var cdxady = cdx * ady
-    var adxcdy = adx * cdy
-    var adxbdy = adx * bdy
-    var bdxady = bdx * ady
-    var det = adz * (bdxcdy - cdxbdy) 
-            + bdz * (cdxady - adxcdy)
-            + cdz * (adxbdy - bdxady)
-    var permanent = (Math.abs(bdxcdy) + Math.abs(cdxbdy)) * Math.abs(adz)
-                  + (Math.abs(cdxady) + Math.abs(adxcdy)) * Math.abs(bdz)
-                  + (Math.abs(adxbdy) + Math.abs(bdxady)) * Math.abs(cdz)
-    var tol = ERRBOUND4 * permanent
-    if ((det > tol) || (-det > tol)) {
-      return det
-    }
-    return orientation4Exact(a,b,c,d)
-  }
-]
-
-function slowOrient(args) {
-  var proc = CACHED[args.length]
-  if(!proc) {
-    proc = CACHED[args.length] = orientation(args.length)
-  }
-  return proc.apply(undefined, args)
-}
-
-function generateOrientationProc() {
-  while(CACHED.length <= NUM_EXPAND) {
-    CACHED.push(orientation(CACHED.length))
-  }
-  var args = []
-  var procArgs = ["slow"]
-  for(var i=0; i<=NUM_EXPAND; ++i) {
-    args.push("a" + i)
-    procArgs.push("o" + i)
-  }
-  var code = [
-    "function getOrientation(", args.join(), "){switch(arguments.length){case 0:case 1:return 0;"
-  ]
-  for(var i=2; i<=NUM_EXPAND; ++i) {
-    code.push("case ", i, ":return o", i, "(", args.slice(0, i).join(), ");")
-  }
-  code.push("}var s=new Array(arguments.length);for(var i=0;i<arguments.length;++i){s[i]=arguments[i]};return slow(s);}return getOrientation")
-  procArgs.push(code.join(""))
-
-  var proc = Function.apply(undefined, procArgs)
-  module.exports = proc.apply(undefined, [slowOrient].concat(CACHED))
-  for(var i=0; i<=NUM_EXPAND; ++i) {
-    module.exports[i] = CACHED[i]
-  }
-}
-
-generateOrientationProc()
-},{"two-product":"MnnT","robust-sum":"Q8bh","robust-scale":"jbtT","robust-subtract":"fBvs"}],"nEKu":[function(require,module,exports) {
-'use strict'
-
-module.exports = monotoneConvexHull2D
-
-var orient = require('robust-orientation')[3]
-
-function monotoneConvexHull2D(points) {
-  var n = points.length
-
-  if(n < 3) {
-    var result = new Array(n)
-    for(var i=0; i<n; ++i) {
-      result[i] = i
-    }
-
-    if(n === 2 &&
-       points[0][0] === points[1][0] &&
-       points[0][1] === points[1][1]) {
-      return [0]
-    }
-
-    return result
-  }
-
-  //Sort point indices along x-axis
-  var sorted = new Array(n)
-  for(var i=0; i<n; ++i) {
-    sorted[i] = i
-  }
-  sorted.sort(function(a,b) {
-    var d = points[a][0]-points[b][0]
-    if(d) {
-      return d
-    }
-    return points[a][1] - points[b][1]
-  })
-
-  //Construct upper and lower hulls
-  var lower = [sorted[0], sorted[1]]
-  var upper = [sorted[0], sorted[1]]
-
-  for(var i=2; i<n; ++i) {
-    var idx = sorted[i]
-    var p   = points[idx]
-
-    //Insert into lower list
-    var m = lower.length
-    while(m > 1 && orient(
-        points[lower[m-2]], 
-        points[lower[m-1]], 
-        p) <= 0) {
-      m -= 1
-      lower.pop()
-    }
-    lower.push(idx)
-
-    //Insert into upper list
-    m = upper.length
-    while(m > 1 && orient(
-        points[upper[m-2]], 
-        points[upper[m-1]], 
-        p) >= 0) {
-      m -= 1
-      upper.pop()
-    }
-    upper.push(idx)
-  }
-
-  //Merge lists together
-  var result = new Array(upper.length + lower.length - 2)
-  var ptr    = 0
-  for(var i=0, nl=lower.length; i<nl; ++i) {
-    result[ptr++] = lower[i]
-  }
-  for(var j=upper.length-2; j>0; --j) {
-    result[ptr++] = upper[j]
-  }
-
-  //Return result
-  return result
-}
-},{"robust-orientation":"GDiG"}],"IGBU":[function(require,module,exports) {
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var StrHelper = /*#__PURE__*/function () {
-  function StrHelper() {
-    _classCallCheck(this, StrHelper);
-  }
-
-  _createClass(StrHelper, null, [{
-    key: "strToEngSymbols",
-    value: function strToEngSymbols(input) {
-      if (!input || input == '') return '';
-      var rus = 'УКЕНХВАРОМС';
-      var eng = 'YKEHXBAPOMC';
-      var output = '';
-      rus.split('').forEach(function (s, i) {
-        output = input.replace(new RegExp(s, 'g'), eng[i]);
-      });
-      return output;
-    }
-  }, {
-    key: "compareEngLanguage",
-    value: function compareEngLanguage(input, template) {
-      return 0 <= this.strToEngSymbols(input).indexOf(this.strToEngSymbols(template));
-    }
-  }, {
-    key: "shrinkStringBeforeDelim",
-    value: function shrinkStringBeforeDelim(input) {
-      var delim = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';
-      var indexOf = input.indexOf(delim);
-      return indexOf > 0 ? input.substr(0, indexOf) : input;
-    }
-  }, {
-    key: "ignoreEqualsValue",
-    value: function ignoreEqualsValue(input) {
-      return input.replace(/[(][^)]*[)]/g, '');
-    }
-  }, {
-    key: "ignoreSpaces",
-    value: function ignoreSpaces(input) {
-      return input.replace(/\s/g, '');
-    }
-  }, {
-    key: "getTwoStringByLastDelim",
-    value: function getTwoStringByLastDelim(input) {
-      var delim = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '.';
-      var lastIndexOf = input.lastIndexOf(delim);
-      var ret = [input.substr(0, lastIndexOf).trim(), input.substr(lastIndexOf + 1, input.length).trim()];
-      return ret;
-    }
-  }]);
-
-  return StrHelper;
-}();
-
-module.exports = StrHelper;
 },{}],"p4qv":[function(require,module,exports) {
 "use strict";
 
@@ -940,13 +190,13 @@ exports.MapControl = void 0;
 
 var _eventEmitter = require("./eventEmitter");
 
-var _monotoneConvexHull2d = _interopRequireDefault(require("monotone-convex-hull-2d"));
-
-var _strHelper = _interopRequireDefault(require("../helper/strHelper"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -968,37 +218,12 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var min_year = 1914;
-var max_year = 1965;
-
-window.onpopstate = function (event) {
-  var map = window.map;
-  event.state ? map.readViewFromState.call(window.map, event.state) : map.readViewFromPermalink.call(window.map);
-  window.map.updateView.call(window.map);
+//import battleLayer from './mapLayers/battleLayer'
+var MAP_PARAMS = {
+  min_year: 1914,
+  max_year: 1965,
+  isEnableAnimate: true
 };
-
-function resizeImage(url, fixWidth, callback) {
-  var sourceImage = new Image();
-
-  sourceImage.onload = function () {
-    // Create a canvas with the desired dimensions
-    var canvas = document.createElement('canvas');
-    var imgWidth = this.width;
-    var aspectRatio = Math.round(imgWidth / fixWidth);
-    var imgHeight = this.height;
-    var fixHeight = Math.round(imgHeight / aspectRatio);
-    canvas.width = fixWidth;
-    canvas.height = fixHeight; // Scale and draw the source image to the canvas
-
-    var ctx = canvas.getContext('2d');
-    ctx.globalAlpha = 0.6;
-    ctx.drawImage(sourceImage, 0, 0, fixWidth, fixHeight); // Convert the canvas to a data URL in PNG format
-
-    if (callback) callback(canvas);
-  };
-
-  return sourceImage.src = url;
-}
 
 var MapControl = /*#__PURE__*/function (_EventEmitter) {
   _inherits(MapControl, _EventEmitter);
@@ -1011,11 +236,6 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
     _classCallCheck(this, MapControl);
 
     _this = _super.call(this); //first must
-    // let rasterLayer = new ol.layer.Tile({
-    //   opacity: 1,
-    //   zIndex: 0,
-    //   source: new ol.source.OSM()
-    // })
 
     var rasterLayer = new ol.layer.Tile({
       preload: 5,
@@ -1027,14 +247,15 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
         }
       })
     });
+    _this.isEnableAnimate = MAP_PARAMS.isEnableAnimate;
+    _this.isDisableSavePermalink = true;
+    _this.isDisableMoveend = false;
 
     _this.readViewFromPermalink();
 
-    _this.shouldUpdate = true;
     var view = new ol.View({
       center: _this.center ? _this.center : new ol.proj.fromLonLat([56.004, 54.695]),
       // ufa place
-      // center: kremlinLocation,
       zoom: _this.zoom ? _this.zoom : 3 // projection: 'EPSG:4326'
 
     });
@@ -1049,7 +270,7 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       positioning: 'auto',
       autoPan: true,
       autoPanAnimation: {
-        duration: 250
+        duration: _this.isEnableAnimate ? 800 : 0
       }
     });
     var map = new ol.Map({
@@ -1067,77 +288,44 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       target: 'map',
       view: view
     });
-    /*
-    solidarik: Temporarily disabled selectStyle
-      const selectedStyle = new ol.style.Style({
-      stroke: new ol.style.Stroke({
-        color: 'red',
-        width: 2
-      }),
-      fill: new ol.style.Fill({
-        color: 'rgba(0, 0, 255, 0.1)'
-      })
-    })
-      const select = new ol.interaction.Select({
-      condition: ol.events.condition.pointerMove,
-      //      style: selectedStyle,
-      multi: false
-    })
-      map.addInteraction(select)
-      select.on('select', function(evt) {
-      if (evt.selected.length) return
-      const feature = evt.selected[0]
-        //window.map.showEventContour(feature.get('eventMap'))
-    })
-      */
-
-    var transparent = [0, 0, 0, 0.01];
-    var filltransparent = [0, 0, 0, 0];
-    var transparentStyle = [new ol.style.Style({
-      image: new ol.style.RegularShape({
-        radius: 10,
-        radius2: 5,
-        points: 5,
-        fill: new ol.style.Fill({
-          color: transparent
-        })
-      }),
-      stroke: new ol.style.Stroke({
-        color: transparent,
-        width: 1
-      }),
-      fill: new ol.style.Fill({
-        color: filltransparent
-      })
-    })]; // Style for the clusters
-
     var styleCache = {};
 
-    function getStyle(feature, resolution) {
+    function getStyleCluster(feature, _) {
       var size = feature.get('features').length;
       var style = styleCache[size];
 
       if (!style) {
-        var color = size > 10 ? '192,0,0' : size > 5 ? '255,128,0' : '0,128,0';
-        var radius = Math.max(8, Math.min(size * 0.75, 20));
+        //todo add support styles by kind for single feature
+        // if (size == 1) {
+        //   style = styleCache[size] = window.map.battlesStyleFunc(
+        //     feature.get('features')[0],
+        //     window.map.view.getZoom()
+        //   )
+        //   return style
+        // }
+        var redColor = '255,0,51';
+        var cyanColor = '0,162,232';
+        var greenColor = '34,177,76';
+        var color = size > 10 ? redColor : size > 5 ? greenColor : cyanColor;
+        var radius = Math.max(8, Math.min(size, 20)) + 5;
         var dash = 2 * Math.PI * radius / 6;
-        var dash = [0, dash, dash, dash, dash, dash, dash];
+        dash = [0, dash, dash, dash, dash, dash, dash];
         style = styleCache[size] = new ol.style.Style({
           image: new ol.style.Circle({
             radius: radius,
             stroke: new ol.style.Stroke({
-              color: 'rgba(' + color + ',0.5)',
+              color: 'rgba(' + color + ',0.6)',
               width: 15,
               lineDash: dash,
               lineCap: 'butt'
             }),
             fill: new ol.style.Fill({
-              color: 'rgba(' + color + ',1)'
+              color: 'rgba(' + color + ',0.9)'
             })
           }),
           text: new ol.style.Text({
             text: size.toString(),
-            //font: 'bold 12px comic sans ms',
+            font: '14px Helvetica',
             //textBaseline: 'top',
             fill: new ol.style.Fill({
               color: '#fff'
@@ -1154,29 +342,26 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       distance: 40,
       source: new ol.source.Vector()
     });
-    map.addLayer(new ol.layer.AnimatedCluster({
+    var clusterLayer = new ol.layer.AnimatedCluster({
       name: 'Cluster',
       source: clusterSource,
-      animationDuration: 700,
-      style: getStyle
-    }));
+      animationDuration: _this.isEnableAnimate ? 400 : 0,
+      style: getStyleCluster
+    });
+    map.addLayer(clusterLayer);
     _this.clusterSource = clusterSource; // Style for selection
 
-    var img = new ol.style.Circle({
-      radius: 5,
-      stroke: new ol.style.Stroke({
-        color: 'rgba(0,255,255,1)',
-        width: 1
+    var apartClusterStyle = new ol.style.Style({
+      image: new ol.style.Circle({
+        radius: 5,
+        stroke: new ol.style.Stroke({
+          color: 'rgba(0,255,255,1)',
+          width: 1
+        }),
+        fill: new ol.style.Fill({
+          color: 'rgba(0,255,255,0.3)'
+        })
       }),
-      fill: new ol.style.Fill({
-        color: 'rgba(0,255,255,0.3)'
-      })
-    });
-    var style0 = new ol.style.Style({
-      image: img
-    });
-    var style1 = new ol.style.Style({
-      image: img,
       // Draw a link beetween points (or not)
       stroke: new ol.style.Stroke({
         color: '#fff',
@@ -1187,10 +372,10 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
     var selectCluster = new ol.interaction.SelectCluster({
       // Point radius: to calculate distance between the features
       pointRadius: 7,
-      animate: true,
+      animate: _this.isEnableAnimate,
       // Feature style when it springs apart
       featureStyle: function featureStyle() {
-        return [style1];
+        return [apartClusterStyle];
       },
       // selectCluster: false,	// disable cluster selection
       // Style to draw cluster when selected
@@ -1198,7 +383,7 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
         var cluster = f.get('features');
 
         if (cluster.length > 1) {
-          var s = [getStyle(f, res)];
+          var s = [getStyleCluster(f, res)];
           return s;
         } else {
           return [new ol.style.Style({
@@ -1216,368 +401,69 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
         }
       }
     });
-    map.addInteraction(selectCluster); // On selected => get feature in cluster and show info
-
+    map.addInteraction(selectCluster);
     selectCluster.getFeatures().on(['add'], function (e) {
       var c = e.element.get('features');
 
       if (c.length == 1) {
         console.log('One feature selected... id ' + c[0].get('id'));
       } else {
-        console.log("Cluster $(c.length) features");
+        console.log("Cluster ".concat(c.length, " features"));
       }
     }); // selectCluster.getFeatures().on(['remove'], function (e) {
     //   console.log('')
     // })
 
-    /* solidarik temprorariry disable click function
-      map.on('click', function (evt) {
-      window.map.popup.hide()
-        let coordinates = evt.coordinate
-      let lonLatCoords = new ol.proj.toLonLat(coordinates)
-      console.log(
-        'clicked on map with coordinates: ' +
-          coordinates +
-          '; WGS: ' +
-          lonLatCoords
-      )
-        let imgUrl = undefined
-      let featureEvent = undefined
-      let kind = undefined
-      const isHit = map.forEachFeatureAtPixel(evt.pixel, function (
-        feature,
-        layer
-      ) {
-        featureEvent = feature
-        imgUrl = feature.get('imgUrl')
-        kind = feature.get('kind')
-        return (
-          ['wmw', 'wow', 'politics', 'chronos', 'persons'].indexOf(
-            feature.get('kind')
-          ) >= 0
-        )
-      })
-        if (!featureEvent) return
-        const info = featureEvent.get('info')
-      const isExistUrl = imgUrl !== undefined
-        let content = `<h3>${info.name}</h3>`
-      switch (kind) {
-        case 'chronos':
-          content = `<h3>${info.place}</h3>`
-          break
-        case 'politics':
-          content = `<h3>${info.place}</h3>`
-          break
-        default:
-          break
-      }
-        let isFirstRow = true
-        const getHtmlForFeatureEvent = (event) => {
-        const getHtmlCell = (caption, param1, param2, isBold = false) => {
-          const f = (value) => {
-            if (Array.isArray(value)) {
-              return value.length > 0
-                ? value.join(', ').replace(/, /g, '<br/>')
-                : '-'
-            } else {
-              if (value == undefined) return '-'
-              const tryFloat = parseFloat(value)
-              const isNaN =
-                typeof Number.isNaN !== 'undefined'
-                  ? Number.isNaN(tryFloat)
-                  : tryFloat !== tryFloat
-                  ? true
-                  : false
-              return isNaN
-                ? value.replace(/, /g, '<br />')
-                : tryFloat.toString()
-            }
-          }
-            const one = f(param1)
-          const two = f(param2)
-            const getTdWithClassName = (defaultClass, value) => {
-            const className = isBold
-              ? defaultClass + ' ' + 'bold-text'
-              : defaultClass
-            return className.trim() != ''
-              ? `<td class="${className}">${value}</td>`
-              : `<td>${value}</td>`
-          }
-            if ('-' != one || '-' != two) {
-            let tr = `<tr>
-              ${getTdWithClassName('left-align', caption)}
-              ${getTdWithClassName('', one)}
-              ${getTdWithClassName('right-align', two)}
-            </tr>`
-            return tr
-          }
-            return ''
-        }
-          let html = ''
-        html += getHtmlCell('Участники', info.allies, info.enemies, true)
-        html += getHtmlCell(
-          'Силы сторон (чел.)',
-          info.ally_troops,
-          info.enem_troops
-        )
-        html += getHtmlCell('Потери (чел.)', info.ally_losses, info.enem_losses)
-        html += getHtmlCell('Убитые (чел.)', info.ally_deads, info.enem_deads)
-        html += getHtmlCell(
-          'Пленные (чел.)',
-          info.ally_prisoners,
-          info.enem_prisoners
-        )
-        html += getHtmlCell(
-          'Раненые (чел.)',
-          info.ally_woundeds,
-          info.enem_woundeds
-        )
-        html += getHtmlCell(
-          'Пропавшие без вести (чел.)',
-          info.ally_missing,
-          info.enem_missing
-        )
-        html += getHtmlCell(
-          'Танков (шт.)',
-          info.ally_tanks_cnt,
-          info.enem_tanks_cnt
-        )
-        html += getHtmlCell(
-          'Самолетов (шт.)',
-          info.ally_airplans_cnt,
-          info.enem_airplans_cnt
-        )
-        html += getHtmlCell(
-          'Кораблей (шт.)',
-          info.ally_ships_cnt,
-          info.enem_ships_cnt
-        )
-        html += getHtmlCell(
-          'Подводных лодок (шт.)',
-          info.ally_submarines_cnt,
-          info.enem_submarines_cnt
-        )
-          return html
-      }
-        if ('politics' === kind) {
-        const startDate = info.startDate
-        const endDate = info.endDate
-        if (startDate) {
-          const dateStr =
-            endDate != undefined && startDate != endDate
-              ? `${startDate} - ${endDate}`
-              : startDate
-          content += '<h4>' + dateStr + '</h4>'
-        }
-          let results = info.results
-        if (results) {
-          results = results.replace(/[.,]\s*$/, '')
-          content += '<p>' + results + '</p>'
-        }
-      } else if ('chronos' === kind) {
-        const startDate = info.startDate
-        const endDate = info.endDate
-        if (startDate) {
-          let dateStr =
-            endDate != undefined && startDate != endDate
-              ? `${startDate} - ${endDate}`
-              : startDate
-          if (info.isOnlyYear) {
-            dateStr = dateStr.slice(-4)
-          }
-          content += '<h4>' + dateStr + '</h4>'
-        }
-          let results = info.brief
-        if (results) {
-          results = results.replace(/[.,]\s*$/, '')
-          content += '<p>' + results + '</p>'
-        }
-      } else if ('persons' === kind) {
-        content = `<h3>${info.surname} ${info.name} ${info.middlename}</h3>`
-        const startDate = info.dateBirth
-        const endDate = info.dateDeath
-        if (startDate) {
-          let dateStr =
-            endDate != undefined && startDate != endDate
-              ? `${startDate} - ${endDate}`
-              : startDate
-          content += '<h4>' + dateStr + '</h4>'
-        }
-          let results = info.description
-        if (results) {
-          results = results.replace(/[.,]\s*$/, '')
-          content += '<p class="content-description">' + results + '</p>'
-        }
-      } else {
-        window.map.setActiveEvent(featureEvent)
-          const startDate = info.startDate
-        const endDate = info.endDate
-        if (startDate) {
-          const dateStr =
-            endDate != undefined && startDate != endDate
-              ? `${startDate} - ${endDate}`
-              : startDate
-          content += '<h4>' + dateStr + '</h4>'
-        }
-          let table = `
-          <table class="table table-sm table-borderless" id="table-info">
-          <tbody>
-          ${getHtmlForFeatureEvent(featureEvent)}
-          </tbody></table>`
-        content += `<p>${table}</p>`
-          const eventId = info.id
-        let table2 = `
-        <table class="table table-sm table-borderless" id="table-control">
-          <tr><td
-            id="showEventContol"
-            onclick="window.map.showActiveEventContour()"
-            onmouseenter="window.map.setCursorPointer(this, true);"
-            onmouseleave="window.map.setCursorPointer(this, false);">Показать/скрыть контур</td></tr>
-          <tr><td
-            id="showMapControl"
-            onclick="window.map.showActiveEventMap()"
-            onmouseenter="window.map.setCursorPointer(this, true);"
-            onmouseleave="window.map.setCursorPointer(this, false);">Показать карту</td></tr>
-        </table>`
-        content += table2
-      }
-        if ('' == content) return
-        if (info.srcUrl && 0 < info.srcUrl.length) {
-        content +=
-          '<span class="small-silver-text"><a href="' +
-          info.srcUrl +
-          '" target="_blank">Источник</a></span>'
-      }
-        const coords = featureEvent.getGeometry().getFirstCoordinate()
-      window.map.popup.show(coords, content)
-        /* Show Big Image */
+    map.on('click', function (event) {
+      window.map.popup.hide();
+      var coordinates = event.coordinate;
+      var lonLatCoords = new ol.proj.toLonLat(coordinates);
+      console.log("clicked on map: ".concat(coordinates, "; WGS: ").concat(lonLatCoords));
+      var featureEvent = undefined;
+      var isHit = map.forEachFeatureAtPixel(event.pixel, function (feature, _) {
+        featureEvent = feature;
+        return feature.get('kind');
+      });
+      if (!featureEvent) return;
+      var kind = featureEvent.get('kind'); //todo Showing HTML content
 
-    /*
-      if (isHit && isExistUrl) {
-        window.map.showEventContour(info.eventMap)
-          $('#imgModalLabel').html(info.name)
-        $('.modal-body').html(`
-        <div class="d-flex justify-content-center">
-          <div class="spinner-border" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div>
-        `)
-        $('#imgModal').modal()
-          setTimeout(() => {
-          resizeImage(imgUrl, $('.modal-body').width(), canvas => {
-            $('.modal-body').html(canvas)
-          })
-        }, 1000)
-      }
-      */
-    //})
-
+      console.log('todo this place for showing html content of selected feature');
+      return;
+    });
     map.on('moveend', function () {
+      if (_this.isDisableMoveend) {
+        _this.isDisableMoveend = false;
+        return;
+      }
+
       window.map.savePermalink.call(window.map);
-    }); // map.on('pointermove', function (evt) {
-    //   const isHit = map.forEachFeatureAtPixel(evt.pixel, function (
-    //     feature,
-    //     layer
-    //   ) {
-    //     if (feature === undefined || feature.get('kind') === undefined)
-    //       return false
-    //     return (
-    //       ['wmw', 'wow', 'politics', 'chronos'].indexOf(feature.get('kind')) >=
-    //       0
-    //     )
-    //   })
-    //   if (isHit) {
-    //     this.getTargetElement().style.cursor = 'pointer'
-    //   } else {
-    //     this.getTargetElement().style.cursor = ''
-    //   }
-    // })
+    });
+    map.on('pointermove', function (event) {
+      var feature = map.forEachFeatureAtPixel(event.pixel, function (feature, _) {
+        return feature;
+      }, {
+        hitTolerance: 5
+      });
+      var isHit = feature ? true : false;
 
+      if (isHit) {
+        map.getTargetElement().style.cursor = 'pointer';
+      } else {
+        map.getTargetElement().style.cursor = '';
+      }
+    });
     _this.map = map;
-    _this.legend = undefined;
-    _this.historyEvents = [];
-    _this.agreements = [];
-    _this.chronos = [];
-    _this.persons = [];
     _this.view = view;
-    _this.draw = undefined;
-    _this.snap = undefined;
-    _this.dragBox = {};
-    _this.addFeatureEnabled = true;
-    _this.activeButton = undefined;
-    _this.maxExtent = {
-      left: -20037508.3,
-      top: -20037508.3,
-      right: 20037508.3,
-      bottom: 20037508.3
-    };
-    _this.maxResolution = 156543.0339;
-    _this.tileSize = {
-      w: 256,
-      h: 256
-    };
-    _this.styleCache = {};
     setTimeout(function () {
-      // this.addSelectInteraction()
       _this.addYearLayer();
-
-      _this.addHistoryEventsLayer();
-
-      _this.addChronosLayer();
-
-      _this.addAgreementsLayer();
-
-      _this.addPersonsLayer(); //this.addLegend()
-      // this._addButtons();
-
     }, 10);
     return _this;
   }
 
   _createClass(MapControl, [{
-    key: "setActiveEvent",
-    value: function setActiveEvent(featureEvent) {
-      this.activeFeatureEvent = featureEvent;
-      this.isShowContour = false;
-    }
-  }, {
-    key: "showActiveEventMap",
-    value: function showActiveEventMap() {
-      var ft = this.activeFeatureEvent;
-      $('#imgModalLabel').html(ft.get('name'));
-      $('.modal-body').html("\n    <div class=\"d-flex justify-content-center\">\n      <div class=\"spinner-border\" role=\"status\">\n        <span class=\"sr-only\">Loading...</span>\n      </div>\n    </div>\n    ");
-      $('#imgModal').modal();
-      setTimeout(function () {
-        resizeImage(ft.get('imgUrl'), $('.modal-body').width(), function (canvas) {
-          $('.modal-body').html(canvas);
-        });
-      }, 1000);
-    }
-  }, {
-    key: "setCursorPointer",
-    value: function setCursorPointer(elem, b) {
-      var c = 'hover-on-text';
-      if (!elem) return;
-      b ? elem.classList.add(c) : elem.classList.remove(c);
-    }
-  }, {
-    key: "showActiveEventContour",
-    value: function showActiveEventContour() {
-      var ft = this.activeFeatureEvent;
-      this.isShowContour = !this.isShowContour;
-      this.historyEventsSource.clear();
-      this.hullSource.clear();
-
-      if (this.isShowContour) {
-        this.showEventContour(ft.get('eventMap'));
-      }
-    }
-  }, {
     key: "setCurrentYearFromServer",
     value: function setCurrentYearFromServer(year) {
       this.changeYear(year);
-      this.addYearControl();
     }
   }, {
     key: "addYearLayer",
@@ -1590,7 +476,7 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
         zIndex: 2,
         source: new ol.source.XYZ({
           tileUrlFunction: function tileUrlFunction(tileCoord, pixelRatio, projection) {
-            return _this2.getYearLayerUrl.call(_this2, tileCoord, pixelRatio, projection);
+            return _this2.getGeacronLayerUrl.call(_this2, tileCoord, pixelRatio, projection);
           }
         })
       });
@@ -1598,445 +484,35 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       this.map.addLayer(yearLayer);
     }
   }, {
-    key: "getNumber",
-    value: function getNumber(value) {
-      if (value == undefined) return 0;
-      var tryFloat = parseFloat(value);
-      var isNaN = typeof Number.isNaN !== 'undefined' ? Number.isNaN(tryFloat) : tryFloat !== tryFloat ? true : false;
-      return isNaN ? 0 : tryFloat;
-    }
-  }, {
-    key: "legendHistoryEventsStyleFunc",
-    value: function legendHistoryEventsStyleFunc() {
-      var starSize = 10;
-      var style = new ol.style.Style({
-        // fill: new ol.style.Fill({
-        //   color: 'rgba(255,255,255,0.5)'
-        // }),
-        // stroke: new ol.style.Stroke({
-        //   width: 2,
-        //   color: 'rgba(40, 40, 40, 0.50)'
-        // }),
-        // text: new ol.style.Text({
-        //   font: '14px helvetica,sans-serif',
-        //   text: zoom > 3 ? feature.get('name') : '',
-        //   fill: new ol.style.Fill({ color: 'red' }),
-        //   stroke: new ol.style.Stroke({
-        //     color: 'white',
-        //     width: 2
-        //   }),
-        //   baseline: 'middle',
-        //   align: 'right',
-        //   offsetX: 100,
-        //   offsetY: 40,
-        //   overflow: 'true',
-        //   // outline: 'black',
-        //   outlineWidth: 0
-        // }),
-        image: new ol.style.RegularShape({
-          fill: new ol.style.Fill({
-            color: 'rgba(255,0,0,0.6)'
-          }),
-          // stroke: new ol.style.Stroke({
-          //   width: 0,
-          //   color: 'gray'
-          // }),
-          points: 5,
-          radius: starSize + 2,
-          radius2: Math.floor(starSize / 2),
-          angle: -50
-        })
-      });
-      return [style];
-    }
-  }, {
-    key: "historyEventsStyleFunc",
-    value: function historyEventsStyleFunc(feature, zoom) {
-      // if (zoom > 4.5) {
-      //   return [new ol.style.Style()]
-      // }
-      var info = feature.get('info');
-      var allyTroops = this.getNumber(info.ally_troops);
-      var enemTroops = this.getNumber(info.enem_troops);
-      var starSize = 4;
-      var starSizes = [{
-        count: 2500,
-        size: 6
-      }, {
-        count: 5000,
-        size: 8
-      }, {
-        count: 70000,
-        size: 10
-      }, {
-        count: 100000,
-        size: 12
-      }, {
-        count: 200000,
-        size: 14
-      }, {
-        count: 500000,
-        size: 16
-      }, {
-        count: 1000000,
-        size: 18
-      }, {
-        count: 10000000000,
-        size: 20
-      }];
-
-      if (allyTroops + enemTroops > 0) {
-        var v = allyTroops + enemTroops;
-
-        for (var i = 0; i < starSizes.length; i++) {
-          if (v < starSizes[i].count) {
-            starSize = starSizes[i].size;
-            break;
-          }
-        }
-      }
-
-      var style = new ol.style.Style({
-        // fill: new ol.style.Fill({
-        //   color: 'rgba(255,255,255,0.5)'
-        // }),
-        // stroke: new ol.style.Stroke({
-        //   width: 2,
-        //   color: 'rgba(40, 40, 40, 0.50)'
-        // }),
-        // text: new ol.style.Text({
-        //   font: '14px helvetica,sans-serif',
-        //   text: zoom > 3 ? feature.get('name') : '',
-        //   fill: new ol.style.Fill({ color: 'red' }),
-        //   stroke: new ol.style.Stroke({
-        //     color: 'white',
-        //     width: 2
-        //   }),
-        //   baseline: 'middle',
-        //   align: 'right',
-        //   offsetX: 100,
-        //   offsetY: 40,
-        //   overflow: 'true',
-        //   // outline: 'black',
-        //   outlineWidth: 0
-        // }),
-        image: new ol.style.RegularShape({
-          fill: new ol.style.Fill(feature.get('kind') == 'wmw' ? {
-            color: 'rgba(102,102,255,0.9 ) '
-          } : feature.get('isWinnerUSSR') == true ? {
-            color: 'rgba(255,0,0,0.6)'
-          } : {
-            color: 'rgba(0,0,0,0.6)'
-          } //black enemy
-          ),
-          // stroke: new ol.style.Stroke({
-          //   width: 0,
-          //   color: 'gray'
-          // }),
-          points: 5,
-          radius: starSize + 2,
-          radius2: Math.floor(starSize / 2),
-          angle: -50
-        })
-      });
-      return [style];
-    }
-  }, {
-    key: "chronosStyleFunc",
-    value: function chronosStyleFunc(feature, zoom) {
-      var svg = '<svg width="24" height="24" version="1.1" xmlns="http://www.w3.org/2000/svg">' + '<path d="M19.74,7.68l1-1L19.29,5.29l-1,1a10,10,0,1,0,1.42,1.42ZM12,22a8,8,0,1,1,8-8A8,8,0,0,1,12,22Z"/>' + '<rect x="7" y="1" width="10" height="2"/><polygon points="13 14 13 8 11 8 11 16 18 16 18 14 13 14"/>' + '</svg>';
-      var style = new ol.style.Style({
-        image: new ol.style.Icon({
-          //src: 'data:image/svg+xml;utf8,' + svg,
-          src: 'images/map_timer.png',
-          color: '#ff0000',
-          fill: new ol.style.Fill({
-            color: 'rgba(153,51,255,1)'
-          }),
-          scale: 1,
-          radius: 7,
-          opacity: 1
-        })
-      });
-      return [style];
-    }
-  }, {
-    key: "personsStyleFunc",
-    value: function personsStyleFunc(feature, zoom) {
-      var style = new ol.style.Style({
-        image: new ol.style.Circle({
-          fill: new ol.style.Fill({
-            color: 'rgba(153,51,255,1)'
-          }),
-          radius: 7
-        })
-      });
-      return [style];
-    }
-  }, {
-    key: "agreementStyleFunc",
-    value: function agreementStyleFunc(feature, zoom) {
-      // if (zoom > 4.5) {
-      //   return [new ol.style.Style()]
-      // }
-      var style = new ol.style.Style({
-        // fill: new ol.style.Fill({
-        //   color: 'rgba(255,255,255,0.5)'
-        // }),
-        // stroke: new ol.style.Stroke({
-        //   width: 2,
-        //   color: 'rgba(40, 40, 40, 0.50)'
-        // }),
-        // text: new ol.style.Text({
-        //   font: '20px helvetica,sans-serif',
-        //   text: zoom > 3 ? feature.get('name') : '',
-        //   fill: new ol.style.Fill({ color: 'black' }),
-        //   stroke: new ol.style.Stroke({
-        //     color: 'white',
-        //     width: 2
-        //   }),
-        //   baseline: 'middle',
-        //   align: 'right',
-        //   offsetX: 100,
-        //   offsetY: 40,
-        //   overflow: 'true',
-        //   // outline: 'black',
-        //   outlineWidth: 0
-        // }),
-        image: new ol.style.Circle({
-          fill: new ol.style.Fill({
-            color: 'rgba(51,153,255,0.7)'
-          }),
-          // stroke: new ol.style.Stroke({
-          //   width: 2,
-          //   color: 'yellow'
-          // }),
-          // points: 3,
-          radius: 7 // angle: 0
-
-        })
-      });
-      return [style];
-    }
-  }, {
-    key: "addHistoryEventsLayer",
-    value: function addHistoryEventsLayer() {
-      var _this3 = this;
-
-      var historyEventsSource = new ol.source.Vector();
-      var historyEventsLayer = new ol.layer.Vector({
-        source: historyEventsSource,
-        zIndex: 1,
-        updateWhileAnimating: true,
-        updateWhileInteracting: true
-      });
-      this.historyEventsSource = historyEventsSource;
-      this.map.addLayer(historyEventsLayer);
-      this.map.historyEventsSource = historyEventsSource;
-      var hullSource = new ol.source.Vector();
-      var hullLayer = new ol.layer.Vector({
-        source: hullSource,
-        zIndex: 100,
-        updateWithAnimating: true,
-        updateWhileInteracting: true
-      });
-      this.hullSource = hullSource;
-      this.map.addLayer(hullLayer);
-      var allHistoryEventsSource = new ol.source.Vector();
-      var allHistoryEventsLayer = new ol.layer.Vector({
-        source: allHistoryEventsSource,
-        style: function style(f, _) {
-          return _this3.historyEventsStyleFunc(f, _this3.view.getZoom());
-        },
-        zIndex: 6,
-        updateWhileAnimating: true,
-        updateWhileInteracting: true
-      });
-      this.allHistoryEventsSource = allHistoryEventsSource;
-      this.map.addLayer(allHistoryEventsLayer);
-    }
-  }, {
-    key: "addChronosLayer",
-    value: function addChronosLayer() {
-      var _this4 = this;
-
-      var chronosSource = new ol.source.Vector();
-      var chronosLayer = new ol.layer.Vector({
-        source: chronosSource,
-        style: function style(feature, _) {
-          return _this4.chronosStyleFunc(feature, _this4.view.getZoom());
-        },
-        zIndex: 7,
-        updateWhileAnimating: true,
-        updateWhileInteracting: true
-      });
-      this.chronosSource = chronosSource;
-      this.map.addLayer(chronosLayer);
-    }
-  }, {
-    key: "addPersonsLayer",
-    value: function addPersonsLayer() {
-      var _this5 = this;
-
-      var personsSource = new ol.source.Vector();
-      var personsLayer = new ol.layer.Vector({
-        source: personsSource,
-        style: function style(feature, _) {
-          return _this5.personsStyleFunc(feature, _this5.view.getZoom());
-        },
-        zIndex: 7,
-        updateWhileAnimating: true,
-        updateWhileInteracting: true
-      });
-      this.personsSource = personsSource;
-      this.map.addLayer(personsLayer);
-    }
-  }, {
-    key: "addAgreementsLayer",
-    value: function addAgreementsLayer() {
-      var _this6 = this;
-
-      var agreementsSource = new ol.source.Vector();
-      var agreementsLayer = new ol.layer.Vector({
-        source: agreementsSource,
-        style: function style(feature, _) {
-          return _this6.agreementStyleFunc(feature, _this6.view.getZoom());
-        },
-        zIndex: 7,
-        updateWhileAnimating: true,
-        updateWhileInteracting: true
-      });
-      this.agreementsSource = agreementsSource;
-      this.map.addLayer(agreementsLayer);
-    }
-  }, {
-    key: "repaintLegend",
-    value: function repaintLegend() {
-      if (!this.legend) return;
-
-      while (this.legend.getLength() != 0) {
-        this.legend.removeRow(0);
-      }
-
-      this.legend.show();
-
-      if (0 < this.allHistoryEventsSource.getFeatures().length) {
-        var f0 = this.allHistoryEventsSource.getFeatures()[0];
-        f0.setStyle(this.legendHistoryEventsStyleFunc()[0]);
-        this.legend.addRow({
-          title: 'ВОВ',
-          feature: f0,
-          typeGeom: f0.getGeometry().getType()
-        });
-      }
-
-      if (0 < this.chronosSource.getFeatures().length) {
-        var _f = this.chronosSource.getFeatures()[0];
-
-        _f.setStyle(this.chronosStyleFunc()[0]);
-
-        this.legend.addRow({
-          title: 'ВМВ',
-          feature: _f,
-          typeGeom: _f.getGeometry().getType()
-        });
-      }
-
-      if (0 < this.agreementsSource.getFeatures().length) {
-        var _f2 = this.agreementsSource.getFeatures()[0];
-
-        _f2.setStyle(this.agreementStyleFunc()[0]);
-
-        this.legend.addRow({
-          title: 'Политические события',
-          feature: _f2,
-          typeGeom: _f2.getGeometry().getType()
-        });
-      }
-
-      if (0 < this.personsSource.getFeatures().length) {
-        var _f3 = this.personsSource.getFeatures()[0];
-
-        _f3.setStyle(this.personsStyleFunc()[0]);
-
-        this.legend.addRow({
-          title: 'Персоналии',
-          feature: _f3,
-          typeGeom: _f3.getGeometry().getType()
-        });
-      }
-    }
-  }, {
-    key: "addLegend",
-    value: function addLegend() {
-      this.legend = new ol.control.Legend({
-        title: 'Легенда',
-        collapsed: false
-      });
-      this.map.addControl(this.legend);
-      this.legend.on('select', function (e) {
-        if (e.index >= 0) {
-          console.log('You click on row: ' + e.title + ' (' + e.index + ')');
-          this.removeRow(e.index);
-        } else console.log('You click on the title: ' + e.title);
-
-        switch (e.title) {
-          case 'ВМВ':
-            window.map.chronosSource.clear();
-            break;
-
-          case 'ВОВ':
-            window.map.allHistoryEventsSource.clear();
-            break;
-
-          case 'Политические события':
-            window.map.agreementsSource.clear();
-            break;
-
-          case 'Персоналии':
-            window.map.personsSource.clear();
-            break;
-
-          default:
-            break;
-        }
-      });
-      setTimeout(function () {
-        var legendControl = $('.ol-legend')[0];
-
-        if (legendControl) {
-          legendControl.setAttribute('id', 'events-legend');
-        }
-      }, 10);
-    }
-  }, {
     key: "fixMapHeight",
     value: function fixMapHeight() {
+      this.isDisableMoveend = true;
       this.map.updateSize();
     }
   }, {
     key: "updateView",
     value: function updateView() {
-      // this.view.setCenter(this.center)
-      // this.view.setZoom(this.zoom)
-      this.view.animate({
-        center: this.center,
-        zoom: this.zoom,
-        duration: 300
-      });
+      if (this.isEnableAnimate) {
+        this.view.animate({
+          center: this.center,
+          zoom: this.zoom,
+          duration: 200
+        });
+      } else {
+        this.view.setCenter(this.center);
+        this.view.setZoom(this.zoom);
+      }
     }
   }, {
     key: "readViewFromState",
     value: function readViewFromState(state) {
-      this.centere = state.center;
+      this.center = state.center;
       this.zoom = state.zoom;
-      this.shouldUpdate = false;
     }
   }, {
     key: "readViewFromPermalink",
     value: function readViewFromPermalink() {
       if (window.location.hash !== '') {
-        // try to restore center, zoom-level from the URL
         var hash = window.location.hash.replace('#map=', '');
         var parts = hash.split('/');
 
@@ -2044,17 +520,13 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
           this.zoom = parseInt(parts[0], 10);
           this.center = [parseFloat(parts[1]), parseFloat(parts[2])];
         }
-
-        this.shouldUpdate = false;
       }
     }
   }, {
     key: "savePermalink",
     value: function savePermalink() {
-      if (!this.shouldUpdate) {
-        // do not update the URL when the view was changed in the 'popstate' handler
-        this.shouldUpdate = true;
-        return;
+      if (this.isDisableSavePermalink) {
+        this.isDisableSavePermalink = false;
       }
 
       var center = this.view.getCenter();
@@ -2066,49 +538,8 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       window.history.pushState(state, 'map', hash);
     }
   }, {
-    key: "getCenterCoord",
-    value: function getCenterCoord(ft) {
-      var geom = ft.getGeometry();
-
-      switch (geom.getType()) {
-        case 'Point':
-          return geom.getCoordinates();
-          break;
-
-        case 'LineString':
-          return this.getMedianXY(geom.getCoordinates());
-          break;
-
-        case 'Polygon':
-          return this.getMedianXY(geom.getCoordinates()[0]);
-          break;
-      }
-
-      return kremlinLocation;
-    }
-  }, {
-    key: "getMedianXY",
-    value: function getMedianXY(coords) {
-      var valuesX = [];
-      var valuesY = [];
-      coords.forEach(function (coord) {
-        valuesX.push(coord[0]);
-        valuesY.push(coord[1]);
-      });
-      return [this.getMedian(valuesX), this.getMedian(valuesY)];
-    }
-  }, {
-    key: "getMedian",
-    value: function getMedian(values) {
-      values.sort(function (a, b) {
-        return a - b;
-      });
-      var half = Math.floor(values.length / 2);
-      if (values.length % 2) return values[half];else return (values[half - 1] + values[half]) / 2.0;
-    }
-  }, {
-    key: "getYearLayerUrl",
-    value: function getYearLayerUrl(tileCoord, pixelRatio, projection) {
+    key: "getGeacronLayerUrl",
+    value: function getGeacronLayerUrl(tileCoord, pixelRatio, projection) {
       if (!this.currentYearForMap) return;
       var ano = this.currentYearForMap;
       var anow = '' + ano;
@@ -2130,49 +561,13 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       return url;
     }
   }, {
-    key: "addYearControl",
-    value: function addYearControl() {
-      var _this7 = this;
-
-      this.map.addControl(new YearControl({
-        caption: 'Выбрать год событий',
-        year: this.currentYear,
-        handler: function handler(year) {
-          _this7.changeYear(year);
-        }
-      }));
-    }
-  }, {
     key: "changeYear",
     value: function changeYear(year) {
       window.map.popup.hide();
-      this.historyEventsSource.clear();
-      this.hullSource.clear();
-      this.agreementsSource.clear();
-      this.chronosSource.clear();
-      this.personsSource.clear();
       this.currentYear = year;
       this.currentYearForMap = this.currentYear == 1951 ? 1950 : this.currentYear;
       this.yearLayer.getSource().refresh();
       this.emit('changeYear', year);
-    }
-  }, {
-    key: "hexToRgbA",
-    value: function hexToRgbA(hex, opacity) {
-      var c;
-
-      if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
-        c = hex.substring(1).split('');
-
-        if (c.length == 3) {
-          c = [c[0], c[0], c[1], c[1], c[2], c[2]];
-        }
-
-        c = '0x' + c.join('');
-        return [c >> 16 & 255, c >> 8 & 255, c & 255, opacity || 0];
-      }
-
-      throw new Error("Bad Hex ".concat(hex));
     }
   }, {
     key: "createGeom",
@@ -2198,396 +593,16 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "refreshInfo",
     value: function refreshInfo(info) {
-      this.chronos = info.chronos;
-      this.agreements = info.agreements;
-      this.historyEvents = info.events;
-      this.persons = info.persons; //this.repaintChronos()
-      //this.repaintAgreements()
+      var _this3 = this;
 
-      this.repaintHistoryEvents(); //this.repaintPersons()
-
-      this.repaintLegend();
-    }
-  }, {
-    key: "getAllCoordsFromMap",
-    value: function getAllCoordsFromMap(map) {
-      var all_coords = [];
-
-      for (var i = 0; i < map.features.length; i++) {
-        var geom = map.features[i].geometry;
-
-        if (geom.type === 'Point') {
-          all_coords.push(new ol.proj.fromLonLat(geom.coordinates));
-        } else {
-          var srcCoords = geom.type === 'Polygon' ? geom.coordinates[0] : geom.coordinates;
-
-          for (var j = 0; j < srcCoords.length; j++) {
-            all_coords.push(new ol.proj.fromLonLat(srcCoords[j]));
-          }
-        }
-      }
-
-      return all_coords;
-    }
-  }, {
-    key: "getCenterOfMap",
-    value: function getCenterOfMap(map) {
-      if (!map.features) {
-        return null;
-      }
-
-      var all_coords = this.getAllCoordsFromMap(map);
-      return this.getMedianXY(all_coords);
-    }
-  }, {
-    key: "repaintHistoryEvents",
-    value: function repaintHistoryEvents() {
-      var _this8 = this;
-
-      this.allHistoryEventsSource.clear();
       this.clusterSource.getSource().clear();
-      this.historyEvents.forEach(function (event, i) {
-        //0 == i && this.showEventContour(event.maps[0])
-        var info = event;
-        var ft = new ol.Feature({
-          id: event.id,
-          name: event.name,
-          geometry: new ol.geom.Point(_this8.getCenterOfMap(event.maps[0])),
-          size: 20000,
-          isWinnerUSSR: _strHelper.default.compareEngLanguage(event.winner, 'CCCР'),
-          kind: event.kind,
-          info: info,
-          imgUrl: event.imgUrl,
-          eventMap: event.maps[0],
-          filename: event.filename
-        });
-        ft.set('id', event.id); //this.allHistoryEventsSource.addFeature(ft)
+      info.battles.forEach(function (item, i) {
+        var ft = new ol.Feature(_objectSpread(_objectSpread({}, item), {}, {
+          geometry: new ol.geom.Point(item.point)
+        }));
 
-        _this8.clusterSource.getSource().addFeature(ft);
+        _this3.clusterSource.getSource().addFeature(ft);
       });
-    }
-  }, {
-    key: "repaintChronos",
-    value: function repaintChronos() {
-      var _this9 = this;
-
-      this.chronosSource.clear();
-      this.chronos.forEach(function (chrono) {
-        var info = chrono;
-
-        if (chrono.placeCoords && chrono.placeCoords.length) {
-          chrono.placeCoords[1] = chrono.placeCoords[1] + chrono.placeCoords[1] / 200; //поправка для слияния нескольких точек в одну
-
-          var ft = new ol.Feature({
-            kind: 'chronos',
-            geometry: new ol.geom.Point(ol.proj.fromLonLat(chrono.placeCoords)),
-            info: info
-          });
-
-          _this9.chronosSource.addFeature(ft);
-        }
-      });
-    }
-  }, {
-    key: "repaintAgreements",
-    value: function repaintAgreements() {
-      var _this10 = this;
-
-      this.agreementsSource.clear();
-      this.agreements.forEach(function (agreement) {
-        var info = agreement;
-
-        if (agreement.placeCoords && agreement.placeCoords.length) {
-          var ft = new ol.Feature({
-            kind: 'politics',
-            geometry: new ol.geom.Point(ol.proj.fromLonLat(agreement.placeCoords)),
-            info: info
-          });
-
-          _this10.agreementsSource.addFeature(ft);
-        }
-      });
-    }
-  }, {
-    key: "repaintPersons",
-    value: function repaintPersons() {
-      var _this11 = this;
-
-      this.personsSource.clear();
-      this.persons.forEach(function (person) {
-        var info = person;
-
-        if (person.placeDeathCoords && person.placeDeathCoords.length && person.placeDeathCoords[0]) {
-          person.placeDeathCoords[1] = person.placeDeathCoords[1] - person.placeDeathCoords[1] / 150; //поправка для слияния нескольких точек в одну
-
-          var ft = new ol.Feature({
-            kind: 'persons',
-            geometry: new ol.geom.Point(ol.proj.fromLonLat(person.placeDeathCoords)),
-            info: info
-          });
-
-          _this11.personsSource.addFeature(ft);
-        }
-
-        if (person.placeAchievementCoords && person.placeAchievementCoords.length) {
-          person.placeAchievementCoords[1] = person.placeAchievementCoords[1] - person.placeAchievementCoords[1] / 200; //поправка для слияния нескольких точек в одну
-
-          var _ft = new ol.Feature({
-            kind: 'persons',
-            geometry: new ol.geom.Point(ol.proj.fromLonLat(person.placeAchievementCoords)),
-            info: info
-          });
-
-          _this11.personsSource.addFeature(_ft);
-        }
-      });
-    }
-  }, {
-    key: "setCurrentEventMap",
-    value: function setCurrentEventMap(map) {//this.showEventContour(map)
-      //this.currentEventMap = map
-    }
-  }, {
-    key: "showEventContour",
-    value: function showEventContour(map) {
-      this.historyEventsSource.clear();
-      this.hullSource.clear();
-      var features = map.features;
-
-      if (!features) {
-        return;
-      }
-
-      var all_coords = [];
-
-      for (var i = 0; i < features.length; i++) {
-        var geom = features[i].geometry;
-        var style_prop = features[i].properties;
-        var style = {};
-
-        if (style_prop.fill) {
-          style.fill = new ol.style.Fill({
-            color: this.hexToRgbA(style_prop.fill, style_prop['fill-opacity'])
-          });
-        }
-
-        if (style_prop.stroke) {
-          style.stroke = new ol.style.Stroke({
-            color: this.hexToRgbA(style_prop.stroke, style_prop['stroke-opacity']),
-            width: style_prop['stroke-width']
-          });
-        }
-
-        var coords = [];
-
-        if (geom.type === 'Point') {
-          coords = new ol.proj.fromLonLat(geom.coordinates);
-          all_coords.push(coords);
-        } else {
-          var srcCoords = geom.type === 'Polygon' ? geom.coordinates[0] : geom.coordinates;
-
-          for (var j = 0; j < srcCoords.length; j++) {
-            var point = new ol.proj.fromLonLat(srcCoords[j]);
-            coords.push(point);
-            all_coords.push(point);
-          }
-
-          if (geom.type === 'Polygon') {
-            coords = [coords];
-          }
-        }
-
-        var _ft2 = new ol.Feature({
-          uid: 100,
-          name: 'test',
-          geometry: this.createGeom({
-            kind: geom.type,
-            coords: coords
-          })
-        });
-
-        _ft2.setStyle(new ol.style.Style(style));
-
-        this.historyEventsSource.addFeature(_ft2);
-      }
-
-      var hull_indexes = (0, _monotoneConvexHull2d.default)(all_coords);
-      var hull_coords = [];
-      hull_indexes.forEach(function (idx) {
-        hull_coords.push(all_coords[idx]);
-      });
-      var polygon = this.createGeom({
-        kind: 'Polygon',
-        coords: [hull_coords]
-      });
-      polygon.scale(1.03, 1.03);
-      var ft = new ol.Feature({
-        uid: 1000,
-        name: 'test2',
-        geometry: polygon
-      });
-      this.hullSource.addFeature(ft); // this.view.animate({
-      //   center: this.getCenterOfMap(map),
-      //   duration: 500
-      // })
-    }
-  }, {
-    key: "_addButtons",
-    value: function _addButtons() {
-      var _this12 = this;
-
-      this.map.addControl(new CustomControl({
-        caption: 'Выбрать объект',
-        class: 'pointer-control',
-        icon: 'mdi mdi-cursor-default-outline',
-        default: true,
-        handler: function handler(btn) {
-          _this12._setActiveButton(btn);
-
-          _this12.map.removeInteraction(_this12.draw);
-
-          _this12.map.removeInteraction(_this12.snap);
-        }
-      }));
-      this.map.addControl(new CustomControl({
-        caption: 'Импортировать объекты из geojson-файла',
-        class: 'box-control',
-        icon: 'mdi mdi-import',
-        handler: function handler(btn) {
-          _this12._setActiveButton(btn);
-
-          document.getElementById('fileImport').click();
-        }
-      }));
-    }
-  }, {
-    key: "_setActiveButton",
-    value: function _setActiveButton(btn) {
-      if (this.activeButton) {
-        $(this.activeButton).removeClass('glow-button');
-      }
-
-      this.activeButton = btn;
-      $(btn).addClass('glow-button');
-    }
-  }, {
-    key: "_getStyleFunction",
-    value: function _getStyleFunction(feature, resolution) {
-      var stroke = new ol.style.Stroke({
-        color: '#ff0000',
-        width: 1
-      });
-      var fill = new ol.style.Fill({
-        color: 'rgba(255, 255, 0, 0.2)'
-      });
-      var imageStyle = new ol.style.Circle({
-        radius: 5,
-        fill: new ol.style.Fill({
-          color: 'red'
-        }),
-        stroke: new ol.style.Stroke({
-          color: 'black',
-          width: 1
-        })
-      });
-      var textColor = 'red';
-
-      switch (feature.get('country')) {
-        case 'germany':
-          stroke = new ol.style.Stroke({
-            color: '#000000',
-            width: 1
-          });
-          imageStyle = new ol.style.Circle({
-            radius: 5,
-            fill: new ol.style.Fill({
-              color: 'black'
-            }),
-            stroke: new ol.style.Stroke({
-              color: 'black',
-              width: 1
-            })
-          });
-          textColor = 'black';
-      }
-
-      return new ol.style.Style({
-        fill: fill,
-        stroke: stroke,
-        image: imageStyle,
-        text: this._createTextStyle.call(this, feature, resolution, {
-          align: 'center',
-          baseline: 'middle',
-          size: '14px',
-          offsetX: 0,
-          offsetY: 15,
-          weight: 'bold',
-          overflow: 'true',
-          rotation: 0,
-          font: 'Arial',
-          color: textColor,
-          outline: 'black',
-          outlineWidth: 0,
-          maxreso: 20000
-        })
-      });
-    }
-  }, {
-    key: "_createTextStyle",
-    value: function _createTextStyle(feature, resolution, dom) {
-      var align = dom.align;
-      var baseline = dom.baseline;
-      var size = dom.size;
-      var offsetX = parseInt(dom.offsetX, 10);
-      var offsetY = parseInt(dom.offsetY, 10);
-      var weight = dom.weight;
-      var placement = dom.placement ? dom.placement : undefined;
-      var maxAngle = dom.maxangle ? parseFloat(dom.maxangle) : undefined;
-      var overflow = dom.overflow ? dom.overflow == 'true' : undefined;
-      var rotation = parseFloat(dom.rotation);
-      var font = weight + ' ' + size + ' ' + dom.font;
-      var fillColor = dom.color;
-      var outlineColor = dom.outline;
-      var outlineWidth = parseInt(dom.outlineWidth, 10);
-      return new ol.style.Text({
-        textAlign: align == '' ? undefined : align,
-        textBaseline: baseline,
-        font: font,
-        text: this._getText(feature, resolution, dom),
-        fill: new ol.style.Fill({
-          color: fillColor
-        }),
-        stroke: outlineWidth == 0 ? undefined : new ol.style.Stroke({
-          color: outlineColor,
-          width: outlineWidth
-        }),
-        offsetX: offsetX,
-        offsetY: offsetY,
-        placement: placement,
-        maxAngle: maxAngle,
-        overflow: overflow,
-        rotation: rotation
-      });
-    }
-  }, {
-    key: "_getText",
-    value: function _getText(feature, resolution, dom) {
-      var type = dom.text;
-      var maxResolution = dom.maxreso;
-      var text = feature.get('name');
-      text = text || '';
-
-      if (resolution > maxResolution) {
-        text = '';
-      } else if (type == 'hide') {
-        text = '';
-      } else if (type == 'shorten') {
-        text = text.trunc(12);
-      } else if (type == 'wrap' && dom.placement != 'line') {
-        text = stringDivider(text, 16, '\n');
-      }
-
-      return text;
     }
   }], [{
     key: "create",
@@ -2601,210 +616,14 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
 
 exports.MapControl = MapControl;
 
-var SuperCustomControl = /*#__PURE__*/function (_ol$control$Control) {
-  _inherits(SuperCustomControl, _ol$control$Control);
-
-  var _super2 = _createSuper(SuperCustomControl);
-
-  function SuperCustomControl(inputParams) {
-    _classCallCheck(this, SuperCustomControl);
-
-    return _super2.call(this, inputParams);
-  }
-
-  _createClass(SuperCustomControl, [{
-    key: "getBSIconHTML",
-    value: function getBSIconHTML(name) {
-      return '<span class="' + name + '"></span>';
-    }
-  }]);
-
-  return SuperCustomControl;
-}(ol.control.Control);
-
-var CustomControl = /*#__PURE__*/function (_SuperCustomControl) {
-  _inherits(CustomControl, _SuperCustomControl);
-
-  var _super3 = _createSuper(CustomControl);
-
-  function CustomControl(inputParams) {
-    var _this13;
-
-    _classCallCheck(this, CustomControl);
-
-    _this13 = _super3.call(this, inputParams);
-    var caption = get(inputParams, 'caption');
-    var hint = get(inputParams, 'hint') || caption;
-    var button = document.createElement('button');
-    button.innerHTML = _this13.getBSIconHTML(get(inputParams, 'icon'));
-    button.className = get(inputParams, 'class');
-    button.title = hint;
-    var parentDiv = $('#custom-control')[0];
-
-    if (!parentDiv) {
-      parentDiv = document.createElement('div');
-      parentDiv.className = 'ol-control';
-      parentDiv.setAttribute('id', 'custom-control');
-    }
-
-    parentDiv.appendChild(button);
-    _this13.element = parentDiv;
-    ol.control.Control.call(_assertThisInitialized(_this13), {
-      label: caption,
-      hint: hint,
-      tipLabel: caption,
-      element: parentDiv // target: get(inputParams, "target")
-
-    });
-    var handler = get(inputParams, 'handler');
-
-    if (handler) {
-      button.addEventListener('click', function () {
-        handler(button);
-      }, false);
-      button.addEventListener('touchstart', function () {
-        handler(button);
-      }, false);
-    }
-
-    var isDefault = get(inputParams, 'default');
-
-    if (isDefault) {
-      handler(button);
-    }
-
-    return _this13;
-  }
-
-  return CustomControl;
-}(SuperCustomControl);
-
-var YearControl = /*#__PURE__*/function (_SuperCustomControl2) {
-  _inherits(YearControl, _SuperCustomControl2);
-
-  var _super4 = _createSuper(YearControl);
-
-  _createClass(YearControl, null, [{
-    key: "min_year",
-    get: function get() {
-      return min_year;
-    }
-  }, {
-    key: "max_year",
-    get: function get() {
-      return max_year;
-    }
-  }]);
-
-  function YearControl(inputParams) {
-    var _this14;
-
-    _classCallCheck(this, YearControl);
-
-    _this14 = _super4.call(this, inputParams);
-    var caption = inputParams.caption;
-    var hint = inputParams.hint || caption;
-    _this14.year = inputParams.year;
-    _this14.handler = inputParams.handler;
-    var yearInput = document.createElement('input');
-    yearInput.className = 'input-without-focus';
-    yearInput.title = hint;
-    yearInput.setAttribute('id', 'year-input');
-    yearInput.value = _this14.year;
-    yearInput.addEventListener('keyup', function (event) {
-      if (event.keyCode == 13) {
-        _this14._inputKeyUp();
-
-        event.preventDefault();
-      }
-    });
-    _this14.yearInput = yearInput;
-    var yearLeftButton = document.createElement('button');
-    yearLeftButton.innerHTML = _this14.getBSIconHTML('mdi mdi-step-backward-2');
-    yearLeftButton.title = 'Предыдущий год';
-    yearLeftButton.setAttribute('id', 'year-left-button');
-    yearLeftButton.addEventListener('click', function () {
-      _this14._leftButtonClick();
-    }, false); // yearLeftButton.addEventListener('touchstart', () => { this._leftButtonClick(); }, false);
-
-    var yearRightButton = document.createElement('button');
-    yearRightButton.innerHTML = _this14.getBSIconHTML('mdi mdi-step-forward-2');
-    yearRightButton.title = 'Следующий год';
-    yearRightButton.setAttribute('id', 'year-right-button');
-    yearRightButton.addEventListener('click', function () {
-      _this14._rightButtonClick();
-    }, false); // yearRightButton.addEventListener('touchstart', () => { this._rightButtonClick(); }, false);
-
-    var parentDiv = document.createElement('div');
-    parentDiv.className = 'ol-control';
-    parentDiv.setAttribute('id', 'year-control');
-    parentDiv.appendChild(yearLeftButton);
-    parentDiv.appendChild(yearInput);
-    parentDiv.appendChild(yearRightButton);
-    _this14.element = parentDiv;
-    ol.control.Control.call(_assertThisInitialized(_this14), {
-      label: 'test',
-      hint: 'test',
-      tipLabel: caption,
-      element: parentDiv // target: get(inputParams, "target")
-
-    });
-    return _this14;
-  }
-
-  _createClass(YearControl, [{
-    key: "_leftButtonClick",
-    value: function _leftButtonClick() {
-      if (!this._checkYear(this.year, -1)) return;
-      this.year = parseInt(this.year) - 1;
-
-      this._setNewYear(this.year);
-    }
-  }, {
-    key: "_rightButtonClick",
-    value: function _rightButtonClick() {
-      if (!this._checkYear(this.year, +1)) return;
-      this.year = parseInt(this.year) + 1;
-
-      this._setNewYear(this.year);
-    }
-  }, {
-    key: "_inputKeyUp",
-    value: function _inputKeyUp() {
-      var year = this.yearInput.value;
-
-      if (!this._checkYear(year, 0, this.year)) {
-        this.yearInput.value = this.year;
-        return;
-      }
-
-      this.year = parseInt(year);
-
-      this._setNewYear(this.year);
-    }
-  }, {
-    key: "_checkYear",
-    value: function _checkYear(year, incr) {
-      var oldValue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-      var reg = /^[1,2][8,9,0]\d{2}$/;
-      if (!reg.test(year)) return false;
-      var intYear = parseInt(year) + incr;
-      if (intYear < YearControl.min_year) return false;
-      if (intYear > YearControl.max_year) return false;
-      if (oldValue == intYear) return false;
-      return true;
-    }
-  }, {
-    key: "_setNewYear",
-    value: function _setNewYear(year) {
-      this.yearInput.value = this.year;
-      this.handler(this.year);
-    }
-  }]);
-
-  return YearControl;
-}(SuperCustomControl);
-},{"./eventEmitter":"STwH","monotone-convex-hull-2d":"nEKu","../helper/strHelper":"IGBU"}],"imeZ":[function(require,module,exports) {
+window.onpopstate = function (event) {
+  var map = window.map;
+  map.isDisableSavePermalink = true;
+  map.isDisableMoveend = true;
+  event.state ? map.readViewFromState.call(map, event.state) : map.readViewFromPermalink.call(map);
+  map.updateView.call(map);
+};
+},{"./eventEmitter":"STwH"}],"imeZ":[function(require,module,exports) {
 /**
  * Parses an URI
  *
@@ -12392,12 +10211,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -12488,8 +10301,8 @@ var ClientProtocol = /*#__PURE__*/function (_EventEmitter) {
       this.lang = lang;
     }
   }, {
-    key: "getHistoryEventsByYear",
-    value: function getHistoryEventsByYear(year) {
+    key: "getDataByYear",
+    value: function getDataByYear(year) {
       var _this2 = this;
 
       if (undefined === year) {
@@ -12498,70 +10311,10 @@ var ClientProtocol = /*#__PURE__*/function (_EventEmitter) {
 
       _cookieHelper.CookieHelper.setCookie('year', year);
 
-      this.socket.emit('clQueryEvents', JSON.stringify({
+      this.socket.emit('clQueryDataByYear', JSON.stringify({
         year: year
       }), function (msg) {
-        var data = JSON.parse(msg);
-        data.events.sort(function (a, b) {});
-        var events = data.events.map(function (event) {
-          return _objectSpread(_objectSpread({}, event), {}, {
-            id: event._name,
-            startDate: _this2._getStrDateFromEvent(event.startDate),
-            endDate: _this2._getStrDateFromEvent(event.endDate),
-            maps: event.maps,
-            name: _this2._getDictName(event._name)
-          });
-        });
-        var agreements = data.agreements.map(function (agreement) {
-          return {
-            id: agreement._id,
-            kind: agreement.kind,
-            place: agreement.place,
-            placeCoords: agreement.placeCoords,
-            startDate: _this2._getStrDateFromEvent(agreement.startDate),
-            endDate: _this2._getStrDateFromEvent(agreement.endDate),
-            player1: agreement.player1,
-            player2: agreement.player2,
-            results: agreement.results,
-            imgUrl: agreement.imgUrl,
-            srcUrl: agreement.srcUrl
-          };
-        });
-        var chronos = data.chronos.map(function (chrono) {
-          return {
-            id: chrono._id,
-            place: chrono.place,
-            placeCoords: chrono.placeCoords,
-            startDate: _this2._getStrDateFromEvent(chrono.startDate),
-            isOnlyYear: chrono.isOnlyYear,
-            brief: chrono.brief,
-            srcUrl: chrono.srcUrl
-          };
-        });
-        var persons = data.persons.map(function (person) {
-          return {
-            id: person._id,
-            surname: person.surname,
-            name: person.name,
-            middlename: person.middlename,
-            dateBirth: _this2._getStrDateFromEvent(person.dateBirth),
-            dateDeath: _this2._getStrDateFromEvent(person.dateDeath),
-            description: person.description,
-            fullDescription: person.fullDescription,
-            photoUrl: person.photoUrl,
-            placeAchieventCoords: person.placeAchieventCoords,
-            placeBirthCoords: person.placeBirthCoords,
-            placeDeathCoords: person.placeDeathCoords,
-            srcUrl: person.srcUrl
-          };
-        });
-
-        _this2.emit('refreshInfo', {
-          events: events,
-          agreements: agreements,
-          chronos: chronos,
-          persons: persons
-        });
+        _this2.emit('refreshInfo', JSON.parse(msg));
       });
     }
   }], [{
@@ -12575,225 +10328,7 @@ var ClientProtocol = /*#__PURE__*/function (_EventEmitter) {
 }(_eventEmitter.EventEmitter);
 
 exports.ClientProtocol = ClientProtocol;
-},{"socket.io-client":"gT2G","./eventEmitter":"STwH","./cookieHelper":"WAuT"}],"LhR7":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.HistoryEventsControl = void 0;
-
-var _eventEmitter = require("./eventEmitter");
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-var HistoryEventsControl = /*#__PURE__*/function (_EventEmitter) {
-  _inherits(HistoryEventsControl, _EventEmitter);
-
-  var _super = _createSuper(HistoryEventsControl);
-
-  function HistoryEventsControl() {
-    var _this;
-
-    _classCallCheck(this, HistoryEventsControl);
-
-    _this = _super.call(this);
-    _this.listDiv = $('#events-info-content')[0];
-    _this.imgDiv = $('#event-image-div')[0];
-    _this.events = [];
-    _this.active_event = '';
-    _this.active_map = '';
-    $(document).ready(function () {
-      var c = $('#collapse-events-info');
-      var ch = $('#collapse-button').children();
-      c.on('shown.bs.collapse', function () {
-        ch.removeClass('mdi-chevron-double-up').addClass('mdi-chevron-double-down');
-      });
-      c.on('hidden.bs.collapse', function () {
-        ch.removeClass('mdi-chevron-double-down').addClass('mdi-chevron-double-up');
-      });
-    });
-    return _this;
-  }
-
-  _createClass(HistoryEventsControl, [{
-    key: "getHtmlForEvent",
-    value: function getHtmlForEvent(event, is_active) {
-      var html = '<tr data-href="' + event.id + '" class="hand-cursor' + (is_active ? ' event-active-row' : '') + '">';
-      html += '<td>' + event.startDate + '</td>';
-      html += '<td>' + event.endDate + '</td>';
-      var name = event.name;
-
-      if (event.kind == 'wmw') {
-        name = '<span class="event-name-color">' + event.name + '</span>';
-      }
-
-      if (1 < event.maps.length) {
-        var delim = '&nbsp';
-
-        for (var i = 0; i < event.maps.length; i++) {
-          name += delim + '<span class="event-feature-color" data-href="' + i + '">' + (i + 1) + '</span>';
-        }
-      }
-
-      html += '<td>' + name + '</td>';
-
-      var f = function f(value) {
-        if (Array.isArray(value)) {
-          return value.length > 0 ? value.join(', ').replace(/, /g, '<br/>') : '-';
-        } else {
-          if (value == undefined) return '-';
-          var tryFloat = parseFloat(value);
-
-          var _isNaN = typeof Number.isNaN !== 'undefined' ? Number.isNaN(tryFloat) : tryFloat !== tryFloat ? true : false;
-
-          return _isNaN ? value.replace(/, /g, '<br />') : tryFloat.toString();
-        }
-      };
-
-      html += '<td>' + f(event.allies) + '</td>';
-      html += '<td>' + f(event.enemies) + '</td>';
-      html += '<td>' + f(event.ally_troops) + '</td>';
-      html += '<td>' + f(event.enem_troops) + '</td>';
-      html += '<td>' + f(event.winner) + '</td>';
-      html += '</tr>';
-      return html;
-    }
-  }, {
-    key: "_resizeImage",
-    value: function _resizeImage(url, fixWidth, callback) {
-      var sourceImage = new Image();
-
-      sourceImage.onload = function () {
-        // Create a canvas with the desired dimensions
-        var canvas = document.createElement('canvas');
-        var imgWidth = this.width;
-        var aspectRatio = Math.round(imgWidth / fixWidth);
-        var imgHeight = this.height;
-        var fixHeight = Math.round(imgHeight / aspectRatio);
-        canvas.width = fixWidth;
-        canvas.height = fixHeight; // Scale and draw the source image to the canvas
-
-        var ctx = canvas.getContext('2d');
-        ctx.globalAlpha = 0.6;
-        ctx.drawImage(sourceImage, 0, 0, fixWidth, fixHeight); // Convert the canvas to a data URL in PNG format
-
-        if (callback) callback(canvas);
-      };
-
-      return sourceImage.src = url;
-    }
-  }, {
-    key: "_refreshEventImage",
-    value: function _refreshEventImage(event) {
-      var _this2 = this;
-
-      this.imgDiv.innerHTML = '';
-      if (!event.imgUrl) return;
-
-      this._resizeImage(event.imgUrl, 300, function (canvas) {
-        _this2.imgDiv.appendChild(canvas);
-      });
-    }
-  }, {
-    key: "setActiveEvent",
-    value: function setActiveEvent(event, map) {
-      if (event == this.active_event && event.maps[map] == this.active_map) return;
-
-      if (event != this.active_event) {//soli disable minimap this._refreshEventImage(event);
-      }
-
-      this.active_event = event;
-      this.active_map = event.maps[map];
-      this.emit('activatedEvent', {
-        event: this.active_event,
-        map: this.active_map
-      });
-    }
-  }, {
-    key: "rowEventClick",
-    value: function rowEventClick(tr) {
-      var isMapEventClick = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      var id = tr.attr('data-href');
-      if (!id) return;
-      tr.addClass('event-active-row').siblings().removeClass('event-active-row');
-      var activeEvent = this.events.filter(function (event) {
-        return event.id == id;
-      })[0];
-
-      if (!isMapEventClick) {
-        this.active_map = 0;
-        $('table tr td span').removeClass('event-feature-active-color');
-
-        if (1 < activeEvent.maps.length) {
-          var firstSpan = $(tr[0].childNodes[2]).children('span:first');
-          firstSpan.addClass('event-feature-active-color');
-        }
-      }
-
-      this.setActiveEvent(activeEvent, this.active_map);
-    }
-  }, {
-    key: "mapEventClick",
-    value: function mapEventClick(a) {
-      this.active_map = a.attr('data-href');
-      $('table tr td span').removeClass('event-feature-active-color');
-      a.addClass('event-feature-active-color');
-      var tr = a.parent().parent();
-      this.rowEventClick(tr, true);
-    }
-  }, {
-    key: "showEvents",
-    value: function showEvents(events) {
-      var _this3 = this;
-
-      this.active_map = 0;
-      this.listDiv.innerHTML = '';
-      this.events = events;
-      if (!events || 0 == events.length) return;
-      var html = "\n        <table class=\"table table-sm table-borderless\" id=\"table-events\">\n        <thead>\n            <tr>\n                <th scope=\"col\">\u041D\u0430\u0447\u0430\u043B\u043E</th>\n                <th scope=\"col\">\u041E\u043A\u043E\u043D\u0447\u0430\u043D\u0438\u0435</th>\n                <th scope=\"col\">\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435</th>\n                <th scope=\"col\" colspan=\"2\">\u0421\u0442\u043E\u0440\u043E\u043D\u044B</th>\n                <th scope=\"col\" colspan=\"2\">\u0421\u0438\u043B\u044B \u0441\u0442\u043E\u0440\u043E\u043D</th>\n                <th scope=\"col\">\u041F\u043E\u0431\u0435\u0434\u0438\u0442\u0435\u043B\u044C</th>\n            </tr>\n        </thead>\n        <tbody>\n        ";
-      var once = true;
-      events.forEach(function (event) {
-        html += _this3.getHtmlForEvent(event, once);
-        once = false;
-      });
-      html += '</tbody></table>';
-      this.listDiv.innerHTML = html;
-      this.emit('refreshedEventList');
-      this.setActiveEvent(events[0], this.active_map);
-    }
-  }], [{
-    key: "create",
-    value: function create() {
-      return new HistoryEventsControl();
-    }
-  }]);
-
-  return HistoryEventsControl;
-}(_eventEmitter.EventEmitter);
-
-exports.HistoryEventsControl = HistoryEventsControl;
-},{"./eventEmitter":"STwH"}],"juYr":[function(require,module,exports) {
+},{"socket.io-client":"gT2G","./eventEmitter":"STwH","./cookieHelper":"WAuT"}],"juYr":[function(require,module,exports) {
 var global = arguments[3];
 var process = require("process");
 var define;
@@ -23682,14 +21217,11 @@ var _mapControl = require("./mapControl");
 
 var _clientProtocol = require("./clientProtocol");
 
-var _historyEventsControl = require("./historyEventsControl");
-
 var _jquery = _interopRequireDefault(require("jquery"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 window.app = {};
-var app = window.app;
 
 function fixMapHeight() {
   console.log('fixMapHeight');
@@ -23701,22 +21233,8 @@ function fixMapHeight() {
   if (window.map) window.map.fixMapHeight();
 }
 
-function fixMiniMapVisible(isHide) {
-  return;
-  var elem = (0, _jquery.default)('#event-image-div');
-
-  if (isHide) {
-    (0, _jquery.default)('#event-image-div')[0].innerHTML = '';
-    elem.hide();
-    return;
-  }
-
-  var viewWidth = (0, _jquery.default)(window).width();
-  350 < viewWidth ? elem.show() : elem.hide();
-}
-
 function changeWindowSize() {
-  fixMapHeight(); //fixMiniMapVisible();
+  fixMapHeight();
 }
 
 window.onresize = fixMapHeight; //changeWindowSize
@@ -23727,40 +21245,20 @@ function startApp() {
   var mapControl = _mapControl.MapControl.create();
 
   protocol.subscribe('setCurrentYear', function (year) {
+    console.log("year from server ".concat(year));
     mapControl.setCurrentYearFromServer(year);
   });
-  mapControl.subscribe('changeYear', function (year) {
-    fixMiniMapVisible(true);
-    protocol.getHistoryEventsByYear(year);
-  });
-
-  var historyEventsControl = _historyEventsControl.HistoryEventsControl.create();
-
   protocol.subscribe('refreshInfo', function (info) {
     mapControl.refreshInfo(info);
-    historyEventsControl.showEvents(info.events);
   });
-  historyEventsControl.subscribe('refreshedEventList', function () {
-    (0, _jquery.default)('table tr').click(function () {
-      historyEventsControl.rowEventClick((0, _jquery.default)(this));
-      return false;
-    });
-    (0, _jquery.default)('table tr td span').click(function () {
-      historyEventsControl.mapEventClick((0, _jquery.default)(this));
-      return false;
-    });
+  mapControl.subscribe('changeYear', function (year) {
+    protocol.getDataByYear(year);
   });
-  historyEventsControl.subscribe('activatedEvent', function (data) {
-    mapControl.setCurrentEventMap(data.map);
-    fixMiniMapVisible();
-  });
-  window.map = mapControl; // var something = document.getElementById('content');
-  // something.style.cursor = 'pointer';
-
+  window.map = mapControl;
   (0, _jquery.default)(document.getElementsByClassName('ol-attribution ol-unselectable ol-control ol-collapsed')).remove();
   changeWindowSize();
 }
-},{"./mapControl":"p4qv","./clientProtocol":"VmvZ","./historyEventsControl":"LhR7","jquery":"juYr"}],"Focm":[function(require,module,exports) {
+},{"./mapControl":"p4qv","./clientProtocol":"VmvZ","jquery":"juYr"}],"Focm":[function(require,module,exports) {
 "use strict";
 
 var _main = require("./main.js");

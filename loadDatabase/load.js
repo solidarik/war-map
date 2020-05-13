@@ -5,7 +5,7 @@ const dateHelper = require('../helper/dateHelper')
 const DbHelper = require('../loadDatabase/dbHelper')
 const inetHelper = require('../helper/inetHelper')
 const strHelper = require('../helper/strHelper')
-const historyEventsJsonMediator = require('../loadDatabase/historyEventsJsonMediator')
+const battlesJsonMediator = require('../loadDatabase/battlesJsonMediator')
 const agreementsJsonMediator = require('../loadDatabase/agreementsJsonMediator')
 const chronosJsonMediator = require('../loadDatabase/chronosJsonMediator')
 const personsJsonMediator = require('../loadDatabase/personsJsonMediator')
@@ -82,28 +82,28 @@ Promise.resolve(true)
   //     mediator: agreementsJsonMediator,
   //   })
   // })
-  // .then(() => {
-  //   return dbHelper.clearDb('historyEvents')
-  // })
-  // .then(() => {
-  //   return dbHelper.saveFilesFrom({
-  //     source: 'python/out_battles',
-  //     procdir: 'python/out_battles_process',
-  //     errdir: 'python/out_battles_errors',
-  //     mediator: historyEventsJsonMediator,
-  //   })
-  // })
   .then(() => {
-    return dbHelper.clearDb('persons')
+    return dbHelper.clearDb('battles')
   })
   .then(() => {
     return dbHelper.saveFilesFrom({
-      source: '../public/data/persons.json',
-      procdir: 'out/out_person_process',
-      errdir: 'out/out_person_errors',
-      mediator: personsJsonMediator,
+      source: 'python/out_battles',
+      procdir: 'python/out_battles_process',
+      errdir: 'python/out_battles_errors',
+      mediator: battlesJsonMediator,
     })
   })
+  // .then(() => {
+  //   return dbHelper.clearDb('persons')
+  // })
+  // .then(() => {
+  //   return dbHelper.saveFilesFrom({
+  //     source: '../public/data/persons.json',
+  //     procdir: 'out/out_person_process',
+  //     errdir: 'out/out_person_errors',
+  //     mediator: personsJsonMediator,
+  //   })
+  // })
   .then(() => {
     log.success(chalk.cyan(`окончание процесса загрузки`))
     dbHelper.free()

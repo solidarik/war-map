@@ -1,23 +1,26 @@
 const mongoose = require('mongoose')
 
-var historyEventsSchema = new mongoose.Schema(
+var battlesSchema = new mongoose.Schema(
   {
     _name: mongoose.Schema.ObjectId,
     filename: String,
     startDate: {
       type: Date,
-      required: 'Не задана начальная дата события'
+      required: 'Не задана начальная дата события',
     },
     endDate: Date,
     kind: String,
+    point: [],
     pageId: Number,
     imgUrl: String,
     srcUrl: String,
     enemies: [],
     allies: [],
     winner: String,
+    isWinnerUSSR: Boolean,
+    isWinnerGermany: Boolean,
     maps: [],
-    corvexes: [],
+    hullCoords: [],
     ally_troops: String,
     ally_tanks_cnt: String,
     ally_airplans_cnt: String,
@@ -45,17 +48,13 @@ var historyEventsSchema = new mongoose.Schema(
     enem_tanks_lost: String,
     enem_airplans_lost: String,
     enem_ships_lost: String,
-    enem_submarines_lost: String
+    enem_submarines_lost: String,
   },
   {
-    timestamps: false
+    timestamps: false,
   }
 )
 
-historyEventsSchema.statics.publicFields = ['startDate', 'endDate']
+battlesSchema.statics.publicFields = ['startDate', 'endDate']
 
-module.exports = mongoose.model(
-  'historyEvents',
-  historyEventsSchema,
-  'historyEvents'
-)
+module.exports = mongoose.model('battles', battlesSchema, 'battles')
