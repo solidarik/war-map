@@ -40,7 +40,7 @@ class StrHelper {
     return ret
   }
 
-  hexToRgbA(hex, opacity) {
+  static hexToRgbA(hex, opacity) {
     var c
     if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
       c = hex.substring(1).split('')
@@ -53,7 +53,7 @@ class StrHelper {
     throw new Error(`Bad Hex ${hex}`)
   }
 
-  getNumber(value) {
+  static getNumber(value) {
     if (value == undefined) return 0
     const tryFloat = parseFloat(value)
     const isNaN =

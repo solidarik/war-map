@@ -1,4 +1,5 @@
 import { MapControl } from './mapControl'
+import { LegendControl } from './legendControl'
 import { ClientProtocol } from './clientProtocol'
 import $ from 'jquery'
 window.app = {}
@@ -23,6 +24,7 @@ window.onresize = fixMapHeight //changeWindowSize
 function startApp() {
   const protocol = ClientProtocol.create()
   const mapControl = MapControl.create()
+  const legendControl = LegendControl.create()
 
   protocol.subscribe('setCurrentYear', (year) => {
     console.log(`year from server ${year}`)
@@ -30,6 +32,12 @@ function startApp() {
   })
 
   protocol.subscribe('refreshInfo', (info) => {
+    //сначала данные проходят через одноименный фильтр контрола легенды
+    legendControl.refreshInfo(info)
+  })
+
+  legendControl.subscribe('refreshInfo', (info) => {
+    //...и потом поступают в контрол карты
     mapControl.refreshInfo(info)
   })
 
@@ -38,6 +46,7 @@ function startApp() {
   })
 
   window.map = mapControl
+  window.legend = legendControl
 
   $(
     document.getElementsByClassName(

@@ -1,11 +1,8 @@
 const AgreementsModel = require('../models/agreementsModel')
-const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol')
 const geoHelper = require('../helper/geoHelper')
 const inetHelper = require('../helper/inetHelper')
-const fileHelper = require('../helper/fileHelper')
 const SuperJsonMediator = require('./superJsonMediator')
 const moment = require('moment')
-const log = require('../helper/logHelper')
 
 class AgreementsJsonMediator extends SuperJsonMediator {
   constructor() {
@@ -16,21 +13,18 @@ class AgreementsJsonMediator extends SuperJsonMediator {
 
   processJson(json) {
     return new Promise((resolve, reject) => {
-      let promises = [
-        //dictEngRusProtocol.getEngRusObjectId(json.name),
-        inetHelper.getCoordsForCityOrCountry(json.place),
-      ]
+      let promises = [inetHelper.getCoordsForCityOrCountry(json.place)]
 
       Promise.all(promises)
         .then((placeCoords) => {
           placeCoords = placeCoords[0]
+          placeCoords = geoHelper.fromLonLat([placeCoords.lon, placeCoords.lat])
           const newJson = {
-            // _name: name_id,
             startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
             endDate: moment.utc(json.endDate, 'DD.MM.YYYY'),
             kind: json.kind ? json.kind : '',
             place: json.place,
-            placeCoords: placeCoords ? [placeCoords.lon, placeCoords.lat] : [],
+            point: placeCoords ? placeCoords : [],
             player1: json.player1,
             player2: json.player2,
             results: json.results,

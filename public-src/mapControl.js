@@ -1,7 +1,10 @@
 // import ol from './libs/ol'
 // import olExt from './libs/ol-ext.min'
 import { EventEmitter } from './eventEmitter'
-//import battleLayer from './mapLayers/battleLayer'
+import BattleLayer from './mapLayers/battleLayer'
+import AgreementFeature from './mapLayers/agreementFeature'
+import BattleFeature from './mapLayers/battleFeature'
+import DateHelper from '../helper/dateHelper'
 
 const MAP_PARAMS = {
   min_year: 1914,
@@ -53,7 +56,7 @@ export class MapControl extends EventEmitter {
       },
       positioning: 'auto',
       autoPan: true,
-      autoPanAnimation: { duration: this.isEnableAnimate ? 800 : 0 },
+      autoPanAnimation: { duration: this.isEnableAnimate ? 250 : 0 },
     })
 
     const map = new ol.Map({
@@ -72,49 +75,46 @@ export class MapControl extends EventEmitter {
       view: view,
     })
 
-    var styleCache = {}
     function getStyleCluster(feature, _) {
       const size = feature.get('features').length
-      let style = styleCache[size]
-      if (!style) {
-        //todo add support styles by kind for single feature
-        // if (size == 1) {
-        //   style = styleCache[size] = window.map.battlesStyleFunc(
-        //     feature.get('features')[0],
-        //     window.map.view.getZoom()
-        //   )
-        //   return style
-        // }
-        const redColor = '255,0,51'
-        const cyanColor = '0,162,232'
-        const greenColor = '34,177,76'
-        const color = size > 10 ? redColor : size > 5 ? greenColor : cyanColor
-        const radius = Math.max(8, Math.min(size, 20)) + 5
-        let dash = (2 * Math.PI * radius) / 6
-        dash = [0, dash, dash, dash, dash, dash, dash]
-        style = styleCache[size] = new ol.style.Style({
-          image: new ol.style.Circle({
-            radius: radius,
-            stroke: new ol.style.Stroke({
-              color: 'rgba(' + color + ',0.6)',
-              width: 15,
-              lineDash: dash,
-              lineCap: 'butt',
-            }),
-            fill: new ol.style.Fill({
-              color: 'rgba(' + color + ',0.9)',
-            }),
-          }),
-          text: new ol.style.Text({
-            text: size.toString(),
-            font: '14px Helvetica',
-            //textBaseline: 'top',
-            fill: new ol.style.Fill({
-              color: '#fff',
-            }),
-          }),
-        })
+      if (size == 1) {
+        const oneFeature = feature.get('features')[0]
+        const featureClass = oneFeature.get('featureClass')
+        const style = featureClass.getStyleFeature(
+          oneFeature,
+          window.map.view.getZoom()
+        )
+        return style
       }
+      const redColor = '255,0,51'
+      const cyanColor = '0,162,232'
+      const greenColor = '34,177,76'
+      const color = size > 10 ? redColor : size > 5 ? greenColor : cyanColor
+      const radius = Math.max(8, Math.min(size, 20)) + 5
+      let dash = (2 * Math.PI * radius) / 6
+      dash = [0, dash, dash, dash, dash, dash, dash]
+      const style = new ol.style.Style({
+        image: new ol.style.Circle({
+          radius: radius,
+          stroke: new ol.style.Stroke({
+            color: 'rgba(' + color + ',0.6)',
+            width: 15,
+            lineDash: dash,
+            lineCap: 'butt',
+          }),
+          fill: new ol.style.Fill({
+            color: 'rgba(' + color + ',0.9)',
+          }),
+        }),
+        text: new ol.style.Text({
+          text: size.toString(),
+          font: '14px Helvetica',
+          //textBaseline: 'top',
+          fill: new ol.style.Fill({
+            color: '#fff',
+          }),
+        }),
+      })
       return style
     }
 
@@ -133,70 +133,6 @@ export class MapControl extends EventEmitter {
 
     this.clusterSource = clusterSource
 
-    // Style for selection
-    const apartClusterStyle = new ol.style.Style({
-      image: new ol.style.Circle({
-        radius: 5,
-        stroke: new ol.style.Stroke({
-          color: 'rgba(0,255,255,1)',
-          width: 1,
-        }),
-        fill: new ol.style.Fill({
-          color: 'rgba(0,255,255,0.3)',
-        }),
-      }),
-      // Draw a link beetween points (or not)
-      stroke: new ol.style.Stroke({
-        color: '#fff',
-        width: 1,
-      }),
-    })
-    // Select interaction to spread cluster out and select features
-    const selectCluster = new ol.interaction.SelectCluster({
-      // Point radius: to calculate distance between the features
-      pointRadius: 7,
-      animate: this.isEnableAnimate,
-      // Feature style when it springs apart
-      featureStyle: function () {
-        return [apartClusterStyle]
-      },
-      // selectCluster: false,	// disable cluster selection
-      // Style to draw cluster when selected
-      style: function (f, res) {
-        var cluster = f.get('features')
-        if (cluster.length > 1) {
-          var s = [getStyleCluster(f, res)]
-          return s
-        } else {
-          return [
-            new ol.style.Style({
-              image: new ol.style.Circle({
-                stroke: new ol.style.Stroke({
-                  color: 'rgba(0,0,192,0.5)',
-                  width: 2,
-                }),
-                fill: new ol.style.Fill({ color: 'rgba(0,0,192,0.3)' }),
-                radius: 5,
-              }),
-            }),
-          ]
-        }
-      },
-    })
-    map.addInteraction(selectCluster)
-
-    selectCluster.getFeatures().on(['add'], function (e) {
-      var c = e.element.get('features')
-      if (c.length == 1) {
-        console.log('One feature selected... id ' + c[0].get('id'))
-      } else {
-        console.log(`Cluster ${c.length} features`)
-      }
-    })
-    // selectCluster.getFeatures().on(['remove'], function (e) {
-    //   console.log('')
-    // })
-
     map.on('click', (event) => {
       window.map.popup.hide()
 
@@ -205,16 +141,39 @@ export class MapControl extends EventEmitter {
       console.log(`clicked on map: ${coordinates}; WGS: ${lonLatCoords}`)
 
       let featureEvent = undefined
-      const isHit = map.forEachFeatureAtPixel(event.pixel, (feature, _) => {
-        featureEvent = feature
-        return feature.get('kind')
-      })
+      const isHit = map.forEachFeatureAtPixel(
+        event.pixel,
+        (feature, _) => {
+          featureEvent = feature
+          return feature.get('kind')
+        },
+        { hitTolerance: 5 }
+      )
 
       if (!featureEvent) return
-      const kind = featureEvent.get('kind')
+      const features = featureEvent.get('features')
+
+      let htmlContent = ''
+      if (features.length == 1) {
+        const feature = features[0]
+        const featureClass = feature.get('featureClass')
+        const info = featureClass.getPopupInfo(feature)
+        htmlContent = `<div>${DateHelper.dateToStr(
+          info.date
+        )} <a href='./some'>${info.caption}</a>`
+      } else {
+        let featureContent = []
+        features.forEach((feature) => {
+          const featureClass = feature.get('featureClass')
+          featureContent.push(featureClass.getPopupInfo(feature))
+        })
+        console.log(`Cluster ${features.length} features`)
+      }
+
       //todo Showing HTML content
-      console.log(
-        'todo this place for showing html content of selected feature'
+      window.map.popup.show(
+        featureEvent.getGeometry().getFirstCoordinate(),
+        htmlContent
       )
       return
     })
@@ -386,16 +345,20 @@ export class MapControl extends EventEmitter {
     return geom
   }
 
+  addFeature(item, classFeature) {
+    const ft = new ol.Feature({
+      info: item,
+      featureClass: classFeature,
+      geometry: new ol.geom.Point(item.point),
+    })
+
+    this.clusterSource.getSource().addFeature(ft)
+  }
+
   refreshInfo(info) {
     this.clusterSource.getSource().clear()
-    info.battles.forEach((item, i) => {
-      let ft = new ol.Feature({
-        ...item,
-        geometry: new ol.geom.Point(item.point),
-      })
-
-      this.clusterSource.getSource().addFeature(ft)
-    })
+    info.battles.forEach((item) => this.addFeature(item, BattleFeature))
+    info.agreements.forEach((item) => this.addFeature(item, AgreementFeature))
   }
 }
 

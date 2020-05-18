@@ -1,41 +1,109 @@
 import convexHull from 'monotone-convex-hull-2d'
 import strHelper from '../../helper/strHelper'
-import SuperLayer from './superLayer'
+import SuperFeature from './superFeature'
 
-class BattleLayer extends SuperLayer {
-  constructor(feature) {
-    this.caption = 'Операции ВОВ/ВМВ'
-    this.kind = undefined
-    this.icon = 'public/undefined.icon'
-    this.features = []
-    // this.icon = 'data:image/svg+xml;utf8,'
-    // '<svg width="24" height="24" version="1.1" xmlns="http://www.w3.org/2000/svg">' +
-    // '<path d="M19.74,7.68l1-1L19.29,5.29l-1,1a10,10,0,1,0,1.42,1.42ZM12,22a8,8,0,1,1,8-8A8,8,0,0,1,12,22Z"/>' +
-    // '<rect x="7" y="1" width="10" height="2"/><polygon points="13 14 13 8 11 8 11 16 18 16 18 14 13 14"/>' +
-    // '</svg>'
+class BattleFeature extends SuperFeature {
+  static getIcon() {
+    return 'images/mapIcons/undefined_icon.png'
   }
 
-  addFeatures(feature) {
-    feature.kind = this.kind
-    this.features.push(feature)
+  static getCaptionInfo(info) {
+    return info.name
   }
 
-  getStyleFeature(feature, zoom) {
+  static getStarThreeIcon() {
+    return 'images/mapIcons/starThree.png'
+  }
+
+  static getWMWIcon() {
+    return 'images/mapIcons/starblue.png'
+  }
+
+  static getWOWIcon() {
+    return 'images/mapIcons/starwow.png'
+  }
+
+  static getRussiaWinnerIcon() {
+    return 'images/mapIcons/starred.png'
+  }
+
+  static getGermanyWinnerIcon() {
+    return 'images/mapIcons/starblack.png'
+  }
+
+  static getCaption(feature) {
+    return 'Операции ВОВ/ВМВ'
+  }
+
+  static getStyleFeature(feature, zoom) {
+    return this.getStarStyleFeature(feature, zoom)
+    //return this.getIconStyleFeature(feature, zoom)
+  }
+
+  static getIconStyleFeature(feature, zoom) {
     const info = feature.get('info')
 
-    const allyTroops = this.getNumber(info.ally_troops)
-    const enemTroops = this.getNumber(info.enem_troops)
-    let starSize = 10
+    const allyTroops = strHelper.getNumber(info.ally_troops)
+    const enemTroops = strHelper.getNumber(info.enem_troops)
+    const starSizes = [
+      { count: 2500, size: 1 },
+      { count: 5000, size: 1 },
+      { count: 70000, size: 1.2 },
+      { count: 100000, size: 1.5 },
+      { count: 200000, size: 1.6 },
+      { count: 500000, size: 1.8 },
+      { count: 1000000, size: 1.9 },
+      { count: 10000000000, size: 2 },
+    ]
+
+    if (allyTroops + enemTroops > 0) {
+      const v = allyTroops + enemTroops
+      for (let i = 0; i < starSizes.length; i++) {
+        if (v < starSizes[i].count) {
+          starSize = starSizes[i].size
+          break
+        }
+      }
+    }
+
+    const icon =
+      info.kind == 'wmw'
+        ? 'images/mapIcons/starblue.png'
+        : info.isWinnerUSSR == true
+        ? 'images/mapIcons/starred.png'
+        : 'images/mapIcons/starblack.png'
+
+    const style = new ol.style.Style({
+      image: new ol.style.Icon({
+        // anchor: [0, 0],
+        imgSize: [32, 32],
+        src: icon,
+        //color: '#ff0000',
+        // fill: new ol.style.Fill({ color: 'rgba(153,51,255,1)' }),
+        //scale: starSize,
+        radius: 7,
+        opacity: 1,
+      }),
+    })
+    return [style]
+  }
+
+  static getStarStyleFeature(feature, zoom) {
+    const info = feature.get('info')
+
+    const allyTroops = strHelper.getNumber(info.ally_troops)
+    const enemTroops = strHelper.getNumber(info.enem_troops)
+    let starSize = 4
 
     const starSizes = [
-      { count: 2500, size: 7 },
-      { count: 5000, size: 9 },
-      { count: 70000, size: 11 },
-      { count: 100000, size: 13 },
-      { count: 200000, size: 15 },
-      { count: 500000, size: 17 },
-      { count: 1000000, size: 19 },
-      { count: 10000000000, size: 21 },
+      { count: 2500, size: 6 },
+      { count: 5000, size: 8 },
+      { count: 70000, size: 10 },
+      { count: 100000, size: 11 },
+      { count: 200000, size: 12 },
+      { count: 500000, size: 14 },
+      { count: 1000000, size: 16 },
+      { count: 10000000000, size: 18 },
     ]
 
     if (allyTroops + enemTroops > 0) {
@@ -51,11 +119,11 @@ class BattleLayer extends SuperLayer {
     let style = new ol.style.Style({
       image: new ol.style.RegularShape({
         fill: new ol.style.Fill(
-          feature.get('kind') == 'wmw'
-            ? { color: 'rgba(102,102,255,0.9 ) ' }
-            : feature.get('isWinnerUSSR') == true
-            ? { color: 'rgba(255,0,0,0.6)' }
-            : { color: 'rgba(0,0,0,0.6)' } //black enemy
+          info.kind == 'wmw'
+            ? { color: 'rgba(102,102,255,0.9 ) ' } //blue color
+            : info.isWinnerUSSR == true
+            ? { color: 'rgba(255,0,0,0.6)' } //red color
+            : { color: 'rgba(0,0,0,0.6)' } //black color
         ),
         // stroke: new ol.style.Stroke({
         //   width: 0,
@@ -73,14 +141,13 @@ class BattleLayer extends SuperLayer {
   static getPopupInfo(feature) {
     const info = feature.get('info')
     return {
-      icon: getIcon(),
+      icon: this.getIcon(),
       date: info.startDate,
       caption: info.name,
-      feature: feature,
     }
   }
 
-  getHtmlInfo(feature) {
+  static getHtmlInfo(feature) {
     /*
     let content = `<h3>${info.name}</h3>`
       switch (kind) {
@@ -316,11 +383,11 @@ class BattleLayer extends SuperLayer {
     return <div>'Not implemented'</div>
   }
 
-  getInnerLayer(feature) {
+  static getInnerLayer(feature) {
     throw 'Not implemented'
   }
 
-  getAllCoordsFromMap(map) {
+  static getAllCoordsFromMap(map) {
     let all_coords = []
 
     for (let i = 0; i < map.features.length; i++) {
@@ -464,4 +531,4 @@ class BattleLayer extends SuperLayer {
   }
 }
 
-module.exports = BattleLayer
+module.exports = BattleFeature

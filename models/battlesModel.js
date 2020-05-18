@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 var battlesSchema = new mongoose.Schema(
   {
-    _name: mongoose.Schema.ObjectId,
+    name: String,
     filename: String,
     startDate: {
       type: Date,

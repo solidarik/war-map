@@ -24,6 +24,17 @@ class DateHelper {
     }
     return moment.utc(`${d}.${m}.${y}`, 'DD.MM.YYYY')
   }
+
+  static dateToStr(inputDate) {
+    let date = new Date(inputDate)
+    return (
+      ('0' + date.getDate()).slice(-2) +
+      '.' +
+      ('0' + (date.getMonth() + 1)).slice(-2) +
+      '.' +
+      date.getFullYear()
+    )
+  }
 }
 
 module.exports = DateHelper

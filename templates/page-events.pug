@@ -12,7 +12,7 @@ block head
   script(src="public-src.js" defer=defer)
 
   script.
-     (function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter52827664 = new Ya.Metrika({ id:52827664, clickmap:true, trackLinks:true, accurateTrackBounce:true }); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = "https://mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks");
+    (function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter52827664 = new Ya.Metrika({ id:52827664, clickmap:true, trackLinks:true, accurateTrackBounce:true }); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = "https://mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks");
 
 block content
   +header('events')
@@ -30,13 +30,10 @@ block content
           | ...
 
   div.content(role="content" id='content' dragable='true')
-    //- input(id='fileImport' accept='application/kml' type='file' style='display:none;')
     div.map(class='fill panel panel-default' id='map' data-role='map')
-    div(id='events-info-container')
-      button(id="collapse-button" class="btn btn-dark btn-small" type="button" data-toggle="collapse" data-target="#collapse-events-info" aria-expanded="false" aria-controls="collapseEventInfo")
-        span(class="mdi mdi-chevron-double-up")
-      div(class="collapse" id="collapse-events-info")
-        div(id='events-info-content' class='table-responsive')
-      //- div(id='event-image-div')
 
-  div(id="events-legend")
+
+    div(id='legend-container')
+      button(id='legend-button' class='btn btn-dark btn-small' type='button')
+          span(id='legend-span' class='mdi mdi-format-list-bulleted mdi-24px')
+      div(id='legend-div' class='legend-div-hide')
