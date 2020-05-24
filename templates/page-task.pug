@@ -1,22 +1,22 @@
 extends layout
 block head
   link(rel="stylesheet" href="/libs/materialdesignicons.min.css")
-  
+
   link(rel="stylesheet" href="/libs/ol.css")
   script(src="/libs/ol.js")
 
   link(rel="stylesheet" href="/libs/ol-ext.min.css")
   script(src="/libs/ol-ext.min.js")
-  
+
   link(rel='stylesheet' href='/style-person.css')
-  
-  
+
+
 
   script(src='/libs/oboe-browser.min.js')
   script(src='/libs/d3.min.js')
   script(src='/libs/jquery.min.js')
   script(src="/libs/bootstrap-notify.min.js")
-  
+
   script(src='/addTask.js')
 
   script(src='/main-task.js')
@@ -30,12 +30,12 @@ block content
             //-         .col-lg-12
             //-             blockquote
             //-                 h5 Описание задачи
-            //-                 h5(id='Name') 
+            //-                 h5(id='Name')
             //-                     | Задача
             //-                 small
-            //-                     cite(id='Workman' title='Исполнитоель') 
+            //-                     cite(id='Workman' title='Исполнитоель')
             //-                         | Имя
-            //-                     br    
+            //-                     br
             //-                     cite(id='Status' title='Статус')
             //-                         | В процессе
             //-                     br
@@ -48,24 +48,24 @@ block content
             .col-md-6
                 .row.details.detail-cont
                     blockquote
-                        h5 Случайная информация
+                        h5 Факты о войне
                 .row.details.detail-cont
                     p(id='Hint')
                         | Хинт
             .col-md-6
                 .row.details.detail-cont
                     blockquote
-                        h5 Этот день в истории 
-                .row.details.detail-cont        
+                        h5 Этот день в истории
+                .row.details.detail-cont
                     p(id='100YearsAgo')
-                        | В этот день Н лет назад             
+                        | В этот день Н лет назад
                     //- .card(style='width: 18rem;')
                     //-     img.card-img-top(src='...' alt='...')
                     //-     .card-body
                     //-         h5.card-title Card title
                     //-         p.card-text
                     //-         | Some quick example text to build on the card title and make up the bulk of the card&apos;s content.
-                    //-         a.btn.btn-primary(href='#') Go somewhere                                    
+                    //-         a.btn.btn-primary(href='#') Go somewhere
     //- div(id='persons-info-container')
     //-   button(id="collapse-person-button" class="btn btn-dark btn-small" type="button" data-toggle="collapse" data-target="#collapse-persons-info" aria-expanded="false" aria-controls="collapsePersonInfo")
     //-     span(class="mdi mdi-chevron-double-down")
@@ -73,6 +73,6 @@ block content
     //-     div(id='persons-info-content' class='table-responsive')
     //-          table.table.table-sm.table-borderless(id='persons-table')
 
-               
+
 
 
