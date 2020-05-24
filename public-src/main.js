@@ -33,20 +33,17 @@ function startApp() {
 
   protocol.subscribe('refreshInfo', (info) => {
     //сначала данные проходят через одноименный фильтр контрола легенды
-    legendControl.refreshInfo(info)
+    legendControl.refreshInfo.call(legendControl, info)
   })
 
   legendControl.subscribe('refreshInfo', (info) => {
     //...и потом поступают в контрол карты
-    mapControl.refreshInfo(info)
+    mapControl.refreshInfo.call(mapControl, info)
   })
 
   mapControl.subscribe('changeYear', (year) => {
     protocol.getDataByYear(year)
   })
-
-  window.map = mapControl
-  window.legend = legendControl
 
   $(
     document.getElementsByClassName(

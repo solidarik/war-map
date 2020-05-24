@@ -203,6 +203,7 @@ export class MapControl extends EventEmitter {
       }
     })
 
+    window.map = this
     this.map = map
     this.view = view
 
@@ -345,10 +346,10 @@ export class MapControl extends EventEmitter {
     return geom
   }
 
-  addFeature(item, classFeature) {
+  addFeature(item) {
     const ft = new ol.Feature({
       info: item,
-      featureClass: classFeature,
+      featureClass: item.classFeature,
       geometry: new ol.geom.Point(item.point),
     })
 
@@ -357,8 +358,7 @@ export class MapControl extends EventEmitter {
 
   refreshInfo(info) {
     this.clusterSource.getSource().clear()
-    info.battles.forEach((item) => this.addFeature(item, BattleFeature))
-    info.agreements.forEach((item) => this.addFeature(item, AgreementFeature))
+    info.forEach((item) => this.addFeature(item))
   }
 }
 

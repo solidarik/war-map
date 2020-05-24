@@ -329,8 +329,12 @@ body {
   z-index: 2;
   border-radius: 3px;
   background-color: rgba(20, 20, 20, 0.5) !important;
-  transition: max-width 0.1s ease-out, max-height 0.1s ease-out;
-  -webkit-transition: max-width 0.1s ease-out, max-height 0.1s ease-out;
+  /* transition: max-width 0.1s ease-out, max-height 0.1s ease-out;
+  -webkit-transition: max-width 0.1s ease-out, max-height 0.1s ease-out; */
+}
+
+#legend-div table {
+  color: whitesmoke;
 }
 
 .legend-div-hide {
@@ -354,13 +358,37 @@ body {
 }
 
 #legend-container td {
-  padding: 0.3em 0;
-  color: whitesmoke;
+  padding: 0.3em 0.5em;
+  cursor: pointer;
 }
 
 #legend-container td:first-child {
-  text-align: center;
-  cursor: default;
+  cursor: pointer;
+  text-align: right;
+  direction: rtl;
+}
+
+#legend-container td:first-child img {
+  margin-right: -10px;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.legend-filter-grayscale {
+  filter: grayscale(90%) contrast(60%);
+  color: silver;
+}
+
+#legend-container td:first-child img:first-child {
+  margin-right: 10px;
 }
 
 #legend-container td:last-child {
@@ -371,12 +399,6 @@ body {
 
 #legend-container table {
   margin-bottom: 0;
-}
-
-#legend-container td {
-  padding: 0.3em 0.5em;
-  cursor: pointer;
-  text-decoration: line-through;
 }
 
 table {

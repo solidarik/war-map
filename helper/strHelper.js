@@ -64,6 +64,10 @@ class StrHelper {
         : false
     return isNaN ? 0 : tryFloat
   }
+
+  static varToString(varObj) {
+    return Object.keys(varObj)[0]
+  }
 }
 
 module.exports = StrHelper

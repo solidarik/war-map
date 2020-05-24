@@ -950,6 +950,11 @@ var StrHelper = /*#__PURE__*/function () {
       var isNaN = typeof Number.isNaN !== 'undefined' ? Number.isNaN(tryFloat) : tryFloat !== tryFloat ? true : false;
       return isNaN ? 0 : tryFloat;
     }
+  }, {
+    key: "varToString",
+    value: function varToString(varObj) {
+      return Object.keys(varObj)[0];
+    }
   }]);
 
   return StrHelper;
@@ -8248,6 +8253,7 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
         map.getTargetElement().style.cursor = '';
       }
     });
+    window.map = _assertThisInitialized(_this);
     _this.map = map;
     _this.view = view;
     setTimeout(function () {
@@ -8388,10 +8394,10 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
     }
   }, {
     key: "addFeature",
-    value: function addFeature(item, classFeature) {
+    value: function addFeature(item) {
       var ft = new ol.Feature({
         info: item,
-        featureClass: classFeature,
+        featureClass: item.classFeature,
         geometry: new ol.geom.Point(item.point)
       });
       this.clusterSource.getSource().addFeature(ft);
@@ -8402,11 +8408,8 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       var _this3 = this;
 
       this.clusterSource.getSource().clear();
-      info.battles.forEach(function (item) {
-        return _this3.addFeature(item, _battleFeature.default);
-      });
-      info.agreements.forEach(function (item) {
-        return _this3.addFeature(item, _agreementFeature.default);
+      info.forEach(function (item) {
+        return _this3.addFeature(item);
       });
     }
   }], [{
@@ -8460,7 +8463,7141 @@ var ClassHelper = /*#__PURE__*/function () {
 }();
 
 module.exports = ClassHelper;
-},{}],"pD6K":[function(require,module,exports) {
+},{}],"uf5M":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var JsHelper = /*#__PURE__*/function () {
+  function JsHelper() {
+    _classCallCheck(this, JsHelper);
+  }
+
+  _createClass(JsHelper, null, [{
+    key: "fillArray",
+    value: function fillArray(value, len) {
+      if (len == 0) return [];
+      var a = [value];
+
+      while (a.length * 2 <= len) {
+        a = a.concat(a);
+      }
+
+      if (a.length < len) a = a.concat(a.slice(0, len - a.length));
+      return a;
+    }
+  }, {
+    key: "getMapSize",
+    value: function getMapSize(x) {
+      var len = 0;
+
+      for (var count in x) {
+        len++;
+      }
+
+      return len;
+    }
+  }]);
+
+  return JsHelper;
+}();
+
+module.exports = JsHelper;
+},{}],"WAuT":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CookieHelper = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var CookieHelper = /*#__PURE__*/function () {
+  function CookieHelper() {
+    _classCallCheck(this, CookieHelper);
+  }
+
+  _createClass(CookieHelper, null, [{
+    key: "getCookie",
+    value: function getCookie(name) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+      var matches = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
+      if (!matches) return defaultValue;
+      matches = decodeURIComponent(matches[1]);
+      return matches == 'undefined' ? defaultValue : matches;
+    }
+  }, {
+    key: "setCookie",
+    value: function setCookie(name, value, options) {
+      options = options || {};
+      var expires = options.expires;
+
+      if (typeof expires == 'number' && expires) {
+        var d = new Date();
+        d.setTime(d.getTime() + expires * 1000);
+        expires = options.expires = d;
+      }
+
+      if (expires && expires.toUTCString) {
+        options.expires = expires.toUTCString();
+      }
+
+      value = encodeURIComponent(value);
+      var updatedCookie = name + '=' + value;
+
+      for (var propName in options) {
+        updatedCookie += '; ' + propName;
+        var propValue = options[propName];
+
+        if (propValue !== true) {
+          updatedCookie += '=' + propValue;
+        }
+      }
+
+      document.cookie = updatedCookie;
+    }
+  }, {
+    key: "deleteCookie",
+    value: function deleteCookie(name) {
+      setCookie(name, '', {
+        expires: -1
+      });
+    }
+  }]);
+
+  return CookieHelper;
+}();
+
+exports.CookieHelper = CookieHelper;
+},{}],"KA50":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.abstract = abstract;
+exports.getUid = getUid;
+exports.VERSION = void 0;
+
+/**
+ * @module ol/util
+ */
+
+/**
+ * @return {?} Any return.
+ */
+function abstract() {
+  return (
+    /** @type {?} */
+    function () {
+      throw new Error('Unimplemented abstract method.');
+    }()
+  );
+}
+/**
+ * Counter for getUid.
+ * @type {number}
+ * @private
+ */
+
+
+var uidCounter_ = 0;
+/**
+ * Gets a unique ID for an object. This mutates the object so that further calls
+ * with the same object as a parameter returns the same value. Unique IDs are generated
+ * as a strictly increasing sequence. Adapted from goog.getUid.
+ *
+ * @param {Object} obj The object to get the unique ID for.
+ * @return {string} The unique ID for the object.
+ * @api
+ */
+
+function getUid(obj) {
+  return obj.ol_uid || (obj.ol_uid = String(++uidCounter_));
+}
+/**
+ * OpenLayers version.
+ * @type {string}
+ */
+
+
+var VERSION = '6.3.1';
+exports.VERSION = VERSION;
+},{}],"ZRwq":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _util = require("./util.js");
+
+var __extends = void 0 && (void 0).__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+/**
+ * @module ol/AssertionError
+ */
+
+
+/**
+ * Error object thrown when an assertion failed. This is an ECMA-262 Error,
+ * extended with a `code` property.
+ * See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error.
+ */
+var AssertionError =
+/** @class */
+function (_super) {
+  __extends(AssertionError, _super);
+  /**
+   * @param {number} code Error code.
+   */
+
+
+  function AssertionError(code) {
+    var _this = this;
+
+    var path = _util.VERSION === 'latest' ? _util.VERSION : 'v' + _util.VERSION.split('-')[0];
+    var message = 'Assertion failed. See https://openlayers.org/en/' + path + '/doc/errors/#' + code + ' for details.';
+    _this = _super.call(this, message) || this;
+    /**
+     * Error code. The meaning of the code can be found on
+     * https://openlayers.org/en/latest/doc/errors/ (replace `latest` with
+     * the version found in the OpenLayers script's header comment if a version
+     * other than the latest is used).
+     * @type {number}
+     * @api
+     */
+
+    _this.code = code;
+    /**
+     * @type {string}
+     */
+
+    _this.name = 'AssertionError'; // Re-assign message, see https://github.com/Rich-Harris/buble/issues/40
+
+    _this.message = message;
+    return _this;
+  }
+
+  return AssertionError;
+}(Error);
+
+var _default = AssertionError;
+exports.default = _default;
+},{"./util.js":"KA50"}],"DVOE":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.assert = assert;
+
+var _AssertionError = _interopRequireDefault(require("./AssertionError.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @module ol/asserts
+ */
+
+/**
+ * @param {*} assertion Assertion we expected to be truthy.
+ * @param {number} errorCode Error code.
+ */
+function assert(assertion, errorCode) {
+  if (!assertion) {
+    throw new _AssertionError.default(errorCode);
+  }
+}
+},{"./AssertionError.js":"ZRwq"}],"UtOR":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _asserts = require("../asserts.js");
+
+/**
+ * @module ol/structs/LRUCache
+ */
+
+/**
+ * @typedef {Object} Entry
+ * @property {string} key_
+ * @property {Object} newer
+ * @property {Object} older
+ * @property {*} value_
+ */
+
+/**
+ * @classdesc
+ * Implements a Least-Recently-Used cache where the keys do not conflict with
+ * Object's properties (e.g. 'hasOwnProperty' is not allowed as a key). Expiring
+ * items from the cache is the responsibility of the user.
+ *
+ * @fires import("../events/Event.js").default
+ * @template T
+ */
+var LRUCache =
+/** @class */
+function () {
+  /**
+   * @param {number=} opt_highWaterMark High water mark.
+   */
+  function LRUCache(opt_highWaterMark) {
+    /**
+     * @type {number}
+     */
+    this.highWaterMark = opt_highWaterMark !== undefined ? opt_highWaterMark : 2048;
+    /**
+     * @private
+     * @type {number}
+     */
+
+    this.count_ = 0;
+    /**
+     * @private
+     * @type {!Object<string, Entry>}
+     */
+
+    this.entries_ = {};
+    /**
+     * @private
+     * @type {?Entry}
+     */
+
+    this.oldest_ = null;
+    /**
+     * @private
+     * @type {?Entry}
+     */
+
+    this.newest_ = null;
+  }
+  /**
+   * @return {boolean} Can expire cache.
+   */
+
+
+  LRUCache.prototype.canExpireCache = function () {
+    return this.getCount() > this.highWaterMark;
+  };
+  /**
+   * FIXME empty description for jsdoc
+   */
+
+
+  LRUCache.prototype.clear = function () {
+    this.count_ = 0;
+    this.entries_ = {};
+    this.oldest_ = null;
+    this.newest_ = null;
+  };
+  /**
+   * @param {string} key Key.
+   * @return {boolean} Contains key.
+   */
+
+
+  LRUCache.prototype.containsKey = function (key) {
+    return this.entries_.hasOwnProperty(key);
+  };
+  /**
+   * @param {function(T, string, LRUCache<T>): ?} f The function
+   *     to call for every entry from the oldest to the newer. This function takes
+   *     3 arguments (the entry value, the entry key and the LRUCache object).
+   *     The return value is ignored.
+   */
+
+
+  LRUCache.prototype.forEach = function (f) {
+    var entry = this.oldest_;
+
+    while (entry) {
+      f(entry.value_, entry.key_, this);
+      entry = entry.newer;
+    }
+  };
+  /**
+   * @param {string} key Key.
+   * @param {*=} opt_options Options (reserverd for subclasses).
+   * @return {T} Value.
+   */
+
+
+  LRUCache.prototype.get = function (key, opt_options) {
+    var entry = this.entries_[key];
+    (0, _asserts.assert)(entry !== undefined, 15); // Tried to get a value for a key that does not exist in the cache
+
+    if (entry === this.newest_) {
+      return entry.value_;
+    } else if (entry === this.oldest_) {
+      this.oldest_ =
+      /** @type {Entry} */
+      this.oldest_.newer;
+      this.oldest_.older = null;
+    } else {
+      entry.newer.older = entry.older;
+      entry.older.newer = entry.newer;
+    }
+
+    entry.newer = null;
+    entry.older = this.newest_;
+    this.newest_.newer = entry;
+    this.newest_ = entry;
+    return entry.value_;
+  };
+  /**
+   * Remove an entry from the cache.
+   * @param {string} key The entry key.
+   * @return {T} The removed entry.
+   */
+
+
+  LRUCache.prototype.remove = function (key) {
+    var entry = this.entries_[key];
+    (0, _asserts.assert)(entry !== undefined, 15); // Tried to get a value for a key that does not exist in the cache
+
+    if (entry === this.newest_) {
+      this.newest_ =
+      /** @type {Entry} */
+      entry.older;
+
+      if (this.newest_) {
+        this.newest_.newer = null;
+      }
+    } else if (entry === this.oldest_) {
+      this.oldest_ =
+      /** @type {Entry} */
+      entry.newer;
+
+      if (this.oldest_) {
+        this.oldest_.older = null;
+      }
+    } else {
+      entry.newer.older = entry.older;
+      entry.older.newer = entry.newer;
+    }
+
+    delete this.entries_[key];
+    --this.count_;
+    return entry.value_;
+  };
+  /**
+   * @return {number} Count.
+   */
+
+
+  LRUCache.prototype.getCount = function () {
+    return this.count_;
+  };
+  /**
+   * @return {Array<string>} Keys.
+   */
+
+
+  LRUCache.prototype.getKeys = function () {
+    var keys = new Array(this.count_);
+    var i = 0;
+    var entry;
+
+    for (entry = this.newest_; entry; entry = entry.older) {
+      keys[i++] = entry.key_;
+    }
+
+    return keys;
+  };
+  /**
+   * @return {Array<T>} Values.
+   */
+
+
+  LRUCache.prototype.getValues = function () {
+    var values = new Array(this.count_);
+    var i = 0;
+    var entry;
+
+    for (entry = this.newest_; entry; entry = entry.older) {
+      values[i++] = entry.value_;
+    }
+
+    return values;
+  };
+  /**
+   * @return {T} Last value.
+   */
+
+
+  LRUCache.prototype.peekLast = function () {
+    return this.oldest_.value_;
+  };
+  /**
+   * @return {string} Last key.
+   */
+
+
+  LRUCache.prototype.peekLastKey = function () {
+    return this.oldest_.key_;
+  };
+  /**
+   * Get the key of the newest item in the cache.  Throws if the cache is empty.
+   * @return {string} The newest key.
+   */
+
+
+  LRUCache.prototype.peekFirstKey = function () {
+    return this.newest_.key_;
+  };
+  /**
+   * @return {T} value Value.
+   */
+
+
+  LRUCache.prototype.pop = function () {
+    var entry = this.oldest_;
+    delete this.entries_[entry.key_];
+
+    if (entry.newer) {
+      entry.newer.older = null;
+    }
+
+    this.oldest_ =
+    /** @type {Entry} */
+    entry.newer;
+
+    if (!this.oldest_) {
+      this.newest_ = null;
+    }
+
+    --this.count_;
+    return entry.value_;
+  };
+  /**
+   * @param {string} key Key.
+   * @param {T} value Value.
+   */
+
+
+  LRUCache.prototype.replace = function (key, value) {
+    this.get(key); // update `newest_`
+
+    this.entries_[key].value_ = value;
+  };
+  /**
+   * @param {string} key Key.
+   * @param {T} value Value.
+   */
+
+
+  LRUCache.prototype.set = function (key, value) {
+    (0, _asserts.assert)(!(key in this.entries_), 16); // Tried to set a value for a key that is used already
+
+    var entry = {
+      key_: key,
+      newer: null,
+      older: this.newest_,
+      value_: value
+    };
+
+    if (!this.newest_) {
+      this.oldest_ = entry;
+    } else {
+      this.newest_.newer = entry;
+    }
+
+    this.newest_ = entry;
+    this.entries_[key] = entry;
+    ++this.count_;
+  };
+  /**
+   * Set a maximum number of entries for the cache.
+   * @param {number} size Cache size.
+   * @api
+   */
+
+
+  LRUCache.prototype.setSize = function (size) {
+    this.highWaterMark = size;
+  };
+
+  return LRUCache;
+}();
+
+var _default = LRUCache;
+exports.default = _default;
+},{"../asserts.js":"DVOE"}],"NPSy":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createOrUpdate = createOrUpdate;
+exports.getKeyZXY = getKeyZXY;
+exports.getKey = getKey;
+exports.fromKey = fromKey;
+exports.hash = hash;
+exports.withinExtentAndZ = withinExtentAndZ;
+
+/**
+ * @module ol/tilecoord
+ */
+
+/**
+ * An array of three numbers representing the location of a tile in a tile
+ * grid. The order is `z` (zoom level), `x` (column), and `y` (row).
+ * @typedef {Array<number>} TileCoord
+ * @api
+ */
+
+/**
+ * @param {number} z Z.
+ * @param {number} x X.
+ * @param {number} y Y.
+ * @param {TileCoord=} opt_tileCoord Tile coordinate.
+ * @return {TileCoord} Tile coordinate.
+ */
+function createOrUpdate(z, x, y, opt_tileCoord) {
+  if (opt_tileCoord !== undefined) {
+    opt_tileCoord[0] = z;
+    opt_tileCoord[1] = x;
+    opt_tileCoord[2] = y;
+    return opt_tileCoord;
+  } else {
+    return [z, x, y];
+  }
+}
+/**
+ * @param {number} z Z.
+ * @param {number} x X.
+ * @param {number} y Y.
+ * @return {string} Key.
+ */
+
+
+function getKeyZXY(z, x, y) {
+  return z + '/' + x + '/' + y;
+}
+/**
+ * Get the key for a tile coord.
+ * @param {TileCoord} tileCoord The tile coord.
+ * @return {string} Key.
+ */
+
+
+function getKey(tileCoord) {
+  return getKeyZXY(tileCoord[0], tileCoord[1], tileCoord[2]);
+}
+/**
+ * Get a tile coord given a key.
+ * @param {string} key The tile coord key.
+ * @return {TileCoord} The tile coord.
+ */
+
+
+function fromKey(key) {
+  return key.split('/').map(Number);
+}
+/**
+ * @param {TileCoord} tileCoord Tile coord.
+ * @return {number} Hash.
+ */
+
+
+function hash(tileCoord) {
+  return (tileCoord[1] << tileCoord[0]) + tileCoord[2];
+}
+/**
+ * @param {TileCoord} tileCoord Tile coordinate.
+ * @param {!import("./tilegrid/TileGrid.js").default} tileGrid Tile grid.
+ * @return {boolean} Tile coordinate is within extent and zoom level range.
+ */
+
+
+function withinExtentAndZ(tileCoord, tileGrid) {
+  var z = tileCoord[0];
+  var x = tileCoord[1];
+  var y = tileCoord[2];
+
+  if (tileGrid.getMinZoom() > z || z > tileGrid.getMaxZoom()) {
+    return false;
+  }
+
+  var extent = tileGrid.getExtent();
+  var tileRange;
+
+  if (!extent) {
+    tileRange = tileGrid.getFullTileRange(z);
+  } else {
+    tileRange = tileGrid.getTileRangeForExtentAndZ(extent, z);
+  }
+
+  if (!tileRange) {
+    return true;
+  } else {
+    return tileRange.containsXY(x, y);
+  }
+}
+},{}],"zj1M":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _LRUCache = _interopRequireDefault(require("./structs/LRUCache.js"));
+
+var _tilecoord = require("./tilecoord.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+/**
+ * @module ol/TileCache
+ */
+
+
+var TileCache =
+/** @class */
+function (_super) {
+  __extends(TileCache, _super);
+
+  function TileCache() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+  /**
+   * @param {!Object<string, boolean>} usedTiles Used tiles.
+   */
+
+
+  TileCache.prototype.expireCache = function (usedTiles) {
+    while (this.canExpireCache()) {
+      var tile = this.peekLast();
+
+      if (tile.getKey() in usedTiles) {
+        break;
+      } else {
+        this.pop().release();
+      }
+    }
+  };
+  /**
+   * Prune all tiles from the cache that don't have the same z as the newest tile.
+   */
+
+
+  TileCache.prototype.pruneExceptNewestZ = function () {
+    if (this.getCount() === 0) {
+      return;
+    }
+
+    var key = this.peekFirstKey();
+    var tileCoord = (0, _tilecoord.fromKey)(key);
+    var z = tileCoord[0];
+    this.forEach(function (tile) {
+      if (tile.tileCoord[0] !== z) {
+        this.remove((0, _tilecoord.getKey)(tile.tileCoord));
+        tile.release();
+      }
+    }.bind(this));
+  };
+
+  return TileCache;
+}(_LRUCache.default);
+
+var _default = TileCache;
+exports.default = _default;
+},{"./structs/LRUCache.js":"UtOR","./tilecoord.js":"NPSy"}],"FoaO":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/**
+ * @module ol/TileState
+ */
+
+/**
+ * @enum {number}
+ */
+var _default = {
+  IDLE: 0,
+  LOADING: 1,
+  LOADED: 2,
+
+  /**
+   * Indicates that tile loading failed
+   * @type {number}
+   */
+  ERROR: 3,
+  EMPTY: 4
+};
+exports.default = _default;
+},{}],"M1Cf":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.stopPropagation = stopPropagation;
+exports.preventDefault = preventDefault;
+exports.default = void 0;
+
+/**
+ * @module ol/events/Event
+ */
+
+/**
+ * @classdesc
+ * Stripped down implementation of the W3C DOM Level 2 Event interface.
+ * See https://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-interface.
+ *
+ * This implementation only provides `type` and `target` properties, and
+ * `stopPropagation` and `preventDefault` methods. It is meant as base class
+ * for higher level events defined in the library, and works with
+ * {@link module:ol/events/Target~Target}.
+ */
+var BaseEvent =
+/** @class */
+function () {
+  /**
+   * @param {string} type Type.
+   */
+  function BaseEvent(type) {
+    /**
+     * @type {boolean}
+     */
+    this.propagationStopped;
+    /**
+     * The event type.
+     * @type {string}
+     * @api
+     */
+
+    this.type = type;
+    /**
+     * The event target.
+     * @type {Object}
+     * @api
+     */
+
+    this.target = null;
+  }
+  /**
+   * Stop event propagation.
+   * @api
+   */
+
+
+  BaseEvent.prototype.preventDefault = function () {
+    this.propagationStopped = true;
+  };
+  /**
+   * Stop event propagation.
+   * @api
+   */
+
+
+  BaseEvent.prototype.stopPropagation = function () {
+    this.propagationStopped = true;
+  };
+
+  return BaseEvent;
+}();
+/**
+ * @param {Event|import("./Event.js").default} evt Event
+ */
+
+
+function stopPropagation(evt) {
+  evt.stopPropagation();
+}
+/**
+ * @param {Event|import("./Event.js").default} evt Event
+ */
+
+
+function preventDefault(evt) {
+  evt.preventDefault();
+}
+
+var _default = BaseEvent;
+exports.default = _default;
+},{}],"qAK2":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.clamp = clamp;
+exports.squaredSegmentDistance = squaredSegmentDistance;
+exports.squaredDistance = squaredDistance;
+exports.solveLinearSystem = solveLinearSystem;
+exports.toDegrees = toDegrees;
+exports.toRadians = toRadians;
+exports.modulo = modulo;
+exports.lerp = lerp;
+exports.cosh = void 0;
+
+/**
+ * @module ol/math
+ */
+
+/**
+ * Takes a number and clamps it to within the provided bounds.
+ * @param {number} value The input number.
+ * @param {number} min The minimum value to return.
+ * @param {number} max The maximum value to return.
+ * @return {number} The input number if it is within bounds, or the nearest
+ *     number within the bounds.
+ */
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+/**
+ * Return the hyperbolic cosine of a given number. The method will use the
+ * native `Math.cosh` function if it is available, otherwise the hyperbolic
+ * cosine will be calculated via the reference implementation of the Mozilla
+ * developer network.
+ *
+ * @param {number} x X.
+ * @return {number} Hyperbolic cosine of x.
+ */
+
+
+var cosh = function () {
+  // Wrapped in a iife, to save the overhead of checking for the native
+  // implementation on every invocation.
+  var cosh;
+
+  if ('cosh' in Math) {
+    // The environment supports the native Math.cosh function, use it…
+    cosh = Math.cosh;
+  } else {
+    // … else, use the reference implementation of MDN:
+    cosh = function (x) {
+      var y =
+      /** @type {Math} */
+      Math.exp(x);
+      return (y + 1 / y) / 2;
+    };
+  }
+
+  return cosh;
+}();
+/**
+ * Returns the square of the closest distance between the point (x, y) and the
+ * line segment (x1, y1) to (x2, y2).
+ * @param {number} x X.
+ * @param {number} y Y.
+ * @param {number} x1 X1.
+ * @param {number} y1 Y1.
+ * @param {number} x2 X2.
+ * @param {number} y2 Y2.
+ * @return {number} Squared distance.
+ */
+
+
+exports.cosh = cosh;
+
+function squaredSegmentDistance(x, y, x1, y1, x2, y2) {
+  var dx = x2 - x1;
+  var dy = y2 - y1;
+
+  if (dx !== 0 || dy !== 0) {
+    var t = ((x - x1) * dx + (y - y1) * dy) / (dx * dx + dy * dy);
+
+    if (t > 1) {
+      x1 = x2;
+      y1 = y2;
+    } else if (t > 0) {
+      x1 += dx * t;
+      y1 += dy * t;
+    }
+  }
+
+  return squaredDistance(x, y, x1, y1);
+}
+/**
+ * Returns the square of the distance between the points (x1, y1) and (x2, y2).
+ * @param {number} x1 X1.
+ * @param {number} y1 Y1.
+ * @param {number} x2 X2.
+ * @param {number} y2 Y2.
+ * @return {number} Squared distance.
+ */
+
+
+function squaredDistance(x1, y1, x2, y2) {
+  var dx = x2 - x1;
+  var dy = y2 - y1;
+  return dx * dx + dy * dy;
+}
+/**
+ * Solves system of linear equations using Gaussian elimination method.
+ *
+ * @param {Array<Array<number>>} mat Augmented matrix (n x n + 1 column)
+ *                                     in row-major order.
+ * @return {Array<number>} The resulting vector.
+ */
+
+
+function solveLinearSystem(mat) {
+  var n = mat.length;
+
+  for (var i = 0; i < n; i++) {
+    // Find max in the i-th column (ignoring i - 1 first rows)
+    var maxRow = i;
+    var maxEl = Math.abs(mat[i][i]);
+
+    for (var r = i + 1; r < n; r++) {
+      var absValue = Math.abs(mat[r][i]);
+
+      if (absValue > maxEl) {
+        maxEl = absValue;
+        maxRow = r;
+      }
+    }
+
+    if (maxEl === 0) {
+      return null; // matrix is singular
+    } // Swap max row with i-th (current) row
+
+
+    var tmp = mat[maxRow];
+    mat[maxRow] = mat[i];
+    mat[i] = tmp; // Subtract the i-th row to make all the remaining rows 0 in the i-th column
+
+    for (var j = i + 1; j < n; j++) {
+      var coef = -mat[j][i] / mat[i][i];
+
+      for (var k = i; k < n + 1; k++) {
+        if (i == k) {
+          mat[j][k] = 0;
+        } else {
+          mat[j][k] += coef * mat[i][k];
+        }
+      }
+    }
+  } // Solve Ax=b for upper triangular matrix A (mat)
+
+
+  var x = new Array(n);
+
+  for (var l = n - 1; l >= 0; l--) {
+    x[l] = mat[l][n] / mat[l][l];
+
+    for (var m = l - 1; m >= 0; m--) {
+      mat[m][n] -= mat[m][l] * x[l];
+    }
+  }
+
+  return x;
+}
+/**
+ * Converts radians to to degrees.
+ *
+ * @param {number} angleInRadians Angle in radians.
+ * @return {number} Angle in degrees.
+ */
+
+
+function toDegrees(angleInRadians) {
+  return angleInRadians * 180 / Math.PI;
+}
+/**
+ * Converts degrees to radians.
+ *
+ * @param {number} angleInDegrees Angle in degrees.
+ * @return {number} Angle in radians.
+ */
+
+
+function toRadians(angleInDegrees) {
+  return angleInDegrees * Math.PI / 180;
+}
+/**
+ * Returns the modulo of a / b, depending on the sign of b.
+ *
+ * @param {number} a Dividend.
+ * @param {number} b Divisor.
+ * @return {number} Modulo.
+ */
+
+
+function modulo(a, b) {
+  var r = a % b;
+  return r * b < 0 ? r + b : r;
+}
+/**
+ * Calculates the linearly interpolated value of x between a and b.
+ *
+ * @param {number} a Number
+ * @param {number} b Number
+ * @param {number} x Value to be interpolated.
+ * @return {number} Interpolated value.
+ */
+
+
+function lerp(a, b, x) {
+  return a + x * (b - a);
+}
+},{}],"ChjE":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/**
+ * @module ol/geom/GeometryType
+ */
+
+/**
+ * The geometry type. One of `'Point'`, `'LineString'`, `'LinearRing'`,
+ * `'Polygon'`, `'MultiPoint'`, `'MultiLineString'`, `'MultiPolygon'`,
+ * `'GeometryCollection'`, `'Circle'`.
+ * @enum {string}
+ */
+var _default = {
+  POINT: 'Point',
+  LINE_STRING: 'LineString',
+  LINEAR_RING: 'LinearRing',
+  POLYGON: 'Polygon',
+  MULTI_POINT: 'MultiPoint',
+  MULTI_LINE_STRING: 'MultiLineString',
+  MULTI_POLYGON: 'MultiPolygon',
+  GEOMETRY_COLLECTION: 'GeometryCollection',
+  CIRCLE: 'Circle'
+};
+exports.default = _default;
+},{}],"TxdA":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getDistance = getDistance;
+exports.getLength = getLength;
+exports.getArea = getArea;
+exports.offset = offset;
+exports.DEFAULT_RADIUS = void 0;
+
+var _math = require("./math.js");
+
+var _GeometryType = _interopRequireDefault(require("./geom/GeometryType.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @module ol/sphere
+ */
+
+/**
+ * Object literal with options for the {@link getLength} or {@link getArea}
+ * functions.
+ * @typedef {Object} SphereMetricOptions
+ * @property {import("./proj.js").ProjectionLike} [projection='EPSG:3857']
+ * Projection of the  geometry.  By default, the geometry is assumed to be in
+ * Web Mercator.
+ * @property {number} [radius=6371008.8] Sphere radius.  By default, the
+ * [mean Earth radius](https://en.wikipedia.org/wiki/Earth_radius#Mean_radius)
+ * for the WGS84 ellipsoid is used.
+ */
+
+/**
+ * The mean Earth radius (1/3 * (2a + b)) for the WGS84 ellipsoid.
+ * https://en.wikipedia.org/wiki/Earth_radius#Mean_radius
+ * @type {number}
+ */
+var DEFAULT_RADIUS = 6371008.8;
+/**
+ * Get the great circle distance (in meters) between two geographic coordinates.
+ * @param {Array} c1 Starting coordinate.
+ * @param {Array} c2 Ending coordinate.
+ * @param {number=} opt_radius The sphere radius to use.  Defaults to the Earth's
+ *     mean radius using the WGS84 ellipsoid.
+ * @return {number} The great circle distance between the points (in meters).
+ * @api
+ */
+
+exports.DEFAULT_RADIUS = DEFAULT_RADIUS;
+
+function getDistance(c1, c2, opt_radius) {
+  var radius = opt_radius || DEFAULT_RADIUS;
+  var lat1 = (0, _math.toRadians)(c1[1]);
+  var lat2 = (0, _math.toRadians)(c2[1]);
+  var deltaLatBy2 = (lat2 - lat1) / 2;
+  var deltaLonBy2 = (0, _math.toRadians)(c2[0] - c1[0]) / 2;
+  var a = Math.sin(deltaLatBy2) * Math.sin(deltaLatBy2) + Math.sin(deltaLonBy2) * Math.sin(deltaLonBy2) * Math.cos(lat1) * Math.cos(lat2);
+  return 2 * radius * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+/**
+ * Get the cumulative great circle length of linestring coordinates (geographic).
+ * @param {Array} coordinates Linestring coordinates.
+ * @param {number} radius The sphere radius to use.
+ * @return {number} The length (in meters).
+ */
+
+
+function getLengthInternal(coordinates, radius) {
+  var length = 0;
+
+  for (var i = 0, ii = coordinates.length; i < ii - 1; ++i) {
+    length += getDistance(coordinates[i], coordinates[i + 1], radius);
+  }
+
+  return length;
+}
+/**
+ * Get the spherical length of a geometry.  This length is the sum of the
+ * great circle distances between coordinates.  For polygons, the length is
+ * the sum of all rings.  For points, the length is zero.  For multi-part
+ * geometries, the length is the sum of the length of each part.
+ * @param {import("./geom/Geometry.js").default} geometry A geometry.
+ * @param {SphereMetricOptions=} opt_options Options for the
+ * length calculation.  By default, geometries are assumed to be in 'EPSG:3857'.
+ * You can change this by providing a `projection` option.
+ * @return {number} The spherical length (in meters).
+ * @api
+ */
+
+
+function getLength(geometry, opt_options) {
+  var options = opt_options || {};
+  var radius = options.radius || DEFAULT_RADIUS;
+  var projection = options.projection || 'EPSG:3857';
+  var type = geometry.getType();
+
+  if (type !== _GeometryType.default.GEOMETRY_COLLECTION) {
+    geometry = geometry.clone().transform(projection, 'EPSG:4326');
+  }
+
+  var length = 0;
+  var coordinates, coords, i, ii, j, jj;
+
+  switch (type) {
+    case _GeometryType.default.POINT:
+    case _GeometryType.default.MULTI_POINT:
+      {
+        break;
+      }
+
+    case _GeometryType.default.LINE_STRING:
+    case _GeometryType.default.LINEAR_RING:
+      {
+        coordinates =
+        /** @type {import("./geom/SimpleGeometry.js").default} */
+        geometry.getCoordinates();
+        length = getLengthInternal(coordinates, radius);
+        break;
+      }
+
+    case _GeometryType.default.MULTI_LINE_STRING:
+    case _GeometryType.default.POLYGON:
+      {
+        coordinates =
+        /** @type {import("./geom/SimpleGeometry.js").default} */
+        geometry.getCoordinates();
+
+        for (i = 0, ii = coordinates.length; i < ii; ++i) {
+          length += getLengthInternal(coordinates[i], radius);
+        }
+
+        break;
+      }
+
+    case _GeometryType.default.MULTI_POLYGON:
+      {
+        coordinates =
+        /** @type {import("./geom/SimpleGeometry.js").default} */
+        geometry.getCoordinates();
+
+        for (i = 0, ii = coordinates.length; i < ii; ++i) {
+          coords = coordinates[i];
+
+          for (j = 0, jj = coords.length; j < jj; ++j) {
+            length += getLengthInternal(coords[j], radius);
+          }
+        }
+
+        break;
+      }
+
+    case _GeometryType.default.GEOMETRY_COLLECTION:
+      {
+        var geometries =
+        /** @type {import("./geom/GeometryCollection.js").default} */
+        geometry.getGeometries();
+
+        for (i = 0, ii = geometries.length; i < ii; ++i) {
+          length += getLength(geometries[i], opt_options);
+        }
+
+        break;
+      }
+
+    default:
+      {
+        throw new Error('Unsupported geometry type: ' + type);
+      }
+  }
+
+  return length;
+}
+/**
+ * Returns the spherical area for a list of coordinates.
+ *
+ * [Reference](https://trs-new.jpl.nasa.gov/handle/2014/40409)
+ * Robert. G. Chamberlain and William H. Duquette, "Some Algorithms for
+ * Polygons on a Sphere", JPL Publication 07-03, Jet Propulsion
+ * Laboratory, Pasadena, CA, June 2007
+ *
+ * @param {Array<import("./coordinate.js").Coordinate>} coordinates List of coordinates of a linear
+ * ring. If the ring is oriented clockwise, the area will be positive,
+ * otherwise it will be negative.
+ * @param {number} radius The sphere radius.
+ * @return {number} Area (in square meters).
+ */
+
+
+function getAreaInternal(coordinates, radius) {
+  var area = 0;
+  var len = coordinates.length;
+  var x1 = coordinates[len - 1][0];
+  var y1 = coordinates[len - 1][1];
+
+  for (var i = 0; i < len; i++) {
+    var x2 = coordinates[i][0];
+    var y2 = coordinates[i][1];
+    area += (0, _math.toRadians)(x2 - x1) * (2 + Math.sin((0, _math.toRadians)(y1)) + Math.sin((0, _math.toRadians)(y2)));
+    x1 = x2;
+    y1 = y2;
+  }
+
+  return area * radius * radius / 2.0;
+}
+/**
+ * Get the spherical area of a geometry.  This is the area (in meters) assuming
+ * that polygon edges are segments of great circles on a sphere.
+ * @param {import("./geom/Geometry.js").default} geometry A geometry.
+ * @param {SphereMetricOptions=} opt_options Options for the area
+ *     calculation.  By default, geometries are assumed to be in 'EPSG:3857'.
+ *     You can change this by providing a `projection` option.
+ * @return {number} The spherical area (in square meters).
+ * @api
+ */
+
+
+function getArea(geometry, opt_options) {
+  var options = opt_options || {};
+  var radius = options.radius || DEFAULT_RADIUS;
+  var projection = options.projection || 'EPSG:3857';
+  var type = geometry.getType();
+
+  if (type !== _GeometryType.default.GEOMETRY_COLLECTION) {
+    geometry = geometry.clone().transform(projection, 'EPSG:4326');
+  }
+
+  var area = 0;
+  var coordinates, coords, i, ii, j, jj;
+
+  switch (type) {
+    case _GeometryType.default.POINT:
+    case _GeometryType.default.MULTI_POINT:
+    case _GeometryType.default.LINE_STRING:
+    case _GeometryType.default.MULTI_LINE_STRING:
+    case _GeometryType.default.LINEAR_RING:
+      {
+        break;
+      }
+
+    case _GeometryType.default.POLYGON:
+      {
+        coordinates =
+        /** @type {import("./geom/Polygon.js").default} */
+        geometry.getCoordinates();
+        area = Math.abs(getAreaInternal(coordinates[0], radius));
+
+        for (i = 1, ii = coordinates.length; i < ii; ++i) {
+          area -= Math.abs(getAreaInternal(coordinates[i], radius));
+        }
+
+        break;
+      }
+
+    case _GeometryType.default.MULTI_POLYGON:
+      {
+        coordinates =
+        /** @type {import("./geom/SimpleGeometry.js").default} */
+        geometry.getCoordinates();
+
+        for (i = 0, ii = coordinates.length; i < ii; ++i) {
+          coords = coordinates[i];
+          area += Math.abs(getAreaInternal(coords[0], radius));
+
+          for (j = 1, jj = coords.length; j < jj; ++j) {
+            area -= Math.abs(getAreaInternal(coords[j], radius));
+          }
+        }
+
+        break;
+      }
+
+    case _GeometryType.default.GEOMETRY_COLLECTION:
+      {
+        var geometries =
+        /** @type {import("./geom/GeometryCollection.js").default} */
+        geometry.getGeometries();
+
+        for (i = 0, ii = geometries.length; i < ii; ++i) {
+          area += getArea(geometries[i], opt_options);
+        }
+
+        break;
+      }
+
+    default:
+      {
+        throw new Error('Unsupported geometry type: ' + type);
+      }
+  }
+
+  return area;
+}
+/**
+ * Returns the coordinate at the given distance and bearing from `c1`.
+ *
+ * @param {import("./coordinate.js").Coordinate} c1 The origin point (`[lon, lat]` in degrees).
+ * @param {number} distance The great-circle distance between the origin
+ *     point and the target point.
+ * @param {number} bearing The bearing (in radians).
+ * @param {number=} opt_radius The sphere radius to use.  Defaults to the Earth's
+ *     mean radius using the WGS84 ellipsoid.
+ * @return {import("./coordinate.js").Coordinate} The target point.
+ */
+
+
+function offset(c1, distance, bearing, opt_radius) {
+  var radius = opt_radius || DEFAULT_RADIUS;
+  var lat1 = (0, _math.toRadians)(c1[1]);
+  var lon1 = (0, _math.toRadians)(c1[0]);
+  var dByR = distance / radius;
+  var lat = Math.asin(Math.sin(lat1) * Math.cos(dByR) + Math.cos(lat1) * Math.sin(dByR) * Math.cos(bearing));
+  var lon = lon1 + Math.atan2(Math.sin(bearing) * Math.sin(dByR) * Math.cos(lat1), Math.cos(dByR) - Math.sin(lat1) * Math.sin(lat));
+  return [(0, _math.toDegrees)(lon), (0, _math.toDegrees)(lat)];
+}
+},{"./math.js":"qAK2","./geom/GeometryType.js":"ChjE"}],"Xc5u":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/**
+ * @module ol/extent/Corner
+ */
+
+/**
+ * Extent corner.
+ * @enum {string}
+ */
+var _default = {
+  BOTTOM_LEFT: 'bottom-left',
+  BOTTOM_RIGHT: 'bottom-right',
+  TOP_LEFT: 'top-left',
+  TOP_RIGHT: 'top-right'
+};
+exports.default = _default;
+},{}],"kQlD":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/**
+ * @module ol/extent/Relationship
+ */
+
+/**
+ * Relationship to an extent.
+ * @enum {number}
+ */
+var _default = {
+  UNKNOWN: 0,
+  INTERSECTING: 1,
+  ABOVE: 2,
+  RIGHT: 4,
+  BELOW: 8,
+  LEFT: 16
+};
+exports.default = _default;
+},{}],"L0Vw":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.boundingExtent = boundingExtent;
+exports.buffer = buffer;
+exports.clone = clone;
+exports.closestSquaredDistanceXY = closestSquaredDistanceXY;
+exports.containsCoordinate = containsCoordinate;
+exports.containsExtent = containsExtent;
+exports.containsXY = containsXY;
+exports.coordinateRelationship = coordinateRelationship;
+exports.createEmpty = createEmpty;
+exports.createOrUpdate = createOrUpdate;
+exports.createOrUpdateEmpty = createOrUpdateEmpty;
+exports.createOrUpdateFromCoordinate = createOrUpdateFromCoordinate;
+exports.createOrUpdateFromCoordinates = createOrUpdateFromCoordinates;
+exports.createOrUpdateFromFlatCoordinates = createOrUpdateFromFlatCoordinates;
+exports.createOrUpdateFromRings = createOrUpdateFromRings;
+exports.equals = equals;
+exports.approximatelyEquals = approximatelyEquals;
+exports.extend = extend;
+exports.extendCoordinate = extendCoordinate;
+exports.extendCoordinates = extendCoordinates;
+exports.extendFlatCoordinates = extendFlatCoordinates;
+exports.extendRings = extendRings;
+exports.extendXY = extendXY;
+exports.forEachCorner = forEachCorner;
+exports.getArea = getArea;
+exports.getBottomLeft = getBottomLeft;
+exports.getBottomRight = getBottomRight;
+exports.getCenter = getCenter;
+exports.getCorner = getCorner;
+exports.getEnlargedArea = getEnlargedArea;
+exports.getForViewAndSize = getForViewAndSize;
+exports.getHeight = getHeight;
+exports.getIntersectionArea = getIntersectionArea;
+exports.getIntersection = getIntersection;
+exports.getMargin = getMargin;
+exports.getSize = getSize;
+exports.getTopLeft = getTopLeft;
+exports.getTopRight = getTopRight;
+exports.getWidth = getWidth;
+exports.intersects = intersects;
+exports.isEmpty = isEmpty;
+exports.returnOrUpdate = returnOrUpdate;
+exports.scaleFromCenter = scaleFromCenter;
+exports.intersectsSegment = intersectsSegment;
+exports.applyTransform = applyTransform;
+exports.wrapX = wrapX;
+
+var _asserts = require("./asserts.js");
+
+var _Corner = _interopRequireDefault(require("./extent/Corner.js"));
+
+var _Relationship = _interopRequireDefault(require("./extent/Relationship.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @module ol/extent
+ */
+
+/**
+ * An array of numbers representing an extent: `[minx, miny, maxx, maxy]`.
+ * @typedef {Array<number>} Extent
+ * @api
+ */
+
+/**
+ * Build an extent that includes all given coordinates.
+ *
+ * @param {Array<import("./coordinate.js").Coordinate>} coordinates Coordinates.
+ * @return {Extent} Bounding extent.
+ * @api
+ */
+function boundingExtent(coordinates) {
+  var extent = createEmpty();
+
+  for (var i = 0, ii = coordinates.length; i < ii; ++i) {
+    extendCoordinate(extent, coordinates[i]);
+  }
+
+  return extent;
+}
+/**
+ * @param {Array<number>} xs Xs.
+ * @param {Array<number>} ys Ys.
+ * @param {Extent=} opt_extent Destination extent.
+ * @private
+ * @return {Extent} Extent.
+ */
+
+
+function _boundingExtentXYs(xs, ys, opt_extent) {
+  var minX = Math.min.apply(null, xs);
+  var minY = Math.min.apply(null, ys);
+  var maxX = Math.max.apply(null, xs);
+  var maxY = Math.max.apply(null, ys);
+  return createOrUpdate(minX, minY, maxX, maxY, opt_extent);
+}
+/**
+ * Return extent increased by the provided value.
+ * @param {Extent} extent Extent.
+ * @param {number} value The amount by which the extent should be buffered.
+ * @param {Extent=} opt_extent Extent.
+ * @return {Extent} Extent.
+ * @api
+ */
+
+
+function buffer(extent, value, opt_extent) {
+  if (opt_extent) {
+    opt_extent[0] = extent[0] - value;
+    opt_extent[1] = extent[1] - value;
+    opt_extent[2] = extent[2] + value;
+    opt_extent[3] = extent[3] + value;
+    return opt_extent;
+  } else {
+    return [extent[0] - value, extent[1] - value, extent[2] + value, extent[3] + value];
+  }
+}
+/**
+ * Creates a clone of an extent.
+ *
+ * @param {Extent} extent Extent to clone.
+ * @param {Extent=} opt_extent Extent.
+ * @return {Extent} The clone.
+ */
+
+
+function clone(extent, opt_extent) {
+  if (opt_extent) {
+    opt_extent[0] = extent[0];
+    opt_extent[1] = extent[1];
+    opt_extent[2] = extent[2];
+    opt_extent[3] = extent[3];
+    return opt_extent;
+  } else {
+    return extent.slice();
+  }
+}
+/**
+ * @param {Extent} extent Extent.
+ * @param {number} x X.
+ * @param {number} y Y.
+ * @return {number} Closest squared distance.
+ */
+
+
+function closestSquaredDistanceXY(extent, x, y) {
+  var dx, dy;
+
+  if (x < extent[0]) {
+    dx = extent[0] - x;
+  } else if (extent[2] < x) {
+    dx = x - extent[2];
+  } else {
+    dx = 0;
+  }
+
+  if (y < extent[1]) {
+    dy = extent[1] - y;
+  } else if (extent[3] < y) {
+    dy = y - extent[3];
+  } else {
+    dy = 0;
+  }
+
+  return dx * dx + dy * dy;
+}
+/**
+ * Check if the passed coordinate is contained or on the edge of the extent.
+ *
+ * @param {Extent} extent Extent.
+ * @param {import("./coordinate.js").Coordinate} coordinate Coordinate.
+ * @return {boolean} The coordinate is contained in the extent.
+ * @api
+ */
+
+
+function containsCoordinate(extent, coordinate) {
+  return containsXY(extent, coordinate[0], coordinate[1]);
+}
+/**
+ * Check if one extent contains another.
+ *
+ * An extent is deemed contained if it lies completely within the other extent,
+ * including if they share one or more edges.
+ *
+ * @param {Extent} extent1 Extent 1.
+ * @param {Extent} extent2 Extent 2.
+ * @return {boolean} The second extent is contained by or on the edge of the
+ *     first.
+ * @api
+ */
+
+
+function containsExtent(extent1, extent2) {
+  return extent1[0] <= extent2[0] && extent2[2] <= extent1[2] && extent1[1] <= extent2[1] && extent2[3] <= extent1[3];
+}
+/**
+ * Check if the passed coordinate is contained or on the edge of the extent.
+ *
+ * @param {Extent} extent Extent.
+ * @param {number} x X coordinate.
+ * @param {number} y Y coordinate.
+ * @return {boolean} The x, y values are contained in the extent.
+ * @api
+ */
+
+
+function containsXY(extent, x, y) {
+  return extent[0] <= x && x <= extent[2] && extent[1] <= y && y <= extent[3];
+}
+/**
+ * Get the relationship between a coordinate and extent.
+ * @param {Extent} extent The extent.
+ * @param {import("./coordinate.js").Coordinate} coordinate The coordinate.
+ * @return {Relationship} The relationship (bitwise compare with
+ *     import("./extent/Relationship.js").Relationship).
+ */
+
+
+function coordinateRelationship(extent, coordinate) {
+  var minX = extent[0];
+  var minY = extent[1];
+  var maxX = extent[2];
+  var maxY = extent[3];
+  var x = coordinate[0];
+  var y = coordinate[1];
+  var relationship = _Relationship.default.UNKNOWN;
+
+  if (x < minX) {
+    relationship = relationship | _Relationship.default.LEFT;
+  } else if (x > maxX) {
+    relationship = relationship | _Relationship.default.RIGHT;
+  }
+
+  if (y < minY) {
+    relationship = relationship | _Relationship.default.BELOW;
+  } else if (y > maxY) {
+    relationship = relationship | _Relationship.default.ABOVE;
+  }
+
+  if (relationship === _Relationship.default.UNKNOWN) {
+    relationship = _Relationship.default.INTERSECTING;
+  }
+
+  return relationship;
+}
+/**
+ * Create an empty extent.
+ * @return {Extent} Empty extent.
+ * @api
+ */
+
+
+function createEmpty() {
+  return [Infinity, Infinity, -Infinity, -Infinity];
+}
+/**
+ * Create a new extent or update the provided extent.
+ * @param {number} minX Minimum X.
+ * @param {number} minY Minimum Y.
+ * @param {number} maxX Maximum X.
+ * @param {number} maxY Maximum Y.
+ * @param {Extent=} opt_extent Destination extent.
+ * @return {Extent} Extent.
+ */
+
+
+function createOrUpdate(minX, minY, maxX, maxY, opt_extent) {
+  if (opt_extent) {
+    opt_extent[0] = minX;
+    opt_extent[1] = minY;
+    opt_extent[2] = maxX;
+    opt_extent[3] = maxY;
+    return opt_extent;
+  } else {
+    return [minX, minY, maxX, maxY];
+  }
+}
+/**
+ * Create a new empty extent or make the provided one empty.
+ * @param {Extent=} opt_extent Extent.
+ * @return {Extent} Extent.
+ */
+
+
+function createOrUpdateEmpty(opt_extent) {
+  return createOrUpdate(Infinity, Infinity, -Infinity, -Infinity, opt_extent);
+}
+/**
+ * @param {import("./coordinate.js").Coordinate} coordinate Coordinate.
+ * @param {Extent=} opt_extent Extent.
+ * @return {Extent} Extent.
+ */
+
+
+function createOrUpdateFromCoordinate(coordinate, opt_extent) {
+  var x = coordinate[0];
+  var y = coordinate[1];
+  return createOrUpdate(x, y, x, y, opt_extent);
+}
+/**
+ * @param {Array<import("./coordinate.js").Coordinate>} coordinates Coordinates.
+ * @param {Extent=} opt_extent Extent.
+ * @return {Extent} Extent.
+ */
+
+
+function createOrUpdateFromCoordinates(coordinates, opt_extent) {
+  var extent = createOrUpdateEmpty(opt_extent);
+  return extendCoordinates(extent, coordinates);
+}
+/**
+ * @param {Array<number>} flatCoordinates Flat coordinates.
+ * @param {number} offset Offset.
+ * @param {number} end End.
+ * @param {number} stride Stride.
+ * @param {Extent=} opt_extent Extent.
+ * @return {Extent} Extent.
+ */
+
+
+function createOrUpdateFromFlatCoordinates(flatCoordinates, offset, end, stride, opt_extent) {
+  var extent = createOrUpdateEmpty(opt_extent);
+  return extendFlatCoordinates(extent, flatCoordinates, offset, end, stride);
+}
+/**
+ * @param {Array<Array<import("./coordinate.js").Coordinate>>} rings Rings.
+ * @param {Extent=} opt_extent Extent.
+ * @return {Extent} Extent.
+ */
+
+
+function createOrUpdateFromRings(rings, opt_extent) {
+  var extent = createOrUpdateEmpty(opt_extent);
+  return extendRings(extent, rings);
+}
+/**
+ * Determine if two extents are equivalent.
+ * @param {Extent} extent1 Extent 1.
+ * @param {Extent} extent2 Extent 2.
+ * @return {boolean} The two extents are equivalent.
+ * @api
+ */
+
+
+function equals(extent1, extent2) {
+  return extent1[0] == extent2[0] && extent1[2] == extent2[2] && extent1[1] == extent2[1] && extent1[3] == extent2[3];
+}
+/**
+ * Determine if two extents are approximately equivalent.
+ * @param {Extent} extent1 Extent 1.
+ * @param {Extent} extent2 Extent 2.
+ * @param {number} tolerance Tolerance in extent coordinate units.
+ * @return {boolean} The two extents differ by less than the tolerance.
+ */
+
+
+function approximatelyEquals(extent1, extent2, tolerance) {
+  return Math.abs(extent1[0] - extent2[0]) < tolerance && Math.abs(extent1[2] - extent2[2]) < tolerance && Math.abs(extent1[1] - extent2[1]) < tolerance && Math.abs(extent1[3] - extent2[3]) < tolerance;
+}
+/**
+ * Modify an extent to include another extent.
+ * @param {Extent} extent1 The extent to be modified.
+ * @param {Extent} extent2 The extent that will be included in the first.
+ * @return {Extent} A reference to the first (extended) extent.
+ * @api
+ */
+
+
+function extend(extent1, extent2) {
+  if (extent2[0] < extent1[0]) {
+    extent1[0] = extent2[0];
+  }
+
+  if (extent2[2] > extent1[2]) {
+    extent1[2] = extent2[2];
+  }
+
+  if (extent2[1] < extent1[1]) {
+    extent1[1] = extent2[1];
+  }
+
+  if (extent2[3] > extent1[3]) {
+    extent1[3] = extent2[3];
+  }
+
+  return extent1;
+}
+/**
+ * @param {Extent} extent Extent.
+ * @param {import("./coordinate.js").Coordinate} coordinate Coordinate.
+ */
+
+
+function extendCoordinate(extent, coordinate) {
+  if (coordinate[0] < extent[0]) {
+    extent[0] = coordinate[0];
+  }
+
+  if (coordinate[0] > extent[2]) {
+    extent[2] = coordinate[0];
+  }
+
+  if (coordinate[1] < extent[1]) {
+    extent[1] = coordinate[1];
+  }
+
+  if (coordinate[1] > extent[3]) {
+    extent[3] = coordinate[1];
+  }
+}
+/**
+ * @param {Extent} extent Extent.
+ * @param {Array<import("./coordinate.js").Coordinate>} coordinates Coordinates.
+ * @return {Extent} Extent.
+ */
+
+
+function extendCoordinates(extent, coordinates) {
+  for (var i = 0, ii = coordinates.length; i < ii; ++i) {
+    extendCoordinate(extent, coordinates[i]);
+  }
+
+  return extent;
+}
+/**
+ * @param {Extent} extent Extent.
+ * @param {Array<number>} flatCoordinates Flat coordinates.
+ * @param {number} offset Offset.
+ * @param {number} end End.
+ * @param {number} stride Stride.
+ * @return {Extent} Extent.
+ */
+
+
+function extendFlatCoordinates(extent, flatCoordinates, offset, end, stride) {
+  for (; offset < end; offset += stride) {
+    extendXY(extent, flatCoordinates[offset], flatCoordinates[offset + 1]);
+  }
+
+  return extent;
+}
+/**
+ * @param {Extent} extent Extent.
+ * @param {Array<Array<import("./coordinate.js").Coordinate>>} rings Rings.
+ * @return {Extent} Extent.
+ */
+
+
+function extendRings(extent, rings) {
+  for (var i = 0, ii = rings.length; i < ii; ++i) {
+    extendCoordinates(extent, rings[i]);
+  }
+
+  return extent;
+}
+/**
+ * @param {Extent} extent Extent.
+ * @param {number} x X.
+ * @param {number} y Y.
+ */
+
+
+function extendXY(extent, x, y) {
+  extent[0] = Math.min(extent[0], x);
+  extent[1] = Math.min(extent[1], y);
+  extent[2] = Math.max(extent[2], x);
+  extent[3] = Math.max(extent[3], y);
+}
+/**
+ * This function calls `callback` for each corner of the extent. If the
+ * callback returns a truthy value the function returns that value
+ * immediately. Otherwise the function returns `false`.
+ * @param {Extent} extent Extent.
+ * @param {function(import("./coordinate.js").Coordinate): S} callback Callback.
+ * @return {S|boolean} Value.
+ * @template S
+ */
+
+
+function forEachCorner(extent, callback) {
+  var val;
+  val = callback(getBottomLeft(extent));
+
+  if (val) {
+    return val;
+  }
+
+  val = callback(getBottomRight(extent));
+
+  if (val) {
+    return val;
+  }
+
+  val = callback(getTopRight(extent));
+
+  if (val) {
+    return val;
+  }
+
+  val = callback(getTopLeft(extent));
+
+  if (val) {
+    return val;
+  }
+
+  return false;
+}
+/**
+ * Get the size of an extent.
+ * @param {Extent} extent Extent.
+ * @return {number} Area.
+ * @api
+ */
+
+
+function getArea(extent) {
+  var area = 0;
+
+  if (!isEmpty(extent)) {
+    area = getWidth(extent) * getHeight(extent);
+  }
+
+  return area;
+}
+/**
+ * Get the bottom left coordinate of an extent.
+ * @param {Extent} extent Extent.
+ * @return {import("./coordinate.js").Coordinate} Bottom left coordinate.
+ * @api
+ */
+
+
+function getBottomLeft(extent) {
+  return [extent[0], extent[1]];
+}
+/**
+ * Get the bottom right coordinate of an extent.
+ * @param {Extent} extent Extent.
+ * @return {import("./coordinate.js").Coordinate} Bottom right coordinate.
+ * @api
+ */
+
+
+function getBottomRight(extent) {
+  return [extent[2], extent[1]];
+}
+/**
+ * Get the center coordinate of an extent.
+ * @param {Extent} extent Extent.
+ * @return {import("./coordinate.js").Coordinate} Center.
+ * @api
+ */
+
+
+function getCenter(extent) {
+  return [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
+}
+/**
+ * Get a corner coordinate of an extent.
+ * @param {Extent} extent Extent.
+ * @param {Corner} corner Corner.
+ * @return {import("./coordinate.js").Coordinate} Corner coordinate.
+ */
+
+
+function getCorner(extent, corner) {
+  var coordinate;
+
+  if (corner === _Corner.default.BOTTOM_LEFT) {
+    coordinate = getBottomLeft(extent);
+  } else if (corner === _Corner.default.BOTTOM_RIGHT) {
+    coordinate = getBottomRight(extent);
+  } else if (corner === _Corner.default.TOP_LEFT) {
+    coordinate = getTopLeft(extent);
+  } else if (corner === _Corner.default.TOP_RIGHT) {
+    coordinate = getTopRight(extent);
+  } else {
+    (0, _asserts.assert)(false, 13); // Invalid corner
+  }
+
+  return coordinate;
+}
+/**
+ * @param {Extent} extent1 Extent 1.
+ * @param {Extent} extent2 Extent 2.
+ * @return {number} Enlarged area.
+ */
+
+
+function getEnlargedArea(extent1, extent2) {
+  var minX = Math.min(extent1[0], extent2[0]);
+  var minY = Math.min(extent1[1], extent2[1]);
+  var maxX = Math.max(extent1[2], extent2[2]);
+  var maxY = Math.max(extent1[3], extent2[3]);
+  return (maxX - minX) * (maxY - minY);
+}
+/**
+ * @param {import("./coordinate.js").Coordinate} center Center.
+ * @param {number} resolution Resolution.
+ * @param {number} rotation Rotation.
+ * @param {import("./size.js").Size} size Size.
+ * @param {Extent=} opt_extent Destination extent.
+ * @return {Extent} Extent.
+ */
+
+
+function getForViewAndSize(center, resolution, rotation, size, opt_extent) {
+  var dx = resolution * size[0] / 2;
+  var dy = resolution * size[1] / 2;
+  var cosRotation = Math.cos(rotation);
+  var sinRotation = Math.sin(rotation);
+  var xCos = dx * cosRotation;
+  var xSin = dx * sinRotation;
+  var yCos = dy * cosRotation;
+  var ySin = dy * sinRotation;
+  var x = center[0];
+  var y = center[1];
+  var x0 = x - xCos + ySin;
+  var x1 = x - xCos - ySin;
+  var x2 = x + xCos - ySin;
+  var x3 = x + xCos + ySin;
+  var y0 = y - xSin - yCos;
+  var y1 = y - xSin + yCos;
+  var y2 = y + xSin + yCos;
+  var y3 = y + xSin - yCos;
+  return createOrUpdate(Math.min(x0, x1, x2, x3), Math.min(y0, y1, y2, y3), Math.max(x0, x1, x2, x3), Math.max(y0, y1, y2, y3), opt_extent);
+}
+/**
+ * Get the height of an extent.
+ * @param {Extent} extent Extent.
+ * @return {number} Height.
+ * @api
+ */
+
+
+function getHeight(extent) {
+  return extent[3] - extent[1];
+}
+/**
+ * @param {Extent} extent1 Extent 1.
+ * @param {Extent} extent2 Extent 2.
+ * @return {number} Intersection area.
+ */
+
+
+function getIntersectionArea(extent1, extent2) {
+  var intersection = getIntersection(extent1, extent2);
+  return getArea(intersection);
+}
+/**
+ * Get the intersection of two extents.
+ * @param {Extent} extent1 Extent 1.
+ * @param {Extent} extent2 Extent 2.
+ * @param {Extent=} opt_extent Optional extent to populate with intersection.
+ * @return {Extent} Intersecting extent.
+ * @api
+ */
+
+
+function getIntersection(extent1, extent2, opt_extent) {
+  var intersection = opt_extent ? opt_extent : createEmpty();
+
+  if (intersects(extent1, extent2)) {
+    if (extent1[0] > extent2[0]) {
+      intersection[0] = extent1[0];
+    } else {
+      intersection[0] = extent2[0];
+    }
+
+    if (extent1[1] > extent2[1]) {
+      intersection[1] = extent1[1];
+    } else {
+      intersection[1] = extent2[1];
+    }
+
+    if (extent1[2] < extent2[2]) {
+      intersection[2] = extent1[2];
+    } else {
+      intersection[2] = extent2[2];
+    }
+
+    if (extent1[3] < extent2[3]) {
+      intersection[3] = extent1[3];
+    } else {
+      intersection[3] = extent2[3];
+    }
+  } else {
+    createOrUpdateEmpty(intersection);
+  }
+
+  return intersection;
+}
+/**
+ * @param {Extent} extent Extent.
+ * @return {number} Margin.
+ */
+
+
+function getMargin(extent) {
+  return getWidth(extent) + getHeight(extent);
+}
+/**
+ * Get the size (width, height) of an extent.
+ * @param {Extent} extent The extent.
+ * @return {import("./size.js").Size} The extent size.
+ * @api
+ */
+
+
+function getSize(extent) {
+  return [extent[2] - extent[0], extent[3] - extent[1]];
+}
+/**
+ * Get the top left coordinate of an extent.
+ * @param {Extent} extent Extent.
+ * @return {import("./coordinate.js").Coordinate} Top left coordinate.
+ * @api
+ */
+
+
+function getTopLeft(extent) {
+  return [extent[0], extent[3]];
+}
+/**
+ * Get the top right coordinate of an extent.
+ * @param {Extent} extent Extent.
+ * @return {import("./coordinate.js").Coordinate} Top right coordinate.
+ * @api
+ */
+
+
+function getTopRight(extent) {
+  return [extent[2], extent[3]];
+}
+/**
+ * Get the width of an extent.
+ * @param {Extent} extent Extent.
+ * @return {number} Width.
+ * @api
+ */
+
+
+function getWidth(extent) {
+  return extent[2] - extent[0];
+}
+/**
+ * Determine if one extent intersects another.
+ * @param {Extent} extent1 Extent 1.
+ * @param {Extent} extent2 Extent.
+ * @return {boolean} The two extents intersect.
+ * @api
+ */
+
+
+function intersects(extent1, extent2) {
+  return extent1[0] <= extent2[2] && extent1[2] >= extent2[0] && extent1[1] <= extent2[3] && extent1[3] >= extent2[1];
+}
+/**
+ * Determine if an extent is empty.
+ * @param {Extent} extent Extent.
+ * @return {boolean} Is empty.
+ * @api
+ */
+
+
+function isEmpty(extent) {
+  return extent[2] < extent[0] || extent[3] < extent[1];
+}
+/**
+ * @param {Extent} extent Extent.
+ * @param {Extent=} opt_extent Extent.
+ * @return {Extent} Extent.
+ */
+
+
+function returnOrUpdate(extent, opt_extent) {
+  if (opt_extent) {
+    opt_extent[0] = extent[0];
+    opt_extent[1] = extent[1];
+    opt_extent[2] = extent[2];
+    opt_extent[3] = extent[3];
+    return opt_extent;
+  } else {
+    return extent;
+  }
+}
+/**
+ * @param {Extent} extent Extent.
+ * @param {number} value Value.
+ */
+
+
+function scaleFromCenter(extent, value) {
+  var deltaX = (extent[2] - extent[0]) / 2 * (value - 1);
+  var deltaY = (extent[3] - extent[1]) / 2 * (value - 1);
+  extent[0] -= deltaX;
+  extent[2] += deltaX;
+  extent[1] -= deltaY;
+  extent[3] += deltaY;
+}
+/**
+ * Determine if the segment between two coordinates intersects (crosses,
+ * touches, or is contained by) the provided extent.
+ * @param {Extent} extent The extent.
+ * @param {import("./coordinate.js").Coordinate} start Segment start coordinate.
+ * @param {import("./coordinate.js").Coordinate} end Segment end coordinate.
+ * @return {boolean} The segment intersects the extent.
+ */
+
+
+function intersectsSegment(extent, start, end) {
+  var intersects = false;
+  var startRel = coordinateRelationship(extent, start);
+  var endRel = coordinateRelationship(extent, end);
+
+  if (startRel === _Relationship.default.INTERSECTING || endRel === _Relationship.default.INTERSECTING) {
+    intersects = true;
+  } else {
+    var minX = extent[0];
+    var minY = extent[1];
+    var maxX = extent[2];
+    var maxY = extent[3];
+    var startX = start[0];
+    var startY = start[1];
+    var endX = end[0];
+    var endY = end[1];
+    var slope = (endY - startY) / (endX - startX);
+    var x = void 0,
+        y = void 0;
+
+    if (!!(endRel & _Relationship.default.ABOVE) && !(startRel & _Relationship.default.ABOVE)) {
+      // potentially intersects top
+      x = endX - (endY - maxY) / slope;
+      intersects = x >= minX && x <= maxX;
+    }
+
+    if (!intersects && !!(endRel & _Relationship.default.RIGHT) && !(startRel & _Relationship.default.RIGHT)) {
+      // potentially intersects right
+      y = endY - (endX - maxX) * slope;
+      intersects = y >= minY && y <= maxY;
+    }
+
+    if (!intersects && !!(endRel & _Relationship.default.BELOW) && !(startRel & _Relationship.default.BELOW)) {
+      // potentially intersects bottom
+      x = endX - (endY - minY) / slope;
+      intersects = x >= minX && x <= maxX;
+    }
+
+    if (!intersects && !!(endRel & _Relationship.default.LEFT) && !(startRel & _Relationship.default.LEFT)) {
+      // potentially intersects left
+      y = endY - (endX - minX) * slope;
+      intersects = y >= minY && y <= maxY;
+    }
+  }
+
+  return intersects;
+}
+/**
+ * Apply a transform function to the extent.
+ * @param {Extent} extent Extent.
+ * @param {import("./proj.js").TransformFunction} transformFn Transform function.
+ * Called with `[minX, minY, maxX, maxY]` extent coordinates.
+ * @param {Extent=} opt_extent Destination extent.
+ * @param {number=} opt_stops Number of stops per side used for the transform.
+ * By default only the corners are used.
+ * @return {Extent} Extent.
+ * @api
+ */
+
+
+function applyTransform(extent, transformFn, opt_extent, opt_stops) {
+  var coordinates = [];
+
+  if (opt_stops > 1) {
+    var width = extent[2] - extent[0];
+    var height = extent[3] - extent[1];
+
+    for (var i = 0; i < opt_stops; ++i) {
+      coordinates.push(extent[0] + width * i / opt_stops, extent[1], extent[2], extent[1] + height * i / opt_stops, extent[2] - width * i / opt_stops, extent[3], extent[0], extent[3] - height * i / opt_stops);
+    }
+  } else {
+    coordinates = [extent[0], extent[1], extent[2], extent[1], extent[2], extent[3], extent[0], extent[3]];
+  }
+
+  transformFn(coordinates, coordinates, 2);
+  var xs = [];
+  var ys = [];
+
+  for (var i = 0, l = coordinates.length; i < l; i += 2) {
+    xs.push(coordinates[i]);
+    ys.push(coordinates[i + 1]);
+  }
+
+  return _boundingExtentXYs(xs, ys, opt_extent);
+}
+/**
+ * Modifies the provided extent in-place to be within the real world
+ * extent.
+ *
+ * @param {Extent} extent Extent.
+ * @param {import("./proj/Projection.js").default} projection Projection
+ * @return {Extent} The extent within the real world extent.
+ */
+
+
+function wrapX(extent, projection) {
+  var projectionExtent = projection.getExtent();
+  var center = getCenter(extent);
+
+  if (projection.canWrapX() && (center[0] < projectionExtent[0] || center[0] >= projectionExtent[2])) {
+    var worldWidth = getWidth(projectionExtent);
+    var worldsAway = Math.floor((center[0] - projectionExtent[0]) / worldWidth);
+    var offset = worldsAway * worldWidth;
+    extent[0] -= offset;
+    extent[2] -= offset;
+  }
+
+  return extent;
+}
+},{"./asserts.js":"DVOE","./extent/Corner.js":"Xc5u","./extent/Relationship.js":"kQlD"}],"TVqV":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.METERS_PER_UNIT = void 0;
+
+/**
+ * @module ol/proj/Units
+ */
+
+/**
+ * Projection units: `'degrees'`, `'ft'`, `'m'`, `'pixels'`, `'tile-pixels'` or
+ * `'us-ft'`.
+ * @enum {string}
+ */
+var Units = {
+  DEGREES: 'degrees',
+  FEET: 'ft',
+  METERS: 'm',
+  PIXELS: 'pixels',
+  TILE_PIXELS: 'tile-pixels',
+  USFEET: 'us-ft'
+};
+/**
+ * Meters per unit lookup table.
+ * @const
+ * @type {Object<Units, number>}
+ * @api
+ */
+
+var METERS_PER_UNIT = {}; // use the radius of the Normal sphere
+
+exports.METERS_PER_UNIT = METERS_PER_UNIT;
+METERS_PER_UNIT[Units.DEGREES] = 2 * Math.PI * 6370997 / 360;
+METERS_PER_UNIT[Units.FEET] = 0.3048;
+METERS_PER_UNIT[Units.METERS] = 1;
+METERS_PER_UNIT[Units.USFEET] = 1200 / 3937;
+var _default = Units;
+exports.default = _default;
+},{}],"wxkT":[function(require,module,exports) {
+var global = arguments[3];
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _Units = require("./Units.js");
+
+/**
+ * @module ol/proj/Projection
+ */
+
+/**
+ * @typedef {Object} Options
+ * @property {string} code The SRS identifier code, e.g. `EPSG:4326`.
+ * @property {import("./Units.js").default|string} [units] Units. Required unless a
+ * proj4 projection is defined for `code`.
+ * @property {import("../extent.js").Extent} [extent] The validity extent for the SRS.
+ * @property {string} [axisOrientation='enu'] The axis orientation as specified in Proj4.
+ * @property {boolean} [global=false] Whether the projection is valid for the whole globe.
+ * @property {number} [metersPerUnit] The meters per unit for the SRS.
+ * If not provided, the `units` are used to get the meters per unit from the {@link module:ol/proj/Units~METERS_PER_UNIT}
+ * lookup table.
+ * @property {import("../extent.js").Extent} [worldExtent] The world extent for the SRS.
+ * @property {function(number, import("../coordinate.js").Coordinate):number} [getPointResolution]
+ * Function to determine resolution at a point. The function is called with a
+ * `{number}` view resolution and an `{import("../coordinate.js").Coordinate}` as arguments, and returns
+ * the `{number}` resolution in projection units at the passed coordinate. If this is `undefined`,
+ * the default {@link module:ol/proj#getPointResolution} function will be used.
+ */
+
+/**
+ * @classdesc
+ * Projection definition class. One of these is created for each projection
+ * supported in the application and stored in the {@link module:ol/proj} namespace.
+ * You can use these in applications, but this is not required, as API params
+ * and options use {@link module:ol/proj~ProjectionLike} which means the simple string
+ * code will suffice.
+ *
+ * You can use {@link module:ol/proj~get} to retrieve the object for a particular
+ * projection.
+ *
+ * The library includes definitions for `EPSG:4326` and `EPSG:3857`, together
+ * with the following aliases:
+ * * `EPSG:4326`: CRS:84, urn:ogc:def:crs:EPSG:6.6:4326,
+ *     urn:ogc:def:crs:OGC:1.3:CRS84, urn:ogc:def:crs:OGC:2:84,
+ *     http://www.opengis.net/gml/srs/epsg.xml#4326,
+ *     urn:x-ogc:def:crs:EPSG:4326
+ * * `EPSG:3857`: EPSG:102100, EPSG:102113, EPSG:900913,
+ *     urn:ogc:def:crs:EPSG:6.18:3:3857,
+ *     http://www.opengis.net/gml/srs/epsg.xml#3857
+ *
+ * If you use [proj4js](https://github.com/proj4js/proj4js), aliases can
+ * be added using `proj4.defs()`. After all required projection definitions are
+ * added, call the {@link module:ol/proj/proj4~register} function.
+ *
+ * @api
+ */
+var Projection =
+/** @class */
+function () {
+  /**
+   * @param {Options} options Projection options.
+   */
+  function Projection(options) {
+    /**
+     * @private
+     * @type {string}
+     */
+    this.code_ = options.code;
+    /**
+     * Units of projected coordinates. When set to `TILE_PIXELS`, a
+     * `this.extent_` and `this.worldExtent_` must be configured properly for each
+     * tile.
+     * @private
+     * @type {import("./Units.js").default}
+     */
+
+    this.units_ =
+    /** @type {import("./Units.js").default} */
+    options.units;
+    /**
+     * Validity extent of the projection in projected coordinates. For projections
+     * with `TILE_PIXELS` units, this is the extent of the tile in
+     * tile pixel space.
+     * @private
+     * @type {import("../extent.js").Extent}
+     */
+
+    this.extent_ = options.extent !== undefined ? options.extent : null;
+    /**
+     * Extent of the world in EPSG:4326. For projections with
+     * `TILE_PIXELS` units, this is the extent of the tile in
+     * projected coordinate space.
+     * @private
+     * @type {import("../extent.js").Extent}
+     */
+
+    this.worldExtent_ = options.worldExtent !== undefined ? options.worldExtent : null;
+    /**
+     * @private
+     * @type {string}
+     */
+
+    this.axisOrientation_ = options.axisOrientation !== undefined ? options.axisOrientation : 'enu';
+    /**
+     * @private
+     * @type {boolean}
+     */
+
+    this.global_ = options.global !== undefined ? options.global : false;
+    /**
+     * @private
+     * @type {boolean}
+     */
+
+    this.canWrapX_ = !!(this.global_ && this.extent_);
+    /**
+     * @private
+     * @type {function(number, import("../coordinate.js").Coordinate):number|undefined}
+     */
+
+    this.getPointResolutionFunc_ = options.getPointResolution;
+    /**
+     * @private
+     * @type {import("../tilegrid/TileGrid.js").default}
+     */
+
+    this.defaultTileGrid_ = null;
+    /**
+     * @private
+     * @type {number|undefined}
+     */
+
+    this.metersPerUnit_ = options.metersPerUnit;
+  }
+  /**
+   * @return {boolean} The projection is suitable for wrapping the x-axis
+   */
+
+
+  Projection.prototype.canWrapX = function () {
+    return this.canWrapX_;
+  };
+  /**
+   * Get the code for this projection, e.g. 'EPSG:4326'.
+   * @return {string} Code.
+   * @api
+   */
+
+
+  Projection.prototype.getCode = function () {
+    return this.code_;
+  };
+  /**
+   * Get the validity extent for this projection.
+   * @return {import("../extent.js").Extent} Extent.
+   * @api
+   */
+
+
+  Projection.prototype.getExtent = function () {
+    return this.extent_;
+  };
+  /**
+   * Get the units of this projection.
+   * @return {import("./Units.js").default} Units.
+   * @api
+   */
+
+
+  Projection.prototype.getUnits = function () {
+    return this.units_;
+  };
+  /**
+   * Get the amount of meters per unit of this projection.  If the projection is
+   * not configured with `metersPerUnit` or a units identifier, the return is
+   * `undefined`.
+   * @return {number|undefined} Meters.
+   * @api
+   */
+
+
+  Projection.prototype.getMetersPerUnit = function () {
+    return this.metersPerUnit_ || _Units.METERS_PER_UNIT[this.units_];
+  };
+  /**
+   * Get the world extent for this projection.
+   * @return {import("../extent.js").Extent} Extent.
+   * @api
+   */
+
+
+  Projection.prototype.getWorldExtent = function () {
+    return this.worldExtent_;
+  };
+  /**
+   * Get the axis orientation of this projection.
+   * Example values are:
+   * enu - the default easting, northing, elevation.
+   * neu - northing, easting, up - useful for "lat/long" geographic coordinates,
+   *     or south orientated transverse mercator.
+   * wnu - westing, northing, up - some planetary coordinate systems have
+   *     "west positive" coordinate systems
+   * @return {string} Axis orientation.
+   * @api
+   */
+
+
+  Projection.prototype.getAxisOrientation = function () {
+    return this.axisOrientation_;
+  };
+  /**
+   * Is this projection a global projection which spans the whole world?
+   * @return {boolean} Whether the projection is global.
+   * @api
+   */
+
+
+  Projection.prototype.isGlobal = function () {
+    return this.global_;
+  };
+  /**
+   * Set if the projection is a global projection which spans the whole world
+   * @param {boolean} global Whether the projection is global.
+   * @api
+   */
+
+
+  Projection.prototype.setGlobal = function (global) {
+    this.global_ = global;
+    this.canWrapX_ = !!(global && this.extent_);
+  };
+  /**
+   * @return {import("../tilegrid/TileGrid.js").default} The default tile grid.
+   */
+
+
+  Projection.prototype.getDefaultTileGrid = function () {
+    return this.defaultTileGrid_;
+  };
+  /**
+   * @param {import("../tilegrid/TileGrid.js").default} tileGrid The default tile grid.
+   */
+
+
+  Projection.prototype.setDefaultTileGrid = function (tileGrid) {
+    this.defaultTileGrid_ = tileGrid;
+  };
+  /**
+   * Set the validity extent for this projection.
+   * @param {import("../extent.js").Extent} extent Extent.
+   * @api
+   */
+
+
+  Projection.prototype.setExtent = function (extent) {
+    this.extent_ = extent;
+    this.canWrapX_ = !!(this.global_ && extent);
+  };
+  /**
+   * Set the world extent for this projection.
+   * @param {import("../extent.js").Extent} worldExtent World extent
+   *     [minlon, minlat, maxlon, maxlat].
+   * @api
+   */
+
+
+  Projection.prototype.setWorldExtent = function (worldExtent) {
+    this.worldExtent_ = worldExtent;
+  };
+  /**
+   * Set the getPointResolution function (see {@link module:ol/proj~getPointResolution}
+   * for this projection.
+   * @param {function(number, import("../coordinate.js").Coordinate):number} func Function
+   * @api
+   */
+
+
+  Projection.prototype.setGetPointResolution = function (func) {
+    this.getPointResolutionFunc_ = func;
+  };
+  /**
+   * Get the custom point resolution function for this projection (if set).
+   * @return {function(number, import("../coordinate.js").Coordinate):number|undefined} The custom point
+   * resolution function (if set).
+   */
+
+
+  Projection.prototype.getPointResolutionFunc = function () {
+    return this.getPointResolutionFunc_;
+  };
+
+  return Projection;
+}();
+
+var _default = Projection;
+exports.default = _default;
+},{"./Units.js":"TVqV"}],"Znm6":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.fromEPSG4326 = fromEPSG4326;
+exports.toEPSG4326 = toEPSG4326;
+exports.PROJECTIONS = exports.WORLD_EXTENT = exports.EXTENT = exports.HALF_SIZE = exports.RADIUS = void 0;
+
+var _math = require("../math.js");
+
+var _Projection = _interopRequireDefault(require("./Projection.js"));
+
+var _Units = _interopRequireDefault(require("./Units.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+/**
+ * @module ol/proj/epsg3857
+ */
+
+
+/**
+ * Radius of WGS84 sphere
+ *
+ * @const
+ * @type {number}
+ */
+var RADIUS = 6378137;
+/**
+ * @const
+ * @type {number}
+ */
+
+exports.RADIUS = RADIUS;
+var HALF_SIZE = Math.PI * RADIUS;
+/**
+ * @const
+ * @type {import("../extent.js").Extent}
+ */
+
+exports.HALF_SIZE = HALF_SIZE;
+var EXTENT = [-HALF_SIZE, -HALF_SIZE, HALF_SIZE, HALF_SIZE];
+/**
+ * @const
+ * @type {import("../extent.js").Extent}
+ */
+
+exports.EXTENT = EXTENT;
+var WORLD_EXTENT = [-180, -85, 180, 85];
+/**
+ * @classdesc
+ * Projection object for web/spherical Mercator (EPSG:3857).
+ */
+
+exports.WORLD_EXTENT = WORLD_EXTENT;
+
+var EPSG3857Projection =
+/** @class */
+function (_super) {
+  __extends(EPSG3857Projection, _super);
+  /**
+   * @param {string} code Code.
+   */
+
+
+  function EPSG3857Projection(code) {
+    return _super.call(this, {
+      code: code,
+      units: _Units.default.METERS,
+      extent: EXTENT,
+      global: true,
+      worldExtent: WORLD_EXTENT,
+      getPointResolution: function (resolution, point) {
+        return resolution / (0, _math.cosh)(point[1] / RADIUS);
+      }
+    }) || this;
+  }
+
+  return EPSG3857Projection;
+}(_Projection.default);
+/**
+ * Projections equal to EPSG:3857.
+ *
+ * @const
+ * @type {Array<import("./Projection.js").default>}
+ */
+
+
+var PROJECTIONS = [new EPSG3857Projection('EPSG:3857'), new EPSG3857Projection('EPSG:102100'), new EPSG3857Projection('EPSG:102113'), new EPSG3857Projection('EPSG:900913'), new EPSG3857Projection('urn:ogc:def:crs:EPSG:6.18:3:3857'), new EPSG3857Projection('urn:ogc:def:crs:EPSG::3857'), new EPSG3857Projection('http://www.opengis.net/gml/srs/epsg.xml#3857')];
+/**
+ * Transformation from EPSG:4326 to EPSG:3857.
+ *
+ * @param {Array<number>} input Input array of coordinate values.
+ * @param {Array<number>=} opt_output Output array of coordinate values.
+ * @param {number=} opt_dimension Dimension (default is `2`).
+ * @return {Array<number>} Output array of coordinate values.
+ */
+
+exports.PROJECTIONS = PROJECTIONS;
+
+function fromEPSG4326(input, opt_output, opt_dimension) {
+  var length = input.length;
+  var dimension = opt_dimension > 1 ? opt_dimension : 2;
+  var output = opt_output;
+
+  if (output === undefined) {
+    if (dimension > 2) {
+      // preserve values beyond second dimension
+      output = input.slice();
+    } else {
+      output = new Array(length);
+    }
+  }
+
+  var halfSize = HALF_SIZE;
+
+  for (var i = 0; i < length; i += dimension) {
+    output[i] = halfSize * input[i] / 180;
+    var y = RADIUS * Math.log(Math.tan(Math.PI * (+input[i + 1] + 90) / 360));
+
+    if (y > halfSize) {
+      y = halfSize;
+    } else if (y < -halfSize) {
+      y = -halfSize;
+    }
+
+    output[i + 1] = y;
+  }
+
+  return output;
+}
+/**
+ * Transformation from EPSG:3857 to EPSG:4326.
+ *
+ * @param {Array<number>} input Input array of coordinate values.
+ * @param {Array<number>=} opt_output Output array of coordinate values.
+ * @param {number=} opt_dimension Dimension (default is `2`).
+ * @return {Array<number>} Output array of coordinate values.
+ */
+
+
+function toEPSG4326(input, opt_output, opt_dimension) {
+  var length = input.length;
+  var dimension = opt_dimension > 1 ? opt_dimension : 2;
+  var output = opt_output;
+
+  if (output === undefined) {
+    if (dimension > 2) {
+      // preserve values beyond second dimension
+      output = input.slice();
+    } else {
+      output = new Array(length);
+    }
+  }
+
+  for (var i = 0; i < length; i += dimension) {
+    output[i] = 180 * input[i] / HALF_SIZE;
+    output[i + 1] = 360 * Math.atan(Math.exp(input[i + 1] / RADIUS)) / Math.PI - 90;
+  }
+
+  return output;
+}
+},{"../math.js":"qAK2","./Projection.js":"wxkT","./Units.js":"TVqV"}],"ztm5":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.PROJECTIONS = exports.METERS_PER_UNIT = exports.EXTENT = exports.RADIUS = void 0;
+
+var _Projection = _interopRequireDefault(require("./Projection.js"));
+
+var _Units = _interopRequireDefault(require("./Units.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+/**
+ * @module ol/proj/epsg4326
+ */
+
+
+/**
+ * Semi-major radius of the WGS84 ellipsoid.
+ *
+ * @const
+ * @type {number}
+ */
+var RADIUS = 6378137;
+/**
+ * Extent of the EPSG:4326 projection which is the whole world.
+ *
+ * @const
+ * @type {import("../extent.js").Extent}
+ */
+
+exports.RADIUS = RADIUS;
+var EXTENT = [-180, -90, 180, 90];
+/**
+ * @const
+ * @type {number}
+ */
+
+exports.EXTENT = EXTENT;
+var METERS_PER_UNIT = Math.PI * RADIUS / 180;
+/**
+ * @classdesc
+ * Projection object for WGS84 geographic coordinates (EPSG:4326).
+ *
+ * Note that OpenLayers does not strictly comply with the EPSG definition.
+ * The EPSG registry defines 4326 as a CRS for Latitude,Longitude (y,x).
+ * OpenLayers treats EPSG:4326 as a pseudo-projection, with x,y coordinates.
+ */
+
+exports.METERS_PER_UNIT = METERS_PER_UNIT;
+
+var EPSG4326Projection =
+/** @class */
+function (_super) {
+  __extends(EPSG4326Projection, _super);
+  /**
+   * @param {string} code Code.
+   * @param {string=} opt_axisOrientation Axis orientation.
+   */
+
+
+  function EPSG4326Projection(code, opt_axisOrientation) {
+    return _super.call(this, {
+      code: code,
+      units: _Units.default.DEGREES,
+      extent: EXTENT,
+      axisOrientation: opt_axisOrientation,
+      global: true,
+      metersPerUnit: METERS_PER_UNIT,
+      worldExtent: EXTENT
+    }) || this;
+  }
+
+  return EPSG4326Projection;
+}(_Projection.default);
+/**
+ * Projections equal to EPSG:4326.
+ *
+ * @const
+ * @type {Array<import("./Projection.js").default>}
+ */
+
+
+var PROJECTIONS = [new EPSG4326Projection('CRS:84'), new EPSG4326Projection('EPSG:4326', 'neu'), new EPSG4326Projection('urn:ogc:def:crs:EPSG::4326', 'neu'), new EPSG4326Projection('urn:ogc:def:crs:EPSG:6.6:4326', 'neu'), new EPSG4326Projection('urn:ogc:def:crs:OGC:1.3:CRS84'), new EPSG4326Projection('urn:ogc:def:crs:OGC:2:84'), new EPSG4326Projection('http://www.opengis.net/gml/srs/epsg.xml#4326', 'neu'), new EPSG4326Projection('urn:x-ogc:def:crs:EPSG:4326', 'neu')];
+exports.PROJECTIONS = PROJECTIONS;
+},{"./Projection.js":"wxkT","./Units.js":"TVqV"}],"SLsU":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.clear = clear;
+exports.isEmpty = isEmpty;
+exports.getValues = exports.assign = void 0;
+
+/**
+ * @module ol/obj
+ */
+
+/**
+ * Polyfill for Object.assign().  Assigns enumerable and own properties from
+ * one or more source objects to a target object.
+ * See https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign.
+ *
+ * @param {!Object} target The target object.
+ * @param {...Object} var_sources The source object(s).
+ * @return {!Object} The modified target object.
+ */
+var assign = typeof Object.assign === 'function' ? Object.assign : function (target, var_sources) {
+  if (target === undefined || target === null) {
+    throw new TypeError('Cannot convert undefined or null to object');
+  }
+
+  var output = Object(target);
+
+  for (var i = 1, ii = arguments.length; i < ii; ++i) {
+    var source = arguments[i];
+
+    if (source !== undefined && source !== null) {
+      for (var key in source) {
+        if (source.hasOwnProperty(key)) {
+          output[key] = source[key];
+        }
+      }
+    }
+  }
+
+  return output;
+};
+/**
+ * Removes all properties from an object.
+ * @param {Object} object The object to clear.
+ */
+
+exports.assign = assign;
+
+function clear(object) {
+  for (var property in object) {
+    delete object[property];
+  }
+}
+/**
+ * Polyfill for Object.values().  Get an array of property values from an object.
+ * See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/values
+ *
+ * @param {!Object<K,V>} object The object from which to get the values.
+ * @return {!Array<V>} The property values.
+ * @template K,V
+ */
+
+
+var getValues = typeof Object.values === 'function' ? Object.values : function (object) {
+  var values = [];
+
+  for (var property in object) {
+    values.push(object[property]);
+  }
+
+  return values;
+};
+/**
+ * Determine if an object has any properties.
+ * @param {Object} object The object to check.
+ * @return {boolean} The object is empty.
+ */
+
+exports.getValues = getValues;
+
+function isEmpty(object) {
+  var property;
+
+  for (property in object) {
+    return false;
+  }
+
+  return !property;
+}
+},{}],"w9tV":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.clear = clear;
+exports.add = add;
+exports.remove = remove;
+exports.get = get;
+
+var _obj = require("../obj.js");
+
+/**
+ * @module ol/proj/transforms
+ */
+
+/**
+ * @private
+ * @type {!Object<string, Object<string, import("../proj.js").TransformFunction>>}
+ */
+var transforms = {};
+/**
+ * Clear the transform cache.
+ */
+
+function clear() {
+  transforms = {};
+}
+/**
+ * Registers a conversion function to convert coordinates from the source
+ * projection to the destination projection.
+ *
+ * @param {import("./Projection.js").default} source Source.
+ * @param {import("./Projection.js").default} destination Destination.
+ * @param {import("../proj.js").TransformFunction} transformFn Transform.
+ */
+
+
+function add(source, destination, transformFn) {
+  var sourceCode = source.getCode();
+  var destinationCode = destination.getCode();
+
+  if (!(sourceCode in transforms)) {
+    transforms[sourceCode] = {};
+  }
+
+  transforms[sourceCode][destinationCode] = transformFn;
+}
+/**
+ * Unregisters the conversion function to convert coordinates from the source
+ * projection to the destination projection.  This method is used to clean up
+ * cached transforms during testing.
+ *
+ * @param {import("./Projection.js").default} source Source projection.
+ * @param {import("./Projection.js").default} destination Destination projection.
+ * @return {import("../proj.js").TransformFunction} transformFn The unregistered transform.
+ */
+
+
+function remove(source, destination) {
+  var sourceCode = source.getCode();
+  var destinationCode = destination.getCode();
+  var transform = transforms[sourceCode][destinationCode];
+  delete transforms[sourceCode][destinationCode];
+
+  if ((0, _obj.isEmpty)(transforms[sourceCode])) {
+    delete transforms[sourceCode];
+  }
+
+  return transform;
+}
+/**
+ * Get a transform given a source code and a destination code.
+ * @param {string} sourceCode The code for the source projection.
+ * @param {string} destinationCode The code for the destination projection.
+ * @return {import("../proj.js").TransformFunction|undefined} The transform function (if found).
+ */
+
+
+function get(sourceCode, destinationCode) {
+  var transform;
+
+  if (sourceCode in transforms && destinationCode in transforms[sourceCode]) {
+    transform = transforms[sourceCode][destinationCode];
+  }
+
+  return transform;
+}
+},{"../obj.js":"SLsU"}],"pht6":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.clear = clear;
+exports.get = get;
+exports.add = add;
+
+/**
+ * @module ol/proj/projections
+ */
+
+/**
+ * @type {Object<string, import("./Projection.js").default>}
+ */
+var cache = {};
+/**
+ * Clear the projections cache.
+ */
+
+function clear() {
+  cache = {};
+}
+/**
+ * Get a cached projection by code.
+ * @param {string} code The code for the projection.
+ * @return {import("./Projection.js").default} The projection (if cached).
+ */
+
+
+function get(code) {
+  return cache[code] || null;
+}
+/**
+ * Add a projection to the cache.
+ * @param {string} code The projection code.
+ * @param {import("./Projection.js").default} projection The projection to cache.
+ */
+
+
+function add(code, projection) {
+  cache[code] = projection;
+}
+},{}],"VAQc":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.cloneTransform = cloneTransform;
+exports.identityTransform = identityTransform;
+exports.addProjection = addProjection;
+exports.addProjections = addProjections;
+exports.get = get;
+exports.getPointResolution = getPointResolution;
+exports.addEquivalentProjections = addEquivalentProjections;
+exports.addEquivalentTransforms = addEquivalentTransforms;
+exports.clearAllProjections = clearAllProjections;
+exports.createProjection = createProjection;
+exports.createTransformFromCoordinateTransform = createTransformFromCoordinateTransform;
+exports.addCoordinateTransforms = addCoordinateTransforms;
+exports.fromLonLat = fromLonLat;
+exports.toLonLat = toLonLat;
+exports.equivalent = equivalent;
+exports.getTransformFromProjections = getTransformFromProjections;
+exports.getTransform = getTransform;
+exports.transform = transform;
+exports.transformExtent = transformExtent;
+exports.transformWithProjections = transformWithProjections;
+exports.setUserProjection = setUserProjection;
+exports.clearUserProjection = clearUserProjection;
+exports.getUserProjection = getUserProjection;
+exports.useGeographic = useGeographic;
+exports.toUserCoordinate = toUserCoordinate;
+exports.fromUserCoordinate = fromUserCoordinate;
+exports.toUserExtent = toUserExtent;
+exports.fromUserExtent = fromUserExtent;
+exports.addCommon = addCommon;
+Object.defineProperty(exports, "Projection", {
+  enumerable: true,
+  get: function () {
+    return _Projection.default;
+  }
+});
+Object.defineProperty(exports, "METERS_PER_UNIT", {
+  enumerable: true,
+  get: function () {
+    return _Units.METERS_PER_UNIT;
+  }
+});
+
+var _sphere = require("./sphere.js");
+
+var _extent = require("./extent.js");
+
+var _math = require("./math.js");
+
+var _epsg = require("./proj/epsg3857.js");
+
+var _epsg2 = require("./proj/epsg4326.js");
+
+var _Projection = _interopRequireDefault(require("./proj/Projection.js"));
+
+var _Units = _interopRequireWildcard(require("./proj/Units.js"));
+
+var _transforms = require("./proj/transforms.js");
+
+var _projections = require("./proj/projections.js");
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @module ol/proj
+ */
+
+/**
+ * The ol/proj module stores:
+ * * a list of {@link module:ol/proj/Projection}
+ * objects, one for each projection supported by the application
+ * * a list of transform functions needed to convert coordinates in one projection
+ * into another.
+ *
+ * The static functions are the methods used to maintain these.
+ * Each transform function can handle not only simple coordinate pairs, but also
+ * large arrays of coordinates such as vector geometries.
+ *
+ * When loaded, the library adds projection objects for EPSG:4326 (WGS84
+ * geographic coordinates) and EPSG:3857 (Web or Spherical Mercator, as used
+ * for example by Bing Maps or OpenStreetMap), together with the relevant
+ * transform functions.
+ *
+ * Additional transforms may be added by using the http://proj4js.org/
+ * library (version 2.2 or later). You can use the full build supplied by
+ * Proj4js, or create a custom build to support those projections you need; see
+ * the Proj4js website for how to do this. You also need the Proj4js definitions
+ * for the required projections. These definitions can be obtained from
+ * https://epsg.io/, and are a JS function, so can be loaded in a script
+ * tag (as in the examples) or pasted into your application.
+ *
+ * After all required projection definitions are added to proj4's registry (by
+ * using `proj4.defs()`), simply call `register(proj4)` from the `ol/proj/proj4`
+ * package. Existing transforms are not changed by this function. See
+ * examples/wms-image-custom-proj for an example of this.
+ *
+ * Additional projection definitions can be registered with `proj4.defs()` any
+ * time. Just make sure to call `register(proj4)` again; for example, with user-supplied data where you don't
+ * know in advance what projections are needed, you can initially load minimal
+ * support and then load whichever are requested.
+ *
+ * Note that Proj4js does not support projection extents. If you want to add
+ * one for creating default tile grids, you can add it after the Projection
+ * object has been created with `setExtent`, for example,
+ * `get('EPSG:1234').setExtent(extent)`.
+ *
+ * In addition to Proj4js support, any transform functions can be added with
+ * {@link module:ol/proj~addCoordinateTransforms}. To use this, you must first create
+ * a {@link module:ol/proj/Projection} object for the new projection and add it with
+ * {@link module:ol/proj~addProjection}. You can then add the forward and inverse
+ * functions with {@link module:ol/proj~addCoordinateTransforms}. See
+ * examples/wms-custom-proj for an example of this.
+ *
+ * Note that if no transforms are needed and you only need to define the
+ * projection, just add a {@link module:ol/proj/Projection} with
+ * {@link module:ol/proj~addProjection}. See examples/wms-no-proj for an example of
+ * this.
+ */
+
+/**
+ * A projection as {@link module:ol/proj/Projection}, SRS identifier
+ * string or undefined.
+ * @typedef {Projection|string|undefined} ProjectionLike
+ * @api
+ */
+
+/**
+ * A transform function accepts an array of input coordinate values, an optional
+ * output array, and an optional dimension (default should be 2).  The function
+ * transforms the input coordinate values, populates the output array, and
+ * returns the output array.
+ *
+ * @typedef {function(Array<number>, Array<number>=, number=): Array<number>} TransformFunction
+ * @api
+ */
+
+/**
+ * @param {Array<number>} input Input coordinate array.
+ * @param {Array<number>=} opt_output Output array of coordinate values.
+ * @param {number=} opt_dimension Dimension.
+ * @return {Array<number>} Output coordinate array (new array, same coordinate
+ *     values).
+ */
+function cloneTransform(input, opt_output, opt_dimension) {
+  var output;
+
+  if (opt_output !== undefined) {
+    for (var i = 0, ii = input.length; i < ii; ++i) {
+      opt_output[i] = input[i];
+    }
+
+    output = opt_output;
+  } else {
+    output = input.slice();
+  }
+
+  return output;
+}
+/**
+ * @param {Array<number>} input Input coordinate array.
+ * @param {Array<number>=} opt_output Output array of coordinate values.
+ * @param {number=} opt_dimension Dimension.
+ * @return {Array<number>} Input coordinate array (same array as input).
+ */
+
+
+function identityTransform(input, opt_output, opt_dimension) {
+  if (opt_output !== undefined && input !== opt_output) {
+    for (var i = 0, ii = input.length; i < ii; ++i) {
+      opt_output[i] = input[i];
+    }
+
+    input = opt_output;
+  }
+
+  return input;
+}
+/**
+ * Add a Projection object to the list of supported projections that can be
+ * looked up by their code.
+ *
+ * @param {Projection} projection Projection instance.
+ * @api
+ */
+
+
+function addProjection(projection) {
+  (0, _projections.add)(projection.getCode(), projection);
+  (0, _transforms.add)(projection, projection, cloneTransform);
+}
+/**
+ * @param {Array<Projection>} projections Projections.
+ */
+
+
+function addProjections(projections) {
+  projections.forEach(addProjection);
+}
+/**
+ * Fetches a Projection object for the code specified.
+ *
+ * @param {ProjectionLike} projectionLike Either a code string which is
+ *     a combination of authority and identifier such as "EPSG:4326", or an
+ *     existing projection object, or undefined.
+ * @return {Projection} Projection object, or null if not in list.
+ * @api
+ */
+
+
+function get(projectionLike) {
+  return typeof projectionLike === 'string' ? (0, _projections.get)(
+  /** @type {string} */
+  projectionLike) :
+  /** @type {Projection} */
+  projectionLike || null;
+}
+/**
+ * Get the resolution of the point in degrees or distance units.
+ * For projections with degrees as the unit this will simply return the
+ * provided resolution. For other projections the point resolution is
+ * by default estimated by transforming the 'point' pixel to EPSG:4326,
+ * measuring its width and height on the normal sphere,
+ * and taking the average of the width and height.
+ * A custom function can be provided for a specific projection, either
+ * by setting the `getPointResolution` option in the
+ * {@link module:ol/proj/Projection~Projection} constructor or by using
+ * {@link module:ol/proj/Projection~Projection#setGetPointResolution} to change an existing
+ * projection object.
+ * @param {ProjectionLike} projection The projection.
+ * @param {number} resolution Nominal resolution in projection units.
+ * @param {import("./coordinate.js").Coordinate} point Point to find adjusted resolution at.
+ * @param {Units=} opt_units Units to get the point resolution in.
+ * Default is the projection's units.
+ * @return {number} Point resolution.
+ * @api
+ */
+
+
+function getPointResolution(projection, resolution, point, opt_units) {
+  projection = get(projection);
+  var pointResolution;
+  var getter = projection.getPointResolutionFunc();
+
+  if (getter) {
+    pointResolution = getter(resolution, point);
+
+    if (opt_units && opt_units !== projection.getUnits()) {
+      var metersPerUnit = projection.getMetersPerUnit();
+
+      if (metersPerUnit) {
+        pointResolution = pointResolution * metersPerUnit / _Units.METERS_PER_UNIT[opt_units];
+      }
+    }
+  } else {
+    var units = projection.getUnits();
+
+    if (units == _Units.default.DEGREES && !opt_units || opt_units == _Units.default.DEGREES) {
+      pointResolution = resolution;
+    } else {
+      // Estimate point resolution by transforming the center pixel to EPSG:4326,
+      // measuring its width and height on the normal sphere, and taking the
+      // average of the width and height.
+      var toEPSG4326_1 = getTransformFromProjections(projection, get('EPSG:4326'));
+      var vertices = [point[0] - resolution / 2, point[1], point[0] + resolution / 2, point[1], point[0], point[1] - resolution / 2, point[0], point[1] + resolution / 2];
+      vertices = toEPSG4326_1(vertices, vertices, 2);
+      var width = (0, _sphere.getDistance)(vertices.slice(0, 2), vertices.slice(2, 4));
+      var height = (0, _sphere.getDistance)(vertices.slice(4, 6), vertices.slice(6, 8));
+      pointResolution = (width + height) / 2;
+      var metersPerUnit = opt_units ? _Units.METERS_PER_UNIT[opt_units] : projection.getMetersPerUnit();
+
+      if (metersPerUnit !== undefined) {
+        pointResolution /= metersPerUnit;
+      }
+    }
+  }
+
+  return pointResolution;
+}
+/**
+ * Registers transformation functions that don't alter coordinates. Those allow
+ * to transform between projections with equal meaning.
+ *
+ * @param {Array<Projection>} projections Projections.
+ * @api
+ */
+
+
+function addEquivalentProjections(projections) {
+  addProjections(projections);
+  projections.forEach(function (source) {
+    projections.forEach(function (destination) {
+      if (source !== destination) {
+        (0, _transforms.add)(source, destination, cloneTransform);
+      }
+    });
+  });
+}
+/**
+ * Registers transformation functions to convert coordinates in any projection
+ * in projection1 to any projection in projection2.
+ *
+ * @param {Array<Projection>} projections1 Projections with equal
+ *     meaning.
+ * @param {Array<Projection>} projections2 Projections with equal
+ *     meaning.
+ * @param {TransformFunction} forwardTransform Transformation from any
+ *   projection in projection1 to any projection in projection2.
+ * @param {TransformFunction} inverseTransform Transform from any projection
+ *   in projection2 to any projection in projection1..
+ */
+
+
+function addEquivalentTransforms(projections1, projections2, forwardTransform, inverseTransform) {
+  projections1.forEach(function (projection1) {
+    projections2.forEach(function (projection2) {
+      (0, _transforms.add)(projection1, projection2, forwardTransform);
+      (0, _transforms.add)(projection2, projection1, inverseTransform);
+    });
+  });
+}
+/**
+ * Clear all cached projections and transforms.
+ */
+
+
+function clearAllProjections() {
+  (0, _projections.clear)();
+  (0, _transforms.clear)();
+}
+/**
+ * @param {Projection|string|undefined} projection Projection.
+ * @param {string} defaultCode Default code.
+ * @return {Projection} Projection.
+ */
+
+
+function createProjection(projection, defaultCode) {
+  if (!projection) {
+    return get(defaultCode);
+  } else if (typeof projection === 'string') {
+    return get(projection);
+  } else {
+    return (
+      /** @type {Projection} */
+      projection
+    );
+  }
+}
+/**
+ * Creates a {@link module:ol/proj~TransformFunction} from a simple 2D coordinate transform
+ * function.
+ * @param {function(import("./coordinate.js").Coordinate): import("./coordinate.js").Coordinate} coordTransform Coordinate
+ *     transform.
+ * @return {TransformFunction} Transform function.
+ */
+
+
+function createTransformFromCoordinateTransform(coordTransform) {
+  return (
+    /**
+     * @param {Array<number>} input Input.
+     * @param {Array<number>=} opt_output Output.
+     * @param {number=} opt_dimension Dimension.
+     * @return {Array<number>} Output.
+     */
+    function (input, opt_output, opt_dimension) {
+      var length = input.length;
+      var dimension = opt_dimension !== undefined ? opt_dimension : 2;
+      var output = opt_output !== undefined ? opt_output : new Array(length);
+
+      for (var i = 0; i < length; i += dimension) {
+        var point = coordTransform([input[i], input[i + 1]]);
+        output[i] = point[0];
+        output[i + 1] = point[1];
+
+        for (var j = dimension - 1; j >= 2; --j) {
+          output[i + j] = input[i + j];
+        }
+      }
+
+      return output;
+    }
+  );
+}
+/**
+ * Registers coordinate transform functions to convert coordinates between the
+ * source projection and the destination projection.
+ * The forward and inverse functions convert coordinate pairs; this function
+ * converts these into the functions used internally which also handle
+ * extents and coordinate arrays.
+ *
+ * @param {ProjectionLike} source Source projection.
+ * @param {ProjectionLike} destination Destination projection.
+ * @param {function(import("./coordinate.js").Coordinate): import("./coordinate.js").Coordinate} forward The forward transform
+ *     function (that is, from the source projection to the destination
+ *     projection) that takes a {@link module:ol/coordinate~Coordinate} as argument and returns
+ *     the transformed {@link module:ol/coordinate~Coordinate}.
+ * @param {function(import("./coordinate.js").Coordinate): import("./coordinate.js").Coordinate} inverse The inverse transform
+ *     function (that is, from the destination projection to the source
+ *     projection) that takes a {@link module:ol/coordinate~Coordinate} as argument and returns
+ *     the transformed {@link module:ol/coordinate~Coordinate}.
+ * @api
+ */
+
+
+function addCoordinateTransforms(source, destination, forward, inverse) {
+  var sourceProj = get(source);
+  var destProj = get(destination);
+  (0, _transforms.add)(sourceProj, destProj, createTransformFromCoordinateTransform(forward));
+  (0, _transforms.add)(destProj, sourceProj, createTransformFromCoordinateTransform(inverse));
+}
+/**
+ * Transforms a coordinate from longitude/latitude to a different projection.
+ * @param {import("./coordinate.js").Coordinate} coordinate Coordinate as longitude and latitude, i.e.
+ *     an array with longitude as 1st and latitude as 2nd element.
+ * @param {ProjectionLike=} opt_projection Target projection. The
+ *     default is Web Mercator, i.e. 'EPSG:3857'.
+ * @return {import("./coordinate.js").Coordinate} Coordinate projected to the target projection.
+ * @api
+ */
+
+
+function fromLonLat(coordinate, opt_projection) {
+  return transform(coordinate, 'EPSG:4326', opt_projection !== undefined ? opt_projection : 'EPSG:3857');
+}
+/**
+ * Transforms a coordinate to longitude/latitude.
+ * @param {import("./coordinate.js").Coordinate} coordinate Projected coordinate.
+ * @param {ProjectionLike=} opt_projection Projection of the coordinate.
+ *     The default is Web Mercator, i.e. 'EPSG:3857'.
+ * @return {import("./coordinate.js").Coordinate} Coordinate as longitude and latitude, i.e. an array
+ *     with longitude as 1st and latitude as 2nd element.
+ * @api
+ */
+
+
+function toLonLat(coordinate, opt_projection) {
+  var lonLat = transform(coordinate, opt_projection !== undefined ? opt_projection : 'EPSG:3857', 'EPSG:4326');
+  var lon = lonLat[0];
+
+  if (lon < -180 || lon > 180) {
+    lonLat[0] = (0, _math.modulo)(lon + 180, 360) - 180;
+  }
+
+  return lonLat;
+}
+/**
+ * Checks if two projections are the same, that is every coordinate in one
+ * projection does represent the same geographic point as the same coordinate in
+ * the other projection.
+ *
+ * @param {Projection} projection1 Projection 1.
+ * @param {Projection} projection2 Projection 2.
+ * @return {boolean} Equivalent.
+ * @api
+ */
+
+
+function equivalent(projection1, projection2) {
+  if (projection1 === projection2) {
+    return true;
+  }
+
+  var equalUnits = projection1.getUnits() === projection2.getUnits();
+
+  if (projection1.getCode() === projection2.getCode()) {
+    return equalUnits;
+  } else {
+    var transformFunc = getTransformFromProjections(projection1, projection2);
+    return transformFunc === cloneTransform && equalUnits;
+  }
+}
+/**
+ * Searches in the list of transform functions for the function for converting
+ * coordinates from the source projection to the destination projection.
+ *
+ * @param {Projection} sourceProjection Source Projection object.
+ * @param {Projection} destinationProjection Destination Projection
+ *     object.
+ * @return {TransformFunction} Transform function.
+ */
+
+
+function getTransformFromProjections(sourceProjection, destinationProjection) {
+  var sourceCode = sourceProjection.getCode();
+  var destinationCode = destinationProjection.getCode();
+  var transformFunc = (0, _transforms.get)(sourceCode, destinationCode);
+
+  if (!transformFunc) {
+    transformFunc = identityTransform;
+  }
+
+  return transformFunc;
+}
+/**
+ * Given the projection-like objects, searches for a transformation
+ * function to convert a coordinates array from the source projection to the
+ * destination projection.
+ *
+ * @param {ProjectionLike} source Source.
+ * @param {ProjectionLike} destination Destination.
+ * @return {TransformFunction} Transform function.
+ * @api
+ */
+
+
+function getTransform(source, destination) {
+  var sourceProjection = get(source);
+  var destinationProjection = get(destination);
+  return getTransformFromProjections(sourceProjection, destinationProjection);
+}
+/**
+ * Transforms a coordinate from source projection to destination projection.
+ * This returns a new coordinate (and does not modify the original).
+ *
+ * See {@link module:ol/proj~transformExtent} for extent transformation.
+ * See the transform method of {@link module:ol/geom/Geometry~Geometry} and its
+ * subclasses for geometry transforms.
+ *
+ * @param {import("./coordinate.js").Coordinate} coordinate Coordinate.
+ * @param {ProjectionLike} source Source projection-like.
+ * @param {ProjectionLike} destination Destination projection-like.
+ * @return {import("./coordinate.js").Coordinate} Coordinate.
+ * @api
+ */
+
+
+function transform(coordinate, source, destination) {
+  var transformFunc = getTransform(source, destination);
+  return transformFunc(coordinate, undefined, coordinate.length);
+}
+/**
+ * Transforms an extent from source projection to destination projection.  This
+ * returns a new extent (and does not modify the original).
+ *
+ * @param {import("./extent.js").Extent} extent The extent to transform.
+ * @param {ProjectionLike} source Source projection-like.
+ * @param {ProjectionLike} destination Destination projection-like.
+ * @param {number=} opt_stops Number of stops per side used for the transform.
+ * By default only the corners are used.
+ * @return {import("./extent.js").Extent} The transformed extent.
+ * @api
+ */
+
+
+function transformExtent(extent, source, destination, opt_stops) {
+  var transformFunc = getTransform(source, destination);
+  return (0, _extent.applyTransform)(extent, transformFunc, undefined, opt_stops);
+}
+/**
+ * Transforms the given point to the destination projection.
+ *
+ * @param {import("./coordinate.js").Coordinate} point Point.
+ * @param {Projection} sourceProjection Source projection.
+ * @param {Projection} destinationProjection Destination projection.
+ * @return {import("./coordinate.js").Coordinate} Point.
+ */
+
+
+function transformWithProjections(point, sourceProjection, destinationProjection) {
+  var transformFunc = getTransformFromProjections(sourceProjection, destinationProjection);
+  return transformFunc(point);
+}
+/**
+ * @type {?Projection}
+ */
+
+
+var userProjection = null;
+/**
+ * Set the projection for coordinates supplied from and returned by API methods.
+ * Note that this method is not yet a part of the stable API.  Support for user
+ * projections is not yet complete and should be considered experimental.
+ * @param {ProjectionLike} projection The user projection.
+ */
+
+function setUserProjection(projection) {
+  userProjection = get(projection);
+}
+/**
+ * Clear the user projection if set.  Note that this method is not yet a part of
+ * the stable API.  Support for user projections is not yet complete and should
+ * be considered experimental.
+ */
+
+
+function clearUserProjection() {
+  userProjection = null;
+}
+/**
+ * Get the projection for coordinates supplied from and returned by API methods.
+ * Note that this method is not yet a part of the stable API.  Support for user
+ * projections is not yet complete and should be considered experimental.
+ * @returns {?Projection} The user projection (or null if not set).
+ */
+
+
+function getUserProjection() {
+  return userProjection;
+}
+/**
+ * Use geographic coordinates (WGS-84 datum) in API methods.  Note that this
+ * method is not yet a part of the stable API.  Support for user projections is
+ * not yet complete and should be considered experimental.
+ */
+
+
+function useGeographic() {
+  setUserProjection('EPSG:4326');
+}
+/**
+ * Return a coordinate transformed into the user projection.  If no user projection
+ * is set, the original coordinate is returned.
+ * @param {Array<number>} coordinate Input coordinate.
+ * @param {ProjectionLike} sourceProjection The input coordinate projection.
+ * @returns {Array<number>} The input coordinate in the user projection.
+ */
+
+
+function toUserCoordinate(coordinate, sourceProjection) {
+  if (!userProjection) {
+    return coordinate;
+  }
+
+  return transform(coordinate, sourceProjection, userProjection);
+}
+/**
+ * Return a coordinate transformed from the user projection.  If no user projection
+ * is set, the original coordinate is returned.
+ * @param {Array<number>} coordinate Input coordinate.
+ * @param {ProjectionLike} destProjection The destination projection.
+ * @returns {Array<number>} The input coordinate transformed.
+ */
+
+
+function fromUserCoordinate(coordinate, destProjection) {
+  if (!userProjection) {
+    return coordinate;
+  }
+
+  return transform(coordinate, userProjection, destProjection);
+}
+/**
+ * Return an extent transformed into the user projection.  If no user projection
+ * is set, the original extent is returned.
+ * @param {import("./extent.js").Extent} extent Input extent.
+ * @param {ProjectionLike} sourceProjection The input extent projection.
+ * @returns {import("./extent.js").Extent} The input extent in the user projection.
+ */
+
+
+function toUserExtent(extent, sourceProjection) {
+  if (!userProjection) {
+    return extent;
+  }
+
+  return transformExtent(extent, sourceProjection, userProjection);
+}
+/**
+ * Return an extent transformed from the user projection.  If no user projection
+ * is set, the original extent is returned.
+ * @param {import("./extent.js").Extent} extent Input extent.
+ * @param {ProjectionLike} destProjection The destination projection.
+ * @returns {import("./extent.js").Extent} The input extent transformed.
+ */
+
+
+function fromUserExtent(extent, destProjection) {
+  if (!userProjection) {
+    return extent;
+  }
+
+  return transformExtent(extent, userProjection, destProjection);
+}
+/**
+ * Add transforms to and from EPSG:4326 and EPSG:3857.  This function is called
+ * by when this module is executed and should only need to be called again after
+ * `clearAllProjections()` is called (e.g. in tests).
+ */
+
+
+function addCommon() {
+  // Add transformations that don't alter coordinates to convert within set of
+  // projections with equal meaning.
+  addEquivalentProjections(_epsg.PROJECTIONS);
+  addEquivalentProjections(_epsg2.PROJECTIONS); // Add transformations to convert EPSG:4326 like coordinates to EPSG:3857 like
+  // coordinates and back.
+
+  addEquivalentTransforms(_epsg2.PROJECTIONS, _epsg.PROJECTIONS, _epsg.fromEPSG4326, _epsg.toEPSG4326);
+}
+
+addCommon();
+},{"./sphere.js":"TxdA","./extent.js":"L0Vw","./math.js":"qAK2","./proj/epsg3857.js":"Znm6","./proj/epsg4326.js":"ztm5","./proj/Projection.js":"wxkT","./proj/Units.js":"TVqV","./proj/transforms.js":"w9tV","./proj/projections.js":"pht6"}],"d9VJ":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.buffer = buffer;
+exports.hasArea = hasArea;
+exports.scale = scale;
+exports.toSize = toSize;
+
+/**
+ * @module ol/size
+ */
+
+/**
+ * An array of numbers representing a size: `[width, height]`.
+ * @typedef {Array<number>} Size
+ * @api
+ */
+
+/**
+ * Returns a buffered size.
+ * @param {Size} size Size.
+ * @param {number} num The amount by which to buffer.
+ * @param {Size=} opt_size Optional reusable size array.
+ * @return {Size} The buffered size.
+ */
+function buffer(size, num, opt_size) {
+  if (opt_size === undefined) {
+    opt_size = [0, 0];
+  }
+
+  opt_size[0] = size[0] + 2 * num;
+  opt_size[1] = size[1] + 2 * num;
+  return opt_size;
+}
+/**
+ * Determines if a size has a positive area.
+ * @param {Size} size The size to test.
+ * @return {boolean} The size has a positive area.
+ */
+
+
+function hasArea(size) {
+  return size[0] > 0 && size[1] > 0;
+}
+/**
+ * Returns a size scaled by a ratio. The result will be an array of integers.
+ * @param {Size} size Size.
+ * @param {number} ratio Ratio.
+ * @param {Size=} opt_size Optional reusable size array.
+ * @return {Size} The scaled size.
+ */
+
+
+function scale(size, ratio, opt_size) {
+  if (opt_size === undefined) {
+    opt_size = [0, 0];
+  }
+
+  opt_size[0] = size[0] * ratio + 0.5 | 0;
+  opt_size[1] = size[1] * ratio + 0.5 | 0;
+  return opt_size;
+}
+/**
+ * Returns an `Size` array for the passed in number (meaning: square) or
+ * `Size` array.
+ * (meaning: non-square),
+ * @param {number|Size} size Width and height.
+ * @param {Size=} opt_size Optional reusable size array.
+ * @return {Size} Size.
+ * @api
+ */
+
+
+function toSize(size, opt_size) {
+  if (Array.isArray(size)) {
+    return size;
+  } else {
+    if (opt_size === undefined) {
+      opt_size = [size, size];
+    } else {
+      opt_size[0] = size;
+      opt_size[1] = size;
+    }
+
+    return opt_size;
+  }
+}
+},{}],"cEhm":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/**
+ * @module ol/ObjectEventType
+ */
+
+/**
+ * @enum {string}
+ */
+var _default = {
+  /**
+   * Triggered when a property is changed.
+   * @event module:ol/Object.ObjectEvent#propertychange
+   * @api
+   */
+  PROPERTYCHANGE: 'propertychange'
+};
+exports.default = _default;
+},{}],"MGag":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.listen = listen;
+exports.listenOnce = listenOnce;
+exports.unlistenByKey = unlistenByKey;
+
+var _obj = require("./obj.js");
+
+/**
+ * @module ol/events
+ */
+
+/**
+ * Key to use with {@link module:ol/Observable~Observable#unByKey}.
+ * @typedef {Object} EventsKey
+ * @property {ListenerFunction} listener
+ * @property {import("./events/Target.js").EventTargetLike} target
+ * @property {string} type
+ * @api
+ */
+
+/**
+ * Listener function. This function is called with an event object as argument.
+ * When the function returns `false`, event propagation will stop.
+ *
+ * @typedef {function((Event|import("./events/Event.js").default)): (void|boolean)} ListenerFunction
+ * @api
+ */
+
+/**
+ * @typedef {Object} ListenerObject
+ * @property {ListenerFunction} handleEvent
+ */
+
+/**
+ * @typedef {ListenerFunction|ListenerObject} Listener
+ */
+
+/**
+ * Registers an event listener on an event target. Inspired by
+ * https://google.github.io/closure-library/api/source/closure/goog/events/events.js.src.html
+ *
+ * This function efficiently binds a `listener` to a `this` object, and returns
+ * a key for use with {@link module:ol/events~unlistenByKey}.
+ *
+ * @param {import("./events/Target.js").EventTargetLike} target Event target.
+ * @param {string} type Event type.
+ * @param {ListenerFunction} listener Listener.
+ * @param {Object=} opt_this Object referenced by the `this` keyword in the
+ *     listener. Default is the `target`.
+ * @param {boolean=} opt_once If true, add the listener as one-off listener.
+ * @return {EventsKey} Unique key for the listener.
+ */
+function listen(target, type, listener, opt_this, opt_once) {
+  if (opt_this && opt_this !== target) {
+    listener = listener.bind(opt_this);
+  }
+
+  if (opt_once) {
+    var originalListener_1 = listener;
+
+    listener = function () {
+      target.removeEventListener(type, listener);
+      originalListener_1.apply(this, arguments);
+    };
+  }
+
+  var eventsKey = {
+    target: target,
+    type: type,
+    listener: listener
+  };
+  target.addEventListener(type, listener);
+  return eventsKey;
+}
+/**
+ * Registers a one-off event listener on an event target. Inspired by
+ * https://google.github.io/closure-library/api/source/closure/goog/events/events.js.src.html
+ *
+ * This function efficiently binds a `listener` as self-unregistering listener
+ * to a `this` object, and returns a key for use with
+ * {@link module:ol/events~unlistenByKey} in case the listener needs to be
+ * unregistered before it is called.
+ *
+ * When {@link module:ol/events~listen} is called with the same arguments after this
+ * function, the self-unregistering listener will be turned into a permanent
+ * listener.
+ *
+ * @param {import("./events/Target.js").EventTargetLike} target Event target.
+ * @param {string} type Event type.
+ * @param {ListenerFunction} listener Listener.
+ * @param {Object=} opt_this Object referenced by the `this` keyword in the
+ *     listener. Default is the `target`.
+ * @return {EventsKey} Key for unlistenByKey.
+ */
+
+
+function listenOnce(target, type, listener, opt_this) {
+  return listen(target, type, listener, opt_this, true);
+}
+/**
+ * Unregisters event listeners on an event target. Inspired by
+ * https://google.github.io/closure-library/api/source/closure/goog/events/events.js.src.html
+ *
+ * The argument passed to this function is the key returned from
+ * {@link module:ol/events~listen} or {@link module:ol/events~listenOnce}.
+ *
+ * @param {EventsKey} key The key.
+ */
+
+
+function unlistenByKey(key) {
+  if (key && key.target) {
+    key.target.removeEventListener(key.type, key.listener);
+    (0, _obj.clear)(key);
+  }
+}
+},{"./obj.js":"SLsU"}],"jZkk":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/**
+ * @module ol/Disposable
+ */
+
+/**
+ * @classdesc
+ * Objects that need to clean up after themselves.
+ */
+var Disposable =
+/** @class */
+function () {
+  function Disposable() {
+    /**
+     * The object has already been disposed.
+     * @type {boolean}
+     * @private
+     */
+    this.disposed_ = false;
+  }
+  /**
+   * Clean up.
+   */
+
+
+  Disposable.prototype.dispose = function () {
+    if (!this.disposed_) {
+      this.disposed_ = true;
+      this.disposeInternal();
+    }
+  };
+  /**
+   * Extension point for disposable objects.
+   * @protected
+   */
+
+
+  Disposable.prototype.disposeInternal = function () {};
+
+  return Disposable;
+}();
+
+var _default = Disposable;
+exports.default = _default;
+},{}],"o0G8":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.binarySearch = binarySearch;
+exports.numberSafeCompareFunction = numberSafeCompareFunction;
+exports.includes = includes;
+exports.linearFindNearest = linearFindNearest;
+exports.reverseSubArray = reverseSubArray;
+exports.extend = extend;
+exports.remove = remove;
+exports.find = find;
+exports.equals = equals;
+exports.stableSort = stableSort;
+exports.findIndex = findIndex;
+exports.isSorted = isSorted;
+
+/**
+ * @module ol/array
+ */
+
+/**
+ * Performs a binary search on the provided sorted list and returns the index of the item if found. If it can't be found it'll return -1.
+ * https://github.com/darkskyapp/binary-search
+ *
+ * @param {Array<*>} haystack Items to search through.
+ * @param {*} needle The item to look for.
+ * @param {Function=} opt_comparator Comparator function.
+ * @return {number} The index of the item if found, -1 if not.
+ */
+function binarySearch(haystack, needle, opt_comparator) {
+  var mid, cmp;
+  var comparator = opt_comparator || numberSafeCompareFunction;
+  var low = 0;
+  var high = haystack.length;
+  var found = false;
+
+  while (low < high) {
+    /* Note that "(low + high) >>> 1" may overflow, and results in a typecast
+     * to double (which gives the wrong results). */
+    mid = low + (high - low >> 1);
+    cmp = +comparator(haystack[mid], needle);
+
+    if (cmp < 0.0) {
+      /* Too low. */
+      low = mid + 1;
+    } else {
+      /* Key found or too high */
+      high = mid;
+      found = !cmp;
+    }
+  }
+  /* Key not found. */
+
+
+  return found ? low : ~low;
+}
+/**
+ * Compare function for array sort that is safe for numbers.
+ * @param {*} a The first object to be compared.
+ * @param {*} b The second object to be compared.
+ * @return {number} A negative number, zero, or a positive number as the first
+ *     argument is less than, equal to, or greater than the second.
+ */
+
+
+function numberSafeCompareFunction(a, b) {
+  return a > b ? 1 : a < b ? -1 : 0;
+}
+/**
+ * Whether the array contains the given object.
+ * @param {Array<*>} arr The array to test for the presence of the element.
+ * @param {*} obj The object for which to test.
+ * @return {boolean} The object is in the array.
+ */
+
+
+function includes(arr, obj) {
+  return arr.indexOf(obj) >= 0;
+}
+/**
+ * @param {Array<number>} arr Array.
+ * @param {number} target Target.
+ * @param {number} direction 0 means return the nearest, > 0
+ *    means return the largest nearest, < 0 means return the
+ *    smallest nearest.
+ * @return {number} Index.
+ */
+
+
+function linearFindNearest(arr, target, direction) {
+  var n = arr.length;
+
+  if (arr[0] <= target) {
+    return 0;
+  } else if (target <= arr[n - 1]) {
+    return n - 1;
+  } else {
+    var i = void 0;
+
+    if (direction > 0) {
+      for (i = 1; i < n; ++i) {
+        if (arr[i] < target) {
+          return i - 1;
+        }
+      }
+    } else if (direction < 0) {
+      for (i = 1; i < n; ++i) {
+        if (arr[i] <= target) {
+          return i;
+        }
+      }
+    } else {
+      for (i = 1; i < n; ++i) {
+        if (arr[i] == target) {
+          return i;
+        } else if (arr[i] < target) {
+          if (arr[i - 1] - target < target - arr[i]) {
+            return i - 1;
+          } else {
+            return i;
+          }
+        }
+      }
+    }
+
+    return n - 1;
+  }
+}
+/**
+ * @param {Array<*>} arr Array.
+ * @param {number} begin Begin index.
+ * @param {number} end End index.
+ */
+
+
+function reverseSubArray(arr, begin, end) {
+  while (begin < end) {
+    var tmp = arr[begin];
+    arr[begin] = arr[end];
+    arr[end] = tmp;
+    ++begin;
+    --end;
+  }
+}
+/**
+ * @param {Array<VALUE>} arr The array to modify.
+ * @param {!Array<VALUE>|VALUE} data The elements or arrays of elements to add to arr.
+ * @template VALUE
+ */
+
+
+function extend(arr, data) {
+  var extension = Array.isArray(data) ? data : [data];
+  var length = extension.length;
+
+  for (var i = 0; i < length; i++) {
+    arr[arr.length] = extension[i];
+  }
+}
+/**
+ * @param {Array<VALUE>} arr The array to modify.
+ * @param {VALUE} obj The element to remove.
+ * @template VALUE
+ * @return {boolean} If the element was removed.
+ */
+
+
+function remove(arr, obj) {
+  var i = arr.indexOf(obj);
+  var found = i > -1;
+
+  if (found) {
+    arr.splice(i, 1);
+  }
+
+  return found;
+}
+/**
+ * @param {Array<VALUE>} arr The array to search in.
+ * @param {function(VALUE, number, ?) : boolean} func The function to compare.
+ * @template VALUE
+ * @return {VALUE|null} The element found or null.
+ */
+
+
+function find(arr, func) {
+  var length = arr.length >>> 0;
+  var value;
+
+  for (var i = 0; i < length; i++) {
+    value = arr[i];
+
+    if (func(value, i, arr)) {
+      return value;
+    }
+  }
+
+  return null;
+}
+/**
+ * @param {Array|Uint8ClampedArray} arr1 The first array to compare.
+ * @param {Array|Uint8ClampedArray} arr2 The second array to compare.
+ * @return {boolean} Whether the two arrays are equal.
+ */
+
+
+function equals(arr1, arr2) {
+  var len1 = arr1.length;
+
+  if (len1 !== arr2.length) {
+    return false;
+  }
+
+  for (var i = 0; i < len1; i++) {
+    if (arr1[i] !== arr2[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+/**
+ * Sort the passed array such that the relative order of equal elements is preverved.
+ * See https://en.wikipedia.org/wiki/Sorting_algorithm#Stability for details.
+ * @param {Array<*>} arr The array to sort (modifies original).
+ * @param {!function(*, *): number} compareFnc Comparison function.
+ * @api
+ */
+
+
+function stableSort(arr, compareFnc) {
+  var length = arr.length;
+  var tmp = Array(arr.length);
+  var i;
+
+  for (i = 0; i < length; i++) {
+    tmp[i] = {
+      index: i,
+      value: arr[i]
+    };
+  }
+
+  tmp.sort(function (a, b) {
+    return compareFnc(a.value, b.value) || a.index - b.index;
+  });
+
+  for (i = 0; i < arr.length; i++) {
+    arr[i] = tmp[i].value;
+  }
+}
+/**
+ * @param {Array<*>} arr The array to search in.
+ * @param {Function} func Comparison function.
+ * @return {number} Return index.
+ */
+
+
+function findIndex(arr, func) {
+  var index;
+  var found = !arr.every(function (el, idx) {
+    index = idx;
+    return !func(el, idx, arr);
+  });
+  return found ? index : -1;
+}
+/**
+ * @param {Array<*>} arr The array to test.
+ * @param {Function=} opt_func Comparison function.
+ * @param {boolean=} opt_strict Strictly sorted (default false).
+ * @return {boolean} Return index.
+ */
+
+
+function isSorted(arr, opt_func, opt_strict) {
+  var compare = opt_func || numberSafeCompareFunction;
+  return arr.every(function (currentVal, index) {
+    if (index === 0) {
+      return true;
+    }
+
+    var res = compare(arr[index - 1], currentVal);
+    return !(res > 0 || opt_strict && res === 0);
+  });
+}
+},{}],"pDAE":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TRUE = TRUE;
+exports.FALSE = FALSE;
+exports.VOID = VOID;
+exports.memoizeOne = memoizeOne;
+
+var _array = require("./array.js");
+
+/**
+ * @module ol/functions
+ */
+
+/**
+ * Always returns true.
+ * @returns {boolean} true.
+ */
+function TRUE() {
+  return true;
+}
+/**
+ * Always returns false.
+ * @returns {boolean} false.
+ */
+
+
+function FALSE() {
+  return false;
+}
+/**
+ * A reusable function, used e.g. as a default for callbacks.
+ *
+ * @return {void} Nothing.
+ */
+
+
+function VOID() {}
+/**
+ * Wrap a function in another function that remembers the last return.  If the
+ * returned function is called twice in a row with the same arguments and the same
+ * this object, it will return the value from the first call in the second call.
+ *
+ * @param {function(...any): ReturnType} fn The function to memoize.
+ * @return {function(...any): ReturnType} The memoized function.
+ * @template ReturnType
+ */
+
+
+function memoizeOne(fn) {
+  var called = false;
+  /** @type {ReturnType} */
+
+  var lastResult;
+  /** @type {Array<any>} */
+
+  var lastArgs;
+  var lastThis;
+  return function () {
+    var nextArgs = Array.prototype.slice.call(arguments);
+
+    if (!called || this !== lastThis || !(0, _array.equals)(nextArgs, lastArgs)) {
+      called = true;
+      lastThis = this;
+      lastArgs = nextArgs;
+      lastResult = fn.apply(this, arguments);
+    }
+
+    return lastResult;
+  };
+}
+},{"./array.js":"o0G8"}],"KnPA":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _Disposable = _interopRequireDefault(require("../Disposable.js"));
+
+var _functions = require("../functions.js");
+
+var _Event = _interopRequireDefault(require("./Event.js"));
+
+var _obj = require("../obj.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+/**
+ * @module ol/events/Target
+ */
+
+
+/**
+ * @typedef {EventTarget|Target} EventTargetLike
+ */
+
+/**
+ * @classdesc
+ * A simplified implementation of the W3C DOM Level 2 EventTarget interface.
+ * See https://www.w3.org/TR/2000/REC-DOM-Level-2-Events-20001113/events.html#Events-EventTarget.
+ *
+ * There are two important simplifications compared to the specification:
+ *
+ * 1. The handling of `useCapture` in `addEventListener` and
+ *    `removeEventListener`. There is no real capture model.
+ * 2. The handling of `stopPropagation` and `preventDefault` on `dispatchEvent`.
+ *    There is no event target hierarchy. When a listener calls
+ *    `stopPropagation` or `preventDefault` on an event object, it means that no
+ *    more listeners after this one will be called. Same as when the listener
+ *    returns false.
+ */
+var Target =
+/** @class */
+function (_super) {
+  __extends(Target, _super);
+  /**
+   * @param {*=} opt_target Default event target for dispatched events.
+   */
+
+
+  function Target(opt_target) {
+    var _this = _super.call(this) || this;
+    /**
+     * @private
+     * @type {*}
+     */
+
+
+    _this.eventTarget_ = opt_target;
+    /**
+     * @private
+     * @type {!Object<string, number>}
+     */
+
+    _this.pendingRemovals_ = {};
+    /**
+     * @private
+     * @type {!Object<string, number>}
+     */
+
+    _this.dispatching_ = {};
+    /**
+     * @private
+     * @type {!Object<string, Array<import("../events.js").Listener>>}
+     */
+
+    _this.listeners_ = {};
+    return _this;
+  }
+  /**
+   * @param {string} type Type.
+   * @param {import("../events.js").Listener} listener Listener.
+   */
+
+
+  Target.prototype.addEventListener = function (type, listener) {
+    if (!type || !listener) {
+      return;
+    }
+
+    var listeners = this.listeners_[type];
+
+    if (!listeners) {
+      listeners = [];
+      this.listeners_[type] = listeners;
+    }
+
+    if (listeners.indexOf(listener) === -1) {
+      listeners.push(listener);
+    }
+  };
+  /**
+   * Dispatches an event and calls all listeners listening for events
+   * of this type. The event parameter can either be a string or an
+   * Object with a `type` property.
+   *
+   * @param {import("./Event.js").default|string} event Event object.
+   * @return {boolean|undefined} `false` if anyone called preventDefault on the
+   *     event object or if any of the listeners returned false.
+   * @api
+   */
+
+
+  Target.prototype.dispatchEvent = function (event) {
+    /** @type {import("./Event.js").default|Event} */
+    var evt = typeof event === 'string' ? new _Event.default(event) : event;
+    var type = evt.type;
+
+    if (!evt.target) {
+      evt.target = this.eventTarget_ || this;
+    }
+
+    var listeners = this.listeners_[type];
+    var propagate;
+
+    if (listeners) {
+      if (!(type in this.dispatching_)) {
+        this.dispatching_[type] = 0;
+        this.pendingRemovals_[type] = 0;
+      }
+
+      ++this.dispatching_[type];
+
+      for (var i = 0, ii = listeners.length; i < ii; ++i) {
+        if ('handleEvent' in listeners[i]) {
+          propagate =
+          /** @type {import("../events.js").ListenerObject} */
+          listeners[i].handleEvent(evt);
+        } else {
+          propagate =
+          /** @type {import("../events.js").ListenerFunction} */
+          listeners[i].call(this, evt);
+        }
+
+        if (propagate === false || evt.propagationStopped) {
+          propagate = false;
+          break;
+        }
+      }
+
+      --this.dispatching_[type];
+
+      if (this.dispatching_[type] === 0) {
+        var pendingRemovals = this.pendingRemovals_[type];
+        delete this.pendingRemovals_[type];
+
+        while (pendingRemovals--) {
+          this.removeEventListener(type, _functions.VOID);
+        }
+
+        delete this.dispatching_[type];
+      }
+
+      return propagate;
+    }
+  };
+  /**
+   * @inheritDoc
+   */
+
+
+  Target.prototype.disposeInternal = function () {
+    (0, _obj.clear)(this.listeners_);
+  };
+  /**
+   * Get the listeners for a specified event type. Listeners are returned in the
+   * order that they will be called in.
+   *
+   * @param {string} type Type.
+   * @return {Array<import("../events.js").Listener>} Listeners.
+   */
+
+
+  Target.prototype.getListeners = function (type) {
+    return this.listeners_[type];
+  };
+  /**
+   * @param {string=} opt_type Type. If not provided,
+   *     `true` will be returned if this event target has any listeners.
+   * @return {boolean} Has listeners.
+   */
+
+
+  Target.prototype.hasListener = function (opt_type) {
+    return opt_type ? opt_type in this.listeners_ : Object.keys(this.listeners_).length > 0;
+  };
+  /**
+   * @param {string} type Type.
+   * @param {import("../events.js").Listener} listener Listener.
+   */
+
+
+  Target.prototype.removeEventListener = function (type, listener) {
+    var listeners = this.listeners_[type];
+
+    if (listeners) {
+      var index = listeners.indexOf(listener);
+
+      if (index !== -1) {
+        if (type in this.pendingRemovals_) {
+          // make listener a no-op, and remove later in #dispatchEvent()
+          listeners[index] = _functions.VOID;
+          ++this.pendingRemovals_[type];
+        } else {
+          listeners.splice(index, 1);
+
+          if (listeners.length === 0) {
+            delete this.listeners_[type];
+          }
+        }
+      }
+    }
+  };
+
+  return Target;
+}(_Disposable.default);
+
+var _default = Target;
+exports.default = _default;
+},{"../Disposable.js":"jZkk","../functions.js":"pDAE","./Event.js":"M1Cf","../obj.js":"SLsU"}],"GUXn":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/**
+ * @module ol/events/EventType
+ */
+
+/**
+ * @enum {string}
+ * @const
+ */
+var _default = {
+  /**
+   * Generic change event. Triggered when the revision counter is increased.
+   * @event module:ol/events/Event~BaseEvent#change
+   * @api
+   */
+  CHANGE: 'change',
+
+  /**
+   * Generic error event. Triggered when an error occurs.
+   * @event module:ol/events/Event~BaseEvent#error
+   * @api
+   */
+  ERROR: 'error',
+  BLUR: 'blur',
+  CLEAR: 'clear',
+  CONTEXTMENU: 'contextmenu',
+  CLICK: 'click',
+  DBLCLICK: 'dblclick',
+  DRAGENTER: 'dragenter',
+  DRAGOVER: 'dragover',
+  DROP: 'drop',
+  FOCUS: 'focus',
+  KEYDOWN: 'keydown',
+  KEYPRESS: 'keypress',
+  LOAD: 'load',
+  RESIZE: 'resize',
+  TOUCHMOVE: 'touchmove',
+  WHEEL: 'wheel'
+};
+exports.default = _default;
+},{}],"TW86":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.unByKey = unByKey;
+exports.default = void 0;
+
+var _events = require("./events.js");
+
+var _Target = _interopRequireDefault(require("./events/Target.js"));
+
+var _EventType = _interopRequireDefault(require("./events/EventType.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+/**
+ * @module ol/Observable
+ */
+
+
+/**
+ * @classdesc
+ * Abstract base class; normally only used for creating subclasses and not
+ * instantiated in apps.
+ * An event target providing convenient methods for listener registration
+ * and unregistration. A generic `change` event is always available through
+ * {@link module:ol/Observable~Observable#changed}.
+ *
+ * @fires import("./events/Event.js").default
+ * @api
+ */
+var Observable =
+/** @class */
+function (_super) {
+  __extends(Observable, _super);
+
+  function Observable() {
+    var _this = _super.call(this) || this;
+    /**
+     * @private
+     * @type {number}
+     */
+
+
+    _this.revision_ = 0;
+    return _this;
+  }
+  /**
+   * Increases the revision counter and dispatches a 'change' event.
+   * @api
+   */
+
+
+  Observable.prototype.changed = function () {
+    ++this.revision_;
+    this.dispatchEvent(_EventType.default.CHANGE);
+  };
+  /**
+   * Get the version number for this object.  Each time the object is modified,
+   * its version number will be incremented.
+   * @return {number} Revision.
+   * @api
+   */
+
+
+  Observable.prototype.getRevision = function () {
+    return this.revision_;
+  };
+  /**
+   * Listen for a certain type of event.
+   * @param {string|Array<string>} type The event type or array of event types.
+   * @param {import("./events.js").ListenerFunction} listener The listener function.
+   * @return {import("./events.js").EventsKey|Array<import("./events.js").EventsKey>} Unique key for the listener. If
+   *     called with an array of event types as the first argument, the return
+   *     will be an array of keys.
+   * @api
+   */
+
+
+  Observable.prototype.on = function (type, listener) {
+    if (Array.isArray(type)) {
+      var len = type.length;
+      var keys = new Array(len);
+
+      for (var i = 0; i < len; ++i) {
+        keys[i] = (0, _events.listen)(this, type[i], listener);
+      }
+
+      return keys;
+    } else {
+      return (0, _events.listen)(this,
+      /** @type {string} */
+      type, listener);
+    }
+  };
+  /**
+   * Listen once for a certain type of event.
+   * @param {string|Array<string>} type The event type or array of event types.
+   * @param {function(?): ?} listener The listener function.
+   * @return {import("./events.js").EventsKey|Array<import("./events.js").EventsKey>} Unique key for the listener. If
+   *     called with an array of event types as the first argument, the return
+   *     will be an array of keys.
+   * @api
+   */
+
+
+  Observable.prototype.once = function (type, listener) {
+    if (Array.isArray(type)) {
+      var len = type.length;
+      var keys = new Array(len);
+
+      for (var i = 0; i < len; ++i) {
+        keys[i] = (0, _events.listenOnce)(this, type[i], listener);
+      }
+
+      return keys;
+    } else {
+      return (0, _events.listenOnce)(this,
+      /** @type {string} */
+      type, listener);
+    }
+  };
+  /**
+   * Unlisten for a certain type of event.
+   * @param {string|Array<string>} type The event type or array of event types.
+   * @param {function(?): ?} listener The listener function.
+   * @api
+   */
+
+
+  Observable.prototype.un = function (type, listener) {
+    if (Array.isArray(type)) {
+      for (var i = 0, ii = type.length; i < ii; ++i) {
+        this.removeEventListener(type[i], listener);
+      }
+    } else {
+      this.removeEventListener(type, listener);
+    }
+  };
+
+  return Observable;
+}(_Target.default);
+/**
+ * Removes an event listener using the key returned by `on()` or `once()`.
+ * @param {import("./events.js").EventsKey|Array<import("./events.js").EventsKey>} key The key returned by `on()`
+ *     or `once()` (or an array of keys).
+ * @api
+ */
+
+
+function unByKey(key) {
+  if (Array.isArray(key)) {
+    for (var i = 0, ii = key.length; i < ii; ++i) {
+      (0, _events.unlistenByKey)(key[i]);
+    }
+  } else {
+    (0, _events.unlistenByKey)(
+    /** @type {import("./events.js").EventsKey} */
+    key);
+  }
+}
+
+var _default = Observable;
+exports.default = _default;
+},{"./events.js":"MGag","./events/Target.js":"KnPA","./events/EventType.js":"GUXn"}],"fB8e":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getChangeEventType = getChangeEventType;
+exports.default = exports.ObjectEvent = void 0;
+
+var _util = require("./util.js");
+
+var _ObjectEventType = _interopRequireDefault(require("./ObjectEventType.js"));
+
+var _Observable = _interopRequireDefault(require("./Observable.js"));
+
+var _Event = _interopRequireDefault(require("./events/Event.js"));
+
+var _obj = require("./obj.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+/**
+ * @module ol/Object
+ */
+
+
+/**
+ * @classdesc
+ * Events emitted by {@link module:ol/Object~BaseObject} instances are instances of this type.
+ */
+var ObjectEvent =
+/** @class */
+function (_super) {
+  __extends(ObjectEvent, _super);
+  /**
+   * @param {string} type The event type.
+   * @param {string} key The property name.
+   * @param {*} oldValue The old value for `key`.
+   */
+
+
+  function ObjectEvent(type, key, oldValue) {
+    var _this = _super.call(this, type) || this;
+    /**
+     * The name of the property whose value is changing.
+     * @type {string}
+     * @api
+     */
+
+
+    _this.key = key;
+    /**
+     * The old value. To get the new value use `e.target.get(e.key)` where
+     * `e` is the event object.
+     * @type {*}
+     * @api
+     */
+
+    _this.oldValue = oldValue;
+    return _this;
+  }
+
+  return ObjectEvent;
+}(_Event.default);
+
+exports.ObjectEvent = ObjectEvent;
+
+/**
+ * @classdesc
+ * Abstract base class; normally only used for creating subclasses and not
+ * instantiated in apps.
+ * Most non-trivial classes inherit from this.
+ *
+ * This extends {@link module:ol/Observable} with observable
+ * properties, where each property is observable as well as the object as a
+ * whole.
+ *
+ * Classes that inherit from this have pre-defined properties, to which you can
+ * add your owns. The pre-defined properties are listed in this documentation as
+ * 'Observable Properties', and have their own accessors; for example,
+ * {@link module:ol/Map~Map} has a `target` property, accessed with
+ * `getTarget()` and changed with `setTarget()`. Not all properties are however
+ * settable. There are also general-purpose accessors `get()` and `set()`. For
+ * example, `get('target')` is equivalent to `getTarget()`.
+ *
+ * The `set` accessors trigger a change event, and you can monitor this by
+ * registering a listener. For example, {@link module:ol/View~View} has a
+ * `center` property, so `view.on('change:center', function(evt) {...});` would
+ * call the function whenever the value of the center property changes. Within
+ * the function, `evt.target` would be the view, so `evt.target.getCenter()`
+ * would return the new center.
+ *
+ * You can add your own observable properties with
+ * `object.set('prop', 'value')`, and retrieve that with `object.get('prop')`.
+ * You can listen for changes on that property value with
+ * `object.on('change:prop', listener)`. You can get a list of all
+ * properties with {@link module:ol/Object~BaseObject#getProperties}.
+ *
+ * Note that the observable properties are separate from standard JS properties.
+ * You can, for example, give your map object a title with
+ * `map.title='New title'` and with `map.set('title', 'Another title')`. The
+ * first will be a `hasOwnProperty`; the second will appear in
+ * `getProperties()`. Only the second is observable.
+ *
+ * Properties can be deleted by using the unset method. E.g.
+ * object.unset('foo').
+ *
+ * @fires ObjectEvent
+ * @api
+ */
+var BaseObject =
+/** @class */
+function (_super) {
+  __extends(BaseObject, _super);
+  /**
+   * @param {Object<string, *>=} opt_values An object with key-value pairs.
+   */
+
+
+  function BaseObject(opt_values) {
+    var _this = _super.call(this) || this; // Call {@link module:ol/util~getUid} to ensure that the order of objects' ids is
+    // the same as the order in which they were created.  This also helps to
+    // ensure that object properties are always added in the same order, which
+    // helps many JavaScript engines generate faster code.
+
+
+    (0, _util.getUid)(_this);
+    /**
+     * @private
+     * @type {!Object<string, *>}
+     */
+
+    _this.values_ = {};
+
+    if (opt_values !== undefined) {
+      _this.setProperties(opt_values);
+    }
+
+    return _this;
+  }
+  /**
+   * Gets a value.
+   * @param {string} key Key name.
+   * @return {*} Value.
+   * @api
+   */
+
+
+  BaseObject.prototype.get = function (key) {
+    var value;
+
+    if (this.values_.hasOwnProperty(key)) {
+      value = this.values_[key];
+    }
+
+    return value;
+  };
+  /**
+   * Get a list of object property names.
+   * @return {Array<string>} List of property names.
+   * @api
+   */
+
+
+  BaseObject.prototype.getKeys = function () {
+    return Object.keys(this.values_);
+  };
+  /**
+   * Get an object of all property names and values.
+   * @return {Object<string, *>} Object.
+   * @api
+   */
+
+
+  BaseObject.prototype.getProperties = function () {
+    return (0, _obj.assign)({}, this.values_);
+  };
+  /**
+   * @param {string} key Key name.
+   * @param {*} oldValue Old value.
+   */
+
+
+  BaseObject.prototype.notify = function (key, oldValue) {
+    var eventType;
+    eventType = getChangeEventType(key);
+    this.dispatchEvent(new ObjectEvent(eventType, key, oldValue));
+    eventType = _ObjectEventType.default.PROPERTYCHANGE;
+    this.dispatchEvent(new ObjectEvent(eventType, key, oldValue));
+  };
+  /**
+   * Sets a value.
+   * @param {string} key Key name.
+   * @param {*} value Value.
+   * @param {boolean=} opt_silent Update without triggering an event.
+   * @api
+   */
+
+
+  BaseObject.prototype.set = function (key, value, opt_silent) {
+    if (opt_silent) {
+      this.values_[key] = value;
+    } else {
+      var oldValue = this.values_[key];
+      this.values_[key] = value;
+
+      if (oldValue !== value) {
+        this.notify(key, oldValue);
+      }
+    }
+  };
+  /**
+   * Sets a collection of key-value pairs.  Note that this changes any existing
+   * properties and adds new ones (it does not remove any existing properties).
+   * @param {Object<string, *>} values Values.
+   * @param {boolean=} opt_silent Update without triggering an event.
+   * @api
+   */
+
+
+  BaseObject.prototype.setProperties = function (values, opt_silent) {
+    for (var key in values) {
+      this.set(key, values[key], opt_silent);
+    }
+  };
+  /**
+   * Unsets a property.
+   * @param {string} key Key name.
+   * @param {boolean=} opt_silent Unset without triggering an event.
+   * @api
+   */
+
+
+  BaseObject.prototype.unset = function (key, opt_silent) {
+    if (key in this.values_) {
+      var oldValue = this.values_[key];
+      delete this.values_[key];
+
+      if (!opt_silent) {
+        this.notify(key, oldValue);
+      }
+    }
+  };
+
+  return BaseObject;
+}(_Observable.default);
+/**
+ * @type {Object<string, string>}
+ */
+
+
+var changeEventTypeCache = {};
+/**
+ * @param {string} key Key name.
+ * @return {string} Change name.
+ */
+
+function getChangeEventType(key) {
+  return changeEventTypeCache.hasOwnProperty(key) ? changeEventTypeCache[key] : changeEventTypeCache[key] = 'change:' + key;
+}
+
+var _default = BaseObject;
+exports.default = _default;
+},{"./util.js":"KA50","./ObjectEventType.js":"cEhm","./Observable.js":"TW86","./events/Event.js":"M1Cf","./obj.js":"SLsU"}],"zzvP":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/**
+ * @module ol/source/State
+ */
+
+/**
+ * @enum {string}
+ * State of the source, one of 'undefined', 'loading', 'ready' or 'error'.
+ */
+var _default = {
+  UNDEFINED: 'undefined',
+  LOADING: 'loading',
+  READY: 'ready',
+  ERROR: 'error'
+};
+exports.default = _default;
+},{}],"AC87":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _util = require("../util.js");
+
+var _Object = _interopRequireDefault(require("../Object.js"));
+
+var _proj = require("../proj.js");
+
+var _State = _interopRequireDefault(require("./State.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+/**
+ * @module ol/source/Source
+ */
+
+
+/**
+ * A function that returns a string or an array of strings representing source
+ * attributions.
+ *
+ * @typedef {function(import("../PluggableMap.js").FrameState): (string|Array<string>)} Attribution
+ */
+
+/**
+ * A type that can be used to provide attribution information for data sources.
+ *
+ * It represents either
+ * * a simple string (e.g. `'© Acme Inc.'`)
+ * * an array of simple strings (e.g. `['© Acme Inc.', '© Bacme Inc.']`)
+ * * a function that returns a string or array of strings ({@link module:ol/source/Source~Attribution})
+ *
+ * @typedef {string|Array<string>|Attribution} AttributionLike
+ */
+
+/**
+ * @typedef {Object} Options
+ * @property {AttributionLike} [attributions]
+ * @property {boolean} [attributionsCollapsible=true] Attributions are collapsible.
+ * @property {import("../proj.js").ProjectionLike} [projection] Projection. Default is the view projection.
+ * @property {SourceState} [state='ready']
+ * @property {boolean} [wrapX=false]
+ */
+
+/**
+ * @classdesc
+ * Abstract base class; normally only used for creating subclasses and not
+ * instantiated in apps.
+ * Base class for {@link module:ol/layer/Layer~Layer} sources.
+ *
+ * A generic `change` event is triggered when the state of the source changes.
+ * @abstract
+ * @api
+ */
+var Source =
+/** @class */
+function (_super) {
+  __extends(Source, _super);
+  /**
+   * @param {Options} options Source options.
+   */
+
+
+  function Source(options) {
+    var _this = _super.call(this) || this;
+    /**
+     * @private
+     * @type {import("../proj/Projection.js").default}
+     */
+
+
+    _this.projection_ = (0, _proj.get)(options.projection);
+    /**
+     * @private
+     * @type {?Attribution}
+     */
+
+    _this.attributions_ = adaptAttributions(options.attributions);
+    /**
+     * @private
+     * @type {boolean}
+     */
+
+    _this.attributionsCollapsible_ = options.attributionsCollapsible !== undefined ? options.attributionsCollapsible : true;
+    /**
+     * This source is currently loading data. Sources that defer loading to the
+     * map's tile queue never set this to `true`.
+     * @type {boolean}
+     */
+
+    _this.loading = false;
+    /**
+     * @private
+     * @type {SourceState}
+     */
+
+    _this.state_ = options.state !== undefined ? options.state : _State.default.READY;
+    /**
+     * @private
+     * @type {boolean}
+     */
+
+    _this.wrapX_ = options.wrapX !== undefined ? options.wrapX : false;
+    return _this;
+  }
+  /**
+   * Get the attribution function for the source.
+   * @return {?Attribution} Attribution function.
+   */
+
+
+  Source.prototype.getAttributions = function () {
+    return this.attributions_;
+  };
+  /**
+   * @return {boolean} Attributions are collapsible.
+   */
+
+
+  Source.prototype.getAttributionsCollapsible = function () {
+    return this.attributionsCollapsible_;
+  };
+  /**
+   * Get the projection of the source.
+   * @return {import("../proj/Projection.js").default} Projection.
+   * @api
+   */
+
+
+  Source.prototype.getProjection = function () {
+    return this.projection_;
+  };
+  /**
+   * @abstract
+   * @return {Array<number>|undefined} Resolutions.
+   */
+
+
+  Source.prototype.getResolutions = function () {
+    return (0, _util.abstract)();
+  };
+  /**
+   * Get the state of the source, see {@link module:ol/source/State~State} for possible states.
+   * @return {SourceState} State.
+   * @api
+   */
+
+
+  Source.prototype.getState = function () {
+    return this.state_;
+  };
+  /**
+   * @return {boolean|undefined} Wrap X.
+   */
+
+
+  Source.prototype.getWrapX = function () {
+    return this.wrapX_;
+  };
+  /**
+   * Refreshes the source. The source will be cleared, and data from the server will be reloaded.
+   * @api
+   */
+
+
+  Source.prototype.refresh = function () {
+    this.changed();
+  };
+  /**
+   * Set the attributions of the source.
+   * @param {AttributionLike|undefined} attributions Attributions.
+   *     Can be passed as `string`, `Array<string>`, {@link module:ol/source/Source~Attribution},
+   *     or `undefined`.
+   * @api
+   */
+
+
+  Source.prototype.setAttributions = function (attributions) {
+    this.attributions_ = adaptAttributions(attributions);
+    this.changed();
+  };
+  /**
+   * Set the state of the source.
+   * @param {SourceState} state State.
+   * @protected
+   */
+
+
+  Source.prototype.setState = function (state) {
+    this.state_ = state;
+    this.changed();
+  };
+
+  return Source;
+}(_Object.default);
+/**
+ * Turns the attributions option into an attributions function.
+ * @param {AttributionLike|undefined} attributionLike The attribution option.
+ * @return {?Attribution} An attribution function (or null).
+ */
+
+
+function adaptAttributions(attributionLike) {
+  if (!attributionLike) {
+    return null;
+  }
+
+  if (Array.isArray(attributionLike)) {
+    return function (frameState) {
+      return attributionLike;
+    };
+  }
+
+  if (typeof attributionLike === 'function') {
+    return attributionLike;
+  }
+
+  return function (frameState) {
+    return [attributionLike];
+  };
+}
+
+var _default = Source;
+exports.default = _default;
+},{"../util.js":"KA50","../Object.js":"fB8e","../proj.js":"VAQc","./State.js":"zzvP"}],"exM9":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DEFAULT_TILE_SIZE = exports.DEFAULT_MAX_ZOOM = void 0;
+
+/**
+ * @module ol/tilegrid/common
+ */
+
+/**
+ * Default maximum zoom for default tile grids.
+ * @type {number}
+ */
+var DEFAULT_MAX_ZOOM = 42;
+/**
+ * Default tile size.
+ * @type {number}
+ */
+
+exports.DEFAULT_MAX_ZOOM = DEFAULT_MAX_ZOOM;
+var DEFAULT_TILE_SIZE = 256;
+exports.DEFAULT_TILE_SIZE = DEFAULT_TILE_SIZE;
+},{}],"m5CX":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createOrUpdate = createOrUpdate;
+exports.default = void 0;
+
+/**
+ * @module ol/TileRange
+ */
+
+/**
+ * A representation of a contiguous block of tiles.  A tile range is specified
+ * by its min/max tile coordinates and is inclusive of coordinates.
+ */
+var TileRange =
+/** @class */
+function () {
+  /**
+   * @param {number} minX Minimum X.
+   * @param {number} maxX Maximum X.
+   * @param {number} minY Minimum Y.
+   * @param {number} maxY Maximum Y.
+   */
+  function TileRange(minX, maxX, minY, maxY) {
+    /**
+     * @type {number}
+     */
+    this.minX = minX;
+    /**
+     * @type {number}
+     */
+
+    this.maxX = maxX;
+    /**
+     * @type {number}
+     */
+
+    this.minY = minY;
+    /**
+     * @type {number}
+     */
+
+    this.maxY = maxY;
+  }
+  /**
+   * @param {import("./tilecoord.js").TileCoord} tileCoord Tile coordinate.
+   * @return {boolean} Contains tile coordinate.
+   */
+
+
+  TileRange.prototype.contains = function (tileCoord) {
+    return this.containsXY(tileCoord[1], tileCoord[2]);
+  };
+  /**
+   * @param {TileRange} tileRange Tile range.
+   * @return {boolean} Contains.
+   */
+
+
+  TileRange.prototype.containsTileRange = function (tileRange) {
+    return this.minX <= tileRange.minX && tileRange.maxX <= this.maxX && this.minY <= tileRange.minY && tileRange.maxY <= this.maxY;
+  };
+  /**
+   * @param {number} x Tile coordinate x.
+   * @param {number} y Tile coordinate y.
+   * @return {boolean} Contains coordinate.
+   */
+
+
+  TileRange.prototype.containsXY = function (x, y) {
+    return this.minX <= x && x <= this.maxX && this.minY <= y && y <= this.maxY;
+  };
+  /**
+   * @param {TileRange} tileRange Tile range.
+   * @return {boolean} Equals.
+   */
+
+
+  TileRange.prototype.equals = function (tileRange) {
+    return this.minX == tileRange.minX && this.minY == tileRange.minY && this.maxX == tileRange.maxX && this.maxY == tileRange.maxY;
+  };
+  /**
+   * @param {TileRange} tileRange Tile range.
+   */
+
+
+  TileRange.prototype.extend = function (tileRange) {
+    if (tileRange.minX < this.minX) {
+      this.minX = tileRange.minX;
+    }
+
+    if (tileRange.maxX > this.maxX) {
+      this.maxX = tileRange.maxX;
+    }
+
+    if (tileRange.minY < this.minY) {
+      this.minY = tileRange.minY;
+    }
+
+    if (tileRange.maxY > this.maxY) {
+      this.maxY = tileRange.maxY;
+    }
+  };
+  /**
+   * @return {number} Height.
+   */
+
+
+  TileRange.prototype.getHeight = function () {
+    return this.maxY - this.minY + 1;
+  };
+  /**
+   * @return {import("./size.js").Size} Size.
+   */
+
+
+  TileRange.prototype.getSize = function () {
+    return [this.getWidth(), this.getHeight()];
+  };
+  /**
+   * @return {number} Width.
+   */
+
+
+  TileRange.prototype.getWidth = function () {
+    return this.maxX - this.minX + 1;
+  };
+  /**
+   * @param {TileRange} tileRange Tile range.
+   * @return {boolean} Intersects.
+   */
+
+
+  TileRange.prototype.intersects = function (tileRange) {
+    return this.minX <= tileRange.maxX && this.maxX >= tileRange.minX && this.minY <= tileRange.maxY && this.maxY >= tileRange.minY;
+  };
+
+  return TileRange;
+}();
+/**
+ * @param {number} minX Minimum X.
+ * @param {number} maxX Maximum X.
+ * @param {number} minY Minimum Y.
+ * @param {number} maxY Maximum Y.
+ * @param {TileRange=} tileRange TileRange.
+ * @return {TileRange} Tile range.
+ */
+
+
+function createOrUpdate(minX, maxX, minY, maxY, tileRange) {
+  if (tileRange !== undefined) {
+    tileRange.minX = minX;
+    tileRange.maxX = maxX;
+    tileRange.minY = minY;
+    tileRange.maxY = maxY;
+    return tileRange;
+  } else {
+    return new TileRange(minX, maxX, minY, maxY);
+  }
+}
+
+var _default = TileRange;
+exports.default = _default;
+},{}],"JVE6":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _common = require("./common.js");
+
+var _asserts = require("../asserts.js");
+
+var _TileRange = _interopRequireWildcard(require("../TileRange.js"));
+
+var _array = require("../array.js");
+
+var _extent = require("../extent.js");
+
+var _math = require("../math.js");
+
+var _size = require("../size.js");
+
+var _tilecoord = require("../tilecoord.js");
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+/**
+ * @module ol/tilegrid/TileGrid
+ */
+
+/**
+ * @private
+ * @type {import("../tilecoord.js").TileCoord}
+ */
+var tmpTileCoord = [0, 0, 0];
+/**
+ * @typedef {Object} Options
+ * @property {import("../extent.js").Extent} [extent] Extent for the tile grid. No tiles outside this
+ * extent will be requested by {@link module:ol/source/Tile} sources. When no `origin` or
+ * `origins` are configured, the `origin` will be set to the top-left corner of the extent.
+ * @property {number} [minZoom=0] Minimum zoom.
+ * @property {import("../coordinate.js").Coordinate} [origin] The tile grid origin, i.e. where the `x`
+ * and `y` axes meet (`[z, 0, 0]`). Tile coordinates increase left to right and downwards. If not
+ * specified, `extent` or `origins` must be provided.
+ * @property {Array<import("../coordinate.js").Coordinate>} [origins] Tile grid origins, i.e. where
+ * the `x` and `y` axes meet (`[z, 0, 0]`), for each zoom level. If given, the array length
+ * should match the length of the `resolutions` array, i.e. each resolution can have a different
+ * origin. Tile coordinates increase left to right and downwards. If not specified, `extent` or
+ * `origin` must be provided.
+ * @property {!Array<number>} resolutions Resolutions. The array index of each resolution needs
+ * to match the zoom level. This means that even if a `minZoom` is configured, the resolutions
+ * array will have a length of `maxZoom + 1`.
+ * @property {Array<import("../size.js").Size>} [sizes] Number of tile rows and columns
+ * of the grid for each zoom level. If specified the values
+ * define each zoom level's extent together with the `origin` or `origins`.
+ * A grid `extent` can be configured in addition, and will further limit the extent
+ * for which tile requests are made by sources. If the bottom-left corner of
+ * an extent is used as `origin` or `origins`, then the `y` value must be
+ * negative because OpenLayers tile coordinates use the top left as the origin.
+ * @property {number|import("../size.js").Size} [tileSize] Tile size.
+ * Default is `[256, 256]`.
+ * @property {Array<import("../size.js").Size>} [tileSizes] Tile sizes. If given, the array length
+ * should match the length of the `resolutions` array, i.e. each resolution can have a different
+ * tile size.
+ */
+
+/**
+ * @classdesc
+ * Base class for setting the grid pattern for sources accessing tiled-image
+ * servers.
+ * @api
+ */
+
+var TileGrid =
+/** @class */
+function () {
+  /**
+   * @param {Options} options Tile grid options.
+   */
+  function TileGrid(options) {
+    /**
+     * @protected
+     * @type {number}
+     */
+    this.minZoom = options.minZoom !== undefined ? options.minZoom : 0;
+    /**
+     * @private
+     * @type {!Array<number>}
+     */
+
+    this.resolutions_ = options.resolutions;
+    (0, _asserts.assert)((0, _array.isSorted)(this.resolutions_, function (a, b) {
+      return b - a;
+    }, true), 17); // `resolutions` must be sorted in descending order
+    // check if we've got a consistent zoom factor and origin
+
+    var zoomFactor;
+
+    if (!options.origins) {
+      for (var i = 0, ii = this.resolutions_.length - 1; i < ii; ++i) {
+        if (!zoomFactor) {
+          zoomFactor = this.resolutions_[i] / this.resolutions_[i + 1];
+        } else {
+          if (this.resolutions_[i] / this.resolutions_[i + 1] !== zoomFactor) {
+            zoomFactor = undefined;
+            break;
+          }
+        }
+      }
+    }
+    /**
+     * @private
+     * @type {number|undefined}
+     */
+
+
+    this.zoomFactor_ = zoomFactor;
+    /**
+     * @protected
+     * @type {number}
+     */
+
+    this.maxZoom = this.resolutions_.length - 1;
+    /**
+     * @private
+     * @type {import("../coordinate.js").Coordinate}
+     */
+
+    this.origin_ = options.origin !== undefined ? options.origin : null;
+    /**
+     * @private
+     * @type {Array<import("../coordinate.js").Coordinate>}
+     */
+
+    this.origins_ = null;
+
+    if (options.origins !== undefined) {
+      this.origins_ = options.origins;
+      (0, _asserts.assert)(this.origins_.length == this.resolutions_.length, 20); // Number of `origins` and `resolutions` must be equal
+    }
+
+    var extent = options.extent;
+
+    if (extent !== undefined && !this.origin_ && !this.origins_) {
+      this.origin_ = (0, _extent.getTopLeft)(extent);
+    }
+
+    (0, _asserts.assert)(!this.origin_ && this.origins_ || this.origin_ && !this.origins_, 18); // Either `origin` or `origins` must be configured, never both
+
+    /**
+     * @private
+     * @type {Array<number|import("../size.js").Size>}
+     */
+
+    this.tileSizes_ = null;
+
+    if (options.tileSizes !== undefined) {
+      this.tileSizes_ = options.tileSizes;
+      (0, _asserts.assert)(this.tileSizes_.length == this.resolutions_.length, 19); // Number of `tileSizes` and `resolutions` must be equal
+    }
+    /**
+     * @private
+     * @type {number|import("../size.js").Size}
+     */
+
+
+    this.tileSize_ = options.tileSize !== undefined ? options.tileSize : !this.tileSizes_ ? _common.DEFAULT_TILE_SIZE : null;
+    (0, _asserts.assert)(!this.tileSize_ && this.tileSizes_ || this.tileSize_ && !this.tileSizes_, 22); // Either `tileSize` or `tileSizes` must be configured, never both
+
+    /**
+     * @private
+     * @type {import("../extent.js").Extent}
+     */
+
+    this.extent_ = extent !== undefined ? extent : null;
+    /**
+     * @private
+     * @type {Array<import("../TileRange.js").default>}
+     */
+
+    this.fullTileRanges_ = null;
+    /**
+     * @private
+     * @type {import("../size.js").Size}
+     */
+
+    this.tmpSize_ = [0, 0];
+
+    if (options.sizes !== undefined) {
+      this.fullTileRanges_ = options.sizes.map(function (size, z) {
+        var tileRange = new _TileRange.default(Math.min(0, size[0]), Math.max(size[0] - 1, -1), Math.min(0, size[1]), Math.max(size[1] - 1, -1));
+        return tileRange;
+      }, this);
+    } else if (extent) {
+      this.calculateTileRanges_(extent);
+    }
+  }
+  /**
+   * Call a function with each tile coordinate for a given extent and zoom level.
+   *
+   * @param {import("../extent.js").Extent} extent Extent.
+   * @param {number} zoom Integer zoom level.
+   * @param {function(import("../tilecoord.js").TileCoord): void} callback Function called with each tile coordinate.
+   * @api
+   */
+
+
+  TileGrid.prototype.forEachTileCoord = function (extent, zoom, callback) {
+    var tileRange = this.getTileRangeForExtentAndZ(extent, zoom);
+
+    for (var i = tileRange.minX, ii = tileRange.maxX; i <= ii; ++i) {
+      for (var j = tileRange.minY, jj = tileRange.maxY; j <= jj; ++j) {
+        callback([zoom, i, j]);
+      }
+    }
+  };
+  /**
+   * @param {import("../tilecoord.js").TileCoord} tileCoord Tile coordinate.
+   * @param {function(number, import("../TileRange.js").default): boolean} callback Callback.
+   * @param {import("../TileRange.js").default=} opt_tileRange Temporary import("../TileRange.js").default object.
+   * @param {import("../extent.js").Extent=} opt_extent Temporary import("../extent.js").Extent object.
+   * @return {boolean} Callback succeeded.
+   */
+
+
+  TileGrid.prototype.forEachTileCoordParentTileRange = function (tileCoord, callback, opt_tileRange, opt_extent) {
+    var tileRange, x, y;
+    var tileCoordExtent = null;
+    var z = tileCoord[0] - 1;
+
+    if (this.zoomFactor_ === 2) {
+      x = tileCoord[1];
+      y = tileCoord[2];
+    } else {
+      tileCoordExtent = this.getTileCoordExtent(tileCoord, opt_extent);
+    }
+
+    while (z >= this.minZoom) {
+      if (this.zoomFactor_ === 2) {
+        x = Math.floor(x / 2);
+        y = Math.floor(y / 2);
+        tileRange = (0, _TileRange.createOrUpdate)(x, x, y, y, opt_tileRange);
+      } else {
+        tileRange = this.getTileRangeForExtentAndZ(tileCoordExtent, z, opt_tileRange);
+      }
+
+      if (callback(z, tileRange)) {
+        return true;
+      }
+
+      --z;
+    }
+
+    return false;
+  };
+  /**
+   * Get the extent for this tile grid, if it was configured.
+   * @return {import("../extent.js").Extent} Extent.
+   * @api
+   */
+
+
+  TileGrid.prototype.getExtent = function () {
+    return this.extent_;
+  };
+  /**
+   * Get the maximum zoom level for the grid.
+   * @return {number} Max zoom.
+   * @api
+   */
+
+
+  TileGrid.prototype.getMaxZoom = function () {
+    return this.maxZoom;
+  };
+  /**
+   * Get the minimum zoom level for the grid.
+   * @return {number} Min zoom.
+   * @api
+   */
+
+
+  TileGrid.prototype.getMinZoom = function () {
+    return this.minZoom;
+  };
+  /**
+   * Get the origin for the grid at the given zoom level.
+   * @param {number} z Integer zoom level.
+   * @return {import("../coordinate.js").Coordinate} Origin.
+   * @api
+   */
+
+
+  TileGrid.prototype.getOrigin = function (z) {
+    if (this.origin_) {
+      return this.origin_;
+    } else {
+      return this.origins_[z];
+    }
+  };
+  /**
+   * Get the resolution for the given zoom level.
+   * @param {number} z Integer zoom level.
+   * @return {number} Resolution.
+   * @api
+   */
+
+
+  TileGrid.prototype.getResolution = function (z) {
+    return this.resolutions_[z];
+  };
+  /**
+   * Get the list of resolutions for the tile grid.
+   * @return {Array<number>} Resolutions.
+   * @api
+   */
+
+
+  TileGrid.prototype.getResolutions = function () {
+    return this.resolutions_;
+  };
+  /**
+   * @param {import("../tilecoord.js").TileCoord} tileCoord Tile coordinate.
+   * @param {import("../TileRange.js").default=} opt_tileRange Temporary import("../TileRange.js").default object.
+   * @param {import("../extent.js").Extent=} opt_extent Temporary import("../extent.js").Extent object.
+   * @return {import("../TileRange.js").default} Tile range.
+   */
+
+
+  TileGrid.prototype.getTileCoordChildTileRange = function (tileCoord, opt_tileRange, opt_extent) {
+    if (tileCoord[0] < this.maxZoom) {
+      if (this.zoomFactor_ === 2) {
+        var minX = tileCoord[1] * 2;
+        var minY = tileCoord[2] * 2;
+        return (0, _TileRange.createOrUpdate)(minX, minX + 1, minY, minY + 1, opt_tileRange);
+      }
+
+      var tileCoordExtent = this.getTileCoordExtent(tileCoord, opt_extent);
+      return this.getTileRangeForExtentAndZ(tileCoordExtent, tileCoord[0] + 1, opt_tileRange);
+    }
+
+    return null;
+  };
+  /**
+   * Get the extent for a tile range.
+   * @param {number} z Integer zoom level.
+   * @param {import("../TileRange.js").default} tileRange Tile range.
+   * @param {import("../extent.js").Extent=} opt_extent Temporary import("../extent.js").Extent object.
+   * @return {import("../extent.js").Extent} Extent.
+   */
+
+
+  TileGrid.prototype.getTileRangeExtent = function (z, tileRange, opt_extent) {
+    var origin = this.getOrigin(z);
+    var resolution = this.getResolution(z);
+    var tileSize = (0, _size.toSize)(this.getTileSize(z), this.tmpSize_);
+    var minX = origin[0] + tileRange.minX * tileSize[0] * resolution;
+    var maxX = origin[0] + (tileRange.maxX + 1) * tileSize[0] * resolution;
+    var minY = origin[1] + tileRange.minY * tileSize[1] * resolution;
+    var maxY = origin[1] + (tileRange.maxY + 1) * tileSize[1] * resolution;
+    return (0, _extent.createOrUpdate)(minX, minY, maxX, maxY, opt_extent);
+  };
+  /**
+   * Get a tile range for the given extent and integer zoom level.
+   * @param {import("../extent.js").Extent} extent Extent.
+   * @param {number} z Integer zoom level.
+   * @param {import("../TileRange.js").default=} opt_tileRange Temporary tile range object.
+   * @return {import("../TileRange.js").default} Tile range.
+   */
+
+
+  TileGrid.prototype.getTileRangeForExtentAndZ = function (extent, z, opt_tileRange) {
+    var tileCoord = tmpTileCoord;
+    this.getTileCoordForXYAndZ_(extent[0], extent[3], z, false, tileCoord);
+    var minX = tileCoord[1];
+    var minY = tileCoord[2];
+    this.getTileCoordForXYAndZ_(extent[2], extent[1], z, true, tileCoord);
+    return (0, _TileRange.createOrUpdate)(minX, tileCoord[1], minY, tileCoord[2], opt_tileRange);
+  };
+  /**
+   * @param {import("../tilecoord.js").TileCoord} tileCoord Tile coordinate.
+   * @return {import("../coordinate.js").Coordinate} Tile center.
+   */
+
+
+  TileGrid.prototype.getTileCoordCenter = function (tileCoord) {
+    var origin = this.getOrigin(tileCoord[0]);
+    var resolution = this.getResolution(tileCoord[0]);
+    var tileSize = (0, _size.toSize)(this.getTileSize(tileCoord[0]), this.tmpSize_);
+    return [origin[0] + (tileCoord[1] + 0.5) * tileSize[0] * resolution, origin[1] - (tileCoord[2] + 0.5) * tileSize[1] * resolution];
+  };
+  /**
+   * Get the extent of a tile coordinate.
+   *
+   * @param {import("../tilecoord.js").TileCoord} tileCoord Tile coordinate.
+   * @param {import("../extent.js").Extent=} opt_extent Temporary extent object.
+   * @return {import("../extent.js").Extent} Extent.
+   * @api
+   */
+
+
+  TileGrid.prototype.getTileCoordExtent = function (tileCoord, opt_extent) {
+    var origin = this.getOrigin(tileCoord[0]);
+    var resolution = this.getResolution(tileCoord[0]);
+    var tileSize = (0, _size.toSize)(this.getTileSize(tileCoord[0]), this.tmpSize_);
+    var minX = origin[0] + tileCoord[1] * tileSize[0] * resolution;
+    var minY = origin[1] - (tileCoord[2] + 1) * tileSize[1] * resolution;
+    var maxX = minX + tileSize[0] * resolution;
+    var maxY = minY + tileSize[1] * resolution;
+    return (0, _extent.createOrUpdate)(minX, minY, maxX, maxY, opt_extent);
+  };
+  /**
+   * Get the tile coordinate for the given map coordinate and resolution.  This
+   * method considers that coordinates that intersect tile boundaries should be
+   * assigned the higher tile coordinate.
+   *
+   * @param {import("../coordinate.js").Coordinate} coordinate Coordinate.
+   * @param {number} resolution Resolution.
+   * @param {import("../tilecoord.js").TileCoord=} opt_tileCoord Destination import("../tilecoord.js").TileCoord object.
+   * @return {import("../tilecoord.js").TileCoord} Tile coordinate.
+   * @api
+   */
+
+
+  TileGrid.prototype.getTileCoordForCoordAndResolution = function (coordinate, resolution, opt_tileCoord) {
+    return this.getTileCoordForXYAndResolution_(coordinate[0], coordinate[1], resolution, false, opt_tileCoord);
+  };
+  /**
+   * Note that this method should not be called for resolutions that correspond
+   * to an integer zoom level.  Instead call the `getTileCoordForXYAndZ_` method.
+   * @param {number} x X.
+   * @param {number} y Y.
+   * @param {number} resolution Resolution (for a non-integer zoom level).
+   * @param {boolean} reverseIntersectionPolicy Instead of letting edge
+   *     intersections go to the higher tile coordinate, let edge intersections
+   *     go to the lower tile coordinate.
+   * @param {import("../tilecoord.js").TileCoord=} opt_tileCoord Temporary import("../tilecoord.js").TileCoord object.
+   * @return {import("../tilecoord.js").TileCoord} Tile coordinate.
+   * @private
+   */
+
+
+  TileGrid.prototype.getTileCoordForXYAndResolution_ = function (x, y, resolution, reverseIntersectionPolicy, opt_tileCoord) {
+    var z = this.getZForResolution(resolution);
+    var scale = resolution / this.getResolution(z);
+    var origin = this.getOrigin(z);
+    var tileSize = (0, _size.toSize)(this.getTileSize(z), this.tmpSize_);
+    var adjustX = reverseIntersectionPolicy ? 0.5 : 0;
+    var adjustY = reverseIntersectionPolicy ? 0.5 : 0;
+    var xFromOrigin = Math.floor((x - origin[0]) / resolution + adjustX);
+    var yFromOrigin = Math.floor((origin[1] - y) / resolution + adjustY);
+    var tileCoordX = scale * xFromOrigin / tileSize[0];
+    var tileCoordY = scale * yFromOrigin / tileSize[1];
+
+    if (reverseIntersectionPolicy) {
+      tileCoordX = Math.ceil(tileCoordX) - 1;
+      tileCoordY = Math.ceil(tileCoordY) - 1;
+    } else {
+      tileCoordX = Math.floor(tileCoordX);
+      tileCoordY = Math.floor(tileCoordY);
+    }
+
+    return (0, _tilecoord.createOrUpdate)(z, tileCoordX, tileCoordY, opt_tileCoord);
+  };
+  /**
+   * Although there is repetition between this method and `getTileCoordForXYAndResolution_`,
+   * they should have separate implementations.  This method is for integer zoom
+   * levels.  The other method should only be called for resolutions corresponding
+   * to non-integer zoom levels.
+   * @param {number} x Map x coordinate.
+   * @param {number} y Map y coordinate.
+   * @param {number} z Integer zoom level.
+   * @param {boolean} reverseIntersectionPolicy Instead of letting edge
+   *     intersections go to the higher tile coordinate, let edge intersections
+   *     go to the lower tile coordinate.
+   * @param {import("../tilecoord.js").TileCoord=} opt_tileCoord Temporary import("../tilecoord.js").TileCoord object.
+   * @return {import("../tilecoord.js").TileCoord} Tile coordinate.
+   * @private
+   */
+
+
+  TileGrid.prototype.getTileCoordForXYAndZ_ = function (x, y, z, reverseIntersectionPolicy, opt_tileCoord) {
+    var origin = this.getOrigin(z);
+    var resolution = this.getResolution(z);
+    var tileSize = (0, _size.toSize)(this.getTileSize(z), this.tmpSize_);
+    var adjustX = reverseIntersectionPolicy ? 0.5 : 0;
+    var adjustY = reverseIntersectionPolicy ? 0.5 : 0;
+    var xFromOrigin = Math.floor((x - origin[0]) / resolution + adjustX);
+    var yFromOrigin = Math.floor((origin[1] - y) / resolution + adjustY);
+    var tileCoordX = xFromOrigin / tileSize[0];
+    var tileCoordY = yFromOrigin / tileSize[1];
+
+    if (reverseIntersectionPolicy) {
+      tileCoordX = Math.ceil(tileCoordX) - 1;
+      tileCoordY = Math.ceil(tileCoordY) - 1;
+    } else {
+      tileCoordX = Math.floor(tileCoordX);
+      tileCoordY = Math.floor(tileCoordY);
+    }
+
+    return (0, _tilecoord.createOrUpdate)(z, tileCoordX, tileCoordY, opt_tileCoord);
+  };
+  /**
+   * Get a tile coordinate given a map coordinate and zoom level.
+   * @param {import("../coordinate.js").Coordinate} coordinate Coordinate.
+   * @param {number} z Zoom level.
+   * @param {import("../tilecoord.js").TileCoord=} opt_tileCoord Destination import("../tilecoord.js").TileCoord object.
+   * @return {import("../tilecoord.js").TileCoord} Tile coordinate.
+   * @api
+   */
+
+
+  TileGrid.prototype.getTileCoordForCoordAndZ = function (coordinate, z, opt_tileCoord) {
+    return this.getTileCoordForXYAndZ_(coordinate[0], coordinate[1], z, false, opt_tileCoord);
+  };
+  /**
+   * @param {import("../tilecoord.js").TileCoord} tileCoord Tile coordinate.
+   * @return {number} Tile resolution.
+   */
+
+
+  TileGrid.prototype.getTileCoordResolution = function (tileCoord) {
+    return this.resolutions_[tileCoord[0]];
+  };
+  /**
+   * Get the tile size for a zoom level. The type of the return value matches the
+   * `tileSize` or `tileSizes` that the tile grid was configured with. To always
+   * get an `import("../size.js").Size`, run the result through `import("../size.js").Size.toSize()`.
+   * @param {number} z Z.
+   * @return {number|import("../size.js").Size} Tile size.
+   * @api
+   */
+
+
+  TileGrid.prototype.getTileSize = function (z) {
+    if (this.tileSize_) {
+      return this.tileSize_;
+    } else {
+      return this.tileSizes_[z];
+    }
+  };
+  /**
+   * @param {number} z Zoom level.
+   * @return {import("../TileRange.js").default} Extent tile range for the specified zoom level.
+   */
+
+
+  TileGrid.prototype.getFullTileRange = function (z) {
+    if (!this.fullTileRanges_) {
+      return null;
+    } else {
+      return this.fullTileRanges_[z];
+    }
+  };
+  /**
+   * @param {number} resolution Resolution.
+   * @param {number=} opt_direction If 0, the nearest resolution will be used.
+   *     If 1, the nearest lower resolution will be used. If -1, the nearest
+   *     higher resolution will be used. Default is 0.
+   * @return {number} Z.
+   * @api
+   */
+
+
+  TileGrid.prototype.getZForResolution = function (resolution, opt_direction) {
+    var z = (0, _array.linearFindNearest)(this.resolutions_, resolution, opt_direction || 0);
+    return (0, _math.clamp)(z, this.minZoom, this.maxZoom);
+  };
+  /**
+   * @param {!import("../extent.js").Extent} extent Extent for this tile grid.
+   * @private
+   */
+
+
+  TileGrid.prototype.calculateTileRanges_ = function (extent) {
+    var length = this.resolutions_.length;
+    var fullTileRanges = new Array(length);
+
+    for (var z = this.minZoom; z < length; ++z) {
+      fullTileRanges[z] = this.getTileRangeForExtentAndZ(extent, z);
+    }
+
+    this.fullTileRanges_ = fullTileRanges;
+  };
+
+  return TileGrid;
+}();
+
+var _default = TileGrid;
+exports.default = _default;
+},{"./common.js":"exM9","../asserts.js":"DVOE","../TileRange.js":"m5CX","../array.js":"o0G8","../extent.js":"L0Vw","../math.js":"qAK2","../size.js":"d9VJ","../tilecoord.js":"NPSy"}],"gNrJ":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getForProjection = getForProjection;
+exports.wrapX = wrapX;
+exports.createForExtent = createForExtent;
+exports.createXYZ = createXYZ;
+exports.createForProjection = createForProjection;
+exports.extentFromProjection = extentFromProjection;
+
+var _common = require("./tilegrid/common.js");
+
+var _size = require("./size.js");
+
+var _extent = require("./extent.js");
+
+var _Corner = _interopRequireDefault(require("./extent/Corner.js"));
+
+var _proj = require("./proj.js");
+
+var _Units = _interopRequireDefault(require("./proj/Units.js"));
+
+var _TileGrid = _interopRequireDefault(require("./tilegrid/TileGrid.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @module ol/tilegrid
+ */
+
+/**
+ * @param {import("./proj/Projection.js").default} projection Projection.
+ * @return {!TileGrid} Default tile grid for the
+ * passed projection.
+ */
+function getForProjection(projection) {
+  var tileGrid = projection.getDefaultTileGrid();
+
+  if (!tileGrid) {
+    tileGrid = createForProjection(projection);
+    projection.setDefaultTileGrid(tileGrid);
+  }
+
+  return tileGrid;
+}
+/**
+ * @param {TileGrid} tileGrid Tile grid.
+ * @param {import("./tilecoord.js").TileCoord} tileCoord Tile coordinate.
+ * @param {import("./proj/Projection.js").default} projection Projection.
+ * @return {import("./tilecoord.js").TileCoord} Tile coordinate.
+ */
+
+
+function wrapX(tileGrid, tileCoord, projection) {
+  var z = tileCoord[0];
+  var center = tileGrid.getTileCoordCenter(tileCoord);
+  var projectionExtent = extentFromProjection(projection);
+
+  if (!(0, _extent.containsCoordinate)(projectionExtent, center)) {
+    var worldWidth = (0, _extent.getWidth)(projectionExtent);
+    var worldsAway = Math.ceil((projectionExtent[0] - center[0]) / worldWidth);
+    center[0] += worldWidth * worldsAway;
+    return tileGrid.getTileCoordForCoordAndZ(center, z);
+  } else {
+    return tileCoord;
+  }
+}
+/**
+ * @param {import("./extent.js").Extent} extent Extent.
+ * @param {number=} opt_maxZoom Maximum zoom level (default is
+ *     DEFAULT_MAX_ZOOM).
+ * @param {number|import("./size.js").Size=} opt_tileSize Tile size (default uses
+ *     DEFAULT_TILE_SIZE).
+ * @param {Corner=} opt_corner Extent corner (default is `'top-left'`).
+ * @return {!TileGrid} TileGrid instance.
+ */
+
+
+function createForExtent(extent, opt_maxZoom, opt_tileSize, opt_corner) {
+  var corner = opt_corner !== undefined ? opt_corner : _Corner.default.TOP_LEFT;
+  var resolutions = resolutionsFromExtent(extent, opt_maxZoom, opt_tileSize);
+  return new _TileGrid.default({
+    extent: extent,
+    origin: (0, _extent.getCorner)(extent, corner),
+    resolutions: resolutions,
+    tileSize: opt_tileSize
+  });
+}
+/**
+ * @typedef {Object} XYZOptions
+ * @property {import("./extent.js").Extent} [extent] Extent for the tile grid. The origin for an XYZ tile grid is the
+ * top-left corner of the extent. If `maxResolution` is not provided the zero level of the grid is defined by the resolution
+ * at which one tile fits in the provided extent. If not provided, the extent of the EPSG:3857 projection is used.
+ * @property {number} [maxResolution] Resolution at level zero.
+ * @property {number} [maxZoom] Maximum zoom. The default is `42`. This determines the number of levels
+ * in the grid set. For example, a `maxZoom` of 21 means there are 22 levels in the grid set.
+ * @property {number} [minZoom=0] Minimum zoom.
+ * @property {number|import("./size.js").Size} [tileSize=[256, 256]] Tile size in pixels.
+ */
+
+/**
+ * Creates a tile grid with a standard XYZ tiling scheme.
+ * @param {XYZOptions=} opt_options Tile grid options.
+ * @return {!TileGrid} Tile grid instance.
+ * @api
+ */
+
+
+function createXYZ(opt_options) {
+  var xyzOptions = opt_options || {};
+  var extent = xyzOptions.extent || (0, _proj.get)('EPSG:3857').getExtent();
+  var gridOptions = {
+    extent: extent,
+    minZoom: xyzOptions.minZoom,
+    tileSize: xyzOptions.tileSize,
+    resolutions: resolutionsFromExtent(extent, xyzOptions.maxZoom, xyzOptions.tileSize, xyzOptions.maxResolution)
+  };
+  return new _TileGrid.default(gridOptions);
+}
+/**
+ * Create a resolutions array from an extent.  A zoom factor of 2 is assumed.
+ * @param {import("./extent.js").Extent} extent Extent.
+ * @param {number=} opt_maxZoom Maximum zoom level (default is
+ *     DEFAULT_MAX_ZOOM).
+ * @param {number|import("./size.js").Size=} opt_tileSize Tile size (default uses
+ *     DEFAULT_TILE_SIZE).
+ * @param {number=} opt_maxResolution Resolution at level zero.
+ * @return {!Array<number>} Resolutions array.
+ */
+
+
+function resolutionsFromExtent(extent, opt_maxZoom, opt_tileSize, opt_maxResolution) {
+  var maxZoom = opt_maxZoom !== undefined ? opt_maxZoom : _common.DEFAULT_MAX_ZOOM;
+  var height = (0, _extent.getHeight)(extent);
+  var width = (0, _extent.getWidth)(extent);
+  var tileSize = (0, _size.toSize)(opt_tileSize !== undefined ? opt_tileSize : _common.DEFAULT_TILE_SIZE);
+  var maxResolution = opt_maxResolution > 0 ? opt_maxResolution : Math.max(width / tileSize[0], height / tileSize[1]);
+  var length = maxZoom + 1;
+  var resolutions = new Array(length);
+
+  for (var z = 0; z < length; ++z) {
+    resolutions[z] = maxResolution / Math.pow(2, z);
+  }
+
+  return resolutions;
+}
+/**
+ * @param {import("./proj.js").ProjectionLike} projection Projection.
+ * @param {number=} opt_maxZoom Maximum zoom level (default is
+ *     DEFAULT_MAX_ZOOM).
+ * @param {number|import("./size.js").Size=} opt_tileSize Tile size (default uses
+ *     DEFAULT_TILE_SIZE).
+ * @param {Corner=} opt_corner Extent corner (default is `'top-left'`).
+ * @return {!TileGrid} TileGrid instance.
+ */
+
+
+function createForProjection(projection, opt_maxZoom, opt_tileSize, opt_corner) {
+  var extent = extentFromProjection(projection);
+  return createForExtent(extent, opt_maxZoom, opt_tileSize, opt_corner);
+}
+/**
+ * Generate a tile grid extent from a projection.  If the projection has an
+ * extent, it is used.  If not, a global extent is assumed.
+ * @param {import("./proj.js").ProjectionLike} projection Projection.
+ * @return {import("./extent.js").Extent} Extent.
+ */
+
+
+function extentFromProjection(projection) {
+  projection = (0, _proj.get)(projection);
+  var extent = projection.getExtent();
+
+  if (!extent) {
+    var half = 180 * _proj.METERS_PER_UNIT[_Units.default.DEGREES] / projection.getMetersPerUnit();
+    extent = (0, _extent.createOrUpdate)(-half, -half, half, half);
+  }
+
+  return extent;
+}
+},{"./tilegrid/common.js":"exM9","./size.js":"d9VJ","./extent.js":"L0Vw","./extent/Corner.js":"Xc5u","./proj.js":"VAQc","./proj/Units.js":"TVqV","./tilegrid/TileGrid.js":"JVE6"}],"MN9s":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.TileSourceEvent = void 0;
+
+var _util = require("../util.js");
+
+var _TileCache = _interopRequireDefault(require("../TileCache.js"));
+
+var _TileState = _interopRequireDefault(require("../TileState.js"));
+
+var _Event = _interopRequireDefault(require("../events/Event.js"));
+
+var _proj = require("../proj.js");
+
+var _size = require("../size.js");
+
+var _Source = _interopRequireDefault(require("./Source.js"));
+
+var _tilecoord = require("../tilecoord.js");
+
+var _tilegrid = require("../tilegrid.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+/**
+ * @module ol/source/Tile
+ */
+
+
+/**
+ * @typedef {Object} Options
+ * @property {import("./Source.js").AttributionLike} [attributions]
+ * @property {boolean} [attributionsCollapsible=true] Attributions are collapsible.
+ * @property {number} [cacheSize]
+ * @property {boolean} [opaque]
+ * @property {number} [tilePixelRatio]
+ * @property {import("../proj.js").ProjectionLike} [projection]
+ * @property {import("./State.js").default} [state]
+ * @property {import("../tilegrid/TileGrid.js").default} [tileGrid]
+ * @property {boolean} [wrapX=true]
+ * @property {number} [transition]
+ * @property {string} [key]
+ * @property {number} [zDirection=0]
+ */
+
+/**
+ * @classdesc
+ * Abstract base class; normally only used for creating subclasses and not
+ * instantiated in apps.
+ * Base class for sources providing images divided into a tile grid.
+ * @abstract
+ * @api
+ */
+var TileSource =
+/** @class */
+function (_super) {
+  __extends(TileSource, _super);
+  /**
+   * @param {Options} options SourceTile source options.
+   */
+
+
+  function TileSource(options) {
+    var _this = _super.call(this, {
+      attributions: options.attributions,
+      attributionsCollapsible: options.attributionsCollapsible,
+      projection: options.projection,
+      state: options.state,
+      wrapX: options.wrapX
+    }) || this;
+    /**
+     * @private
+     * @type {boolean}
+     */
+
+
+    _this.opaque_ = options.opaque !== undefined ? options.opaque : false;
+    /**
+     * @private
+     * @type {number}
+     */
+
+    _this.tilePixelRatio_ = options.tilePixelRatio !== undefined ? options.tilePixelRatio : 1;
+    /**
+     * @protected
+     * @type {import("../tilegrid/TileGrid.js").default}
+     */
+
+    _this.tileGrid = options.tileGrid !== undefined ? options.tileGrid : null;
+    var tileSize = [256, 256];
+    var tileGrid = options.tileGrid;
+
+    if (tileGrid) {
+      (0, _size.toSize)(tileGrid.getTileSize(tileGrid.getMinZoom()), tileSize);
+    }
+
+    var canUseScreen = typeof screen !== 'undefined';
+    var width = canUseScreen ? screen.availWidth || screen.width : 1920;
+    var height = canUseScreen ? screen.availHeight || screen.height : 1080;
+    var minCacheSize = 4 * Math.ceil(width / tileSize[0]) * Math.ceil(height / tileSize[1]);
+    /**
+     * @protected
+     * @type {import("../TileCache.js").default}
+     */
+
+    _this.tileCache = new _TileCache.default(Math.max(minCacheSize, options.cacheSize || 0));
+    /**
+     * @protected
+     * @type {import("../size.js").Size}
+     */
+
+    _this.tmpSize = [0, 0];
+    /**
+     * @private
+     * @type {string}
+     */
+
+    _this.key_ = options.key || '';
+    /**
+     * @protected
+     * @type {import("../Tile.js").Options}
+     */
+
+    _this.tileOptions = {
+      transition: options.transition
+    };
+    /**
+     * zDirection hint, read by the renderer. Indicates which resolution should be used
+     * by a renderer if the views resolution does not match any resolution of the tile source.
+     * If 0, the nearest resolution will be used. If 1, the nearest lower resolution
+     * will be used. If -1, the nearest higher resolution will be used.
+     * @type {number}
+     */
+
+    _this.zDirection = options.zDirection ? options.zDirection : 0;
+    return _this;
+  }
+  /**
+   * @return {boolean} Can expire cache.
+   */
+
+
+  TileSource.prototype.canExpireCache = function () {
+    return this.tileCache.canExpireCache();
+  };
+  /**
+   * @param {import("../proj/Projection.js").default} projection Projection.
+   * @param {!Object<string, boolean>} usedTiles Used tiles.
+   */
+
+
+  TileSource.prototype.expireCache = function (projection, usedTiles) {
+    var tileCache = this.getTileCacheForProjection(projection);
+
+    if (tileCache) {
+      tileCache.expireCache(usedTiles);
+    }
+  };
+  /**
+   * @param {import("../proj/Projection.js").default} projection Projection.
+   * @param {number} z Zoom level.
+   * @param {import("../TileRange.js").default} tileRange Tile range.
+   * @param {function(import("../Tile.js").default):(boolean|void)} callback Called with each
+   *     loaded tile.  If the callback returns `false`, the tile will not be
+   *     considered loaded.
+   * @return {boolean} The tile range is fully covered with loaded tiles.
+   */
+
+
+  TileSource.prototype.forEachLoadedTile = function (projection, z, tileRange, callback) {
+    var tileCache = this.getTileCacheForProjection(projection);
+
+    if (!tileCache) {
+      return false;
+    }
+
+    var covered = true;
+    var tile, tileCoordKey, loaded;
+
+    for (var x = tileRange.minX; x <= tileRange.maxX; ++x) {
+      for (var y = tileRange.minY; y <= tileRange.maxY; ++y) {
+        tileCoordKey = (0, _tilecoord.getKeyZXY)(z, x, y);
+        loaded = false;
+
+        if (tileCache.containsKey(tileCoordKey)) {
+          tile =
+          /** @type {!import("../Tile.js").default} */
+          tileCache.get(tileCoordKey);
+          loaded = tile.getState() === _TileState.default.LOADED;
+
+          if (loaded) {
+            loaded = callback(tile) !== false;
+          }
+        }
+
+        if (!loaded) {
+          covered = false;
+        }
+      }
+    }
+
+    return covered;
+  };
+  /**
+   * @param {import("../proj/Projection.js").default} projection Projection.
+   * @return {number} Gutter.
+   */
+
+
+  TileSource.prototype.getGutterForProjection = function (projection) {
+    return 0;
+  };
+  /**
+   * Return the key to be used for all tiles in the source.
+   * @return {string} The key for all tiles.
+   * @protected
+   */
+
+
+  TileSource.prototype.getKey = function () {
+    return this.key_;
+  };
+  /**
+   * Set the value to be used as the key for all tiles in the source.
+   * @param {string} key The key for tiles.
+   * @protected
+   */
+
+
+  TileSource.prototype.setKey = function (key) {
+    if (this.key_ !== key) {
+      this.key_ = key;
+      this.changed();
+    }
+  };
+  /**
+   * @param {import("../proj/Projection.js").default} projection Projection.
+   * @return {boolean} Opaque.
+   */
+
+
+  TileSource.prototype.getOpaque = function (projection) {
+    return this.opaque_;
+  };
+  /**
+   * @inheritDoc
+   */
+
+
+  TileSource.prototype.getResolutions = function () {
+    return this.tileGrid.getResolutions();
+  };
+  /**
+   * @abstract
+   * @param {number} z Tile coordinate z.
+   * @param {number} x Tile coordinate x.
+   * @param {number} y Tile coordinate y.
+   * @param {number} pixelRatio Pixel ratio.
+   * @param {import("../proj/Projection.js").default} projection Projection.
+   * @return {!import("../Tile.js").default} Tile.
+   */
+
+
+  TileSource.prototype.getTile = function (z, x, y, pixelRatio, projection) {
+    return (0, _util.abstract)();
+  };
+  /**
+   * Return the tile grid of the tile source.
+   * @return {import("../tilegrid/TileGrid.js").default} Tile grid.
+   * @api
+   */
+
+
+  TileSource.prototype.getTileGrid = function () {
+    return this.tileGrid;
+  };
+  /**
+   * @param {import("../proj/Projection.js").default} projection Projection.
+   * @return {!import("../tilegrid/TileGrid.js").default} Tile grid.
+   */
+
+
+  TileSource.prototype.getTileGridForProjection = function (projection) {
+    if (!this.tileGrid) {
+      return (0, _tilegrid.getForProjection)(projection);
+    } else {
+      return this.tileGrid;
+    }
+  };
+  /**
+   * @param {import("../proj/Projection.js").default} projection Projection.
+   * @return {import("../TileCache.js").default} Tile cache.
+   * @protected
+   */
+
+
+  TileSource.prototype.getTileCacheForProjection = function (projection) {
+    var thisProj = this.getProjection();
+
+    if (thisProj && !(0, _proj.equivalent)(thisProj, projection)) {
+      return null;
+    } else {
+      return this.tileCache;
+    }
+  };
+  /**
+   * Get the tile pixel ratio for this source. Subclasses may override this
+   * method, which is meant to return a supported pixel ratio that matches the
+   * provided `pixelRatio` as close as possible.
+   * @param {number} pixelRatio Pixel ratio.
+   * @return {number} Tile pixel ratio.
+   */
+
+
+  TileSource.prototype.getTilePixelRatio = function (pixelRatio) {
+    return this.tilePixelRatio_;
+  };
+  /**
+   * @param {number} z Z.
+   * @param {number} pixelRatio Pixel ratio.
+   * @param {import("../proj/Projection.js").default} projection Projection.
+   * @return {import("../size.js").Size} Tile size.
+   */
+
+
+  TileSource.prototype.getTilePixelSize = function (z, pixelRatio, projection) {
+    var tileGrid = this.getTileGridForProjection(projection);
+    var tilePixelRatio = this.getTilePixelRatio(pixelRatio);
+    var tileSize = (0, _size.toSize)(tileGrid.getTileSize(z), this.tmpSize);
+
+    if (tilePixelRatio == 1) {
+      return tileSize;
+    } else {
+      return (0, _size.scale)(tileSize, tilePixelRatio, this.tmpSize);
+    }
+  };
+  /**
+   * Returns a tile coordinate wrapped around the x-axis. When the tile coordinate
+   * is outside the resolution and extent range of the tile grid, `null` will be
+   * returned.
+   * @param {import("../tilecoord.js").TileCoord} tileCoord Tile coordinate.
+   * @param {import("../proj/Projection.js").default=} opt_projection Projection.
+   * @return {import("../tilecoord.js").TileCoord} Tile coordinate to be passed to the tileUrlFunction or
+   *     null if no tile URL should be created for the passed `tileCoord`.
+   */
+
+
+  TileSource.prototype.getTileCoordForTileUrlFunction = function (tileCoord, opt_projection) {
+    var projection = opt_projection !== undefined ? opt_projection : this.getProjection();
+    var tileGrid = this.getTileGridForProjection(projection);
+
+    if (this.getWrapX() && projection.isGlobal()) {
+      tileCoord = (0, _tilegrid.wrapX)(tileGrid, tileCoord, projection);
+    }
+
+    return (0, _tilecoord.withinExtentAndZ)(tileCoord, tileGrid) ? tileCoord : null;
+  };
+  /**
+   * Remove all cached tiles from the source. The next render cycle will fetch new tiles.
+   * @api
+   */
+
+
+  TileSource.prototype.clear = function () {
+    this.tileCache.clear();
+  };
+
+  TileSource.prototype.refresh = function () {
+    this.clear();
+
+    _super.prototype.refresh.call(this);
+  };
+  /**
+   * Marks a tile coord as being used, without triggering a load.
+   * @abstract
+   * @param {number} z Tile coordinate z.
+   * @param {number} x Tile coordinate x.
+   * @param {number} y Tile coordinate y.
+   * @param {import("../proj/Projection.js").default} projection Projection.
+   */
+
+
+  TileSource.prototype.useTile = function (z, x, y, projection) {};
+
+  return TileSource;
+}(_Source.default);
+/**
+ * @classdesc
+ * Events emitted by {@link module:ol/source/Tile~TileSource} instances are instances of this
+ * type.
+ */
+
+
+var TileSourceEvent =
+/** @class */
+function (_super) {
+  __extends(TileSourceEvent, _super);
+  /**
+   * @param {string} type Type.
+   * @param {import("../Tile.js").default} tile The tile.
+   */
+
+
+  function TileSourceEvent(type, tile) {
+    var _this = _super.call(this, type) || this;
+    /**
+     * The tile related to the event.
+     * @type {import("../Tile.js").default}
+     * @api
+     */
+
+
+    _this.tile = tile;
+    return _this;
+  }
+
+  return TileSourceEvent;
+}(_Event.default);
+
+exports.TileSourceEvent = TileSourceEvent;
+var _default = TileSource;
+exports.default = _default;
+},{"../util.js":"KA50","../TileCache.js":"zj1M","../TileState.js":"FoaO","../events/Event.js":"M1Cf","../proj.js":"VAQc","../size.js":"d9VJ","./Source.js":"AC87","../tilecoord.js":"NPSy","../tilegrid.js":"gNrJ"}],"pD6K":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8472,15 +15609,25 @@ var _eventEmitter = require("./eventEmitter");
 
 var _classHelper = _interopRequireDefault(require("../helper/classHelper"));
 
-var _strHelper = _interopRequireDefault(require("../helper/strHelper"));
+var _jsHelper = _interopRequireDefault(require("../helper/jsHelper"));
 
 var _battleFeature = _interopRequireDefault(require("./mapLayers/battleFeature"));
 
 var _agreementFeature = _interopRequireDefault(require("./mapLayers/agreementFeature"));
 
+var _cookieHelper = require("./cookieHelper");
+
+var _Tile = _interopRequireDefault(require("ol/source/Tile"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -8520,81 +15667,120 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
 
     _this.legendSpan = document.getElementById('legend-span');
     _this.legendDiv = document.getElementById('legend-div');
-    _this.isShow = false;
+    _this.isShow = _cookieHelper.CookieHelper.getCookie('isShowLegend', false);
+
+    _this.showHideLegend();
+
     _this.lines = _this.addLines();
+    _this.linesCount = 6;
+
+    var isCheckArr = _cookieHelper.CookieHelper.getCookie('isCheckArrLegend', undefined);
+
+    _this.isCheckArr = isCheckArr ? JSON.parse(isCheckArr) : _jsHelper.default.fillArray(true, _this.linesCount);
+    _this.items = [];
+    _this.uniqueItems = {};
+    window.legend = _assertThisInitialized(_this);
+    window.legendOnClick = _this.legendOnClick;
     return _this;
   }
 
   _createClass(LegendControl, [{
     key: "fillBattles",
-    value: function fillBattles(info) {}
+    value: function fillBattles(info) {
+      return info.battles;
+    }
   }, {
     key: "fillAgreementFeature",
-    value: function fillAgreementFeature(info) {}
+    value: function fillAgreementFeature(info) {
+      return info.agreements;
+    }
   }, {
     key: "fillWMW",
-    value: function fillWMW(info) {}
+    value: function fillWMW(info) {
+      return info.battles.filter(function (battle) {
+        return battle.kind === 'wmw';
+      });
+    }
   }, {
     key: "fillWOW",
-    value: function fillWOW(info) {}
+    value: function fillWOW(info) {
+      return info.battles.filter(function (battle) {
+        return battle.kind === 'wow';
+      });
+    }
   }, {
-    key: "fillRussiaWinner",
-    value: function fillRussiaWinner(info) {}
+    key: "fillUSSRWinner",
+    value: function fillUSSRWinner(info) {
+      return info.battles.filter(function (battle) {
+        return battle.isWinnerUSSR;
+      });
+    }
   }, {
     key: "fillGermanyWinner",
-    value: function fillGermanyWinner(info) {}
+    value: function fillGermanyWinner(info) {
+      return info.battles.filter(function (battle) {
+        return battle.isWinnerGermany;
+      });
+    }
   }, {
     key: "addLines",
     value: function addLines() {
       var lines = [];
       lines.push({
+        id: 0,
         caption: 'Военные события',
         classFeature: _battleFeature.default,
         fillFunction: this.fillBattles,
-        checkVariable: this.isCheckBattles,
         childs: [{
-          caption: 'ВОВ',
+          id: 1,
+          caption: 'События ВОВ',
           classFeature: _battleFeature.default,
           hint: 'События Великой Отечественной войны',
-          fillFunction: this.FillWOW,
-          checkVariable: this.isCheckBattlesWOW,
+          fillFunction: this.fillWOW,
           childs: [{
+            id: 2,
             caption: 'Победы СССР',
             classFeature: _battleFeature.default,
-            fillFunction: this.fillRussiaWinner(),
-            icon: _battleFeature.default.getRussiaWinnerIcon(),
-            checkVariable: this.isCheckBattlesRussiaWinner
+            fillFunction: this.fillUSSRWinner,
+            icon: _battleFeature.default.getRussiaWinnerIcon()
           }, {
+            id: 3,
             caption: 'Победы Германии',
             classFeature: _battleFeature.default,
-            fillFunction: this.fillGermanyWinner(),
-            icon: _battleFeature.default.getGermanyWinnerIcon(),
-            checkVariable: this.isCheckBattlesGermanyWinner
+            fillFunction: this.fillGermanyWinner,
+            icon: _battleFeature.default.getGermanyWinnerIcon()
           }]
         }, {
-          caption: 'ВМВ',
+          caption: 'События ВМВ',
+          id: 4,
           classFeature: _battleFeature.default,
           hint: 'Международные военные события',
           fillFunction: this.fillWMW,
-          icon: _battleFeature.default.getWMWIcon(),
-          checkVariable: this.isCheckBattlesWMW
+          icon: _battleFeature.default.getWMWIcon()
         }]
       });
       lines.push({
+        id: 5,
         caption: 'Соглашения',
         classFeature: _agreementFeature.default,
-        fillFunction: this.fillAgreementFeature(),
-        icon: _agreementFeature.default.getIcon(),
-        checkVariable: this.isCheckAgreements
+        fillFunction: this.fillAgreementFeature,
+        icon: _agreementFeature.default.getIcon()
       });
       return lines;
+    }
+  }, {
+    key: "showHideLegend",
+    value: function showHideLegend() {
+      this.isShow ? this.showLegend() : this.hideLegend();
     }
   }, {
     key: "legendButtonClick",
     value: function legendButtonClick(event) {
       var legend = window.legend;
       legend.isShow = !legend.isShow;
-      legend.isShow ? legend.showLegend.call(legend) : legend.hideLegend.call(legend);
+      legend.showHideLegend();
+
+      _cookieHelper.CookieHelper.setCookie('isShowLegend', legend.isShow);
     }
   }, {
     key: "showLegend",
@@ -8640,43 +15826,154 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
     value: function getHTMLIcons(line) {
       var htmlIcon = '';
       this.getIcons(line).forEach(function (icon) {
-        console.log(icon);
         htmlIcon += "<img src=\"".concat(icon, "\" alt=\"Girl in a jacket\">");
       });
       return htmlIcon;
     }
   }, {
-    key: "filterInfo",
-    value: function filterInfo(rawInfo) {
-      //todo filter by check legends
-      return rawInfo;
+    key: "searchLinesById",
+    value: function searchLinesById(id) {
+      var _this3 = this;
+
+      var lines = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+      var maybeLine = undefined;
+      !lines && (lines = this.lines);
+      lines.forEach(function (line) {
+        if (id === line.id) {
+          maybeLine = line;
+          return maybeLine;
+        }
+
+        if (line.childs) {
+          maybeLine = _this3.searchLinesById(id, line.childs);
+
+          if (maybeLine) {
+            return maybeLine;
+          }
+        }
+      });
+      return maybeLine;
     }
   }, {
-    key: "rowClick",
-    value: function rowClick(tr) {
-      var id = tr.attr('data-href');
-      if (!id) return;
-      tr.addClass('event-active-row').siblings().removeClass('event-active-row'); //let activeEvent = this.lines.filter(event => event.id == id)[0]
+    key: "changeParentCheck",
+    value: function changeParentCheck() {}
+  }, {
+    key: "repaintLegend",
+    value: function repaintLegend() {
+      var _this4 = this;
+
+      var html = "\n    <h1>\u041B\u0435\u0433\u0435\u043D\u0434\u0430</h1>\n    <table class=\"table table-borderless\">\n    <tbody>";
+      this.lines.forEach(function (line) {
+        html += _this4.getHTMLOneLineLegend(line, 0, _this4.isCheckArr[line.id]);
+      });
+      html += '</tbody></table>';
+      this.legendDiv.innerHTML = html;
+    }
+  }, {
+    key: "legendOnClick",
+    value: function legendOnClick(span) {
+      //get attribute for tr element: span > td > tr
+      var tr = span.parentElement.parentElement;
+      var rowId = parseInt(tr.getAttribute('data-href'));
+      var legend = window.legend; //const line = legend.searchLinesById.call(legend, rowId)
+
+      legend.isCheckArr[rowId] = !legend.isCheckArr[rowId];
+
+      _cookieHelper.CookieHelper.setCookie('isCheckArrLegend', JSON.stringify(legend.isCheckArr));
+
+      legend.repaintLegend();
+      legend.filterInfo.call(legend);
+    }
+  }, {
+    key: "clickSpan",
+    value: function clickSpan(content) {
+      return "<span onclick=legendOnClick(this)>".concat(content, "</span>");
+    }
+  }, {
+    key: "getHTMLOneLineLegend",
+    value: function getHTMLOneLineLegend(line, level, isCheckParent) {
+      var _this5 = this;
+
+      var html = '';
+      var leftImagePosition = level > 0 ? "style=\"left: ".concat(level * 5, "px;z-index: ").concat(level, "\"") : '';
+      var leftCaptionPosition = level > 0 ? "style=\"padding-left: ".concat(level * 30, "px\"") : '';
+      var classTr = this.isCheckArr[line.id] && isCheckParent ? '' : 'class="legend-filter-grayscale"';
+      html += "<tr data-href=".concat(line.id, " ").concat(classTr, ">\n      <td ").concat(leftImagePosition, ">").concat(this.clickSpan(this.getHTMLIcons(line)), "</td>\n      <td ").concat(leftCaptionPosition, ">").concat(this.clickSpan(line.caption), "</td>\n      <td>").concat(this.items[line.id].length, "</td>\n    </tr>");
+
+      if (line.childs) {
+        line.childs.forEach(function (child) {
+          html += _this5.getHTMLOneLineLegend(child, level + 1, isCheckParent && _this5.isCheckArr[child.id]);
+        });
+      }
+
+      return html;
     }
   }, {
     key: "updateCounter",
     value: function updateCounter(rawInfo) {
-      var _this3 = this;
+      var _this6 = this;
 
-      var html = "\n      <h1>\u041B\u0435\u0433\u0435\u043D\u0434\u0430</h1>\n      <table class=\"table table-borderless\">\n      <tbody>";
-      this.lines.forEach(function (line) {
-        html += "<tr>\n        <td>".concat(_this3.getHTMLIcons(line), "</td>\n        <td>").concat(line.caption, "</td>\n        <td>0</td>\n      </tr>");
-      });
-      html += '</tbody></table>';
-      this.legendDiv.innerHTML = html;
+      this.items = [];
+      this.uniqueItems = {};
+
+      var _loop = function _loop(id) {
+        var line = _this6.searchLinesById(id); //injection classFeature property to every item
+
+
+        _this6.items[id] = line.fillFunction(rawInfo).map(function (elem) {
+          return _objectSpread(_objectSpread({}, elem), {}, {
+            classFeature: line.classFeature
+          });
+        });
+
+        _this6.items[id].forEach(function (item) {
+          _this6.uniqueItems[item._id] = item;
+        });
+      };
+
+      for (var id = 0; id < this.linesCount; id++) {
+        _loop(id);
+      }
+    }
+  }, {
+    key: "filterInfo",
+    value: function filterInfo() {
+      var _this7 = this;
+
+      var visible = {};
+
+      for (var id in this.uniqueItems) {
+        visible[id] = true;
+      } //loop all layer items and set visible to unique items
+
+
+      var _loop2 = function _loop2(_id) {
+        var isVisibleLayer = _this7.isCheckArr[_id];
+
+        _this7.items[_id].forEach(function (item) {
+          visible[item._id] = visible[item._id] && isVisibleLayer;
+        });
+      };
+
+      for (var _id = 0; _id < this.linesCount; _id++) {
+        _loop2(_id);
+      }
+
+      var res = [];
+
+      for (var _id2 in this.uniqueItems) {
+        visible[_id2] && res.push(this.uniqueItems[_id2]);
+      }
+
+      this.emit('refreshInfo', res);
     }
   }, {
     key: "refreshInfo",
     value: function refreshInfo(rawInfo) {
       this.rawInfo = rawInfo;
       this.updateCounter(this.rawInfo);
-      var info = this.filterInfo(this.rawInfo);
-      this.emit('refreshInfo', info);
+      this.repaintLegend();
+      this.filterInfo();
     }
   }], [{
     key: "create",
@@ -8689,7 +15986,7 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
 }(_eventEmitter.EventEmitter);
 
 exports.LegendControl = LegendControl;
-},{"./eventEmitter":"STwH","../helper/classHelper":"LZLq","../helper/strHelper":"IGBU","./mapLayers/battleFeature":"rOJZ","./mapLayers/agreementFeature":"QR23"}],"imeZ":[function(require,module,exports) {
+},{"./eventEmitter":"STwH","../helper/classHelper":"LZLq","../helper/jsHelper":"uf5M","./mapLayers/battleFeature":"rOJZ","./mapLayers/agreementFeature":"QR23","./cookieHelper":"WAuT","ol/source/Tile":"MN9s"}],"imeZ":[function(require,module,exports) {
 /**
  * Parses an URI
  *
@@ -18189,77 +25486,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./url":"ECAZ","socket.io-parser":"dF18","./manager":"Di21","debug":"g98s","./socket":"wT76"}],"WAuT":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.CookieHelper = void 0;
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var CookieHelper = /*#__PURE__*/function () {
-  function CookieHelper() {
-    _classCallCheck(this, CookieHelper);
-  }
-
-  _createClass(CookieHelper, null, [{
-    key: "getCookie",
-    value: function getCookie(name) {
-      var matches = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
-      if (!matches) return undefined;
-      matches = decodeURIComponent(matches[1]);
-      return matches == 'undefined' ? undefined : matches;
-    }
-  }, {
-    key: "setCookie",
-    value: function setCookie(name, value, options) {
-      options = options || {};
-      var expires = options.expires;
-
-      if (typeof expires == 'number' && expires) {
-        var d = new Date();
-        d.setTime(d.getTime() + expires * 1000);
-        expires = options.expires = d;
-      }
-
-      if (expires && expires.toUTCString) {
-        options.expires = expires.toUTCString();
-      }
-
-      value = encodeURIComponent(value);
-      var updatedCookie = name + '=' + value;
-
-      for (var propName in options) {
-        updatedCookie += '; ' + propName;
-        var propValue = options[propName];
-
-        if (propValue !== true) {
-          updatedCookie += '=' + propValue;
-        }
-      }
-
-      document.cookie = updatedCookie;
-    }
-  }, {
-    key: "deleteCookie",
-    value: function deleteCookie(name) {
-      setCookie(name, '', {
-        expires: -1
-      });
-    }
-  }]);
-
-  return CookieHelper;
-}();
-
-exports.CookieHelper = CookieHelper;
-},{}],"VmvZ":[function(require,module,exports) {
+},{"./url":"ECAZ","socket.io-parser":"dF18","./manager":"Di21","debug":"g98s","./socket":"wT76"}],"VmvZ":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29309,17 +36536,15 @@ function startApp() {
   });
   protocol.subscribe('refreshInfo', function (info) {
     //сначала данные проходят через одноименный фильтр контрола легенды
-    legendControl.refreshInfo(info);
+    legendControl.refreshInfo.call(legendControl, info);
   });
   legendControl.subscribe('refreshInfo', function (info) {
     //...и потом поступают в контрол карты
-    mapControl.refreshInfo(info);
+    mapControl.refreshInfo.call(mapControl, info);
   });
   mapControl.subscribe('changeYear', function (year) {
     protocol.getDataByYear(year);
   });
-  window.map = mapControl;
-  window.legend = legendControl;
   (0, _jquery.default)(document.getElementsByClassName('ol-attribution ol-unselectable ol-control ol-collapsed')).remove();
   changeWindowSize();
 }

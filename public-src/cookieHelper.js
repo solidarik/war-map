@@ -1,5 +1,5 @@
 export class CookieHelper {
-  static getCookie(name) {
+  static getCookie(name, defaultValue = undefined) {
     var matches = document.cookie.match(
       new RegExp(
         '(?:^|; )' +
@@ -8,11 +8,11 @@ export class CookieHelper {
       )
     )
 
-    if (!matches) return undefined
+    if (!matches) return defaultValue
 
     matches = decodeURIComponent(matches[1])
 
-    return matches == 'undefined' ? undefined : matches
+    return matches == 'undefined' ? defaultValue : matches
   }
 
   static setCookie(name, value, options) {
@@ -46,7 +46,7 @@ export class CookieHelper {
 
   static deleteCookie(name) {
     setCookie(name, '', {
-      expires: -1
+      expires: -1,
     })
   }
 }
