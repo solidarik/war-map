@@ -15829,7 +15829,10 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
 
     _this.legendSpan = document.getElementById('legend-span');
     _this.legendDiv = document.getElementById('legend-div');
-    _this.isVisible = _cookieHelper.CookieHelper.getCookie('isVisibleLegend', false);
+
+    var isVisible = _cookieHelper.CookieHelper.getCookie('isVisibleLegend', false);
+
+    _this.isVisible = isVisible ? JSON.parse(isVisible) : false;
 
     _this.showHideLegend();
 
@@ -15933,32 +15936,26 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "showHideLegend",
     value: function showHideLegend() {
-      this.isVisible === true ? this.showLegend() : this.hideLegend();
+      if (this.isVisible) {
+        _classHelper.default.removeClass(this.legendDiv, 'legend-div-hide');
+
+        _classHelper.default.addClass(this.legendDiv, 'legend-div-show'); // this.legendSpan.className = 'mdi mdi-close mdi-24px'
+
+      } else {
+        _classHelper.default.removeClass(this.legendDiv, 'legend-div-show');
+
+        _classHelper.default.addClass(this.legendDiv, 'legend-div-hide'); // this.legendSpan.className = 'mdi mdi-format-list-bulleted mdi-24px'
+
+      }
     }
   }, {
     key: "legendButtonClick",
     value: function legendButtonClick(event) {
       var legend = window.legend;
       legend.isVisible = !legend.isVisible;
-      legend.showHideLegend();
+      legend.showHideLegend.call(legend);
 
       _cookieHelper.CookieHelper.setCookie('isVisibleLegend', legend.isVisible);
-    }
-  }, {
-    key: "showLegend",
-    value: function showLegend() {
-      _classHelper.default.removeClass(this.legendDiv, 'legend-div-hide');
-
-      _classHelper.default.addClass(this.legendDiv, 'legend-div-show'); // this.legendSpan.className = 'mdi mdi-close mdi-24px'
-
-    }
-  }, {
-    key: "hideLegend",
-    value: function hideLegend() {
-      _classHelper.default.removeClass(this.legendDiv, 'legend-div-show');
-
-      _classHelper.default.addClass(this.legendDiv, 'legend-div-hide'); // this.legendSpan.className = 'mdi mdi-format-list-bulleted mdi-24px'
-
     }
   }, {
     key: "getIcons",
@@ -27690,7 +27687,7 @@ var SuperSimple = /*#__PURE__*/function (_React$Component) {
           justifyContent: 'center',
           flexWrap: 'wrap',
           margin: '0 2em',
-          marginRight: '8em'
+          marginRight: '8.5em'
         }
       }, /*#__PURE__*/React.createElement(_reactRange.Range, {
         values: this.state.values,

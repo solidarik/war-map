@@ -15,7 +15,8 @@ export class LegendControl extends EventEmitter {
 
     this.legendSpan = document.getElementById('legend-span')
     this.legendDiv = document.getElementById('legend-div')
-    this.isVisible = CookieHelper.getCookie('isVisibleLegend', false)
+    const isVisible = CookieHelper.getCookie('isVisibleLegend', false)
+    this.isVisible = isVisible ? JSON.parse(isVisible) : false
     this.showHideLegend()
 
     this.lines = this.addLines()
@@ -115,26 +116,22 @@ export class LegendControl extends EventEmitter {
   }
 
   showHideLegend() {
-    this.isVisible === true ? this.showLegend() : this.hideLegend()
+    if (this.isVisible) {
+      ClassHelper.removeClass(this.legendDiv, 'legend-div-hide')
+      ClassHelper.addClass(this.legendDiv, 'legend-div-show')
+      // this.legendSpan.className = 'mdi mdi-close mdi-24px'
+    } else {
+      ClassHelper.removeClass(this.legendDiv, 'legend-div-show')
+      ClassHelper.addClass(this.legendDiv, 'legend-div-hide')
+      // this.legendSpan.className = 'mdi mdi-format-list-bulleted mdi-24px'
+    }
   }
 
   legendButtonClick(event) {
     const legend = window.legend
     legend.isVisible = !legend.isVisible
-    legend.showHideLegend()
+    legend.showHideLegend.call(legend)
     CookieHelper.setCookie('isVisibleLegend', legend.isVisible)
-  }
-
-  showLegend() {
-    ClassHelper.removeClass(this.legendDiv, 'legend-div-hide')
-    ClassHelper.addClass(this.legendDiv, 'legend-div-show')
-    // this.legendSpan.className = 'mdi mdi-close mdi-24px'
-  }
-
-  hideLegend() {
-    ClassHelper.removeClass(this.legendDiv, 'legend-div-show')
-    ClassHelper.addClass(this.legendDiv, 'legend-div-hide')
-    // this.legendSpan.className = 'mdi mdi-format-list-bulleted mdi-24px'
   }
 
   getIcons(line) {
