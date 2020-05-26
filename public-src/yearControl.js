@@ -15,7 +15,7 @@ class SuperSimple extends React.Component {
           justifyContent: 'center',
           flexWrap: 'wrap',
           margin: '0 2em',
-          marginRight: '7em',
+          marginRight: '8em',
         }}
       >
         <Range

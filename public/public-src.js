@@ -27687,7 +27687,7 @@ var SuperSimple = /*#__PURE__*/function (_React$Component) {
           justifyContent: 'center',
           flexWrap: 'wrap',
           margin: '0 2em',
-          marginRight: '7em'
+          marginRight: '8em'
         }
       }, /*#__PURE__*/React.createElement(_reactRange.Range, {
         values: this.state.values,
