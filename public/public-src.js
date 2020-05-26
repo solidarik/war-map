@@ -6107,7 +6107,184 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
   });
 };
 
-},{"./keys":"Tn4q","has-binary2":"E6Ed","arraybuffer.slice":"iRcD","after":"ibc9","./utf8":"s6hm","base64-arraybuffer":"vLJO","blob":"LDmX"}],"HBl9":[function(require,module,exports) {
+},{"./keys":"Tn4q","has-binary2":"E6Ed","arraybuffer.slice":"iRcD","after":"ibc9","./utf8":"s6hm","base64-arraybuffer":"vLJO","blob":"LDmX"}],"jlON":[function(require,module,exports) {
+
+/**
+ * Expose `Emitter`.
+ */
+
+if (typeof module !== 'undefined') {
+  module.exports = Emitter;
+}
+
+/**
+ * Initialize a new `Emitter`.
+ *
+ * @api public
+ */
+
+function Emitter(obj) {
+  if (obj) return mixin(obj);
+};
+
+/**
+ * Mixin the emitter properties.
+ *
+ * @param {Object} obj
+ * @return {Object}
+ * @api private
+ */
+
+function mixin(obj) {
+  for (var key in Emitter.prototype) {
+    obj[key] = Emitter.prototype[key];
+  }
+  return obj;
+}
+
+/**
+ * Listen on the given `event` with `fn`.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.on =
+Emitter.prototype.addEventListener = function(event, fn){
+  this._callbacks = this._callbacks || {};
+  (this._callbacks['$' + event] = this._callbacks['$' + event] || [])
+    .push(fn);
+  return this;
+};
+
+/**
+ * Adds an `event` listener that will be invoked a single
+ * time then automatically removed.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.once = function(event, fn){
+  function on() {
+    this.off(event, on);
+    fn.apply(this, arguments);
+  }
+
+  on.fn = fn;
+  this.on(event, on);
+  return this;
+};
+
+/**
+ * Remove the given callback for `event` or all
+ * registered callbacks.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.off =
+Emitter.prototype.removeListener =
+Emitter.prototype.removeAllListeners =
+Emitter.prototype.removeEventListener = function(event, fn){
+  this._callbacks = this._callbacks || {};
+
+  // all
+  if (0 == arguments.length) {
+    this._callbacks = {};
+    return this;
+  }
+
+  // specific event
+  var callbacks = this._callbacks['$' + event];
+  if (!callbacks) return this;
+
+  // remove all handlers
+  if (1 == arguments.length) {
+    delete this._callbacks['$' + event];
+    return this;
+  }
+
+  // remove specific handler
+  var cb;
+  for (var i = 0; i < callbacks.length; i++) {
+    cb = callbacks[i];
+    if (cb === fn || cb.fn === fn) {
+      callbacks.splice(i, 1);
+      break;
+    }
+  }
+
+  // Remove event specific arrays for event types that no
+  // one is subscribed for to avoid memory leak.
+  if (callbacks.length === 0) {
+    delete this._callbacks['$' + event];
+  }
+
+  return this;
+};
+
+/**
+ * Emit `event` with the given args.
+ *
+ * @param {String} event
+ * @param {Mixed} ...
+ * @return {Emitter}
+ */
+
+Emitter.prototype.emit = function(event){
+  this._callbacks = this._callbacks || {};
+
+  var args = new Array(arguments.length - 1)
+    , callbacks = this._callbacks['$' + event];
+
+  for (var i = 1; i < arguments.length; i++) {
+    args[i - 1] = arguments[i];
+  }
+
+  if (callbacks) {
+    callbacks = callbacks.slice(0);
+    for (var i = 0, len = callbacks.length; i < len; ++i) {
+      callbacks[i].apply(this, args);
+    }
+  }
+
+  return this;
+};
+
+/**
+ * Return array of callbacks for `event`.
+ *
+ * @param {String} event
+ * @return {Array}
+ * @api public
+ */
+
+Emitter.prototype.listeners = function(event){
+  this._callbacks = this._callbacks || {};
+  return this._callbacks['$' + event] || [];
+};
+
+/**
+ * Check if this emitter has `event` handlers.
+ *
+ * @param {String} event
+ * @return {Boolean}
+ * @api public
+ */
+
+Emitter.prototype.hasListeners = function(event){
+  return !! this.listeners(event).length;
+};
+
+},{}],"HBl9":[function(require,module,exports) {
 /**
  * Module dependencies.
  */
@@ -6270,7 +6447,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"engine.io-parser":"HSgu","component-emitter":"Wr69"}],"vs2a":[function(require,module,exports) {
+},{"engine.io-parser":"HSgu","component-emitter":"jlON"}],"vs2a":[function(require,module,exports) {
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -7499,7 +7676,7 @@ function unloadHandler () {
   }
 }
 
-},{"xmlhttprequest-ssl":"cVUh","./polling":"hsm0","component-emitter":"Wr69","component-inherit":"X1xq","debug":"Rs26","../globalThis":"ViVL"}],"ruO5":[function(require,module,exports) {
+},{"xmlhttprequest-ssl":"cVUh","./polling":"hsm0","component-emitter":"jlON","component-inherit":"X1xq","debug":"Rs26","../globalThis":"ViVL"}],"ruO5":[function(require,module,exports) {
 /**
  * Module requirements.
  */
@@ -8847,7 +9024,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
   return filteredUpgrades;
 };
 
-},{"./transports/index":"xQDS","component-emitter":"Wr69","debug":"Rs26","indexof":"rcym","engine.io-parser":"HSgu","parseuri":"imeZ","parseqs":"vs2a","./transport":"HBl9"}],"h0uD":[function(require,module,exports) {
+},{"./transports/index":"xQDS","component-emitter":"jlON","debug":"Rs26","indexof":"rcym","engine.io-parser":"HSgu","parseuri":"imeZ","parseqs":"vs2a","./transport":"HBl9"}],"h0uD":[function(require,module,exports) {
 
 module.exports = require('./socket');
 
