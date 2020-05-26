@@ -8610,11 +8610,14 @@ var ClassHelper = /*#__PURE__*/function () {
       if (arr.indexOf(className) == -1) {
         element.className += className;
       }
+
+      console.log("addClass ".concat(className, ", result: ").concat(element.className));
     }
   }, {
     key: "removeClass",
     value: function removeClass(element, className) {
       element.className = element.className.replace(className, '');
+      console.log("removeClass ".concat(className, ", result: ").concat(element.className));
     }
   }]);
 
@@ -15826,7 +15829,7 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
 
     _this.legendSpan = document.getElementById('legend-span');
     _this.legendDiv = document.getElementById('legend-div');
-    _this.isShow = _cookieHelper.CookieHelper.getCookie('isShowLegend', false);
+    _this.isVisible = _cookieHelper.CookieHelper.getCookie('isVisibleLegend', false);
 
     _this.showHideLegend();
 
@@ -15930,16 +15933,16 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "showHideLegend",
     value: function showHideLegend() {
-      this.isShow ? this.showLegend() : this.hideLegend();
+      this.isVisible === true ? this.showLegend() : this.hideLegend();
     }
   }, {
     key: "legendButtonClick",
     value: function legendButtonClick(event) {
       var legend = window.legend;
-      legend.isShow = !legend.isShow;
+      legend.isVisible = !legend.isVisible;
       legend.showHideLegend();
 
-      _cookieHelper.CookieHelper.setCookie('isShowLegend', legend.isShow);
+      _cookieHelper.CookieHelper.setCookie('isVisibleLegend', legend.isVisible);
     }
   }, {
     key: "showLegend",

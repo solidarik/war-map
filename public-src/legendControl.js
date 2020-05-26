@@ -15,7 +15,7 @@ export class LegendControl extends EventEmitter {
 
     this.legendSpan = document.getElementById('legend-span')
     this.legendDiv = document.getElementById('legend-div')
-    this.isShow = CookieHelper.getCookie('isShowLegend', false)
+    this.isVisible = CookieHelper.getCookie('isVisibleLegend', false)
     this.showHideLegend()
 
     this.lines = this.addLines()
@@ -115,14 +115,14 @@ export class LegendControl extends EventEmitter {
   }
 
   showHideLegend() {
-    this.isShow ? this.showLegend() : this.hideLegend()
+    this.isVisible === true ? this.showLegend() : this.hideLegend()
   }
 
   legendButtonClick(event) {
     const legend = window.legend
-    legend.isShow = !legend.isShow
+    legend.isVisible = !legend.isVisible
     legend.showHideLegend()
-    CookieHelper.setCookie('isShowLegend', legend.isShow)
+    CookieHelper.setCookie('isVisibleLegend', legend.isVisible)
   }
 
   showLegend() {
