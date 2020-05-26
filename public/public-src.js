@@ -27706,7 +27706,7 @@ var SuperSimple = /*#__PURE__*/function (_React$Component) {
             onMouseDown: props.onMouseDown,
             onTouchStart: props.onTouchStart,
             style: _objectSpread(_objectSpread({}, props.style), {}, {
-              height: '36px',
+              height: '31px',
               display: 'flex',
               width: '100%'
             })
@@ -27725,10 +27725,10 @@ var SuperSimple = /*#__PURE__*/function (_React$Component) {
               isDragged = _ref2.isDragged;
           return /*#__PURE__*/React.createElement("div", _extends({}, props, {
             style: _objectSpread(_objectSpread({}, props.style), {}, {
-              height: '42px',
-              width: '42px',
-              borderRadius: '4px',
-              backgroundColor: '#FFF',
+              height: '34px',
+              width: '34px',
+              borderRadius: '2px',
+              backgroundColor: 'whitesmoke',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
@@ -27738,7 +27738,7 @@ var SuperSimple = /*#__PURE__*/function (_React$Component) {
             style: {
               height: '16px',
               width: '5px',
-              backgroundColor: isDragged ? '#548BF4' : '#CCC'
+              backgroundColor: isDragged ? '#548BF4' : 'rgba(0,162,232,0.7)'
             }
           }));
         }

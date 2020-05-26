@@ -30,7 +30,7 @@ class SuperSimple extends React.Component {
               onTouchStart={props.onTouchStart}
               style={{
                 ...props.style,
-                height: '36px',
+                height: '31px',
                 display: 'flex',
                 width: '100%',
               }}
@@ -53,10 +53,10 @@ class SuperSimple extends React.Component {
               {...props}
               style={{
                 ...props.style,
-                height: '42px',
-                width: '42px',
-                borderRadius: '4px',
-                backgroundColor: '#FFF',
+                height: '34px',
+                width: '34px',
+                borderRadius: '2px',
+                backgroundColor: 'whitesmoke',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -67,7 +67,9 @@ class SuperSimple extends React.Component {
                 style={{
                   height: '16px',
                   width: '5px',
-                  backgroundColor: isDragged ? '#548BF4' : '#CCC',
+                  backgroundColor: isDragged
+                    ? '#548BF4'
+                    : 'rgba(0,162,232,0.7)',
                 }}
               />
             </div>
