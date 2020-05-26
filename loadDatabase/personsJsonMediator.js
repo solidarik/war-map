@@ -1,5 +1,4 @@
 const PersonsModel = require('../models/personsModel')
-const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol')
 const strHelper = require('../helper/strHelper')
 const dateHelper = require('../helper/dateHelper')
 const geoHelper = require('../helper/geoHelper')

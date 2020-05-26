@@ -2,10 +2,10 @@ const mongoose = require('mongoose')
 
 var chronosSchema = new mongoose.Schema(
   {
-    _name: mongoose.Schema.ObjectId,
+    pageId: Number,
     startDate: {
       type: Date,
-      required: 'Не задана начальная дата события'
+      required: 'Не задана начальная дата события',
     },
     isOnlyYear: Boolean,
     endDate: Date,
@@ -15,11 +15,11 @@ var chronosSchema = new mongoose.Schema(
     srcUrl: String,
     brief: {
       type: String,
-      required: 'Нет описания события'
-    }
+      required: 'Нет описания события',
+    },
   },
   {
-    timestamps: false
+    timestamps: false,
   }
 )
 

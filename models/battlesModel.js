@@ -2,7 +2,8 @@ const mongoose = require('mongoose')
 
 var battlesSchema = new mongoose.Schema(
   {
-    _name: mongoose.Schema.ObjectId,
+    pageId: Number,
+    name: String,
     filename: String,
     startDate: {
       type: Date,
@@ -11,7 +12,6 @@ var battlesSchema = new mongoose.Schema(
     endDate: Date,
     kind: String,
     point: [],
-    pageId: Number,
     imgUrl: String,
     srcUrl: String,
     enemies: [],

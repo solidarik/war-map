@@ -1,17 +1,13 @@
 const chalk = require('chalk')
 const log = require('../helper/logHelper')
-const dateHelper = require('../helper/dateHelper')
 
 const DbHelper = require('../loadDatabase/dbHelper')
 const inetHelper = require('../helper/inetHelper')
-const strHelper = require('../helper/strHelper')
 const battlesJsonMediator = require('../loadDatabase/battlesJsonMediator')
 const agreementsJsonMediator = require('../loadDatabase/agreementsJsonMediator')
 const chronosJsonMediator = require('../loadDatabase/chronosJsonMediator')
 const personsJsonMediator = require('../loadDatabase/personsJsonMediator')
 const usersJsonMediator = require('../loadDatabase/usersJsonMediator')
-const dictEngRusJsonMediator = require('../loadDatabase/dictEngRusJsonMediator')
-const dictEngRusProtocol = require('../socketProtocol/dictEngRusProtocol')
 const loadPersons = require('../loadDatabase/loadPersons')
 
 // loadPersons.download(
@@ -32,15 +28,6 @@ inetHelper.loadCoords(checkedCoordsPath)
 
 dbHelper = new DbHelper()
 
-// dictEngRusProtocol
-//   .getEngRusObjectId("блаблабла")
-//   .then(obj => console.log(obj))
-//   .then(() => {
-//     dbHelper.free();
-//   });
-
-// return;
-
 Promise.resolve(true)
   // .then(() => {
   //   return dbHelper.clearDb('users')
@@ -49,15 +36,6 @@ Promise.resolve(true)
   //   return dbHelper.saveFilesFrom({
   //     source: 'dataSources/secretUsers.json',
   //     mediator: usersJsonMediator
-  //   })
-  // })
-  // .then(() => {
-  //   return dbHelper.clearDb('dictEngRus')
-  // })
-  // .then(() => {
-  //   return dbHelper.saveFilesFrom({
-  //     source: 'dataSources/engRus.json',
-  //     mediator: dictEngRusJsonMediator
   //   })
   // })
   // .then(() => {
@@ -71,17 +49,17 @@ Promise.resolve(true)
   //     mediator: chronosJsonMediator,
   //   })
   // })
-  // .then(() => {
-  //   return dbHelper.clearDb('agreements')
-  // })
-  // .then(() => {
-  //   return dbHelper.saveFilesFrom({
-  //     source: 'python/out_agreements',
-  //     procdir: 'python/out_agreements_process',
-  //     errdir: 'python/out_agreements_errors',
-  //     mediator: agreementsJsonMediator,
-  //   })
-  // })
+  .then(() => {
+    return dbHelper.clearDb('agreements')
+  })
+  .then(() => {
+    return dbHelper.saveFilesFrom({
+      source: 'python/out_agreements',
+      procdir: 'python/out_agreements_process',
+      errdir: 'python/out_agreements_errors',
+      mediator: agreementsJsonMediator,
+    })
+  })
   .then(() => {
     return dbHelper.clearDb('battles')
   })

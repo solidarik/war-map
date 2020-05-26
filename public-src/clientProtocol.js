@@ -10,14 +10,6 @@ export class ClientProtocol extends EventEmitter {
     this.lang = 'rus'
     this.dict = new Map() //key - hash (tobject), value {объект}
 
-    socket.emit('clGetDictEngRus', '', (msg) => {
-      let data = JSON.parse(msg)
-      data.res.forEach((item) => {
-        let obj = { eng: item.eng, rus: item.rus }
-        this.dict.set(item.id, obj)
-      })
-    })
-
     socket.emit('clGetCurrentYear', '', (msg) => {
       const data = JSON.parse(msg)
       const serverYear = data.year
@@ -74,9 +66,13 @@ export class ClientProtocol extends EventEmitter {
 
     CookieHelper.setCookie('year', year)
 
-    this.socket.emit('clQueryDataByYear', JSON.stringify({ year: year }), (msg) => {
-      this.emit('refreshInfo', JSON.parse(msg))
-    })
+    this.socket.emit(
+      'clQueryDataByYear',
+      JSON.stringify({ year: year }),
+      (msg) => {
+        this.emit('refreshInfo', JSON.parse(msg))
+      }
+    )
   }
 
   static create() {
