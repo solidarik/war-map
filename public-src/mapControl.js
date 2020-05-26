@@ -218,6 +218,19 @@ export class MapControl extends EventEmitter {
 
   setCurrentYearFromServer(year) {
     this.changeYear(year)
+    this.addYearControl()
+  }
+
+  addYearControl() {
+    this.map.addControl(
+      new YearControl({
+        caption: 'Выбрать год событий',
+        year: this.currentYear,
+        handler: (year) => {
+          this.changeYear(year)
+        },
+      })
+    )
   }
 
   addYearLayer() {
@@ -370,4 +383,135 @@ window.onpopstate = (event) => {
     ? map.readViewFromState.call(map, event.state)
     : map.readViewFromPermalink.call(map)
   map.updateView.call(map)
+}
+
+class SuperCustomControl extends ol.control.Control {
+  constructor(inputParams) {
+    super(inputParams)
+  }
+
+  getBSIconHTML(name) {
+    return '<span class="' + name + '"></span>'
+  }
+}
+
+class YearControl extends SuperCustomControl {
+  static get min_year() {
+    return MAP_PARAMS.min_year
+  }
+
+  static get max_year() {
+    return MAP_PARAMS.max_year
+  }
+
+  constructor(inputParams) {
+    super(inputParams)
+
+    const caption = inputParams.caption
+    const hint = inputParams.hint || caption
+    this.year = inputParams.year
+    this.handler = inputParams.handler
+
+    let yearInput = document.createElement('input')
+    yearInput.className = 'input-without-focus'
+    yearInput.title = hint
+    yearInput.setAttribute('id', 'year-input')
+    yearInput.value = this.year
+    yearInput.addEventListener('keyup', (event) => {
+      if (event.keyCode == 13) {
+        this._inputKeyUp()
+        event.preventDefault()
+      }
+    })
+
+    this.yearInput = yearInput
+
+    let yearLeftButton = document.createElement('button')
+    yearLeftButton.innerHTML = this.getBSIconHTML('mdi mdi-step-backward-2')
+    yearLeftButton.title = 'Предыдущий год'
+    yearLeftButton.setAttribute('id', 'year-left-button')
+    yearLeftButton.addEventListener(
+      'click',
+      () => {
+        this._leftButtonClick()
+      },
+      false
+    )
+    // yearLeftButton.addEventListener('touchstart', () => { this._leftButtonClick(); }, false);
+
+    let yearRightButton = document.createElement('button')
+    yearRightButton.innerHTML = this.getBSIconHTML('mdi mdi-step-forward-2')
+    yearRightButton.title = 'Следующий год'
+    yearRightButton.setAttribute('id', 'year-right-button')
+    yearRightButton.addEventListener(
+      'click',
+      () => {
+        this._rightButtonClick()
+      },
+      false
+    )
+    // yearRightButton.addEventListener('touchstart', () => { this._rightButtonClick(); }, false);
+
+    let parentDiv = document.createElement('div')
+    parentDiv.className = 'ol-control'
+    parentDiv.setAttribute('id', 'year-control')
+
+    parentDiv.appendChild(yearLeftButton)
+    parentDiv.appendChild(yearInput)
+    parentDiv.appendChild(yearRightButton)
+
+    this.element = parentDiv
+
+    ol.control.Control.call(this, {
+      label: 'test',
+      hint: 'test',
+      tipLabel: caption,
+      element: parentDiv,
+      // target: get(inputParams, "target")
+    })
+  }
+
+  _leftButtonClick() {
+    if (!this._checkYear(this.year, -1)) return
+
+    this.year = parseInt(this.year) - 1
+    this._setNewYear(this.year)
+  }
+
+  _rightButtonClick() {
+    if (!this._checkYear(this.year, +1)) return
+
+    this.year = parseInt(this.year) + 1
+    this._setNewYear(this.year)
+  }
+
+  _inputKeyUp() {
+    let year = this.yearInput.value
+
+    if (!this._checkYear(year, 0, this.year)) {
+      this.yearInput.value = this.year
+      return
+    }
+
+    this.year = parseInt(year)
+    this._setNewYear(this.year)
+  }
+
+  _checkYear(year, incr, oldValue = undefined) {
+    var reg = /^[1,2][8,9,0]\d{2}$/
+    if (!reg.test(year)) return false
+
+    let intYear = parseInt(year) + incr
+    if (intYear < YearControl.min_year) return false
+    if (intYear > YearControl.max_year) return false
+
+    if (oldValue == intYear) return false
+
+    return true
+  }
+
+  _setNewYear(year) {
+    this.yearInput.value = this.year
+    this.handler(this.year)
+  }
 }

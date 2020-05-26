@@ -65,7 +65,7 @@
     "pug": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "request": "latest",
+    "react-range": "latest",
     "socket.io": "latest",
     "socket.io-emitter": "latest",
     "socket.io-redis": "latest",
@@ -73,14 +73,28 @@
     "xlsx": "latest"
   },
   "devDependencies": {
-    "@babel/core": "latest",
-    "@babel/plugin-proposal-class-properties": "latest",
-    "@babel/plugin-proposal-object-rest-spread": "latest",
-    "mocha": "^7.1.2",
+    "@babel/core": "^7.9.6",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-syntax-class-properties": "^7.8.3",
+    "@babel/preset-react": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "mocha": "latest",
     "parcel-bundler": "latest"
   },
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "babel": {
+    "plugins": [
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ],
+      "@babel/plugin-syntax-class-properties"
+    ]
+  }
 }

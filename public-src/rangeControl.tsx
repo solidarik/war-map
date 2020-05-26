@@ -1,12 +1,14 @@
-//todo react year changer
 import * as React from 'react'
-import { Range } from 'react-range'
-import ReactDOM from 'react-dom'
-import { EventEmitter } from './eventEmitter'
-//import RangeControl from './rangeControl'
+import { Range, getTrackBackground } from 'react-range'
 
-class SuperSimple extends React.Component {
-  state = { values: [0, 100] }
+const STEP = 0.1
+const MIN = 0
+const MAX = 100
+
+class LabeledTwoThumbs extends React.Component {
+  state = {
+    values: [20, 40],
+  }
   render() {
     return (
       <div
@@ -14,15 +16,13 @@ class SuperSimple extends React.Component {
           display: 'flex',
           justifyContent: 'center',
           flexWrap: 'wrap',
-          margin: '0 2em',
-          marginRight: '10em',
         }}
       >
         <Range
           values={this.state.values}
-          step={1}
-          min={0}
-          max={100}
+          step={STEP}
+          min={MIN}
+          max={MAX}
           onChange={(values) => this.setState({ values })}
           renderTrack={({ props, children }) => (
             <div
@@ -41,6 +41,12 @@ class SuperSimple extends React.Component {
                   height: '5px',
                   width: '100%',
                   borderRadius: '4px',
+                  background: getTrackBackground({
+                    values: this.state.values,
+                    colors: ['#ccc', '#548BF4', '#ccc'],
+                    min: MIN,
+                    max: MAX,
+                  }),
                   alignSelf: 'center',
                 }}
               >
@@ -48,7 +54,7 @@ class SuperSimple extends React.Component {
               </div>
             </div>
           )}
-          renderThumb={({ props, isDragged }) => (
+          renderThumb={({ index, props, isDragged }) => (
             <div
               {...props}
               style={{
@@ -65,6 +71,21 @@ class SuperSimple extends React.Component {
             >
               <div
                 style={{
+                  position: 'absolute',
+                  top: '-28px',
+                  color: '#fff',
+                  fontWeight: 'bold',
+                  fontSize: '14px',
+                  fontFamily: 'Arial,Helvetica Neue,Helvetica,sans-serif',
+                  padding: '4px',
+                  borderRadius: '4px',
+                  backgroundColor: '#548BF4',
+                }}
+              >
+                {this.state.values[index].toFixed(1)}
+              </div>
+              <div
+                style={{
                   height: '16px',
                   width: '5px',
                   backgroundColor: isDragged ? '#548BF4' : '#CCC',
@@ -78,21 +99,4 @@ class SuperSimple extends React.Component {
   }
 }
 
-export class YearControl extends EventEmitter {
-  constructor() {
-    super() //first must
-
-    window.yearControl = this
-
-    const simple = <SuperSimple />
-
-    console.log('before render YearControl')
-    ReactDOM.render(simple, document.getElementById('events-info-container'))
-  }
-
-  static create() {
-    return new YearControl()
-  }
-}
-
-//https://codesandbox.io/s/rlp1j1183n?file=/src/index.js:240-2385
+export default LabeledTwoThumbs
