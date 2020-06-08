@@ -80,6 +80,7 @@ export class MapControl extends EventEmitter {
       if (size == 1) {
         const oneFeature = feature.get('features')[0]
         const featureClass = oneFeature.get('featureClass')
+        console.log(featureClass)
         const style = featureClass.getStyleFeature(
           oneFeature,
           window.map.view.getZoom()
@@ -366,10 +367,13 @@ export class MapControl extends EventEmitter {
       geometry: new ol.geom.Point(item.point),
     })
 
+    console.log(`item point ${item.point}`)
+
     this.clusterSource.getSource().addFeature(ft)
   }
 
   refreshInfo(info) {
+    console.log(`refresh info in map control ${info}`)
     this.clusterSource.getSource().clear()
     info.forEach((item) => this.addFeature(item))
   }

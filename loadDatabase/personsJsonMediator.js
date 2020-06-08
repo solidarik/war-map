@@ -26,12 +26,6 @@ class PersonsJsonMediator extends SuperJsonMediator {
         return
       }
 
-      json.PlaceAchievement = strHelper.shrinkStringBeforeDelim(
-        json.PlaceAchievement
-      )
-      json.PlaceBirth = strHelper.shrinkStringBeforeDelim(json.PlaceBirth)
-      json.PlaceDeath = strHelper.shrinkStringBeforeDelim(json.PlaceDeath)
-
       let promises = [
         inetHelper.getCoordsForCityOrCountry(json.PlaceAchievement),
         inetHelper.getCoordsForCityOrCountry(json.PlaceBirth),
@@ -57,17 +51,11 @@ class PersonsJsonMediator extends SuperJsonMediator {
             photoUrl: json.PhotoUrl,
             linkUrl: json.Link,
             placeAchievement: json.PlaceAchievement,
-            placeAchievementCoords: placeAchievementCoords
-              ? [placeAchievementCoords.lon, placeAchievementCoords.lat]
-              : [],
+            placeAchievementCoords: placeAchievementCoords,
             placeBirth: json.PlaceBirth,
-            placeBirthCoords: placeBirthCoords
-              ? [placeBirthCoords.lon, placeBirthCoords.lat]
-              : [],
+            placeBirthCoords: placeBirthCoords,
             placeDeath: json.PlaceDeath,
-            placeDeathCoords: placeDeathCoords
-              ? [placeDeathCoords.lon, placeDeathCoords.lat]
-              : [],
+            placeDeathCoords: placeDeathCoords,
           }
 
           resolve(newJson)

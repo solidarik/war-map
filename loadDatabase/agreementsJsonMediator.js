@@ -13,18 +13,15 @@ class AgreementsJsonMediator extends SuperJsonMediator {
 
   processJson(json) {
     return new Promise((resolve, reject) => {
-      let promises = [inetHelper.getCoordsForCityOrCountry(json.place)]
-
-      Promise.all(promises)
+      inetHelper
+        .getCoordsForCityOrCountry(json.place)
         .then((placeCoords) => {
-          placeCoords = placeCoords[0]
-          placeCoords = geoHelper.fromLonLat([placeCoords.lon, placeCoords.lat])
           const newJson = {
             startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
             endDate: moment.utc(json.endDate, 'DD.MM.YYYY'),
             kind: json.kind ? json.kind : '',
             place: json.place,
-            point: placeCoords ? placeCoords : [],
+            point: placeCoords,
             player1: json.player1,
             player2: json.player2,
             results: json.results,
@@ -36,7 +33,9 @@ class AgreementsJsonMediator extends SuperJsonMediator {
 
           resolve(newJson)
         })
-        .catch((err) => reject(`ошибка в processJson: ${err}`))
+        .catch((err) => {
+          resolve({ error: `ошибка в processJson: ${err}` })
+        })
     })
   }
 }

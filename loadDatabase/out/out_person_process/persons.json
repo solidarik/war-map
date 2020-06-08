@@ -1,25 +1,39 @@
 {
-    "surname": "Алексенко",
-    "name": "Владимир ",
-    "middlename": "Аврамович",
-    "dateBirth": "1923-01-26T00:00:00.000Z",
-    "dateDeath": "1995-06-15T00:00:00.000Z",
-    "dateAchievement": "1945-04-19T00:00:00.000Z",
+    "surname": "Боровых",
+    "name": "Андрей",
+    "middlename": "Егорович",
+    "dateBirth": "1921-10-29T00:00:00.000Z",
+    "dateDeath": "1943-07-31T00:00:00.000Z",
+    "dateAchievement": "",
     "description": "Дважды Герой Советского Союза",
-    "fullDescription": "Командир эскадрильи 15-го гвардейского штурмового авиационного полка 277-й штурмовой авиационной дивизии 1-й воздушной армии 3-го Белорусского фронта.",
-    "srcUrl": "https://ru.wikipedia.org/wiki/Алексенко,_Владимир_Аврамович#Память",
-    "photoUrl": "https://upload.wikimedia.org/wikipedia/ru/2/25/AleksenkoVlAvr.jpg",
-    "linkUrl": "https://ru.wikipedia.org/wiki/%D0%A3-2",
-    "placeAchievement": "Крым;  Ставрополь; Владикавказ; Новороссийск; Варшава",
-    "placeAchievementCoords": [],
-    "placeBirth": "с. Киевское",
-    "placeBirthCoords": [
-        45.038114,
-        37.889645
+    "fullDescription": "",
+    "srcUrl": "https://ru.wikipedia.org/wiki/Боровых,_Андрей_Егорович",
+    "photoUrl": "https://upload.wikimedia.org/wikipedia/ru/thumb/0/01/Borovyh_A_E.jpg/200px-Borovyh_A_E.jpg",
+    "linkUrl": "https://ru.wikipedia.org/wiki/%D0%AF%D0%BA-1",
+    "placeAchievement": "Сталинград; Донецк; Ростов-на-Дону",
+    "placeAchievementCoords": [
+        [
+            4955572.665518294,
+            6224110.131660085
+        ],
+        [
+            4207876.751985741,
+            6108333.941572525
+        ],
+        [
+            4420559.318315738,
+            5981428.364175855
+        ]
     ],
-    "placeDeath": "Москва",
+    "placeBirth": "Курск, Курская губерния, РСФСР, СССР",
+    "placeBirthCoords": [
+        [
+            4027909.8708049795,
+            6749056.994288551
+        ]
+    ],
+    "placeDeath": "Дмитровка, шахтерский р-н, Донецкая область",
     "placeDeathCoords": [
-        37.61778,
-        55.75583
+        null
     ]
 }

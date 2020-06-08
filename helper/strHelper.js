@@ -19,15 +19,21 @@ class StrHelper {
   }
 
   static shrinkStringBeforeDelim(input, delim = ',') {
+    if (!input) return input
+    input = '' + input
     const indexOf = input.indexOf(delim)
     return indexOf > 0 ? input.substr(0, indexOf) : input
   }
 
   static ignoreEqualsValue(input) {
+    if (!input) return input
+    input = '' + input
     return input.replace(/[(][^)]*[)]/g, '')
   }
 
   static ignoreSpaces(input) {
+    if (!input) return input
+    input = '' + input
     return input.replace(/\s/g, '')
   }
 

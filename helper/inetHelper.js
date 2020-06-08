@@ -1,5 +1,7 @@
 const log = require('../helper/logHelper')
 const fileHelper = require('../helper/fileHelper')
+const geoHelper = require('../helper/geoHelper')
+const strHelper = require('../helper/strHelper')
 const config = require('config')
 const chalk = require('chalk')
 const axios = require('axios')
@@ -59,34 +61,42 @@ class InetHelper {
     })
   }
 
-  async getCoordsForCityOrCountry(name) {
+  async getCoordsForCityOrCountry(input) {
+    const promises = input.split(';').map((local) => {
+      return this.getLocalCoordsForName(local.trim())
+    })
+
+    return await Promise.all(promises)
+  }
+
+  async getLocalCoordsForName(input) {
+    const name = strHelper.shrinkStringBeforeDelim(input)
+
     if (!name) {
       return undefined
     }
 
-    let isExistCoords = false
-    const isRus = /[а-яА-ЯЁё]/.test(name)
+    const isExistCoords = this.coords && this.coords[name]
     let coords = null
     try {
-      if (this.coords[name]) {
-        isExistCoords = true
-        return this.coords[name]
-      }
-      coords = await this.getCoordsFromWiki(name)
-      if (coords) return coords
+      coords = isExistCoords
+        ? this.coords[name]
+        : await this.getCoordsFromWiki(name)
 
-      // if (isRus) {
-      //   coords = await this.getCoordsFromWiki(`столица ${name}`)
-      //   if (coords) return coords
-      // } else {
-      //   coords = await this.getCoordsFromWiki(`capital of ${name}`)
-      //   if (coords) return coords
-      // }
-      return null
+      return coords ? geoHelper.fromLonLat([coords.lon, coords.lat]) : null
+
+      //const isRus = /[а-яА-ЯЁё]/.test(name)
+      //if (isRus) {
+      //  coords = await this.getCoordsFromWiki(`столица ${name}`)
+      //  if (coords) return coords
+      //} else {
+      //  coords = await this.getCoordsFromWiki(`capital of ${name}`)
+      //  if (coords) return coords
+      //}
     } catch (error) {
       throw error
     } finally {
-      if (!isExistCoords && coords) {
+      if (this.coords && !isExistCoords && coords) {
         this.coords[name] = coords
         log.info(`новая координата ${JSON.stringify(coords)} для места ${name}`)
       }

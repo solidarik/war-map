@@ -903,17 +903,23 @@ var StrHelper = /*#__PURE__*/function () {
     key: "shrinkStringBeforeDelim",
     value: function shrinkStringBeforeDelim(input) {
       var delim = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';
+      if (!input) return input;
+      input = '' + input;
       var indexOf = input.indexOf(delim);
       return indexOf > 0 ? input.substr(0, indexOf) : input;
     }
   }, {
     key: "ignoreEqualsValue",
     value: function ignoreEqualsValue(input) {
+      if (!input) return input;
+      input = '' + input;
       return input.replace(/[(][^)]*[)]/g, '');
     }
   }, {
     key: "ignoreSpaces",
     value: function ignoreSpaces(input) {
+      if (!input) return input;
+      input = '' + input;
       return input.replace(/\s/g, '');
     }
   }, {
@@ -8144,6 +8150,7 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       if (size == 1) {
         var oneFeature = feature.get('features')[0];
         var featureClass = oneFeature.get('featureClass');
+        console.log(featureClass);
 
         var _style = featureClass.getStyleFeature(oneFeature, window.map.view.getZoom());
 
@@ -8412,6 +8419,7 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
         featureClass: item.classFeature,
         geometry: new ol.geom.Point(item.point)
       });
+      console.log("item point ".concat(item.point));
       this.clusterSource.getSource().addFeature(ft);
     }
   }, {
@@ -8419,6 +8427,7 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
     value: function refreshInfo(info) {
       var _this4 = this;
 
+      console.log("refresh info in map control ".concat(info));
       this.clusterSource.getSource().clear();
       info.forEach(function (item) {
         return _this4.addFeature(item);
@@ -8610,14 +8619,11 @@ var ClassHelper = /*#__PURE__*/function () {
       if (arr.indexOf(className) == -1) {
         element.className += className;
       }
-
-      console.log("addClass ".concat(className, ", result: ").concat(element.className));
     }
   }, {
     key: "removeClass",
     value: function removeClass(element, className) {
       element.className = element.className.replace(className, '');
-      console.log("removeClass ".concat(className, ", result: ").concat(element.className));
     }
   }]);
 
@@ -8667,7 +8673,93 @@ var JsHelper = /*#__PURE__*/function () {
 }();
 
 module.exports = JsHelper;
-},{}],"WAuT":[function(require,module,exports) {
+},{}],"oL5g":[function(require,module,exports) {
+"use strict";
+
+var _superFeature = _interopRequireDefault(require("./superFeature"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var PersonFeature = /*#__PURE__*/function (_SuperFeature) {
+  _inherits(PersonFeature, _SuperFeature);
+
+  var _super = _createSuper(PersonFeature);
+
+  function PersonFeature() {
+    _classCallCheck(this, PersonFeature);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(PersonFeature, null, [{
+    key: "getIcon",
+    value: function getIcon() {
+      return 'images/mapIcons/tag.png';
+    }
+  }, {
+    key: "getBirthIcon",
+    value: function getBirthIcon() {
+      return 'images/mapIcons/tagBirth.png';
+    }
+  }, {
+    key: "getAchievementIcon",
+    value: function getAchievementIcon() {
+      return 'images/mapIcons/tagAchiev.png';
+    }
+  }, {
+    key: "getDeathIcon",
+    value: function getDeathIcon() {
+      return 'images/mapIcons/tagDeath.png';
+    }
+  }, {
+    key: "getCaptionInfo",
+    value: function getCaptionInfo(info) {
+      return "".concat(info.kind, ". ").concat(info.place);
+    }
+  }, {
+    key: "getPopupInfo",
+    value: function getPopupInfo(feature) {
+      var info = feature.get('info');
+      return {
+        icon: this.getIcon(),
+        date: info.startDate,
+        caption: this.getCaptionInfo(info)
+      };
+    }
+  }, {
+    key: "getHtmlInfo",
+    value: function getHtmlInfo(feature) {
+      return /*#__PURE__*/React.createElement("div", null, "'Not implemented'");
+    }
+  }]);
+
+  return PersonFeature;
+}(_superFeature.default);
+
+module.exports = PersonFeature;
+},{"./superFeature":"hPGt"}],"WAuT":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15777,6 +15869,8 @@ var _battleFeature = _interopRequireDefault(require("./mapLayers/battleFeature")
 
 var _agreementFeature = _interopRequireDefault(require("./mapLayers/agreementFeature"));
 
+var _personFeature = _interopRequireDefault(require("./mapLayers/personFeature"));
+
 var _cookieHelper = require("./cookieHelper");
 
 var _Tile = _interopRequireDefault(require("ol/source/Tile"));
@@ -15837,7 +15931,7 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
     _this.showHideLegend();
 
     _this.lines = _this.addLines();
-    _this.linesCount = 6;
+    _this.linesCount = 10;
 
     var isCheckArr = _cookieHelper.CookieHelper.getCookie('isCheckArrLegend', undefined);
 
@@ -15850,14 +15944,75 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
   }
 
   _createClass(LegendControl, [{
-    key: "fillBattles",
-    value: function fillBattles(info) {
-      return info.battles;
+    key: "pointFilter",
+    value: function pointFilter(res) {
+      return res.filter(function (item) {
+        return item.point && item.point.length === 2 && item.point[0] !== 0;
+      });
     }
   }, {
     key: "fillAgreementFeature",
     value: function fillAgreementFeature(info) {
       return info.agreements;
+    }
+  }, {
+    key: "fillPersonFeature",
+    value: function fillPersonFeature(info) {
+      var res = [];
+      res = res.concat(this.fillPersonBirth(info));
+      res = res.concat(this.fillPersonAchievement(info));
+      res = res.concat(this.fillPersonDeath(info));
+      return res;
+    }
+  }, {
+    key: "fillPersonBirth",
+    value: function fillPersonBirth(info) {
+      var res = [];
+
+      if (info.personBirth) {
+        res = info.personBirth.map(function (elem) {
+          return _objectSpread(_objectSpread({}, elem), {}, {
+            point: elem.placeBirthCoords[0]
+          });
+        });
+      }
+
+      return this.pointFilter(res);
+    }
+  }, {
+    key: "fillPersonAchievement",
+    value: function fillPersonAchievement(info) {
+      var res = [];
+
+      if (info.personsAchievement) {
+        res = info.personsAchievement.map(function (elem) {
+          return _objectSpread(_objectSpread({}, elem), {}, {
+            point: elem.placeAchievementCoords[0]
+          });
+        });
+      }
+
+      return this.pointFilter(res);
+    }
+  }, {
+    key: "fillPersonDeath",
+    value: function fillPersonDeath(info) {
+      var res = [];
+
+      if (info.personsDeath) {
+        res = info.personsDeath.map(function (elem) {
+          return _objectSpread(_objectSpread({}, elem), {}, {
+            point: elem.placeDeathCoords[0]
+          });
+        });
+      }
+
+      return this.pointFilter(res);
+    }
+  }, {
+    key: "fillBattles",
+    value: function fillBattles(info) {
+      return this.pointFilter(info.battles);
     }
   }, {
     key: "fillWMW",
@@ -15926,10 +16081,35 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
       });
       lines.push({
         id: 5,
-        caption: 'Соглашения',
+        caption: 'Политические события',
         classFeature: _agreementFeature.default,
         fillFunction: this.fillAgreementFeature,
         icon: _agreementFeature.default.getIcon()
+      });
+      lines.push({
+        id: 6,
+        caption: 'Персоналии',
+        classFeature: _personFeature.default,
+        fillFunction: this.fillPersonFeature,
+        childs: [{
+          id: 7,
+          caption: 'Рождения',
+          classFeature: _personFeature.default,
+          fillFunction: this.fillPersonBirth,
+          icon: _personFeature.default.getBirthIcon()
+        }, {
+          id: 8,
+          caption: 'Достижения',
+          classFeature: _personFeature.default,
+          fillFunction: this.fillPersonAchievement,
+          icon: _personFeature.default.getAchievementIcon()
+        }, {
+          id: 9,
+          caption: 'Смерти',
+          classFeature: _personFeature.default,
+          fillFunction: this.fillPersonDeath,
+          icon: _personFeature.default.getDeathIcon()
+        }]
       });
       return lines;
     }
@@ -15992,25 +16172,27 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "searchLinesById",
     value: function searchLinesById(id) {
-      var _this3 = this;
-
       var lines = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
       var maybeLine = undefined;
       !lines && (lines = this.lines);
-      lines.forEach(function (line) {
+
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+
         if (id === line.id) {
           maybeLine = line;
-          return maybeLine;
+          break;
         }
 
         if (line.childs) {
-          maybeLine = _this3.searchLinesById(id, line.childs);
+          maybeLine = this.searchLinesById(id, line.childs);
 
           if (maybeLine) {
-            return maybeLine;
+            break;
           }
         }
-      });
+      }
+
       return maybeLine;
     }
   }, {
@@ -16019,11 +16201,11 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "repaintLegend",
     value: function repaintLegend() {
-      var _this4 = this;
+      var _this3 = this;
 
       var html = "\n    <h1>\u041B\u0435\u0433\u0435\u043D\u0434\u0430</h1>\n    <table class=\"table table-borderless\">\n    <tbody>";
       this.lines.forEach(function (line) {
-        html += _this4.getHTMLOneLineLegend(line, 0, _this4.isCheckArr[line.id]);
+        html += _this3.getHTMLOneLineLegend(line, 0, _this3.isCheckArr[line.id]);
       });
       html += '</tbody></table>';
       this.legendDiv.innerHTML = html;
@@ -16051,7 +16233,7 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "getHTMLOneLineLegend",
     value: function getHTMLOneLineLegend(line, level, isCheckParent) {
-      var _this5 = this;
+      var _this4 = this;
 
       var html = '';
       var leftImagePosition = level > 0 ? "style=\"left: ".concat(level * 5, "px;z-index: ").concat(level, "\"") : '';
@@ -16061,7 +16243,7 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
 
       if (line.childs) {
         line.childs.forEach(function (child) {
-          html += _this5.getHTMLOneLineLegend(child, level + 1, isCheckParent && _this5.isCheckArr[child.id]);
+          html += _this4.getHTMLOneLineLegend(child, level + 1, isCheckParent && _this4.isCheckArr[child.id]);
         });
       }
 
@@ -16070,24 +16252,31 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "updateCounter",
     value: function updateCounter(rawInfo) {
-      var _this6 = this;
+      var _this5 = this;
 
       this.items = [];
       this.uniqueItems = {};
 
       var _loop = function _loop(id) {
-        var line = _this6.searchLinesById(id); //injection classFeature property to every item
+        var line = _this5.searchLinesById(id); //injection classFeature property to every item
 
 
-        _this6.items[id] = line.fillFunction(rawInfo).map(function (elem) {
-          return _objectSpread(_objectSpread({}, elem), {}, {
-            classFeature: line.classFeature
+        var fillResult = line.fillFunction.call(_this5, rawInfo);
+        _this5.items[id] = [];
+
+        if (fillResult) {
+          _this5.items[id] = fillResult.map(function (elem) {
+            return _objectSpread(_objectSpread({}, elem), {}, {
+              classFeature: line.classFeature
+            });
           });
-        });
 
-        _this6.items[id].forEach(function (item) {
-          _this6.uniqueItems[item._id] = item;
-        });
+          _this5.items[id].forEach(function (item) {
+            _this5.uniqueItems[item._id] = item;
+          });
+        } else {
+          console.log("\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0438\u043D\u0438\u0446\u0438\u0430\u043B\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043C\u0430\u0441\u0441\u0438\u0432 \u0434\u043B\u044F ".concat(line.caption));
+        }
       };
 
       for (var id = 0; id < this.linesCount; id++) {
@@ -16097,7 +16286,7 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "filterInfo",
     value: function filterInfo() {
-      var _this7 = this;
+      var _this6 = this;
 
       var visible = {};
 
@@ -16107,9 +16296,9 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
 
 
       var _loop2 = function _loop2(_id) {
-        var isVisibleLayer = _this7.isCheckArr[_id];
+        var isVisibleLayer = _this6.isCheckArr[_id];
 
-        _this7.items[_id].forEach(function (item) {
+        _this6.items[_id].forEach(function (item) {
           visible[item._id] = visible[item._id] && isVisibleLayer;
         });
       };
@@ -16124,6 +16313,7 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
         visible[_id2] && res.push(this.uniqueItems[_id2]);
       }
 
+      console.log('refreshInfo', res);
       this.emit('refreshInfo', res);
     }
   }, {
@@ -16145,7 +16335,7 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
 }(_eventEmitter.EventEmitter);
 
 exports.LegendControl = LegendControl;
-},{"./eventEmitter":"STwH","../helper/classHelper":"LZLq","../helper/jsHelper":"uf5M","./mapLayers/battleFeature":"rOJZ","./mapLayers/agreementFeature":"QR23","./cookieHelper":"WAuT","ol/source/Tile":"MN9s"}],"imeZ":[function(require,module,exports) {
+},{"./eventEmitter":"STwH","../helper/classHelper":"LZLq","../helper/jsHelper":"uf5M","./mapLayers/battleFeature":"rOJZ","./mapLayers/agreementFeature":"QR23","./mapLayers/personFeature":"oL5g","./cookieHelper":"WAuT","ol/source/Tile":"MN9s"}],"imeZ":[function(require,module,exports) {
 /**
  * Parses an URI
  *

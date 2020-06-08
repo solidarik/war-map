@@ -1,5 +1,9 @@
 class GeoHelper {
   static fromLonLat(input) {
+    if (!input || input.length !== 2) {
+      return undefined
+    }
+
     const RADIUS = 6378137
     const HALF_SIZE = Math.PI * RADIUS
     const halfSize = HALF_SIZE
