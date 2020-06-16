@@ -26,6 +26,7 @@ class DateHelper {
   }
 
   static dateToStr(inputDate) {
+    if (!inputDate) return undefined
     let date = new Date(inputDate)
     return (
       ('0' + date.getDate()).slice(-2) +
@@ -34,6 +35,14 @@ class DateHelper {
       '.' +
       date.getFullYear()
     )
+  }
+
+  static twoDateToStr(startDate, endDate) {
+    const startDateStr = DateHelper.dateToStr(startDate)
+    const endDateStr = DateHelper.dateToStr(endDate)
+    return endDateStr != undefined && startDateStr != endDateStr
+      ? `${startDateStr} - ${endDateStr}`
+      : startDateStr
   }
 }
 

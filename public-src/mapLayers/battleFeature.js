@@ -1,5 +1,6 @@
 import convexHull from 'monotone-convex-hull-2d'
 import strHelper from '../../helper/strHelper'
+import dateHelper from '../../helper/dateHelper'
 import SuperFeature from './superFeature'
 
 class BattleFeature extends SuperFeature {
@@ -23,7 +24,7 @@ class BattleFeature extends SuperFeature {
     return 'images/mapIcons/starwow.png'
   }
 
-  static getRussiaWinnerIcon() {
+  static getUSSRWinnerIcon() {
     return 'images/mapIcons/starred.png'
   }
 
@@ -33,6 +34,57 @@ class BattleFeature extends SuperFeature {
 
   static getCaption(feature) {
     return 'Операции ВОВ/ВМВ'
+  }
+
+  static fillAddInfo(res) {
+    return res.map((elem) => {
+      return {
+        ...elem,
+        popupFirst: dateHelper.twoDateToStr(elem.startDate, elem.endDate),
+        popupSecond: elem.name,
+        oneLine: elem.name,
+      }
+    })
+  }
+
+  static fillBattles(info) {
+    let res = info.battles
+    res = res.map((elem) => {
+      return { ...elem, icon: BattleFeature.getIcon() }
+    })
+    return BattleFeature.fillAddInfo(res)
+  }
+
+  static fillWMW(info) {
+    let res = info.battles.filter((battle) => battle.kind === 'wmw')
+    res = res.map((elem) => {
+      return { ...elem, icon: BattleFeature.getWMWIcon() }
+    })
+    return BattleFeature.fillAddInfo(res)
+  }
+
+  static fillWOW(info) {
+    let res = info.battles.filter((battle) => battle.kind === 'wow')
+    res = res.map((elem) => {
+      return { ...elem, icon: BattleFeature.getWOWIcon() }
+    })
+    return BattleFeature.fillAddInfo(res)
+  }
+
+  static fillUSSRWinner(info) {
+    let res = info.battles.filter((battle) => battle.isWinnerUSSR)
+    res = res.map((elem) => {
+      return { ...elem, icon: BattleFeature.getUSSRWinnerIcon() }
+    })
+    return BattleFeature.fillAddInfo(res)
+  }
+
+  static fillGermanyWinner(info) {
+    let res = info.battles.filter((battle) => battle.isWinnerGermany)
+    res = res.map((elem) => {
+      return { ...elem, icon: BattleFeature.getGermanyWinnerIcon() }
+    })
+    return BattleFeature.fillAddInfo(res)
   }
 
   static getStyleFeature(feature, zoom) {

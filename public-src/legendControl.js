@@ -31,7 +31,9 @@ export class LegendControl extends EventEmitter {
     this.uniqueItems = {}
 
     window.legend = this
-    window.legendOnClick = this.legendOnClick
+    window.legendOnClick = (element) => {
+      window.legend.legendOnClick.call(window.legend, element)
+    }
   }
 
   static create() {
@@ -44,66 +46,12 @@ export class LegendControl extends EventEmitter {
     )
   }
 
-  fillAgreementFeature(info) {
-    return info.agreements
-  }
-
   fillPersonFeature(info) {
     let res = []
-    res = res.concat(this.fillPersonBirth(info))
-    res = res.concat(this.fillPersonAchievement(info))
-    res = res.concat(this.fillPersonDeath(info))
+    res = res.concat(PersonFeature.fillPersonItems(info, 'birth'))
+    res = res.concat(PersonFeature.fillPersonItems(info, 'achievement'))
+    res = res.concat(PersonFeature.fillPersonItems(info, 'death'))
     return res
-  }
-
-  fillPersonBirth(info) {
-    let res = []
-    if (info.personBirth) {
-      res = info.personBirth.map((elem) => {
-        return { ...elem, point: elem.placeBirthCoords[0] }
-      })
-    }
-    return this.pointFilter(res)
-  }
-
-  fillPersonAchievement(info) {
-    let res = []
-    if (info.personsAchievement) {
-      res = info.personsAchievement.map((elem) => {
-        return { ...elem, point: elem.placeAchievementCoords[0] }
-      })
-    }
-    return this.pointFilter(res)
-  }
-
-  fillPersonDeath(info) {
-    let res = []
-    if (info.personsDeath) {
-      res = info.personsDeath.map((elem) => {
-        return { ...elem, point: elem.placeDeathCoords[0] }
-      })
-    }
-    return this.pointFilter(res)
-  }
-
-  fillBattles(info) {
-    return this.pointFilter(info.battles)
-  }
-
-  fillWMW(info) {
-    return info.battles.filter((battle) => battle.kind === 'wmw')
-  }
-
-  fillWOW(info) {
-    return info.battles.filter((battle) => battle.kind === 'wow')
-  }
-
-  fillUSSRWinner(info) {
-    return info.battles.filter((battle) => battle.isWinnerUSSR)
-  }
-
-  fillGermanyWinner(info) {
-    return info.battles.filter((battle) => battle.isWinnerGermany)
   }
 
   addLines() {
@@ -113,27 +61,26 @@ export class LegendControl extends EventEmitter {
       id: 0,
       caption: 'Военные события',
       classFeature: BattleFeature,
-      fillFunction: this.fillBattles,
+      fillFunction: BattleFeature.fillBattles,
       childs: [
         {
           id: 1,
           caption: 'События ВОВ',
           classFeature: BattleFeature,
-          hint: 'События Великой Отечественной войны',
-          fillFunction: this.fillWOW,
+          fillFunction: BattleFeature.fillWOW,
           childs: [
             {
               id: 2,
               caption: 'Победы СССР',
               classFeature: BattleFeature,
-              fillFunction: this.fillUSSRWinner,
-              icon: BattleFeature.getRussiaWinnerIcon(),
+              fillFunction: BattleFeature.fillUSSRWinner,
+              icon: BattleFeature.getUSSRWinnerIcon(),
             },
             {
               id: 3,
               caption: 'Победы Германии',
               classFeature: BattleFeature,
-              fillFunction: this.fillGermanyWinner,
+              fillFunction: BattleFeature.fillGermanyWinner,
               icon: BattleFeature.getGermanyWinnerIcon(),
             },
           ],
@@ -142,8 +89,7 @@ export class LegendControl extends EventEmitter {
           caption: 'События ВМВ',
           id: 4,
           classFeature: BattleFeature,
-          hint: 'Международные военные события',
-          fillFunction: this.fillWMW,
+          fillFunction: BattleFeature.fillWMW,
           icon: BattleFeature.getWMWIcon(),
         },
       ],
@@ -153,7 +99,7 @@ export class LegendControl extends EventEmitter {
       id: 5,
       caption: 'Политические события',
       classFeature: AgreementFeature,
-      fillFunction: this.fillAgreementFeature,
+      fillFunction: AgreementFeature.fillAgreementFeature,
       icon: AgreementFeature.getIcon(),
     })
 
@@ -167,21 +113,24 @@ export class LegendControl extends EventEmitter {
           id: 7,
           caption: 'Рождения',
           classFeature: PersonFeature,
-          fillFunction: this.fillPersonBirth,
+          fillFunction: PersonFeature.fillPersonItems,
+          fillFunctionKind: 'birth',
           icon: PersonFeature.getBirthIcon(),
         },
         {
           id: 8,
           caption: 'Достижения',
           classFeature: PersonFeature,
-          fillFunction: this.fillPersonAchievement,
+          fillFunction: PersonFeature.fillPersonItems,
+          fillFunctionKind: 'achievement',
           icon: PersonFeature.getAchievementIcon(),
         },
         {
           id: 9,
           caption: 'Смерти',
           classFeature: PersonFeature,
-          fillFunction: this.fillPersonDeath,
+          fillFunction: PersonFeature.fillPersonItems,
+          fillFunctionKind: 'death',
           icon: PersonFeature.getDeathIcon(),
         },
       ],
@@ -273,18 +222,17 @@ export class LegendControl extends EventEmitter {
 
   legendOnClick(span) {
     //get attribute for tr element: span > td > tr
+
+    this.emit('legendClick', null)
+
     const tr = span.parentElement.parentElement
     const rowId = parseInt(tr.getAttribute('data-href'))
-    const legend = window.legend
-    //const line = legend.searchLinesById.call(legend, rowId)
+    //const line = this.searchLinesById.call(this, rowId)
 
-    legend.isCheckArr[rowId] = !legend.isCheckArr[rowId]
-    CookieHelper.setCookie(
-      'isCheckArrLegend',
-      JSON.stringify(legend.isCheckArr)
-    )
-    legend.repaintLegend()
-    legend.filterInfo.call(legend)
+    this.isCheckArr[rowId] = !this.isCheckArr[rowId]
+    CookieHelper.setCookie('isCheckArrLegend', JSON.stringify(this.isCheckArr))
+    this.repaintLegend()
+    this.filterInfo()
   }
 
   clickSpan(content) {
@@ -327,9 +275,14 @@ export class LegendControl extends EventEmitter {
     for (let id = 0; id < this.linesCount; id++) {
       const line = this.searchLinesById(id)
       //injection classFeature property to every item
-      const fillResult = line.fillFunction.call(this, rawInfo)
+      const fillResult = line.fillFunction.call(
+        this,
+        rawInfo,
+        line.fillFunctionKind
+      )
       this.items[id] = []
       if (fillResult) {
+        fillResult = this.pointFilter(fillResult)
         this.items[id] = fillResult.map((elem) => {
           return { ...elem, classFeature: line.classFeature }
         })
@@ -361,7 +314,6 @@ export class LegendControl extends EventEmitter {
       visible[id] && res.push(this.uniqueItems[id])
     }
 
-    console.log('refreshInfo', res)
     this.emit('refreshInfo', res)
   }
 

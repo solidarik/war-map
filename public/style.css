@@ -660,6 +660,25 @@ input.form-control {
   background-color: rgba(255, 153, 102, 1);
 }
 
+.popupDiv h1 {
+  font-size: 1.5em;
+}
+
+.popupDiv h2 {
+  font-size: 1.2em;
+}
+
+.popupDiv td {
+  text-align: left;
+  vertical-align: top;
+}
+
+.popupDiv span {
+  color: black;
+  font-size: 1.2em;
+  /* white-space: nowrap; */
+}
+
 .hover-on-text {
   cursor: pointer;
   color: red;

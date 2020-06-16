@@ -46,8 +46,8 @@ export class MapControl extends EventEmitter {
     })
 
     this.popup = new ol.Overlay.Popup({
-      popupClass: 'default shadow', //"tooltips", "warning" "black" "default", "tips", "shadow",
-      closeBox: false,
+      popupClass: 'default shadow', //"default shadow", "tooltips", "warning" "black" "default", "tips", "shadow",
+      closeBox: true,
       onshow: function () {
         // console.log('You opened the box')
       },
@@ -80,7 +80,6 @@ export class MapControl extends EventEmitter {
       if (size == 1) {
         const oneFeature = feature.get('features')[0]
         const featureClass = oneFeature.get('featureClass')
-        console.log(featureClass)
         const style = featureClass.getStyleFeature(
           oneFeature,
           window.map.view.getZoom()
@@ -121,7 +120,7 @@ export class MapControl extends EventEmitter {
 
     // Cluster Source
     let clusterSource = new ol.source.Cluster({
-      distance: 40,
+      distance: 10,
       source: new ol.source.Vector(),
     })
     let clusterLayer = new ol.layer.AnimatedCluster({
@@ -157,24 +156,27 @@ export class MapControl extends EventEmitter {
       let htmlContent = ''
       if (features.length == 1) {
         const feature = features[0]
-        const featureClass = feature.get('featureClass')
-        const info = featureClass.getPopupInfo(feature)
-        htmlContent = `<div>${DateHelper.dateToStr(
-          info.date
-        )} <a href='./some'>${info.caption}</a>`
+        const info = feature.get('info')
+        htmlContent += `<h1>${info.popupFirst}</h1>
+            <h2>${info.popupSecond}</h2>
+            ${info.popupThird ? '<h2>' + info.popupThird + '</h2>' : ''}`
       } else {
-        let featureContent = []
+        htmlContent = `<table>`
         features.forEach((feature) => {
-          const featureClass = feature.get('featureClass')
-          featureContent.push(featureClass.getPopupInfo(feature))
+          const info = feature.get('info')
+          htmlContent += `<tr>
+            <td><img src="${info.icon}" alt="Girl in a jacket"></td>
+            <td><span>${info.oneLine}</span></td>
+          </tr>`
         })
+        htmlContent += `</table>`
         console.log(`Cluster ${features.length} features`)
       }
 
       //todo Showing HTML content
       window.map.popup.show(
         featureEvent.getGeometry().getFirstCoordinate(),
-        htmlContent
+        `<div class="popupDiv">${htmlContent}</div>`
       )
       return
     })
@@ -336,8 +338,12 @@ export class MapControl extends EventEmitter {
     return url
   }
 
-  changeYear(year) {
+  hidePopup() {
     window.map.popup.hide()
+  }
+
+  changeYear(year) {
+    this.hidePopup()
     this.currentYear = year
     this.currentYearForMap = this.currentYear == 1951 ? 1950 : this.currentYear
     this.yearLayer.getSource().refresh()
@@ -367,13 +373,10 @@ export class MapControl extends EventEmitter {
       geometry: new ol.geom.Point(item.point),
     })
 
-    console.log(`item point ${item.point}`)
-
     this.clusterSource.getSource().addFeature(ft)
   }
 
   refreshInfo(info) {
-    console.log(`refresh info in map control ${info}`)
     this.clusterSource.getSource().clear()
     info.forEach((item) => this.addFeature(item))
   }

@@ -22,7 +22,7 @@ class SuperFeature {
       image: new ol.style.Icon({
         // anchor: [0, 0],
         imgSize: [32, 32],
-        src: this.getIcon(),
+        src: feature.get('info').icon,
         //color: '#ff0000',
         // fill: new ol.style.Fill({ color: 'rgba(153,51,255,1)' }),
         scale: 1,
@@ -35,7 +35,7 @@ class SuperFeature {
 
   static getPopupInfo(feature) {
     return {
-      icon: this.getIcon(),
+      icon: feature.get('info').icon,
       date: now(),
       caption: 'Not implemented',
     }

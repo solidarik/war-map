@@ -1588,7 +1588,7 @@ var SuperFeature = /*#__PURE__*/function () {
         image: new ol.style.Icon({
           // anchor: [0, 0],
           imgSize: [32, 32],
-          src: this.getIcon(),
+          src: feature.get('info').icon,
           //color: '#ff0000',
           // fill: new ol.style.Fill({ color: 'rgba(153,51,255,1)' }),
           scale: 1,
@@ -1602,7 +1602,7 @@ var SuperFeature = /*#__PURE__*/function () {
     key: "getPopupInfo",
     value: function getPopupInfo(feature) {
       return {
-        icon: this.getIcon(),
+        icon: feature.get('info').icon,
         date: now(),
         caption: 'Not implemented'
       };
@@ -1623,687 +1623,7 @@ var SuperFeature = /*#__PURE__*/function () {
 }();
 
 module.exports = SuperFeature;
-},{}],"QR23":[function(require,module,exports) {
-"use strict";
-
-var _superFeature = _interopRequireDefault(require("./superFeature"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-var AgreementFeature = /*#__PURE__*/function (_SuperFeature) {
-  _inherits(AgreementFeature, _SuperFeature);
-
-  var _super = _createSuper(AgreementFeature);
-
-  function AgreementFeature() {
-    _classCallCheck(this, AgreementFeature);
-
-    return _super.apply(this, arguments);
-  }
-
-  _createClass(AgreementFeature, null, [{
-    key: "getIcon",
-    value: function getIcon() {
-      return 'images/mapIcons/agreement.png';
-    }
-  }, {
-    key: "getCaptionInfo",
-    value: function getCaptionInfo(info) {
-      return "".concat(info.kind, ". ").concat(info.place);
-    }
-  }, {
-    key: "getPopupInfo",
-    value: function getPopupInfo(feature) {
-      var info = feature.get('info');
-      return {
-        icon: this.getIcon(),
-        date: info.startDate,
-        caption: this.getCaptionInfo(info)
-      };
-    }
-  }, {
-    key: "getHtmlInfo",
-    value: function getHtmlInfo(feature) {
-      return /*#__PURE__*/React.createElement("div", null, "'Not implemented'");
-    }
-  }]);
-
-  return AgreementFeature;
-}(_superFeature.default);
-
-module.exports = AgreementFeature;
-},{"./superFeature":"hPGt"}],"rOJZ":[function(require,module,exports) {
-"use strict";
-
-var _monotoneConvexHull2d = _interopRequireDefault(require("monotone-convex-hull-2d"));
-
-var _strHelper = _interopRequireDefault(require("../../helper/strHelper"));
-
-var _superFeature = _interopRequireDefault(require("./superFeature"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-var BattleFeature = /*#__PURE__*/function (_SuperFeature) {
-  _inherits(BattleFeature, _SuperFeature);
-
-  var _super = _createSuper(BattleFeature);
-
-  function BattleFeature() {
-    _classCallCheck(this, BattleFeature);
-
-    return _super.apply(this, arguments);
-  }
-
-  _createClass(BattleFeature, [{
-    key: "getCenterOfMap",
-    value: function getCenterOfMap(map) {
-      if (!map.features) {
-        return null;
-      }
-
-      var all_coords = this.getAllCoordsFromMap(map);
-      return this.getMedianXY(all_coords);
-    }
-  }, {
-    key: "setActiveEvent",
-    value: function setActiveEvent(featureEvent) {
-      this.activeFeatureEvent = featureEvent;
-      this.isShowContour = false;
-    }
-  }, {
-    key: "showActiveEventMap",
-    value: function showActiveEventMap() {
-      var ft = this.activeFeatureEvent;
-      $('#imgModalLabel').html(ft.get('name'));
-      $('.modal-body').html("\n    <div class=\"d-flex justify-content-center\">\n      <div class=\"spinner-border\" role=\"status\">\n        <span class=\"sr-only\">Loading...</span>\n      </div>\n    </div>\n    ");
-      $('#imgModal').modal();
-      setTimeout(function () {
-        resizeImage(ft.get('imgUrl'), $('.modal-body').width(), function (canvas) {
-          $('.modal-body').html(canvas);
-        });
-      }, 1000);
-    }
-  }, {
-    key: "setCursorPointer",
-    value: function setCursorPointer(elem, b) {
-      var c = 'hover-on-text';
-      if (!elem) return;
-      b ? elem.classList.add(c) : elem.classList.remove(c);
-    }
-  }, {
-    key: "showActiveEventContour",
-    value: function showActiveEventContour() {
-      var ft = this.activeFeatureEvent;
-      this.isShowContour = !this.isShowContour;
-      this.battlesSource.clear();
-      this.hullSource.clear();
-
-      if (this.isShowContour) {
-        this.showEventContour(ft.get('eventMap'));
-      }
-    }
-  }, {
-    key: "showEventContour",
-    value: function showEventContour(map) {
-      this.battlesSource.clear();
-      this.hullSource.clear();
-      var features = map.features;
-
-      if (!features) {
-        return;
-      }
-
-      var all_coords = [];
-
-      for (var i = 0; i < features.length; i++) {
-        var geom = features[i].geometry;
-        var style_prop = features[i].properties;
-        var style = {};
-
-        if (style_prop.fill) {
-          style.fill = new ol.style.Fill({
-            color: _strHelper.default.hexToRgbA(style_prop.fill, style_prop['fill-opacity'])
-          });
-        }
-
-        if (style_prop.stroke) {
-          style.stroke = new ol.style.Stroke({
-            color: _strHelper.default.hexToRgbA(style_prop.stroke, style_prop['stroke-opacity']),
-            width: style_prop['stroke-width']
-          });
-        }
-
-        var coords = [];
-
-        if (geom.type === 'Point') {
-          coords = new ol.proj.fromLonLat(geom.coordinates);
-          all_coords.push(coords);
-        } else {
-          var srcCoords = geom.type === 'Polygon' ? geom.coordinates[0] : geom.coordinates;
-
-          for (var j = 0; j < srcCoords.length; j++) {
-            var point = new ol.proj.fromLonLat(srcCoords[j]);
-            coords.push(point);
-            all_coords.push(point);
-          }
-
-          if (geom.type === 'Polygon') {
-            coords = [coords];
-          }
-        }
-
-        var _ft = new ol.Feature({
-          uid: 100,
-          name: 'test',
-          geometry: this.createGeom({
-            kind: geom.type,
-            coords: coords
-          })
-        });
-
-        _ft.setStyle(new ol.style.Style(style));
-
-        this.battlesSource.addFeature(_ft);
-      }
-
-      var hull_indexes = (0, _monotoneConvexHull2d.default)(all_coords);
-      var hull_coords = [];
-      hull_indexes.forEach(function (idx) {
-        hull_coords.push(all_coords[idx]);
-      });
-      var polygon = this.createGeom({
-        kind: 'Polygon',
-        coords: [hull_coords]
-      });
-      polygon.scale(1.03, 1.03);
-      var ft = new ol.Feature({
-        uid: 1000,
-        name: 'test2',
-        geometry: polygon
-      });
-      this.hullSource.addFeature(ft);
-    }
-  }], [{
-    key: "getIcon",
-    value: function getIcon() {
-      return 'images/mapIcons/undefined_icon.png';
-    }
-  }, {
-    key: "getCaptionInfo",
-    value: function getCaptionInfo(info) {
-      return info.name;
-    }
-  }, {
-    key: "getStarThreeIcon",
-    value: function getStarThreeIcon() {
-      return 'images/mapIcons/starThree.png';
-    }
-  }, {
-    key: "getWMWIcon",
-    value: function getWMWIcon() {
-      return 'images/mapIcons/starblue.png';
-    }
-  }, {
-    key: "getWOWIcon",
-    value: function getWOWIcon() {
-      return 'images/mapIcons/starwow.png';
-    }
-  }, {
-    key: "getRussiaWinnerIcon",
-    value: function getRussiaWinnerIcon() {
-      return 'images/mapIcons/starred.png';
-    }
-  }, {
-    key: "getGermanyWinnerIcon",
-    value: function getGermanyWinnerIcon() {
-      return 'images/mapIcons/starblack.png';
-    }
-  }, {
-    key: "getCaption",
-    value: function getCaption(feature) {
-      return 'Операции ВОВ/ВМВ';
-    }
-  }, {
-    key: "getStyleFeature",
-    value: function getStyleFeature(feature, zoom) {
-      return this.getStarStyleFeature(feature, zoom); //return this.getIconStyleFeature(feature, zoom)
-    }
-  }, {
-    key: "getIconStyleFeature",
-    value: function getIconStyleFeature(feature, zoom) {
-      var info = feature.get('info');
-
-      var allyTroops = _strHelper.default.getNumber(info.ally_troops);
-
-      var enemTroops = _strHelper.default.getNumber(info.enem_troops);
-
-      var starSizes = [{
-        count: 2500,
-        size: 1
-      }, {
-        count: 5000,
-        size: 1
-      }, {
-        count: 70000,
-        size: 1.2
-      }, {
-        count: 100000,
-        size: 1.5
-      }, {
-        count: 200000,
-        size: 1.6
-      }, {
-        count: 500000,
-        size: 1.8
-      }, {
-        count: 1000000,
-        size: 1.9
-      }, {
-        count: 10000000000,
-        size: 2
-      }];
-
-      if (allyTroops + enemTroops > 0) {
-        var v = allyTroops + enemTroops;
-
-        for (var i = 0; i < starSizes.length; i++) {
-          if (v < starSizes[i].count) {
-            starSize = starSizes[i].size;
-            break;
-          }
-        }
-      }
-
-      var icon = info.kind == 'wmw' ? 'images/mapIcons/starblue.png' : info.isWinnerUSSR == true ? 'images/mapIcons/starred.png' : 'images/mapIcons/starblack.png';
-      var style = new ol.style.Style({
-        image: new ol.style.Icon({
-          // anchor: [0, 0],
-          imgSize: [32, 32],
-          src: icon,
-          //color: '#ff0000',
-          // fill: new ol.style.Fill({ color: 'rgba(153,51,255,1)' }),
-          //scale: starSize,
-          radius: 7,
-          opacity: 1
-        })
-      });
-      return [style];
-    }
-  }, {
-    key: "getStarStyleFeature",
-    value: function getStarStyleFeature(feature, zoom) {
-      var info = feature.get('info');
-
-      var allyTroops = _strHelper.default.getNumber(info.ally_troops);
-
-      var enemTroops = _strHelper.default.getNumber(info.enem_troops);
-
-      var starSize = 4;
-      var starSizes = [{
-        count: 2500,
-        size: 6
-      }, {
-        count: 5000,
-        size: 8
-      }, {
-        count: 70000,
-        size: 10
-      }, {
-        count: 100000,
-        size: 11
-      }, {
-        count: 200000,
-        size: 12
-      }, {
-        count: 500000,
-        size: 14
-      }, {
-        count: 1000000,
-        size: 16
-      }, {
-        count: 10000000000,
-        size: 18
-      }];
-
-      if (allyTroops + enemTroops > 0) {
-        var v = allyTroops + enemTroops;
-
-        for (var i = 0; i < starSizes.length; i++) {
-          if (v < starSizes[i].count) {
-            starSize = starSizes[i].size;
-            break;
-          }
-        }
-      }
-
-      var style = new ol.style.Style({
-        image: new ol.style.RegularShape({
-          fill: new ol.style.Fill(info.kind == 'wmw' ? {
-            color: 'rgba(102,102,255,0.9 ) '
-          } //blue color
-          : info.isWinnerUSSR == true ? {
-            color: 'rgba(255,0,0,0.6)'
-          } //red color
-          : {
-            color: 'rgba(0,0,0,0.6)'
-          } //black color
-          ),
-          // stroke: new ol.style.Stroke({
-          //   width: 0,
-          //   color: 'gray'
-          // }),
-          points: 5,
-          radius: starSize + 2,
-          radius2: Math.floor(starSize / 2),
-          angle: -50
-        })
-      });
-      return [style];
-    }
-  }, {
-    key: "getPopupInfo",
-    value: function getPopupInfo(feature) {
-      var info = feature.get('info');
-      return {
-        icon: this.getIcon(),
-        date: info.startDate,
-        caption: info.name
-      };
-    }
-  }, {
-    key: "getHtmlInfo",
-    value: function getHtmlInfo(feature) {
-      /*
-      let content = `<h3>${info.name}</h3>`
-        switch (kind) {
-          case 'chronos':
-            content = `<h3>${info.place}</h3>`
-            break
-          case 'politics':
-            content = `<h3>${info.place}</h3>`
-            break
-          default:
-            break
-        }
-          let isFirstRow = true
-          const getHtmlForFeatureEvent = (event) => {
-          const getHtmlCell = (caption, param1, param2, isBold = false) => {
-            const f = (value) => {
-              if (Array.isArray(value)) {
-                return value.length > 0
-                  ? value.join(', ').replace(/, /g, '<br/>')
-                  : '-'
-              } else {
-                if (value == undefined) return '-'
-                const tryFloat = parseFloat(value)
-                const isNaN =
-                  typeof Number.isNaN !== 'undefined'
-                    ? Number.isNaN(tryFloat)
-                    : tryFloat !== tryFloat
-                    ? true
-                    : false
-                return isNaN
-                  ? value.replace(/, /g, '<br />')
-                  : tryFloat.toString()
-              }
-            }
-              const one = f(param1)
-            const two = f(param2)
-              const getTdWithClassName = (defaultClass, value) => {
-              const className = isBold
-                ? defaultClass + ' ' + 'bold-text'
-                : defaultClass
-              return className.trim() != ''
-                ? `<td class="${className}">${value}</td>`
-                : `<td>${value}</td>`
-            }
-              if ('-' != one || '-' != two) {
-              let tr = `<tr>
-                ${getTdWithClassName('left-align', caption)}
-                ${getTdWithClassName('', one)}
-                ${getTdWithClassName('right-align', two)}
-              </tr>`
-              return tr
-            }
-              return ''
-          }
-            let html = ''
-          html += getHtmlCell('Участники', info.allies, info.enemies, true)
-          html += getHtmlCell(
-            'Силы сторон (чел.)',
-            info.ally_troops,
-            info.enem_troops
-          )
-          html += getHtmlCell('Потери (чел.)', info.ally_losses, info.enem_losses)
-          html += getHtmlCell('Убитые (чел.)', info.ally_deads, info.enem_deads)
-          html += getHtmlCell(
-            'Пленные (чел.)',
-            info.ally_prisoners,
-            info.enem_prisoners
-          )
-          html += getHtmlCell(
-            'Раненые (чел.)',
-            info.ally_woundeds,
-            info.enem_woundeds
-          )
-          html += getHtmlCell(
-            'Пропавшие без вести (чел.)',
-            info.ally_missing,
-            info.enem_missing
-          )
-          html += getHtmlCell(
-            'Танков (шт.)',
-            info.ally_tanks_cnt,
-            info.enem_tanks_cnt
-          )
-          html += getHtmlCell(
-            'Самолетов (шт.)',
-            info.ally_airplans_cnt,
-            info.enem_airplans_cnt
-          )
-          html += getHtmlCell(
-            'Кораблей (шт.)',
-            info.ally_ships_cnt,
-            info.enem_ships_cnt
-          )
-          html += getHtmlCell(
-            'Подводных лодок (шт.)',
-            info.ally_submarines_cnt,
-            info.enem_submarines_cnt
-          )
-            return html
-        }
-          if ('politics' === kind) {
-          const startDate = info.startDate
-          const endDate = info.endDate
-          if (startDate) {
-            const dateStr =
-              endDate != undefined && startDate != endDate
-                ? `${startDate} - ${endDate}`
-                : startDate
-            content += '<h4>' + dateStr + '</h4>'
-          }
-            let results = info.results
-          if (results) {
-            results = results.replace(/[.,]\s*$/, '')
-            content += '<p>' + results + '</p>'
-          }
-        } else if ('chronos' === kind) {
-          const startDate = info.startDate
-          const endDate = info.endDate
-          if (startDate) {
-            let dateStr =
-              endDate != undefined && startDate != endDate
-                ? `${startDate} - ${endDate}`
-                : startDate
-            if (info.isOnlyYear) {
-              dateStr = dateStr.slice(-4)
-            }
-            content += '<h4>' + dateStr + '</h4>'
-          }
-            let results = info.brief
-          if (results) {
-            results = results.replace(/[.,]\s*$/, '')
-            content += '<p>' + results + '</p>'
-          }
-        } else if ('persons' === kind) {
-          content = `<h3>${info.surname} ${info.name} ${info.middlename}</h3>`
-          const startDate = info.dateBirth
-          const endDate = info.dateDeath
-          if (startDate) {
-            let dateStr =
-              endDate != undefined && startDate != endDate
-                ? `${startDate} - ${endDate}`
-                : startDate
-            content += '<h4>' + dateStr + '</h4>'
-          }
-            let results = info.description
-          if (results) {
-            results = results.replace(/[.,]\s*$/, '')
-            content += '<p class="content-description">' + results + '</p>'
-          }
-        } else {
-          window.map.setActiveEvent(featureEvent)
-            const startDate = info.startDate
-          const endDate = info.endDate
-          if (startDate) {
-            const dateStr =
-              endDate != undefined && startDate != endDate
-                ? `${startDate} - ${endDate}`
-                : startDate
-            content += '<h4>' + dateStr + '</h4>'
-          }
-            let table = `
-            <table class="table table-sm table-borderless" id="table-info">
-            <tbody>
-            ${getHtmlForFeatureEvent(featureEvent)}
-            </tbody></table>`
-          content += `<p>${table}</p>`
-            const eventId = info.id
-          let table2 = `
-          <table class="table table-sm table-borderless" id="table-control">
-            <tr><td
-              id="showEventContol"
-              onclick="window.map.showActiveEventContour()"
-              onmouseenter="window.map.setCursorPointer(this, true);"
-              onmouseleave="window.map.setCursorPointer(this, false);">Показать/скрыть контур</td></tr>
-            <tr><td
-              id="showMapControl"
-              onclick="window.map.showActiveEventMap()"
-              onmouseenter="window.map.setCursorPointer(this, true);"
-              onmouseleave="window.map.setCursorPointer(this, false);">Показать карту</td></tr>
-          </table>`
-          content += table2
-        }
-          if ('' == content) return
-          if (info.srcUrl && 0 < info.srcUrl.length) {
-          content +=
-            '<span class="small-silver-text"><a href="' +
-            info.srcUrl +
-            '" target="_blank">Источник</a></span>'
-        }
-          const coords = featureEvent.getGeometry().getFirstCoordinate()
-        window.map.popup.show(coords, content)
-          /* Show Big Image */
-
-      /*
-        if (isHit && isExistUrl) {
-          window.map.showEventContour(info.eventMap)
-            $('#imgModalLabel').html(info.name)
-          $('.modal-body').html(`
-          <div class="d-flex justify-content-center">
-            <div class="spinner-border" role="status">
-              <span class="sr-only">Loading...</span>
-            </div>
-          </div>
-          `)
-          $('#imgModal').modal()
-            setTimeout(() => {
-            resizeImage(imgUrl, $('.modal-body').width(), canvas => {
-              $('.modal-body').html(canvas)
-            })
-          }, 1000)
-        }
-        */
-      return /*#__PURE__*/React.createElement("div", null, "'Not implemented'");
-    }
-  }, {
-    key: "getInnerLayer",
-    value: function getInnerLayer(feature) {
-      throw 'Not implemented';
-    }
-  }, {
-    key: "getAllCoordsFromMap",
-    value: function getAllCoordsFromMap(map) {
-      var all_coords = [];
-
-      for (var i = 0; i < map.features.length; i++) {
-        var geom = map.features[i].geometry;
-
-        if (geom.type === 'Point') {
-          all_coords.push(new ol.proj.fromLonLat(geom.coordinates));
-        } else {
-          var srcCoords = geom.type === 'Polygon' ? geom.coordinates[0] : geom.coordinates;
-
-          for (var j = 0; j < srcCoords.length; j++) {
-            all_coords.push(new ol.proj.fromLonLat(srcCoords[j]));
-          }
-        }
-      }
-
-      return all_coords;
-    }
-  }]);
-
-  return BattleFeature;
-}(_superFeature.default);
-
-module.exports = BattleFeature;
-},{"monotone-convex-hull-2d":"nEKu","../../helper/strHelper":"IGBU","./superFeature":"hPGt"}],"a2Bw":[function(require,module,exports) {
+},{}],"a2Bw":[function(require,module,exports) {
 var define;
 var global = arguments[3];
 //! moment.js
@@ -8023,8 +7343,16 @@ var DateHelper = /*#__PURE__*/function () {
   }, {
     key: "dateToStr",
     value: function dateToStr(inputDate) {
+      if (!inputDate) return undefined;
       var date = new Date(inputDate);
       return ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear();
+    }
+  }, {
+    key: "twoDateToStr",
+    value: function twoDateToStr(startDate, endDate) {
+      var startDateStr = DateHelper.dateToStr(startDate);
+      var endDateStr = DateHelper.dateToStr(endDate);
+      return endDateStr != undefined && startDateStr != endDateStr ? "".concat(startDateStr, " - ").concat(endDateStr) : startDateStr;
     }
   }]);
 
@@ -8032,7 +7360,790 @@ var DateHelper = /*#__PURE__*/function () {
 }();
 
 module.exports = DateHelper;
-},{"../helper/strHelper":"IGBU","moment":"a2Bw"}],"p4qv":[function(require,module,exports) {
+},{"../helper/strHelper":"IGBU","moment":"a2Bw"}],"QR23":[function(require,module,exports) {
+"use strict";
+
+var _superFeature = _interopRequireDefault(require("./superFeature"));
+
+var _dateHelper = _interopRequireDefault(require("../../helper/dateHelper"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var AgreementFeature = /*#__PURE__*/function (_SuperFeature) {
+  _inherits(AgreementFeature, _SuperFeature);
+
+  var _super = _createSuper(AgreementFeature);
+
+  function AgreementFeature() {
+    _classCallCheck(this, AgreementFeature);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(AgreementFeature, null, [{
+    key: "getIcon",
+    value: function getIcon() {
+      return 'images/mapIcons/agreement.png';
+    }
+  }, {
+    key: "getCaptionInfo",
+    value: function getCaptionInfo(info) {
+      return "".concat(info.kind, ". ").concat(info.place);
+    }
+  }, {
+    key: "getPopupInfo",
+    value: function getPopupInfo(feature) {
+      var info = feature.get('info');
+      return {
+        icon: this.getIcon(),
+        date: info.startDate,
+        caption: this.getCaptionInfo(info)
+      };
+    }
+  }, {
+    key: "getHtmlInfo",
+    value: function getHtmlInfo(feature) {
+      return /*#__PURE__*/React.createElement("div", null, "'Not implemented'");
+    }
+  }, {
+    key: "fillAgreementFeature",
+    value: function fillAgreementFeature(info) {
+      return info.agreements.map(function (elem) {
+        return _objectSpread(_objectSpread({}, elem), {}, {
+          icon: AgreementFeature.getIcon(),
+          popupFirst: elem.kind,
+          popupSecond: _dateHelper.default.twoDateToStr(elem.startDate, elem.endDate),
+          popupThird: elem.place,
+          oneLine: elem.kind
+        });
+      });
+    }
+  }]);
+
+  return AgreementFeature;
+}(_superFeature.default);
+
+module.exports = AgreementFeature;
+},{"./superFeature":"hPGt","../../helper/dateHelper":"IrKG"}],"rOJZ":[function(require,module,exports) {
+"use strict";
+
+var _monotoneConvexHull2d = _interopRequireDefault(require("monotone-convex-hull-2d"));
+
+var _strHelper = _interopRequireDefault(require("../../helper/strHelper"));
+
+var _dateHelper = _interopRequireDefault(require("../../helper/dateHelper"));
+
+var _superFeature = _interopRequireDefault(require("./superFeature"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var BattleFeature = /*#__PURE__*/function (_SuperFeature) {
+  _inherits(BattleFeature, _SuperFeature);
+
+  var _super = _createSuper(BattleFeature);
+
+  function BattleFeature() {
+    _classCallCheck(this, BattleFeature);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(BattleFeature, [{
+    key: "getCenterOfMap",
+    value: function getCenterOfMap(map) {
+      if (!map.features) {
+        return null;
+      }
+
+      var all_coords = this.getAllCoordsFromMap(map);
+      return this.getMedianXY(all_coords);
+    }
+  }, {
+    key: "setActiveEvent",
+    value: function setActiveEvent(featureEvent) {
+      this.activeFeatureEvent = featureEvent;
+      this.isShowContour = false;
+    }
+  }, {
+    key: "showActiveEventMap",
+    value: function showActiveEventMap() {
+      var ft = this.activeFeatureEvent;
+      $('#imgModalLabel').html(ft.get('name'));
+      $('.modal-body').html("\n    <div class=\"d-flex justify-content-center\">\n      <div class=\"spinner-border\" role=\"status\">\n        <span class=\"sr-only\">Loading...</span>\n      </div>\n    </div>\n    ");
+      $('#imgModal').modal();
+      setTimeout(function () {
+        resizeImage(ft.get('imgUrl'), $('.modal-body').width(), function (canvas) {
+          $('.modal-body').html(canvas);
+        });
+      }, 1000);
+    }
+  }, {
+    key: "setCursorPointer",
+    value: function setCursorPointer(elem, b) {
+      var c = 'hover-on-text';
+      if (!elem) return;
+      b ? elem.classList.add(c) : elem.classList.remove(c);
+    }
+  }, {
+    key: "showActiveEventContour",
+    value: function showActiveEventContour() {
+      var ft = this.activeFeatureEvent;
+      this.isShowContour = !this.isShowContour;
+      this.battlesSource.clear();
+      this.hullSource.clear();
+
+      if (this.isShowContour) {
+        this.showEventContour(ft.get('eventMap'));
+      }
+    }
+  }, {
+    key: "showEventContour",
+    value: function showEventContour(map) {
+      this.battlesSource.clear();
+      this.hullSource.clear();
+      var features = map.features;
+
+      if (!features) {
+        return;
+      }
+
+      var all_coords = [];
+
+      for (var i = 0; i < features.length; i++) {
+        var geom = features[i].geometry;
+        var style_prop = features[i].properties;
+        var style = {};
+
+        if (style_prop.fill) {
+          style.fill = new ol.style.Fill({
+            color: _strHelper.default.hexToRgbA(style_prop.fill, style_prop['fill-opacity'])
+          });
+        }
+
+        if (style_prop.stroke) {
+          style.stroke = new ol.style.Stroke({
+            color: _strHelper.default.hexToRgbA(style_prop.stroke, style_prop['stroke-opacity']),
+            width: style_prop['stroke-width']
+          });
+        }
+
+        var coords = [];
+
+        if (geom.type === 'Point') {
+          coords = new ol.proj.fromLonLat(geom.coordinates);
+          all_coords.push(coords);
+        } else {
+          var srcCoords = geom.type === 'Polygon' ? geom.coordinates[0] : geom.coordinates;
+
+          for (var j = 0; j < srcCoords.length; j++) {
+            var point = new ol.proj.fromLonLat(srcCoords[j]);
+            coords.push(point);
+            all_coords.push(point);
+          }
+
+          if (geom.type === 'Polygon') {
+            coords = [coords];
+          }
+        }
+
+        var _ft = new ol.Feature({
+          uid: 100,
+          name: 'test',
+          geometry: this.createGeom({
+            kind: geom.type,
+            coords: coords
+          })
+        });
+
+        _ft.setStyle(new ol.style.Style(style));
+
+        this.battlesSource.addFeature(_ft);
+      }
+
+      var hull_indexes = (0, _monotoneConvexHull2d.default)(all_coords);
+      var hull_coords = [];
+      hull_indexes.forEach(function (idx) {
+        hull_coords.push(all_coords[idx]);
+      });
+      var polygon = this.createGeom({
+        kind: 'Polygon',
+        coords: [hull_coords]
+      });
+      polygon.scale(1.03, 1.03);
+      var ft = new ol.Feature({
+        uid: 1000,
+        name: 'test2',
+        geometry: polygon
+      });
+      this.hullSource.addFeature(ft);
+    }
+  }], [{
+    key: "getIcon",
+    value: function getIcon() {
+      return 'images/mapIcons/undefined_icon.png';
+    }
+  }, {
+    key: "getCaptionInfo",
+    value: function getCaptionInfo(info) {
+      return info.name;
+    }
+  }, {
+    key: "getStarThreeIcon",
+    value: function getStarThreeIcon() {
+      return 'images/mapIcons/starThree.png';
+    }
+  }, {
+    key: "getWMWIcon",
+    value: function getWMWIcon() {
+      return 'images/mapIcons/starblue.png';
+    }
+  }, {
+    key: "getWOWIcon",
+    value: function getWOWIcon() {
+      return 'images/mapIcons/starwow.png';
+    }
+  }, {
+    key: "getUSSRWinnerIcon",
+    value: function getUSSRWinnerIcon() {
+      return 'images/mapIcons/starred.png';
+    }
+  }, {
+    key: "getGermanyWinnerIcon",
+    value: function getGermanyWinnerIcon() {
+      return 'images/mapIcons/starblack.png';
+    }
+  }, {
+    key: "getCaption",
+    value: function getCaption(feature) {
+      return 'Операции ВОВ/ВМВ';
+    }
+  }, {
+    key: "fillAddInfo",
+    value: function fillAddInfo(res) {
+      return res.map(function (elem) {
+        return _objectSpread(_objectSpread({}, elem), {}, {
+          popupFirst: _dateHelper.default.twoDateToStr(elem.startDate, elem.endDate),
+          popupSecond: elem.name,
+          oneLine: elem.name
+        });
+      });
+    }
+  }, {
+    key: "fillBattles",
+    value: function fillBattles(info) {
+      var res = info.battles;
+      res = res.map(function (elem) {
+        return _objectSpread(_objectSpread({}, elem), {}, {
+          icon: BattleFeature.getIcon()
+        });
+      });
+      return BattleFeature.fillAddInfo(res);
+    }
+  }, {
+    key: "fillWMW",
+    value: function fillWMW(info) {
+      var res = info.battles.filter(function (battle) {
+        return battle.kind === 'wmw';
+      });
+      res = res.map(function (elem) {
+        return _objectSpread(_objectSpread({}, elem), {}, {
+          icon: BattleFeature.getWMWIcon()
+        });
+      });
+      return BattleFeature.fillAddInfo(res);
+    }
+  }, {
+    key: "fillWOW",
+    value: function fillWOW(info) {
+      var res = info.battles.filter(function (battle) {
+        return battle.kind === 'wow';
+      });
+      res = res.map(function (elem) {
+        return _objectSpread(_objectSpread({}, elem), {}, {
+          icon: BattleFeature.getWOWIcon()
+        });
+      });
+      return BattleFeature.fillAddInfo(res);
+    }
+  }, {
+    key: "fillUSSRWinner",
+    value: function fillUSSRWinner(info) {
+      var res = info.battles.filter(function (battle) {
+        return battle.isWinnerUSSR;
+      });
+      res = res.map(function (elem) {
+        return _objectSpread(_objectSpread({}, elem), {}, {
+          icon: BattleFeature.getUSSRWinnerIcon()
+        });
+      });
+      return BattleFeature.fillAddInfo(res);
+    }
+  }, {
+    key: "fillGermanyWinner",
+    value: function fillGermanyWinner(info) {
+      var res = info.battles.filter(function (battle) {
+        return battle.isWinnerGermany;
+      });
+      res = res.map(function (elem) {
+        return _objectSpread(_objectSpread({}, elem), {}, {
+          icon: BattleFeature.getGermanyWinnerIcon()
+        });
+      });
+      return BattleFeature.fillAddInfo(res);
+    }
+  }, {
+    key: "getStyleFeature",
+    value: function getStyleFeature(feature, zoom) {
+      return this.getStarStyleFeature(feature, zoom); //return this.getIconStyleFeature(feature, zoom)
+    }
+  }, {
+    key: "getIconStyleFeature",
+    value: function getIconStyleFeature(feature, zoom) {
+      var info = feature.get('info');
+
+      var allyTroops = _strHelper.default.getNumber(info.ally_troops);
+
+      var enemTroops = _strHelper.default.getNumber(info.enem_troops);
+
+      var starSizes = [{
+        count: 2500,
+        size: 1
+      }, {
+        count: 5000,
+        size: 1
+      }, {
+        count: 70000,
+        size: 1.2
+      }, {
+        count: 100000,
+        size: 1.5
+      }, {
+        count: 200000,
+        size: 1.6
+      }, {
+        count: 500000,
+        size: 1.8
+      }, {
+        count: 1000000,
+        size: 1.9
+      }, {
+        count: 10000000000,
+        size: 2
+      }];
+
+      if (allyTroops + enemTroops > 0) {
+        var v = allyTroops + enemTroops;
+
+        for (var i = 0; i < starSizes.length; i++) {
+          if (v < starSizes[i].count) {
+            starSize = starSizes[i].size;
+            break;
+          }
+        }
+      }
+
+      var icon = info.kind == 'wmw' ? 'images/mapIcons/starblue.png' : info.isWinnerUSSR == true ? 'images/mapIcons/starred.png' : 'images/mapIcons/starblack.png';
+      var style = new ol.style.Style({
+        image: new ol.style.Icon({
+          // anchor: [0, 0],
+          imgSize: [32, 32],
+          src: icon,
+          //color: '#ff0000',
+          // fill: new ol.style.Fill({ color: 'rgba(153,51,255,1)' }),
+          //scale: starSize,
+          radius: 7,
+          opacity: 1
+        })
+      });
+      return [style];
+    }
+  }, {
+    key: "getStarStyleFeature",
+    value: function getStarStyleFeature(feature, zoom) {
+      var info = feature.get('info');
+
+      var allyTroops = _strHelper.default.getNumber(info.ally_troops);
+
+      var enemTroops = _strHelper.default.getNumber(info.enem_troops);
+
+      var starSize = 4;
+      var starSizes = [{
+        count: 2500,
+        size: 6
+      }, {
+        count: 5000,
+        size: 8
+      }, {
+        count: 70000,
+        size: 10
+      }, {
+        count: 100000,
+        size: 11
+      }, {
+        count: 200000,
+        size: 12
+      }, {
+        count: 500000,
+        size: 14
+      }, {
+        count: 1000000,
+        size: 16
+      }, {
+        count: 10000000000,
+        size: 18
+      }];
+
+      if (allyTroops + enemTroops > 0) {
+        var v = allyTroops + enemTroops;
+
+        for (var i = 0; i < starSizes.length; i++) {
+          if (v < starSizes[i].count) {
+            starSize = starSizes[i].size;
+            break;
+          }
+        }
+      }
+
+      var style = new ol.style.Style({
+        image: new ol.style.RegularShape({
+          fill: new ol.style.Fill(info.kind == 'wmw' ? {
+            color: 'rgba(102,102,255,0.9 ) '
+          } //blue color
+          : info.isWinnerUSSR == true ? {
+            color: 'rgba(255,0,0,0.6)'
+          } //red color
+          : {
+            color: 'rgba(0,0,0,0.6)'
+          } //black color
+          ),
+          // stroke: new ol.style.Stroke({
+          //   width: 0,
+          //   color: 'gray'
+          // }),
+          points: 5,
+          radius: starSize + 2,
+          radius2: Math.floor(starSize / 2),
+          angle: -50
+        })
+      });
+      return [style];
+    }
+  }, {
+    key: "getPopupInfo",
+    value: function getPopupInfo(feature) {
+      var info = feature.get('info');
+      return {
+        icon: this.getIcon(),
+        date: info.startDate,
+        caption: info.name
+      };
+    }
+  }, {
+    key: "getHtmlInfo",
+    value: function getHtmlInfo(feature) {
+      /*
+      let content = `<h3>${info.name}</h3>`
+        switch (kind) {
+          case 'chronos':
+            content = `<h3>${info.place}</h3>`
+            break
+          case 'politics':
+            content = `<h3>${info.place}</h3>`
+            break
+          default:
+            break
+        }
+          let isFirstRow = true
+          const getHtmlForFeatureEvent = (event) => {
+          const getHtmlCell = (caption, param1, param2, isBold = false) => {
+            const f = (value) => {
+              if (Array.isArray(value)) {
+                return value.length > 0
+                  ? value.join(', ').replace(/, /g, '<br/>')
+                  : '-'
+              } else {
+                if (value == undefined) return '-'
+                const tryFloat = parseFloat(value)
+                const isNaN =
+                  typeof Number.isNaN !== 'undefined'
+                    ? Number.isNaN(tryFloat)
+                    : tryFloat !== tryFloat
+                    ? true
+                    : false
+                return isNaN
+                  ? value.replace(/, /g, '<br />')
+                  : tryFloat.toString()
+              }
+            }
+              const one = f(param1)
+            const two = f(param2)
+              const getTdWithClassName = (defaultClass, value) => {
+              const className = isBold
+                ? defaultClass + ' ' + 'bold-text'
+                : defaultClass
+              return className.trim() != ''
+                ? `<td class="${className}">${value}</td>`
+                : `<td>${value}</td>`
+            }
+              if ('-' != one || '-' != two) {
+              let tr = `<tr>
+                ${getTdWithClassName('left-align', caption)}
+                ${getTdWithClassName('', one)}
+                ${getTdWithClassName('right-align', two)}
+              </tr>`
+              return tr
+            }
+              return ''
+          }
+            let html = ''
+          html += getHtmlCell('Участники', info.allies, info.enemies, true)
+          html += getHtmlCell(
+            'Силы сторон (чел.)',
+            info.ally_troops,
+            info.enem_troops
+          )
+          html += getHtmlCell('Потери (чел.)', info.ally_losses, info.enem_losses)
+          html += getHtmlCell('Убитые (чел.)', info.ally_deads, info.enem_deads)
+          html += getHtmlCell(
+            'Пленные (чел.)',
+            info.ally_prisoners,
+            info.enem_prisoners
+          )
+          html += getHtmlCell(
+            'Раненые (чел.)',
+            info.ally_woundeds,
+            info.enem_woundeds
+          )
+          html += getHtmlCell(
+            'Пропавшие без вести (чел.)',
+            info.ally_missing,
+            info.enem_missing
+          )
+          html += getHtmlCell(
+            'Танков (шт.)',
+            info.ally_tanks_cnt,
+            info.enem_tanks_cnt
+          )
+          html += getHtmlCell(
+            'Самолетов (шт.)',
+            info.ally_airplans_cnt,
+            info.enem_airplans_cnt
+          )
+          html += getHtmlCell(
+            'Кораблей (шт.)',
+            info.ally_ships_cnt,
+            info.enem_ships_cnt
+          )
+          html += getHtmlCell(
+            'Подводных лодок (шт.)',
+            info.ally_submarines_cnt,
+            info.enem_submarines_cnt
+          )
+            return html
+        }
+          if ('politics' === kind) {
+          const startDate = info.startDate
+          const endDate = info.endDate
+          if (startDate) {
+            const dateStr =
+              endDate != undefined && startDate != endDate
+                ? `${startDate} - ${endDate}`
+                : startDate
+            content += '<h4>' + dateStr + '</h4>'
+          }
+            let results = info.results
+          if (results) {
+            results = results.replace(/[.,]\s*$/, '')
+            content += '<p>' + results + '</p>'
+          }
+        } else if ('chronos' === kind) {
+          const startDate = info.startDate
+          const endDate = info.endDate
+          if (startDate) {
+            let dateStr =
+              endDate != undefined && startDate != endDate
+                ? `${startDate} - ${endDate}`
+                : startDate
+            if (info.isOnlyYear) {
+              dateStr = dateStr.slice(-4)
+            }
+            content += '<h4>' + dateStr + '</h4>'
+          }
+            let results = info.brief
+          if (results) {
+            results = results.replace(/[.,]\s*$/, '')
+            content += '<p>' + results + '</p>'
+          }
+        } else if ('persons' === kind) {
+          content = `<h3>${info.surname} ${info.name} ${info.middlename}</h3>`
+          const startDate = info.dateBirth
+          const endDate = info.dateDeath
+          if (startDate) {
+            let dateStr =
+              endDate != undefined && startDate != endDate
+                ? `${startDate} - ${endDate}`
+                : startDate
+            content += '<h4>' + dateStr + '</h4>'
+          }
+            let results = info.description
+          if (results) {
+            results = results.replace(/[.,]\s*$/, '')
+            content += '<p class="content-description">' + results + '</p>'
+          }
+        } else {
+          window.map.setActiveEvent(featureEvent)
+            const startDate = info.startDate
+          const endDate = info.endDate
+          if (startDate) {
+            const dateStr =
+              endDate != undefined && startDate != endDate
+                ? `${startDate} - ${endDate}`
+                : startDate
+            content += '<h4>' + dateStr + '</h4>'
+          }
+            let table = `
+            <table class="table table-sm table-borderless" id="table-info">
+            <tbody>
+            ${getHtmlForFeatureEvent(featureEvent)}
+            </tbody></table>`
+          content += `<p>${table}</p>`
+            const eventId = info.id
+          let table2 = `
+          <table class="table table-sm table-borderless" id="table-control">
+            <tr><td
+              id="showEventContol"
+              onclick="window.map.showActiveEventContour()"
+              onmouseenter="window.map.setCursorPointer(this, true);"
+              onmouseleave="window.map.setCursorPointer(this, false);">Показать/скрыть контур</td></tr>
+            <tr><td
+              id="showMapControl"
+              onclick="window.map.showActiveEventMap()"
+              onmouseenter="window.map.setCursorPointer(this, true);"
+              onmouseleave="window.map.setCursorPointer(this, false);">Показать карту</td></tr>
+          </table>`
+          content += table2
+        }
+          if ('' == content) return
+          if (info.srcUrl && 0 < info.srcUrl.length) {
+          content +=
+            '<span class="small-silver-text"><a href="' +
+            info.srcUrl +
+            '" target="_blank">Источник</a></span>'
+        }
+          const coords = featureEvent.getGeometry().getFirstCoordinate()
+        window.map.popup.show(coords, content)
+          /* Show Big Image */
+
+      /*
+        if (isHit && isExistUrl) {
+          window.map.showEventContour(info.eventMap)
+            $('#imgModalLabel').html(info.name)
+          $('.modal-body').html(`
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+          `)
+          $('#imgModal').modal()
+            setTimeout(() => {
+            resizeImage(imgUrl, $('.modal-body').width(), canvas => {
+              $('.modal-body').html(canvas)
+            })
+          }, 1000)
+        }
+        */
+      return /*#__PURE__*/React.createElement("div", null, "'Not implemented'");
+    }
+  }, {
+    key: "getInnerLayer",
+    value: function getInnerLayer(feature) {
+      throw 'Not implemented';
+    }
+  }, {
+    key: "getAllCoordsFromMap",
+    value: function getAllCoordsFromMap(map) {
+      var all_coords = [];
+
+      for (var i = 0; i < map.features.length; i++) {
+        var geom = map.features[i].geometry;
+
+        if (geom.type === 'Point') {
+          all_coords.push(new ol.proj.fromLonLat(geom.coordinates));
+        } else {
+          var srcCoords = geom.type === 'Polygon' ? geom.coordinates[0] : geom.coordinates;
+
+          for (var j = 0; j < srcCoords.length; j++) {
+            all_coords.push(new ol.proj.fromLonLat(srcCoords[j]));
+          }
+        }
+      }
+
+      return all_coords;
+    }
+  }]);
+
+  return BattleFeature;
+}(_superFeature.default);
+
+module.exports = BattleFeature;
+},{"monotone-convex-hull-2d":"nEKu","../../helper/strHelper":"IGBU","../../helper/dateHelper":"IrKG","./superFeature":"hPGt"}],"p4qv":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8116,8 +8227,8 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
     });
     _this.popup = new ol.Overlay.Popup({
       popupClass: 'default shadow',
-      //"tooltips", "warning" "black" "default", "tips", "shadow",
-      closeBox: false,
+      //"default shadow", "tooltips", "warning" "black" "default", "tips", "shadow",
+      closeBox: true,
       onshow: function onshow() {// console.log('You opened the box')
       },
       onclose: function onclose() {// console.log('You close the box')
@@ -8150,7 +8261,6 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       if (size == 1) {
         var oneFeature = feature.get('features')[0];
         var featureClass = oneFeature.get('featureClass');
-        console.log(featureClass);
 
         var _style = featureClass.getStyleFeature(oneFeature, window.map.view.getZoom());
 
@@ -8191,7 +8301,7 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
 
 
     var clusterSource = new ol.source.Cluster({
-      distance: 40,
+      distance: 10,
       source: new ol.source.Vector()
     });
     var clusterLayer = new ol.layer.AnimatedCluster({
@@ -8220,20 +8330,20 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
 
       if (features.length == 1) {
         var feature = features[0];
-        var featureClass = feature.get('featureClass');
-        var info = featureClass.getPopupInfo(feature);
-        htmlContent = "<div>".concat(_dateHelper.default.dateToStr(info.date), " <a href='./some'>").concat(info.caption, "</a>");
+        var info = feature.get('info');
+        htmlContent += "<h1>".concat(info.popupFirst, "</h1>\n            <h2>").concat(info.popupSecond, "</h2>\n            ").concat(info.popupThird ? '<h2>' + info.popupThird + '</h2>' : '');
       } else {
-        var featureContent = [];
+        htmlContent = "<table>";
         features.forEach(function (feature) {
-          var featureClass = feature.get('featureClass');
-          featureContent.push(featureClass.getPopupInfo(feature));
+          var info = feature.get('info');
+          htmlContent += "<tr>\n            <td><img src=\"".concat(info.icon, "\" alt=\"Girl in a jacket\"></td>\n            <td><span>").concat(info.oneLine, "</span></td>\n          </tr>");
         });
+        htmlContent += "</table>";
         console.log("Cluster ".concat(features.length, " features"));
       } //todo Showing HTML content
 
 
-      window.map.popup.show(featureEvent.getGeometry().getFirstCoordinate(), htmlContent);
+      window.map.popup.show(featureEvent.getGeometry().getFirstCoordinate(), "<div class=\"popupDiv\">".concat(htmlContent, "</div>"));
       return;
     });
     map.on('moveend', function () {
@@ -8382,9 +8492,14 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       return url;
     }
   }, {
+    key: "hidePopup",
+    value: function hidePopup() {
+      window.map.popup.hide();
+    }
+  }, {
     key: "changeYear",
     value: function changeYear(year) {
-      window.map.popup.hide();
+      this.hidePopup();
       this.currentYear = year;
       this.currentYearForMap = this.currentYear == 1951 ? 1950 : this.currentYear;
       this.yearLayer.getSource().refresh();
@@ -8419,7 +8534,6 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
         featureClass: item.classFeature,
         geometry: new ol.geom.Point(item.point)
       });
-      console.log("item point ".concat(item.point));
       this.clusterSource.getSource().addFeature(ft);
     }
   }, {
@@ -8427,7 +8541,6 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
     value: function refreshInfo(info) {
       var _this4 = this;
 
-      console.log("refresh info in map control ".concat(info));
       this.clusterSource.getSource().clear();
       info.forEach(function (item) {
         return _this4.addFeature(item);
@@ -8678,9 +8791,19 @@ module.exports = JsHelper;
 
 var _superFeature = _interopRequireDefault(require("./superFeature"));
 
+var _dateHelper = _interopRequireDefault(require("../../helper/dateHelper"));
+
+var _strHelper = _interopRequireDefault(require("../../helper/strHelper"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -8753,13 +8876,78 @@ var PersonFeature = /*#__PURE__*/function (_SuperFeature) {
     value: function getHtmlInfo(feature) {
       return /*#__PURE__*/React.createElement("div", null, "'Not implemented'");
     }
+  }, {
+    key: "getFio",
+    value: function getFio(info) {
+      var res = [];
+      info.surname && res.push(info.surname);
+      info.name && res.push(info.name);
+      info.middlename && res.push(info.middlename);
+      return res.join(' ');
+    }
+  }, {
+    key: "fillPersonItems",
+    value: function fillPersonItems(info, kind) {
+      var res = [];
+
+      switch (kind) {
+        case 'birth':
+          if (!info.personBirth) return res;
+          res = info.personBirth.map(function (elem) {
+            return _objectSpread(_objectSpread({}, elem), {}, {
+              point: elem.placeBirthCoords[0],
+              icon: PersonFeature.getBirthIcon(),
+              popupFirst: "".concat(PersonFeature.getFio(elem)),
+              popupSecond: "\u0414\u0430\u0442\u0430 \u0440\u043E\u0436\u0434\u0435\u043D\u0438\u044F: ".concat(_dateHelper.default.dateToStr(elem.dateBirth)),
+              popupThird: "\u041C\u0435\u0441\u0442\u043E \u0440\u043E\u0436\u0434\u0435\u043D\u0438\u044F: ".concat(elem.placeBirth)
+            });
+          });
+          break;
+
+        case 'achievement':
+          if (!info.personsAchievement) return res;
+          res = info.personsAchievement.map(function (elem) {
+            return _objectSpread(_objectSpread({}, elem), {}, {
+              point: elem.placeAchievementCoords[0],
+              icon: PersonFeature.getAchievementIcon(),
+              popupFirst: "".concat(PersonFeature.getFio(elem)),
+              popupSecond: "\u0414\u0430\u0442\u0430 \u043F\u043E\u0434\u0432\u0438\u0433\u0430: ".concat(_dateHelper.default.dateToStr(elem.dateAchievement)),
+              popupThird: "\u041C\u0435\u0441\u0442\u043E \u043F\u043E\u0434\u0432\u0438\u0433\u0430: ".concat(_strHelper.default.shrinkStringBeforeDelim(elem.placeAchievement, ';'))
+            });
+          });
+          break;
+
+        case 'death':
+          if (!info.personsDeath) return res;
+          res = info.personsDeath.map(function (elem) {
+            return _objectSpread(_objectSpread({}, elem), {}, {
+              point: elem.placeDeathCoords[0],
+              icon: PersonFeature.getDeathIcon(),
+              popupFirst: "".concat(PersonFeature.getFio(elem)),
+              popupSecond: "\u0414\u0430\u0442\u0430 \u0441\u043C\u0435\u0440\u0442\u0438: ".concat(_dateHelper.default.dateToStr(elem.dateDeath)),
+              popupThird: "\u041C\u0435\u0441\u0442\u043E \u0441\u043C\u0435\u0440\u0442\u0438: ".concat(elem.placeDeath)
+            });
+          });
+          break;
+
+        default:
+          throw console.error("fillPersonItems, \u043D\u0435\u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u044B\u0439 kind ".concat(kind));
+      }
+
+      res = res.map(function (elem) {
+        return _objectSpread(_objectSpread({}, elem), {}, {
+          oneLine: "".concat(PersonFeature.getFio(elem))
+        });
+      });
+      return res;
+    }
   }]);
 
   return PersonFeature;
 }(_superFeature.default);
 
 module.exports = PersonFeature;
-},{"./superFeature":"hPGt"}],"WAuT":[function(require,module,exports) {
+},{"./superFeature":"hPGt","../../helper/dateHelper":"IrKG","../../helper/strHelper":"IGBU"}],"WAuT":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15939,7 +16127,11 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
     _this.items = [];
     _this.uniqueItems = {};
     window.legend = _assertThisInitialized(_this);
-    window.legendOnClick = _this.legendOnClick;
+
+    window.legendOnClick = function (element) {
+      window.legend.legendOnClick.call(window.legend, element);
+    };
+
     return _this;
   }
 
@@ -15951,96 +16143,13 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
       });
     }
   }, {
-    key: "fillAgreementFeature",
-    value: function fillAgreementFeature(info) {
-      return info.agreements;
-    }
-  }, {
     key: "fillPersonFeature",
     value: function fillPersonFeature(info) {
       var res = [];
-      res = res.concat(this.fillPersonBirth(info));
-      res = res.concat(this.fillPersonAchievement(info));
-      res = res.concat(this.fillPersonDeath(info));
+      res = res.concat(_personFeature.default.fillPersonItems(info, 'birth'));
+      res = res.concat(_personFeature.default.fillPersonItems(info, 'achievement'));
+      res = res.concat(_personFeature.default.fillPersonItems(info, 'death'));
       return res;
-    }
-  }, {
-    key: "fillPersonBirth",
-    value: function fillPersonBirth(info) {
-      var res = [];
-
-      if (info.personBirth) {
-        res = info.personBirth.map(function (elem) {
-          return _objectSpread(_objectSpread({}, elem), {}, {
-            point: elem.placeBirthCoords[0]
-          });
-        });
-      }
-
-      return this.pointFilter(res);
-    }
-  }, {
-    key: "fillPersonAchievement",
-    value: function fillPersonAchievement(info) {
-      var res = [];
-
-      if (info.personsAchievement) {
-        res = info.personsAchievement.map(function (elem) {
-          return _objectSpread(_objectSpread({}, elem), {}, {
-            point: elem.placeAchievementCoords[0]
-          });
-        });
-      }
-
-      return this.pointFilter(res);
-    }
-  }, {
-    key: "fillPersonDeath",
-    value: function fillPersonDeath(info) {
-      var res = [];
-
-      if (info.personsDeath) {
-        res = info.personsDeath.map(function (elem) {
-          return _objectSpread(_objectSpread({}, elem), {}, {
-            point: elem.placeDeathCoords[0]
-          });
-        });
-      }
-
-      return this.pointFilter(res);
-    }
-  }, {
-    key: "fillBattles",
-    value: function fillBattles(info) {
-      return this.pointFilter(info.battles);
-    }
-  }, {
-    key: "fillWMW",
-    value: function fillWMW(info) {
-      return info.battles.filter(function (battle) {
-        return battle.kind === 'wmw';
-      });
-    }
-  }, {
-    key: "fillWOW",
-    value: function fillWOW(info) {
-      return info.battles.filter(function (battle) {
-        return battle.kind === 'wow';
-      });
-    }
-  }, {
-    key: "fillUSSRWinner",
-    value: function fillUSSRWinner(info) {
-      return info.battles.filter(function (battle) {
-        return battle.isWinnerUSSR;
-      });
-    }
-  }, {
-    key: "fillGermanyWinner",
-    value: function fillGermanyWinner(info) {
-      return info.battles.filter(function (battle) {
-        return battle.isWinnerGermany;
-      });
     }
   }, {
     key: "addLines",
@@ -16050,32 +16159,30 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
         id: 0,
         caption: 'Военные события',
         classFeature: _battleFeature.default,
-        fillFunction: this.fillBattles,
+        fillFunction: _battleFeature.default.fillBattles,
         childs: [{
           id: 1,
           caption: 'События ВОВ',
           classFeature: _battleFeature.default,
-          hint: 'События Великой Отечественной войны',
-          fillFunction: this.fillWOW,
+          fillFunction: _battleFeature.default.fillWOW,
           childs: [{
             id: 2,
             caption: 'Победы СССР',
             classFeature: _battleFeature.default,
-            fillFunction: this.fillUSSRWinner,
-            icon: _battleFeature.default.getRussiaWinnerIcon()
+            fillFunction: _battleFeature.default.fillUSSRWinner,
+            icon: _battleFeature.default.getUSSRWinnerIcon()
           }, {
             id: 3,
             caption: 'Победы Германии',
             classFeature: _battleFeature.default,
-            fillFunction: this.fillGermanyWinner,
+            fillFunction: _battleFeature.default.fillGermanyWinner,
             icon: _battleFeature.default.getGermanyWinnerIcon()
           }]
         }, {
           caption: 'События ВМВ',
           id: 4,
           classFeature: _battleFeature.default,
-          hint: 'Международные военные события',
-          fillFunction: this.fillWMW,
+          fillFunction: _battleFeature.default.fillWMW,
           icon: _battleFeature.default.getWMWIcon()
         }]
       });
@@ -16083,7 +16190,7 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
         id: 5,
         caption: 'Политические события',
         classFeature: _agreementFeature.default,
-        fillFunction: this.fillAgreementFeature,
+        fillFunction: _agreementFeature.default.fillAgreementFeature,
         icon: _agreementFeature.default.getIcon()
       });
       lines.push({
@@ -16095,19 +16202,22 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
           id: 7,
           caption: 'Рождения',
           classFeature: _personFeature.default,
-          fillFunction: this.fillPersonBirth,
+          fillFunction: _personFeature.default.fillPersonItems,
+          fillFunctionKind: 'birth',
           icon: _personFeature.default.getBirthIcon()
         }, {
           id: 8,
           caption: 'Достижения',
           classFeature: _personFeature.default,
-          fillFunction: this.fillPersonAchievement,
+          fillFunction: _personFeature.default.fillPersonItems,
+          fillFunctionKind: 'achievement',
           icon: _personFeature.default.getAchievementIcon()
         }, {
           id: 9,
           caption: 'Смерти',
           classFeature: _personFeature.default,
-          fillFunction: this.fillPersonDeath,
+          fillFunction: _personFeature.default.fillPersonItems,
+          fillFunctionKind: 'death',
           icon: _personFeature.default.getDeathIcon()
         }]
       });
@@ -16214,16 +16324,16 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
     key: "legendOnClick",
     value: function legendOnClick(span) {
       //get attribute for tr element: span > td > tr
+      this.emit('legendClick', null);
       var tr = span.parentElement.parentElement;
-      var rowId = parseInt(tr.getAttribute('data-href'));
-      var legend = window.legend; //const line = legend.searchLinesById.call(legend, rowId)
+      var rowId = parseInt(tr.getAttribute('data-href')); //const line = this.searchLinesById.call(this, rowId)
 
-      legend.isCheckArr[rowId] = !legend.isCheckArr[rowId];
+      this.isCheckArr[rowId] = !this.isCheckArr[rowId];
 
-      _cookieHelper.CookieHelper.setCookie('isCheckArrLegend', JSON.stringify(legend.isCheckArr));
+      _cookieHelper.CookieHelper.setCookie('isCheckArrLegend', JSON.stringify(this.isCheckArr));
 
-      legend.repaintLegend();
-      legend.filterInfo.call(legend);
+      this.repaintLegend();
+      this.filterInfo();
     }
   }, {
     key: "clickSpan",
@@ -16261,10 +16371,11 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
         var line = _this5.searchLinesById(id); //injection classFeature property to every item
 
 
-        var fillResult = line.fillFunction.call(_this5, rawInfo);
+        var fillResult = line.fillFunction.call(_this5, rawInfo, line.fillFunctionKind);
         _this5.items[id] = [];
 
         if (fillResult) {
+          fillResult = _this5.pointFilter(fillResult);
           _this5.items[id] = fillResult.map(function (elem) {
             return _objectSpread(_objectSpread({}, elem), {}, {
               classFeature: line.classFeature
@@ -16313,7 +16424,6 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
         visible[_id2] && res.push(this.uniqueItems[_id2]);
       }
 
-      console.log('refreshInfo', res);
       this.emit('refreshInfo', res);
     }
   }, {
@@ -38907,6 +39017,9 @@ function startApp() {
   legendControl.subscribe('refreshInfo', function (info) {
     //...и потом поступают в контрол карты
     mapControl.refreshInfo.call(mapControl, info);
+  });
+  legendControl.subscribe('legendClick', function () {
+    mapControl.hidePopup();
   });
   mapControl.subscribe('changeYear', function (year) {
     protocol.getDataByYear(year);
