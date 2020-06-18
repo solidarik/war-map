@@ -26,7 +26,7 @@ class ChronosJsonMediator extends SuperJsonMediator {
             startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
             isOnlyYear: json.isOnlyYear == 'True' ? true : false,
             place: json.place,
-            placeCoords: placeCoords,
+            point: placeCoords[0],
             brief: json.brief,
             srcUrl: json.srcUrl,
           }

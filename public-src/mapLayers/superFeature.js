@@ -1,3 +1,5 @@
+import * as olStyle from 'ol/style'
+
 class SuperFeature {
   static getKind() {
     return undefined
@@ -18,13 +20,13 @@ class SuperFeature {
   }
 
   static getStyleFeature(feature, zoom) {
-    const style = new ol.style.Style({
-      image: new ol.style.Icon({
+    const style = new olStyle.Style({
+      image: new olStyle.Icon({
         // anchor: [0, 0],
         imgSize: [32, 32],
         src: feature.get('info').icon,
         //color: '#ff0000',
-        // fill: new ol.style.Fill({ color: 'rgba(153,51,255,1)' }),
+        // fill: new olStyle.Fill({ color: 'rgba(153,51,255,1)' }),
         scale: 1,
         radius: 7,
         opacity: 1,

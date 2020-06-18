@@ -3,6 +3,7 @@ import ClassHelper from '../helper/classHelper'
 import JsHelper from '../helper/jsHelper'
 import BattleFeature from './mapLayers/battleFeature'
 import AgreementFeature from './mapLayers/agreementFeature'
+import ChronosFeature from './mapLayers/chronosFeature'
 import PersonFeature from './mapLayers/personFeature'
 import { CookieHelper } from './cookieHelper'
 import TileSource from 'ol/source/Tile'
@@ -21,7 +22,7 @@ export class LegendControl extends EventEmitter {
     this.showHideLegend()
 
     this.lines = this.addLines()
-    this.linesCount = 10
+    this.linesCount = 11
     const isCheckArr = CookieHelper.getCookie('isCheckArrLegend', undefined)
     this.isCheckArr = isCheckArr
       ? JSON.parse(isCheckArr)
@@ -97,7 +98,7 @@ export class LegendControl extends EventEmitter {
 
     lines.push({
       id: 5,
-      caption: 'Политические события',
+      caption: 'Международные соглашения',
       classFeature: AgreementFeature,
       fillFunction: AgreementFeature.fillAgreementFeature,
       icon: AgreementFeature.getIcon(),
@@ -105,12 +106,20 @@ export class LegendControl extends EventEmitter {
 
     lines.push({
       id: 6,
+      caption: 'Другие события',
+      classFeature: ChronosFeature,
+      fillFunction: ChronosFeature.fillChronosFeature,
+      icon: ChronosFeature.getIcon(),
+    })
+
+    lines.push({
+      id: 7,
       caption: 'Персоналии',
       classFeature: PersonFeature,
       fillFunction: this.fillPersonFeature,
       childs: [
         {
-          id: 7,
+          id: 8,
           caption: 'Рождения',
           classFeature: PersonFeature,
           fillFunction: PersonFeature.fillPersonItems,
@@ -118,7 +127,7 @@ export class LegendControl extends EventEmitter {
           icon: PersonFeature.getBirthIcon(),
         },
         {
-          id: 8,
+          id: 9,
           caption: 'Достижения',
           classFeature: PersonFeature,
           fillFunction: PersonFeature.fillPersonItems,
@@ -126,7 +135,7 @@ export class LegendControl extends EventEmitter {
           icon: PersonFeature.getAchievementIcon(),
         },
         {
-          id: 9,
+          id: 10,
           caption: 'Смерти',
           classFeature: PersonFeature,
           fillFunction: PersonFeature.fillPersonItems,

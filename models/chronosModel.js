@@ -11,7 +11,7 @@ var chronosSchema = new mongoose.Schema(
     endDate: Date,
     kind: String,
     place: String,
-    placeCoords: [],
+    point: [],
     srcUrl: String,
     brief: {
       type: String,

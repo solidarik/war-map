@@ -18,6 +18,10 @@ class StrHelper {
     )
   }
 
+  static ellipseLongString(input, len = 100, end = '...') {
+    return input.length > len ? input.substring(0, len) + end : input
+  }
+
   static shrinkStringBeforeDelim(input, delim = ',') {
     if (!input) return input
     input = '' + input

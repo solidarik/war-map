@@ -21,7 +21,7 @@ class AgreementsJsonMediator extends SuperJsonMediator {
             endDate: moment.utc(json.endDate, 'DD.MM.YYYY'),
             kind: json.kind ? json.kind : '',
             place: json.place,
-            point: placeCoords,
+            point: placeCoords[0],
             player1: json.player1,
             player2: json.player2,
             results: json.results,

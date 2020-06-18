@@ -2,6 +2,7 @@ import convexHull from 'monotone-convex-hull-2d'
 import strHelper from '../../helper/strHelper'
 import dateHelper from '../../helper/dateHelper'
 import SuperFeature from './superFeature'
+import * as olStyle from 'ol/style'
 
 class BattleFeature extends SuperFeature {
   static getIcon() {
@@ -125,13 +126,13 @@ class BattleFeature extends SuperFeature {
         ? 'images/mapIcons/starred.png'
         : 'images/mapIcons/starblack.png'
 
-    const style = new ol.style.Style({
-      image: new ol.style.Icon({
+    const style = new olStyle.Style({
+      image: new olStyle.Icon({
         // anchor: [0, 0],
         imgSize: [32, 32],
         src: icon,
         //color: '#ff0000',
-        // fill: new ol.style.Fill({ color: 'rgba(153,51,255,1)' }),
+        // fill: new olStyle.Fill({ color: 'rgba(153,51,255,1)' }),
         //scale: starSize,
         radius: 7,
         opacity: 1,
@@ -168,16 +169,16 @@ class BattleFeature extends SuperFeature {
       }
     }
 
-    let style = new ol.style.Style({
-      image: new ol.style.RegularShape({
-        fill: new ol.style.Fill(
+    let style = new olStyle.Style({
+      image: new olStyle.RegularShape({
+        fill: new olStyle.Fill(
           info.kind == 'wmw'
             ? { color: 'rgba(102,102,255,0.9 ) ' } //blue color
             : info.isWinnerUSSR == true
             ? { color: 'rgba(255,0,0,0.6)' } //red color
             : { color: 'rgba(0,0,0,0.6)' } //black color
         ),
-        // stroke: new ol.style.Stroke({
+        // stroke: new olStyle.Stroke({
         //   width: 0,
         //   color: 'gray'
         // }),
@@ -525,7 +526,7 @@ class BattleFeature extends SuperFeature {
       let style_prop = features[i].properties
       let style = {}
       if (style_prop.fill) {
-        style.fill = new ol.style.Fill({
+        style.fill = new olStyle.Fill({
           color: strHelper.hexToRgbA(
             style_prop.fill,
             style_prop['fill-opacity']
@@ -533,7 +534,7 @@ class BattleFeature extends SuperFeature {
         })
       }
       if (style_prop.stroke) {
-        style.stroke = new ol.style.Stroke({
+        style.stroke = new olStyle.Stroke({
           color: strHelper.hexToRgbA(
             style_prop.stroke,
             style_prop['stroke-opacity']
@@ -562,7 +563,7 @@ class BattleFeature extends SuperFeature {
         name: 'test',
         geometry: this.createGeom({ kind: geom.type, coords: coords }),
       })
-      ft.setStyle(new ol.style.Style(style))
+      ft.setStyle(new olStyle.Style(style))
       this.battlesSource.addFeature(ft)
     }
 
