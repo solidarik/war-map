@@ -346,11 +346,13 @@ export class MapControl extends EventEmitter {
   }
 
   getGeacronLayerUrl(tileCoord, pixelRatio, projection) {
-    if (!this.currentYearForMap) return
+    if (!this.currentYear) return
 
-    let ano = this.currentYearForMap
-    var anow = '' + ano
+    let ano = this.currentYear
+    let anow = '' + ano
     anow = anow.replace('-', 'B')
+
+    anow = anow == '1951' ? '1950' : anow == '1960' ? '1959' : anow
 
     let z = tileCoord[0]
     let x = tileCoord[1]
@@ -378,7 +380,6 @@ export class MapControl extends EventEmitter {
   changeYear(year) {
     this.hidePopup()
     this.currentYear = year
-    this.currentYearForMap = this.currentYear == 1951 ? 1950 : this.currentYear
     this.yearLayer.getSource().refresh()
     this.emit('changeYear', year)
   }
