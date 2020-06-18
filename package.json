@@ -11,6 +11,7 @@
     "parcel": "parcel build --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js",
     "parcel-dev": "parcel build --public-url --no-minify --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js",
     "watch": "nodemon -w public-src -x npm run parcel-dev",
+    "build": "npm run parcel",
     "dev": "nodemon index.js"
   },
   "repository": {
