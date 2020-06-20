@@ -28,20 +28,27 @@ class DateHelper {
   static dateToStr(inputDate) {
     if (!inputDate) return undefined
     let date = new Date(inputDate)
-    return (
-      ('0' + date.getDate()).slice(-2) +
-      '.' +
-      ('0' + (date.getMonth() + 1)).slice(-2) +
-      '.' +
-      date.getFullYear()
-    )
+    const day = ('0' + date.getDate()).slice(-2)
+    const month = ('0' + (date.getMonth() + 1)).slice(-2)
+    const year = date.getFullYear()
+    return day == '01' && month == '01' ? year : `${day}.${month}.${year}`
   }
 
-  static twoDateToStr(startDate, endDate) {
+  static getYearStr(inputDate) {
+    if (!inputDate) return ''
+    if (4 == length(inputDate)) return inputDate
+
+    let date = new Date(inputDate)
+    return '' + date.getFullYear()
+  }
+
+  static twoDateToStr(startDate, endDate, isOnlyYear = false) {
     const startDateStr = DateHelper.dateToStr(startDate)
     const endDateStr = DateHelper.dateToStr(endDate)
     return endDateStr != undefined && startDateStr != endDateStr
       ? `${startDateStr} - ${endDateStr}`
+      : isOnlyYear
+      ? this.getYearStr(startDate)
       : startDateStr
   }
 }

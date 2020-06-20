@@ -82047,11 +82047,19 @@ var DateHelper = /*#__PURE__*/function () {
       return ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear();
     }
   }, {
+    key: "getYearStr",
+    value: function getYearStr(inputDate) {
+      if (!inputDate) return '';
+      var date = new Date(inputDate);
+      return '' + date.getFullYear();
+    }
+  }, {
     key: "twoDateToStr",
     value: function twoDateToStr(startDate, endDate) {
+      var isOnlyYear = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       var startDateStr = DateHelper.dateToStr(startDate);
       var endDateStr = DateHelper.dateToStr(endDate);
-      return endDateStr != undefined && startDateStr != endDateStr ? "".concat(startDateStr, " - ").concat(endDateStr) : startDateStr;
+      return endDateStr != undefined && startDateStr != endDateStr ? "".concat(startDateStr, " - ").concat(endDateStr) : isOnlyYear ? this.getYearStr(startDate) : startDateStr;
     }
   }]);
 
@@ -83013,7 +83021,7 @@ var ChronosFeature = /*#__PURE__*/function (_SuperFeature) {
         return _objectSpread(_objectSpread({}, elem), {}, {
           icon: ChronosFeature.getIcon(),
           popupFirst: _strHelper.default.ellipseLongString(elem.brief),
-          popupSecond: _dateHelper.default.twoDateToStr(elem.startDate, elem.endDate),
+          popupSecond: _dateHelper.default.twoDateToStr(elem.startDate, elem.endDate, elem.isOnlyYear),
           popupThird: elem.place,
           oneLine: _strHelper.default.ellipseLongString(elem.brief)
         });

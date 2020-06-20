@@ -30,7 +30,7 @@ class ChronosFeature extends SuperFeature {
         ...elem,
         icon: ChronosFeature.getIcon(),
         popupFirst: strHelper.ellipseLongString(elem.brief),
-        popupSecond: dateHelper.twoDateToStr(elem.startDate, elem.endDate),
+        popupSecond: dateHelper.twoDateToStr(elem.startDate, elem.endDate, elem.isOnlyYear),
         popupThird: elem.place,
         oneLine: strHelper.ellipseLongString(elem.brief),
       }
