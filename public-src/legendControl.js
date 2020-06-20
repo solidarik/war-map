@@ -22,7 +22,7 @@ export class LegendControl extends EventEmitter {
     this.showHideLegend()
 
     this.lines = this.addLines()
-    this.linesCount = 11
+    this.linesCount = 9
     const isCheckArr = CookieHelper.getCookie('isCheckArrLegend', undefined)
     this.isCheckArr = isCheckArr
       ? JSON.parse(isCheckArr)
@@ -58,46 +58,32 @@ export class LegendControl extends EventEmitter {
   addLines() {
     let lines = []
 
-    lines.push({
-      id: 0,
-      caption: 'Военные события',
-      classFeature: BattleFeature,
-      fillFunction: BattleFeature.fillBattles,
-      childs: [
-        {
-          id: 1,
-          caption: 'События ВОВ',
-          classFeature: BattleFeature,
-          fillFunction: BattleFeature.fillWOW,
-          childs: [
-            {
-              id: 2,
-              caption: 'Победы СССР',
-              classFeature: BattleFeature,
-              fillFunction: BattleFeature.fillUSSRWinner,
-              icon: BattleFeature.getUSSRWinnerIcon(),
-            },
-            {
-              id: 3,
-              caption: 'Победы Германии',
-              classFeature: BattleFeature,
-              fillFunction: BattleFeature.fillGermanyWinner,
-              icon: BattleFeature.getGermanyWinnerIcon(),
-            },
-          ],
-        },
-        {
-          caption: 'События ВМВ',
-          id: 4,
-          classFeature: BattleFeature,
-          fillFunction: BattleFeature.fillWMW,
-          icon: BattleFeature.getWMWIcon(),
-        },
-      ],
-    })
+    lines.push(
+      {
+        id: 0,
+        caption: 'Победы СССР',
+        classFeature: BattleFeature,
+        fillFunction: BattleFeature.fillUSSRWinner,
+        icon: BattleFeature.getUSSRWinnerIcon(),
+      },
+      {
+        id: 1,
+        caption: 'Победы Германии',
+        classFeature: BattleFeature,
+        fillFunction: BattleFeature.fillGermanyWinner,
+        icon: BattleFeature.getGermanyWinnerIcon(),
+      },
+      {
+        caption: 'События ВМВ',
+        id: 2,
+        classFeature: BattleFeature,
+        fillFunction: BattleFeature.fillWMW,
+        icon: BattleFeature.getWMWIcon(),
+      }
+    )
 
     lines.push({
-      id: 5,
+      id: 3,
       caption: 'Международные соглашения',
       classFeature: AgreementFeature,
       fillFunction: AgreementFeature.fillAgreementFeature,
@@ -105,7 +91,7 @@ export class LegendControl extends EventEmitter {
     })
 
     lines.push({
-      id: 6,
+      id: 4,
       caption: 'Другие события',
       classFeature: ChronosFeature,
       fillFunction: ChronosFeature.fillChronosFeature,
@@ -113,34 +99,38 @@ export class LegendControl extends EventEmitter {
     })
 
     lines.push({
-      id: 7,
+      id: 5,
       caption: 'Персоналии',
       classFeature: PersonFeature,
       fillFunction: this.fillPersonFeature,
+      icon: PersonFeature.getIcon(),
       childs: [
         {
-          id: 8,
+          id: 6,
           caption: 'Рождения',
           classFeature: PersonFeature,
           fillFunction: PersonFeature.fillPersonItems,
           fillFunctionKind: 'birth',
           icon: PersonFeature.getBirthIcon(),
+          isHide: true,
         },
         {
-          id: 9,
+          id: 7,
           caption: 'Достижения',
           classFeature: PersonFeature,
           fillFunction: PersonFeature.fillPersonItems,
           fillFunctionKind: 'achievement',
           icon: PersonFeature.getAchievementIcon(),
+          isHide: true,
         },
         {
-          id: 10,
+          id: 8,
           caption: 'Смерти',
           classFeature: PersonFeature,
           fillFunction: PersonFeature.fillPersonItems,
           fillFunctionKind: 'death',
           icon: PersonFeature.getDeathIcon(),
+          isHide: true,
         },
       ],
     })
@@ -186,9 +176,12 @@ export class LegendControl extends EventEmitter {
 
   getHTMLIcons(line) {
     let htmlIcon = ''
-    this.getIcons(line).forEach((icon) => {
-      htmlIcon += `<img src="${icon}" alt="Girl in a jacket">`
-    })
+    if (line.icon) htmlIcon += `<img src="${line.icon}" alt="Girl in a jacket">`
+    else {
+      this.getIcons(line).forEach((icon) => {
+        htmlIcon += `<img src="${icon}" alt="Girl in a jacket">`
+      })
+    }
     return htmlIcon
   }
 
@@ -222,7 +215,8 @@ export class LegendControl extends EventEmitter {
     <tbody>`
 
     this.lines.forEach((line) => {
-      html += this.getHTMLOneLineLegend(line, 0, this.isCheckArr[line.id])
+      if (!line.isHide)
+        html += this.getHTMLOneLineLegend(line, 0, this.isCheckArr[line.id])
     })
 
     html += '</tbody></table>'
@@ -268,11 +262,13 @@ export class LegendControl extends EventEmitter {
 
     if (line.childs) {
       line.childs.forEach((child) => {
-        html += this.getHTMLOneLineLegend(
-          child,
-          level + 1,
-          isCheckParent && this.isCheckArr[child.id]
-        )
+        if (!child.isHide) {
+          html += this.getHTMLOneLineLegend(
+            child,
+            level + 1,
+            isCheckParent && this.isCheckArr[child.id]
+          )
+        }
       })
     }
     return html

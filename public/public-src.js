@@ -82044,13 +82044,16 @@ var DateHelper = /*#__PURE__*/function () {
     value: function dateToStr(inputDate) {
       if (!inputDate) return undefined;
       var date = new Date(inputDate);
-      return ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear();
+      var day = ('0' + date.getDate()).slice(-2);
+      var month = ('0' + (date.getMonth() + 1)).slice(-2);
+      var year = date.getFullYear();
+      return day == '01' && month == '01' ? year : "".concat(day, ".").concat(month, ".").concat(year);
     }
   }, {
     key: "getYearStr",
     value: function getYearStr(inputDate) {
       if (!inputDate) return '';
-      var date = new Date(inputDate);
+      var date = new Date('' + inputDate);
       return '' + date.getFullYear();
     }
   }, {
@@ -83086,7 +83089,7 @@ var PersonFeature = /*#__PURE__*/function (_SuperFeature) {
   _createClass(PersonFeature, null, [{
     key: "getIcon",
     value: function getIcon() {
-      return 'images/mapIcons/tag.png';
+      return 'images/mapIcons/tagAchiev.png';
     }
   }, {
     key: "getBirthIcon",
@@ -83347,7 +83350,7 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
     _this.showHideLegend();
 
     _this.lines = _this.addLines();
-    _this.linesCount = 11;
+    _this.linesCount = 9;
 
     var isCheckArr = _cookieHelper.CookieHelper.getCookie('isCheckArrLegend', undefined);
 
@@ -83385,75 +83388,67 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
       var lines = [];
       lines.push({
         id: 0,
-        caption: 'Военные события',
+        caption: 'Победы СССР',
         classFeature: _battleFeature.default,
-        fillFunction: _battleFeature.default.fillBattles,
-        childs: [{
-          id: 1,
-          caption: 'События ВОВ',
-          classFeature: _battleFeature.default,
-          fillFunction: _battleFeature.default.fillWOW,
-          childs: [{
-            id: 2,
-            caption: 'Победы СССР',
-            classFeature: _battleFeature.default,
-            fillFunction: _battleFeature.default.fillUSSRWinner,
-            icon: _battleFeature.default.getUSSRWinnerIcon()
-          }, {
-            id: 3,
-            caption: 'Победы Германии',
-            classFeature: _battleFeature.default,
-            fillFunction: _battleFeature.default.fillGermanyWinner,
-            icon: _battleFeature.default.getGermanyWinnerIcon()
-          }]
-        }, {
-          caption: 'События ВМВ',
-          id: 4,
-          classFeature: _battleFeature.default,
-          fillFunction: _battleFeature.default.fillWMW,
-          icon: _battleFeature.default.getWMWIcon()
-        }]
+        fillFunction: _battleFeature.default.fillUSSRWinner,
+        icon: _battleFeature.default.getUSSRWinnerIcon()
+      }, {
+        id: 1,
+        caption: 'Победы Германии',
+        classFeature: _battleFeature.default,
+        fillFunction: _battleFeature.default.fillGermanyWinner,
+        icon: _battleFeature.default.getGermanyWinnerIcon()
+      }, {
+        caption: 'События ВМВ',
+        id: 2,
+        classFeature: _battleFeature.default,
+        fillFunction: _battleFeature.default.fillWMW,
+        icon: _battleFeature.default.getWMWIcon()
       });
       lines.push({
-        id: 5,
+        id: 3,
         caption: 'Международные соглашения',
         classFeature: _agreementFeature.default,
         fillFunction: _agreementFeature.default.fillAgreementFeature,
         icon: _agreementFeature.default.getIcon()
       });
       lines.push({
-        id: 6,
+        id: 4,
         caption: 'Другие события',
         classFeature: _chronosFeature.default,
         fillFunction: _chronosFeature.default.fillChronosFeature,
         icon: _chronosFeature.default.getIcon()
       });
       lines.push({
-        id: 7,
+        id: 5,
         caption: 'Персоналии',
         classFeature: _personFeature.default,
         fillFunction: this.fillPersonFeature,
+        icon: _personFeature.default.getIcon(),
         childs: [{
-          id: 8,
+          id: 6,
           caption: 'Рождения',
           classFeature: _personFeature.default,
           fillFunction: _personFeature.default.fillPersonItems,
           fillFunctionKind: 'birth',
-          icon: _personFeature.default.getBirthIcon()
+          icon: _personFeature.default.getBirthIcon(),
+          isHide: true
         }, {
-          id: 9,
+          id: 7,
           caption: 'Достижения',
           classFeature: _personFeature.default,
           fillFunction: _personFeature.default.fillPersonItems,
           fillFunctionKind: 'achievement',
-          icon: _personFeature.default.getAchievementIcon()
+          icon: _personFeature.default.getAchievementIcon(),
+          isHide: true
         }, {
-          id: 10,
+          id: 8,
           caption: 'Смерти',
           classFeature: _personFeature.default,
           fillFunction: _personFeature.default.fillPersonItems,
           fillFunctionKind: 'death',
-          icon: _personFeature.default.getDeathIcon()
+          icon: _personFeature.default.getDeathIcon(),
+          isHide: true
         }]
       });
       return lines;
@@ -83509,9 +83504,11 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
     key: "getHTMLIcons",
     value: function getHTMLIcons(line) {
       var htmlIcon = '';
-      this.getIcons(line).forEach(function (icon) {
-        htmlIcon += "<img src=\"".concat(icon, "\" alt=\"Girl in a jacket\">");
-      });
+      if (line.icon) htmlIcon += "<img src=\"".concat(line.icon, "\" alt=\"Girl in a jacket\">");else {
+        this.getIcons(line).forEach(function (icon) {
+          htmlIcon += "<img src=\"".concat(icon, "\" alt=\"Girl in a jacket\">");
+        });
+      }
       return htmlIcon;
     }
   }, {
@@ -83550,7 +83547,7 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
 
       var html = "\n    <h1>\u041B\u0435\u0433\u0435\u043D\u0434\u0430</h1>\n    <table class=\"table table-borderless\">\n    <tbody>";
       this.lines.forEach(function (line) {
-        html += _this3.getHTMLOneLineLegend(line, 0, _this3.isCheckArr[line.id]);
+        if (!line.isHide) html += _this3.getHTMLOneLineLegend(line, 0, _this3.isCheckArr[line.id]);
       });
       html += '</tbody></table>';
       this.legendDiv.innerHTML = html;
@@ -83588,7 +83585,9 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
 
       if (line.childs) {
         line.childs.forEach(function (child) {
-          html += _this4.getHTMLOneLineLegend(child, level + 1, isCheckParent && _this4.isCheckArr[child.id]);
+          if (!child.isHide) {
+            html += _this4.getHTMLOneLineLegend(child, level + 1, isCheckParent && _this4.isCheckArr[child.id]);
+          }
         });
       }
 

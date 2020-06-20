@@ -4,7 +4,7 @@ import strHelper from '../../helper/strHelper'
 
 class PersonFeature extends SuperFeature {
   static getIcon() {
-    return 'images/mapIcons/tag.png'
+    return 'images/mapIcons/tagAchiev.png'
   }
 
   static getBirthIcon() {

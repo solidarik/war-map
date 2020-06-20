@@ -36,9 +36,8 @@ class DateHelper {
 
   static getYearStr(inputDate) {
     if (!inputDate) return ''
-    if (4 == length(inputDate)) return inputDate
 
-    let date = new Date(inputDate)
+    let date = new Date('' + inputDate)
     return '' + date.getFullYear()
   }
 
