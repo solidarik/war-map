@@ -24,11 +24,13 @@ class BattlesProtocol extends ServerProtocol {
       let startDate = new Date(data.year, 0, 1).toISOString()
       let endDate = new Date(data.year, 11, 31).toISOString()
 
+      const searchDates = {
+        $gte: startDate,
+        $lt: endDate,
+      }
+
       const defaultSearchParam = {
-        startDate: {
-          $gte: startDate,
-          $lt: endDate,
-        },
+        startDate: searchDates,
       }
 
       const promices = [
@@ -36,10 +38,13 @@ class BattlesProtocol extends ServerProtocol {
         AgreementsModel.find(defaultSearchParam),
         ChronosModel.find(defaultSearchParam),
         PersonsModel.find({
-          dateDeath: {
-            $gte: startDate,
-            $lt: endDate,
-          },
+          dateBirth: searchDates,
+        }),
+        PersonsModel.find({
+          dateAchievement: searchDates,
+        }),
+        PersonsModel.find({
+          dateDeath: searchDates,
         }),
       ]
 
@@ -50,7 +55,9 @@ class BattlesProtocol extends ServerProtocol {
               battles: res[0],
               agreements: res[1],
               chronos: res[2],
-              persons: res[3],
+              personsBirth: res[3],
+              personsAchievement: res[4],
+              personsDeath: res[5],
             })
           )
         })

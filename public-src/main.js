@@ -44,6 +44,10 @@ function startApp() {
     mapControl.refreshInfo.call(mapControl, info)
   })
 
+  legendControl.subscribe('legendClick', () => {
+    mapControl.hidePopup()
+  })
+
   mapControl.subscribe('changeYear', (year) => {
     protocol.getDataByYear(year)
   })

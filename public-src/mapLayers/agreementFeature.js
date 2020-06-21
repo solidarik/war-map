@@ -1,4 +1,5 @@
 import SuperFeature from './superFeature'
+import dateHelper from '../../helper/dateHelper'
 
 class AgreementFeature extends SuperFeature {
   static getIcon() {
@@ -20,6 +21,19 @@ class AgreementFeature extends SuperFeature {
 
   static getHtmlInfo(feature) {
     return <div>'Not implemented'</div>
+  }
+
+  static fillAgreementFeature(info) {
+    return info.agreements.map((elem) => {
+      return {
+        ...elem,
+        icon: AgreementFeature.getIcon(),
+        popupFirst: elem.kind,
+        popupSecond: dateHelper.twoDateToStr(elem.startDate, elem.endDate),
+        popupThird: elem.place,
+        oneLine: elem.kind,
+      }
+    })
   }
 }
 

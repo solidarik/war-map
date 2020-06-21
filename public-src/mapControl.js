@@ -1,10 +1,23 @@
-// import ol from './libs/ol'
-// import olExt from './libs/ol-ext.min'
+import { Map as olMap, View as olView } from 'ol'
+import * as olStyle from 'ol/style'
+import * as olGeom from 'ol/geom'
+import { default as olFeature } from 'ol/Feature'
+import {
+  fromLonLat,
+  toLonLat,
+  get as getProjection,
+  transformExtent,
+} from 'ol/proj'
+import * as olControl from 'ol/control'
+import { default as olLayer } from 'ol/layer/Tile'
+import * as olSource from 'ol/source'
+import * as olTilegrid from 'ol/tilegrid'
+import * as olInteraction from 'ol/interaction'
 import { EventEmitter } from './eventEmitter'
-import BattleLayer from './mapLayers/battleLayer'
-import AgreementFeature from './mapLayers/agreementFeature'
-import BattleFeature from './mapLayers/battleFeature'
-import DateHelper from '../helper/dateHelper'
+import proj4 from 'proj4'
+import { register } from 'ol/proj/proj4'
+import { default as olPopup } from 'ol-ext/overlay/Popup'
+import { default as olAnimatedCluster } from 'ol-ext/layer/AnimatedCluster'
 
 const MAP_PARAMS = {
   min_year: 1914,
@@ -16,19 +29,41 @@ export class MapControl extends EventEmitter {
   constructor() {
     super() //first must
 
-    const rasterLayer = new ol.layer.Tile({
+    const yaex = [
+      -20037508.342789244,
+      -20037508.342789244,
+      20037508.342789244,
+      20037508.342789244,
+    ]
+    proj4.defs(
+      'EPSG:3395',
+      '+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs'
+    )
+    register(proj4)
+    let projection = getProjection('EPSG:3395')
+    projection.setExtent(yaex)
+
+    const rasterLayer = new olLayer({
       preload: 5,
       zIndex: 0,
-      //      source: new ol.source.OSM(),
-      source: new ol.source.XYZ({
-        tileUrlFunction: (tileCoord, pixelRatio, projection) => {
-          return this.getYandexLayerUrl.call(
-            this,
-            tileCoord,
-            pixelRatio,
-            projection
-          )
-        },
+      // source: new olSource.OSM(),
+      source: new olSource.XYZ({
+        projection: 'EPSG:3395',
+        tileGrid: olTilegrid.createXYZ({
+          extent: yaex,
+        }),
+        url:
+          'http://vec0{1-4}.maps.yandex.net/tiles?l=map&v=4.55.2&z={z}&x={x}&y={y}&scale=2&lang=ru_RU',
+        // url:
+        //   'http://vec0{1-4}.maps.yandex.net/tiles?l=map&v=4.55.2&x={x}&y={y}&z={z}',
+        // tileUrlFunction: (tileCoord, pixelRatio, projection) => {
+        //   return this.getYandexLayerUrl.call(
+        //     this,
+        //     tileCoord,
+        //     pixelRatio,
+        //     projection
+        //   )
+        // },
       }),
     })
 
@@ -37,17 +72,17 @@ export class MapControl extends EventEmitter {
     this.isDisableMoveend = false
     this.readViewFromPermalink()
 
-    const view = new ol.View({
-      center: this.center
-        ? this.center
-        : new ol.proj.fromLonLat([56.004, 54.695]), // ufa place
+    const view = new olView({
+      center: this.center ? this.center : new fromLonLat([56.004, 54.695]), // ufa place
       zoom: this.zoom ? this.zoom : 3,
-      // projection: 'EPSG:4326'
+      // projection: 'EPSG:4326',
+      // projection: 'EPSG:3857',
+      // projection: 'EPSG:3395',
     })
 
-    this.popup = new ol.Overlay.Popup({
-      popupClass: 'default shadow', //"tooltips", "warning" "black" "default", "tips", "shadow",
-      closeBox: false,
+    this.popup = new olPopup({
+      popupClass: 'default shadow', //"default shadow", "tooltips", "warning" "black" "default", "tips", "shadow",
+      closeBox: true,
       onshow: function () {
         // console.log('You opened the box')
       },
@@ -59,16 +94,14 @@ export class MapControl extends EventEmitter {
       autoPanAnimation: { duration: this.isEnableAnimate ? 250 : 0 },
     })
 
-    const map = new ol.Map({
-      interactions: ol.interaction.defaults({
+    const map = new olMap({
+      interactions: olInteraction.defaults({
         altShiftDragRotate: false,
         pinchRotate: false,
       }),
-      controls: ol.control
-        .defaults({ attribution: false, zoom: false })
-        .extend([
-          // new ol.control.FullScreen()
-        ]),
+      controls: olControl.defaults({ attribution: false, zoom: false }).extend([
+        //new olControl.FullScreen()
+      ]),
       layers: [rasterLayer],
       overlays: [this.popup],
       target: 'map',
@@ -93,24 +126,24 @@ export class MapControl extends EventEmitter {
       const radius = Math.max(8, Math.min(size, 20)) + 5
       let dash = (2 * Math.PI * radius) / 6
       dash = [0, dash, dash, dash, dash, dash, dash]
-      const style = new ol.style.Style({
-        image: new ol.style.Circle({
+      const style = new olStyle.Style({
+        image: new olStyle.Circle({
           radius: radius,
-          stroke: new ol.style.Stroke({
+          stroke: new olStyle.Stroke({
             color: 'rgba(' + color + ',0.6)',
             width: 15,
             lineDash: dash,
             lineCap: 'butt',
           }),
-          fill: new ol.style.Fill({
+          fill: new olStyle.Fill({
             color: 'rgba(' + color + ',0.9)',
           }),
         }),
-        text: new ol.style.Text({
+        text: new olStyle.Text({
           text: size.toString(),
           font: '14px Helvetica',
           //textBaseline: 'top',
-          fill: new ol.style.Fill({
+          fill: new olStyle.Fill({
             color: '#fff',
           }),
         }),
@@ -119,11 +152,11 @@ export class MapControl extends EventEmitter {
     }
 
     // Cluster Source
-    let clusterSource = new ol.source.Cluster({
-      distance: 40,
-      source: new ol.source.Vector(),
+    let clusterSource = new olSource.Cluster({
+      distance: 10,
+      source: new olSource.Vector(),
     })
-    let clusterLayer = new ol.layer.AnimatedCluster({
+    let clusterLayer = new olAnimatedCluster({
       name: 'Cluster',
       source: clusterSource,
       animationDuration: this.isEnableAnimate ? 400 : 0,
@@ -137,7 +170,7 @@ export class MapControl extends EventEmitter {
       window.map.popup.hide()
 
       const coordinates = event.coordinate
-      const lonLatCoords = new ol.proj.toLonLat(coordinates)
+      const lonLatCoords = new toLonLat(coordinates)
       console.log(`clicked on map: ${coordinates}; WGS: ${lonLatCoords}`)
 
       let featureEvent = undefined
@@ -156,24 +189,27 @@ export class MapControl extends EventEmitter {
       let htmlContent = ''
       if (features.length == 1) {
         const feature = features[0]
-        const featureClass = feature.get('featureClass')
-        const info = featureClass.getPopupInfo(feature)
-        htmlContent = `<div>${DateHelper.dateToStr(
-          info.date
-        )} <a href='./some'>${info.caption}</a>`
+        const info = feature.get('info')
+        htmlContent += `<h1>${info.popupFirst}</h1>
+            <h2>${info.popupSecond}</h2>
+            ${info.popupThird ? '<h2>' + info.popupThird + '</h2>' : ''}`
       } else {
-        let featureContent = []
+        htmlContent = `<table>`
         features.forEach((feature) => {
-          const featureClass = feature.get('featureClass')
-          featureContent.push(featureClass.getPopupInfo(feature))
+          const info = feature.get('info')
+          htmlContent += `<tr>
+            <td><img src="${info.icon}" alt="Girl in a jacket"></td>
+            <td><span>${info.oneLine}</span></td>
+          </tr>`
         })
+        htmlContent += `</table>`
         console.log(`Cluster ${features.length} features`)
       }
 
       //todo Showing HTML content
       window.map.popup.show(
         featureEvent.getGeometry().getFirstCoordinate(),
-        htmlContent
+        `<div class="popupDiv">${htmlContent}</div>`
       )
       return
     })
@@ -234,11 +270,11 @@ export class MapControl extends EventEmitter {
   }
 
   addYearLayer() {
-    var yearLayer = new ol.layer.Tile({
+    const yearLayer = new olLayer({
       preload: 5,
       opacity: 0.2,
       zIndex: 2,
-      source: new ol.source.XYZ({
+      source: new olSource.XYZ({
         tileUrlFunction: (tileCoord, pixelRatio, projection) => {
           return this.getGeacronLayerUrl.call(
             this,
@@ -310,15 +346,17 @@ export class MapControl extends EventEmitter {
   }
 
   getGeacronLayerUrl(tileCoord, pixelRatio, projection) {
-    if (!this.currentYearForMap) return
+    if (!this.currentYear) return
 
-    let ano = this.currentYearForMap
-    var anow = '' + ano
+    let ano = this.currentYear
+    let anow = '' + ano
     anow = anow.replace('-', 'B')
+
+    anow = anow == '1951' ? '1950' : anow == '1960' ? '1959' : anow
 
     let z = tileCoord[0]
     let x = tileCoord[1]
-    let y = -tileCoord[2] - 1
+    let y = tileCoord[2]
 
     if (z == 0 || z > 6) return
 
@@ -335,10 +373,13 @@ export class MapControl extends EventEmitter {
     return url
   }
 
-  changeYear(year) {
+  hidePopup() {
     window.map.popup.hide()
+  }
+
+  changeYear(year) {
+    this.hidePopup()
     this.currentYear = year
-    this.currentYearForMap = this.currentYear == 1951 ? 1950 : this.currentYear
     this.yearLayer.getSource().refresh()
     this.emit('changeYear', year)
   }
@@ -347,23 +388,23 @@ export class MapControl extends EventEmitter {
     let geom
     switch (mo.kind) {
       case 'Point':
-        geom = new ol.geom.Point(mo.coords)
+        geom = new olGeom.Point(mo.coords)
         break
       case 'LineString':
-        geom = new ol.geom.LineString(mo.coords)
+        geom = new olGeom.LineString(mo.coords)
         break
       case 'Polygon':
-        geom = new ol.geom.Polygon(mo.coords)
+        geom = new olGeom.Polygon(mo.coords)
         break
     }
     return geom
   }
 
   addFeature(item) {
-    const ft = new ol.Feature({
+    const ft = new olFeature({
       info: item,
       featureClass: item.classFeature,
-      geometry: new ol.geom.Point(item.point),
+      geometry: new olGeom.Point(item.point),
     })
 
     this.clusterSource.getSource().addFeature(ft)
@@ -385,7 +426,7 @@ window.onpopstate = (event) => {
   map.updateView.call(map)
 }
 
-class SuperCustomControl extends ol.control.Control {
+class SuperCustomControl extends olControl.Control {
   constructor(inputParams) {
     super(inputParams)
   }
@@ -462,7 +503,7 @@ class YearControl extends SuperCustomControl {
 
     this.element = parentDiv
 
-    ol.control.Control.call(this, {
+    olControl.Control.call(this, {
       label: 'test',
       hint: 'test',
       tipLabel: caption,

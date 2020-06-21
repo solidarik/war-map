@@ -1,11 +1,10 @@
-const testArr = [
-  { name: 'hello', value: 2 },
-  { name: 'some', value: 3 },
-  { name: 'third', value: 3 },
-]
+const inetHelper = require('../helper/inetHelper')
+const dateHelper = require('../helper/dateHelper')
 
-const nextArr = testArr.map((elem) => {
-  return { ...elem, hello: 'world' }
-})
+const checkedCoordsPath = 'loadDatabase\\dataSources\\checkedCoords.json'
+inetHelper.loadCoords(checkedCoordsPath)
 
-console.log(JSON.stringify(nextArr))
+const places = ''
+const date = dateHelper.ignoreAlterDate(places)
+
+console.log(`>>>>>>>> date ${date}`)

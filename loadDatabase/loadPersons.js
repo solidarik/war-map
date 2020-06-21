@@ -24,6 +24,7 @@ class LoadPersons {
             response.pipe(file)
             file.on('finish', function () {
               try {
+                console.log(`>>>>>>>> finish file `)
                 file.close(cb) // close() is async, call cb after close completes.
               } catch (e) {
                 console.log(e)
