@@ -34,6 +34,7 @@
   "homepage": "https://github.com/solidarik/war-map#readme",
   "dependencies": {
     "@material-ui/core": "latest",
+    "@types/shelljs": "^0.8.8",
     "axios": "latest",
     "chalk": "latest",
     "co-busboy": "latest",
@@ -68,6 +69,7 @@
     "react": "latest",
     "react-dom": "latest",
     "react-range": "latest",
+    "shelljs": "^0.8.4",
     "socket.io": "latest",
     "socket.io-emitter": "latest",
     "socket.io-redis": "latest",

@@ -5,6 +5,7 @@ const strHelper = require('../helper/strHelper')
 const config = require('config')
 const chalk = require('chalk')
 const axios = require('axios')
+const { info } = require('../helper/logHelper')
 
 class InetHelper {
   constructor() {}
