@@ -115,14 +115,14 @@ var addTanks = /*#__PURE__*/function () {
       newNode = document.getElementById(divId + '-Engine_power_hp');
       newNode.innerHTML = "Мощность двигателя, л.с. - <p id='Engine_power_hp'>" + tankData.Engine_power_hp + "</p>";
       newNode.classList.add("row"); //div.appendChild( newNode );  
-
-      newNode = document.getElementById(divId + '-Armament');
-      newNode.innerHTML = "Вооружение - <p id='Armament'>" + tankData.Armament + "</p>";
-      newNode.classList.add("row"); //div.appendChild( newNode );  
-
-      newNode = document.getElementById(divId + '-Practical_ceiling');
-      newNode.innerHTML = "Практический потолок - <p id='Practical_ceiling'>" + tankData.Practical_ceiling + "</p>";
-      newNode.classList.add("row"); //div.appendChild( newNode );  
+      // newNode = document.getElementById(divId+'-Armament');     
+      // newNode.innerHTML = "Вооружение - <p id='Armament'>"+tankData.Armament+"</p>";
+      // newNode.classList.add("row");
+      //div.appendChild( newNode );  
+      // newNode = document.getElementById(divId+'-Practical_ceiling');     
+      // newNode.innerHTML = "Практический потолок - <p id='Practical_ceiling'>"+tankData.Practical_ceiling+"</p>";
+      // newNode.classList.add("row");
+      //div.appendChild( newNode );  
 
       newNode = document.getElementById(divId + '-Source');
       newNode.innerHTML = "Источник - <p id='Source'><a href='" + tankData.Source + "'>Ссылка</a></p>";

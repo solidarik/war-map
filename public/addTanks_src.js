@@ -127,14 +127,14 @@ class addTanks{
         newNode.classList.add("row");
         //div.appendChild( newNode );  
 
-        newNode = document.getElementById(divId+'-Armament');     
-        newNode.innerHTML = "Вооружение - <p id='Armament'>"+tankData.Armament+"</p>";
-        newNode.classList.add("row");
+        // newNode = document.getElementById(divId+'-Armament');     
+        // newNode.innerHTML = "Вооружение - <p id='Armament'>"+tankData.Armament+"</p>";
+        // newNode.classList.add("row");
         //div.appendChild( newNode );  
 
-        newNode = document.getElementById(divId+'-Practical_ceiling');     
-        newNode.innerHTML = "Практический потолок - <p id='Practical_ceiling'>"+tankData.Practical_ceiling+"</p>";
-        newNode.classList.add("row");
+        // newNode = document.getElementById(divId+'-Practical_ceiling');     
+        // newNode.innerHTML = "Практический потолок - <p id='Practical_ceiling'>"+tankData.Practical_ceiling+"</p>";
+        // newNode.classList.add("row");
         //div.appendChild( newNode );  
 
         newNode = document.getElementById(divId+'-Source');     
