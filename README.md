@@ -1,5 +1,5 @@
 # war-map
-Movement of combat troops in WWII
+Battle events and heroes in World War II
 
-author: solidarik
+authors: solidarik, codmonkdev
 create date: 24th March 2018

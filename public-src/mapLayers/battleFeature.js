@@ -51,7 +51,7 @@ class BattleFeature extends SuperFeature {
   static fillBattles(info) {
     let res = info.battles
     res = res.map((elem) => {
-      return { ...elem, icon: BattleFeature.getIcon() }
+      return { ...elem, icon: BattleFeature.getIcon(), simple: true }
     })
     return BattleFeature.fillAddInfo(res)
   }
@@ -59,7 +59,7 @@ class BattleFeature extends SuperFeature {
   static fillWMW(info) {
     let res = info.battles.filter((battle) => battle.kind === 'wmw')
     res = res.map((elem) => {
-      return { ...elem, icon: BattleFeature.getWMWIcon() }
+      return { ...elem, icon: BattleFeature.getWMWIcon(), simple: true }
     })
     return BattleFeature.fillAddInfo(res)
   }
@@ -67,7 +67,7 @@ class BattleFeature extends SuperFeature {
   static fillWOW(info) {
     let res = info.battles.filter((battle) => battle.kind === 'wow')
     res = res.map((elem) => {
-      return { ...elem, icon: BattleFeature.getWOWIcon() }
+      return { ...elem, icon: BattleFeature.getWOWIcon(), simple: true }
     })
     return BattleFeature.fillAddInfo(res)
   }
@@ -75,7 +75,7 @@ class BattleFeature extends SuperFeature {
   static fillUSSRWinner(info) {
     let res = info.battles.filter((battle) => battle.isWinnerUSSR)
     res = res.map((elem) => {
-      return { ...elem, icon: BattleFeature.getUSSRWinnerIcon() }
+      return { ...elem, icon: BattleFeature.getUSSRWinnerIcon(), simple: true }
     })
     return BattleFeature.fillAddInfo(res)
   }
@@ -83,7 +83,11 @@ class BattleFeature extends SuperFeature {
   static fillGermanyWinner(info) {
     let res = info.battles.filter((battle) => battle.isWinnerGermany)
     res = res.map((elem) => {
-      return { ...elem, icon: BattleFeature.getGermanyWinnerIcon() }
+      return {
+        ...elem,
+        icon: BattleFeature.getGermanyWinnerIcon(),
+        simple: true,
+      }
     })
     return BattleFeature.fillAddInfo(res)
   }

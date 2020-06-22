@@ -10,6 +10,7 @@ import {
 } from 'ol/proj'
 import * as olControl from 'ol/control'
 import { default as olLayer } from 'ol/layer/Tile'
+import { default as olLayerVector } from 'ol/layer/Vector'
 import * as olSource from 'ol/source'
 import * as olTilegrid from 'ol/tilegrid'
 import * as olInteraction from 'ol/interaction'
@@ -108,6 +109,15 @@ export class MapControl extends EventEmitter {
       view: view,
     })
 
+    function getStyleSimple(feature, _) {
+      const featureClass = feature.get('featureClass')
+      const style = featureClass.getStyleFeature(
+        feature,
+        window.map.view.getZoom()
+      )
+      return style
+    }
+
     function getStyleCluster(feature, _) {
       const size = feature.get('features').length
       if (size == 1) {
@@ -151,6 +161,18 @@ export class MapControl extends EventEmitter {
       return style
     }
 
+    // Simple Source
+    let simpleSource = new olSource.Vector()
+    let simpleLayer = new olLayerVector({
+      source: simpleSource,
+      zIndex: 1,
+      updateWhileAnimating: true,
+      updateWhileInteracting: true,
+      style: getStyleSimple,
+    })
+    this.simpleSource = simpleSource
+    map.addLayer(simpleLayer)
+
     // Cluster Source
     let clusterSource = new olSource.Cluster({
       distance: 10,
@@ -184,7 +206,13 @@ export class MapControl extends EventEmitter {
       )
 
       if (!featureEvent) return
-      const features = featureEvent.get('features')
+
+      //simple feature
+      let features = featureEvent.get('features')
+      if (!features) {
+        features = []
+        features[0] = featureEvent
+      }
 
       let htmlContent = ''
       if (features.length == 1) {
@@ -407,10 +435,14 @@ export class MapControl extends EventEmitter {
       geometry: new olGeom.Point(item.point),
     })
 
-    this.clusterSource.getSource().addFeature(ft)
+    let source = item.simple
+      ? this.simpleSource
+      : this.clusterSource.getSource()
+    source.addFeature(ft)
   }
 
   refreshInfo(info) {
+    this.simpleSource.clear()
     this.clusterSource.getSource().clear()
     info.forEach((item) => this.addFeature(item))
   }
