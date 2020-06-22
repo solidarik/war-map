@@ -1,17 +1,17 @@
 extends layout
 
 block head
- 
+
   script(src='/libs/json2.js')
 
   link(rel='stylesheet' href='/style-info.css')
   script(src='/libs/oboe-browser.min.js')
   script(src='/libs/d3.min.js')
-  script(src='/libs/jquery.min.js')
+  //script(src='/libs/jquery.min.js')
 
   link(rel='stylesheet' href='/libs/bootstrap-toggle.min.css')
   script(src='/libs/bootstrap-toggle.min.js')
-  
+
   link(rel='stylesheet' href='/libs/spin.css')
   script(src='/libs/spin.js')
 
@@ -63,7 +63,7 @@ block content
             |  14-65
           label.btn.btn-secondary
             input#option2(type='radio', name='options')
-            |  Всё 
+            |  Всё
 
     div(id='graph-control')
       div(id='cbdd' class='row')
