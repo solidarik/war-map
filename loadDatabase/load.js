@@ -15,6 +15,7 @@ const loadPersons = require('../loadDatabase/loadPersons')
 //   './public/data/persons.xlsx',
 //   loadPersons.parseExcel
 // )
+// loadPersons.parseExcel()
 // console.info('cron job completed')
 // return
 

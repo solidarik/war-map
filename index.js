@@ -19,7 +19,7 @@ const path = require('path')
 const fs = require('fs')
 
 const middlewares = fs.readdirSync(path.join(__dirname, 'middlewares')).sort()
-middlewares.forEach(handler => require('./middlewares/' + handler).init(app))
+middlewares.forEach((handler) => require('./middlewares/' + handler).init(app))
 
 /*
 middlewares.forEach(function(middleware) {
@@ -36,7 +36,7 @@ let protocolFunctions = []
 const protocolClasses = fs
   .readdirSync(path.join(__dirname, 'socketProtocol'))
   .sort()
-protocolClasses.forEach(handler => {
+protocolClasses.forEach((handler) => {
   let protocolClass = require('./socketProtocol/' + handler)
   protocolClass.init()
   protocolFunctions.push(protocolClass.getProtocol(app))
@@ -44,13 +44,13 @@ protocolClasses.forEach(handler => {
 
 app.socket = serverSocket(server, protocolFunctions)
 
-var cron = require('cron');
-var lp = require('./loadDatabase/loadPersons.js');
-//0 */3 * * * * every 3 minutes
-//0 0 */8 * * * every 8 hours
-var cronJob = cron.job("0 0 */8 * * *", function(){
-    // perform operation e.g. GET request http.get() etc.
-    lp.download("http://www.historian.by/ww2/person.xlsx","./public/data/persons.xlsx",lp.parseExcel);
-    console.info('cron job completed');
-}); 
-cronJob.start();
+// var cron = require('cron');
+// var lp = require('./loadDatabase/loadPersons.js');
+// //0 */3 * * * * every 3 minutes
+// //0 0 */8 * * * every 8 hours
+// var cronJob = cron.job("0 0 */8 * * *", function(){
+//     // perform operation e.g. GET request http.get() etc.
+//     lp.download("http://www.historian.by/ww2/person.xlsx","./public/data/persons.xlsx",lp.parseExcel);
+//     console.info('cron job completed');
+// });
+// cronJob.start();

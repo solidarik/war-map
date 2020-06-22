@@ -188,6 +188,17 @@ class LoadPersons {
               return comparison
             })
 
+            obj.forEach((item) => {
+              Object.keys(item).map((k) => {
+                try {
+                  if (typeof item[k].trim === 'function')
+                    item[k] = item[k].trim()
+                } catch (error) {
+                  console.log(item)
+                }
+              })
+            })
+
             var json = JSON.stringify(obj) //convert it back to json
             //console.log(json);
             fs.writeFile('./public/data/persons.json', json, 'utf8', function (
