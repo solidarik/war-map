@@ -65,38 +65,34 @@ var AddMapInfoDiagramm = /*#__PURE__*/function () {
       } else {
         height = Math.round(this.height) - margin.top - margin.bottom;
       } //add -1 when not in 14-65
+      // for(var i=1914;i<1966;i++){
+      //     var df = this.data.filter(
+      //         function(d){ return parseInt(d.date) == i }
+      //     );
+      //     if(df.length==0){
+      //         var e = {};
+      //         e.iso3=this.data[0].iso3;
+      //         e.iso2=this.data[0].iso2;
+      //         e.rusCountry=this.data[0].rusCountry;
+      //         e.engCountry=this.data[0].engCountry;
+      //         e.rusCity=this.data[0].rusCity;
+      //         e.engCity=this.data[0].engCity;
+      //         e.rusIndicator=this.data[0].rusIndicator;
+      //         e.engIndicator=this.data[0].engIndicator;
+      //         e.date=i.toString();
+      //         e.rusUnit=this.data[0].rusUnit;
+      //         e.engUnit=this.data[0].engUnit;
+      //         e.value=0.0;
+      //         e.rusSource="";
+      //         e.engSource="";
+      //         e.sourceURL="";
+      //         e.engComment=""
+      //         e.centroid==this.data[0].centroid;
+      //         this.data.push(e);
+      //     }
+      //     //break;
+      // }
 
-
-      for (var i = 1914; i < 1966; i++) {
-        var df = this.data.filter(function (d) {
-          return parseInt(d.date) == i;
-        });
-
-
-        if (df.length == 0) {
-          var e = {};
-          e.iso3 = this.data[0].iso3;
-          e.iso2 = this.data[0].iso2;
-          e.rusCountry = this.data[0].rusCountry;
-          e.engCountry = this.data[0].engCountry;
-          e.rusCity = this.data[0].rusCity;
-          e.engCity = this.data[0].engCity;
-          e.rusIndicator = this.data[0].rusIndicator;
-          e.engIndicator = this.data[0].engIndicator;
-          e.date = i.toString();
-          e.rusUnit = this.data[0].rusUnit;
-          e.engUnit = this.data[0].engUnit;
-          e.value = 0.0;
-          e.rusSource = "";
-          e.engSource = "";
-          e.sourceURL = "";
-          e.engComment = "";
-          e.centroid == this.data[0].centroid;
-          
-          this.data.push(e);
-        } //break;
-
-      }
 
       this.data.sort(function (a, b) {
         if (a.date > b.date) return 1;else if (a.date < b.date) return -1;
@@ -219,6 +215,138 @@ var AddMapInfoDiagramm = /*#__PURE__*/function () {
           } else if (maxY < 999999) {
             if (uniY.indexOf("тыс.") !== -1) return couY + " " + uniY.replace("тыс.", "миллионы").replace("ед", "единиц");else if (uniY.indexOf("млн") !== -1) return couY + " " + uniY.replace("млн", "миллиарды").replace("ед", "единиц");else return couY + " " + "тысячи " + uniY.replace("ед", "единиц");
           } else if (maxY < 9999999999) if (uniY.indexOf("тыс.") !== -1) return couY + " " + uniY.replace("тыс.", "миллиарды").replace("ед", "единиц");else if (uniY.indexOf("млн") !== -1) return couY + " " + uniY.replace("тыс.", "триллиарды").replace("ед", "единиц");else return couY + " " + "миллионы " + uniY.replace("ед", "единиц");
+        });
+      }
+    }
+  }, {
+    key: "addMapInfoDiagrammInDivTop5",
+    value: function addMapInfoDiagrammInDivTop5() {
+      // set the dimensions and margins of the graph
+      var margin = {
+        top: 20,
+        right: 20,
+        bottom: 30,
+        left: 40
+      };
+      var width = this.width - margin.left - margin.right - 10;
+      var height;
+
+      if (this.width >= 160) {
+        height = Math.round(this.height * 0.52) - margin.top - margin.bottom;
+
+        if (height <= 110) {
+          height = Math.round(this.height) - margin.top - margin.bottom;
+        }
+      } else {
+        height = Math.round(this.height) - margin.top - margin.bottom;
+      }
+
+      this.data.sort(function (a, b) {
+        if (a.value > b.value) return -1;else if (a.value < b.value) return 1;
+        return 0;
+      });
+      console.log(JSON.stringify(this.data));
+      var first5tData = this.data.slice(0, 5);
+      console.log(JSON.stringify(first5tData)); // set the ranges
+
+      var x = d3.scaleBand().range([0, width]).padding(0.1);
+      var y = d3.scaleLinear().range([height, 0]); // append the svg object to the body of the page
+      // append a 'group' element to 'svg'
+      // moves the 'group' element to the top left margin
+
+      d3.select("#" + this.divElement + "Svg").remove();
+      var svg = d3.select("#" + this.divElement).append("svg").attr("id", this.divElement + "Svg").attr("width", width + margin.left + margin.right - 10).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")"); // Scale the range of the data in the domains
+      //console.log("this.data.map=" + this.data.map(function (d) { return d.date; }));
+
+      x.domain(first5tData.map(function (d) {
+        return d.iso3;
+      })); //console.log("d3.max=" + d3.max(this.data, function (d) { return d.value; }));
+
+      var maxY = d3.max(this.data, function (d) {
+        return d.value;
+      });
+      var uniY = d3.max(this.data, function (d) {
+        return d.rusUnit;
+      });
+      var couY = "ТОП 5 " + d3.max(this.data, function (d) {
+        return d.rusIndicator;
+      });
+      y.domain([0, maxY]); // append the rectangles for the bar chart
+
+      svg.selectAll(".bar").data(first5tData).enter().append("rect").attr("class", "bar").attr("x", function (d) {
+        return x(d.iso3);
+      }).attr("width", x.bandwidth()).style("fill", function (d) {
+        return "url(#img_" + d.iso2 + ")";
+      }).attr("y", function (d) {
+        return y(d.value);
+      }).attr("height", function (d) {
+        return height - y(d.value);
+      });
+      var domainXaxis;
+
+      if (this.width >= 160 && height !== Math.round(this.height) - margin.top - margin.bottom) {
+        if (x.domain().length <= 10) {
+          domainXaxis = x.domain();
+        } else {
+          if (x.domain().length <= 50) {
+            domainXaxis = x.domain().filter(function (d, i) {
+              return !(i % 5);
+            });
+          } else {
+            if (x.domain().length <= 200) {
+              domainXaxis = x.domain().filter(function (d, i) {
+                return !(i % 10);
+              });
+            }
+          }
+        } // add the x Axis
+
+
+        svg.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x).tickValues(domainXaxis)).selectAll("text").style("text-anchor", "end").attr("dx", "-.8em").attr("dy", ".15em").attr("transform", "rotate(-90)"); // add the y Axis
+
+        svg.append("g").call(d3.axisLeft(y).ticks(5).tickFormat(function (d) {
+          if (maxY < 9999) {
+            return d;
+          } else if (maxY < 999999) {
+            return (d / 1000).toFixed(1);
+          } else if (maxY < 9999999999) {
+            return (d / 1000000).toFixed(1);
+          }
+        })).style("font-size", "8px");
+        svg.append("text").attr("x", width / 2).attr("y", -10).attr("class", "title").style("text-anchor", "middle").style("font-size", "10px").text(function () {
+          return couY;
+        });
+      } else {
+        var delit = x.domain().length - 1; ///2;
+        //console.log("x.domain().length="+x.domain().length);
+        //console.log("x.domain().length/3="+x.domain().length/3);
+        //console.log("x.domain().length/2="+x.domain().length/2);
+        //delit = +delit;
+        //if (!isFinite(delit)) {
+        //  delit = delit;
+        //}
+        //else{
+        //  delit = (delit - delit % 1)   ||   (delit < 0 ? -0 : delit === 0 ? delit : 0);
+        //}
+        //console.log("delit="+delit);
+
+        domainXaxis = x.domain().filter(function (d, i) {
+          return !(i % delit);
+        }); // add the x Axis
+
+        svg.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x).tickValues(domainXaxis)).selectAll("text").style("text-anchor", "end").attr("dx", "-1em").attr("dy", "-.9em").attr("transform", "rotate(-90)").style("font-size", "8px"); // add the y Axis
+
+        svg.append("g").call(d3.axisLeft(y).ticks(2).tickFormat(function (d) {
+          if (maxY < 9999) {
+            return d;
+          } else if (maxY < 999999) {
+            return (d / 1000).toFixed(1);
+          } else if (maxY < 9999999999) {
+            return (d / 1000000).toFixed(1);
+          }
+        })).style("font-size", "8px");
+        svg.append("text").attr("x", width / 2).attr("y", -8).attr("class", "title").style("text-anchor", "middle").style("font-size", "8px").text(function () {
+          return couY;
         });
       }
     }

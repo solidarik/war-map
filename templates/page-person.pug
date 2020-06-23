@@ -14,19 +14,19 @@ block head
 block content
     +header('person')
     div.content(role='content' id='content' dragable='true')
-        div(class='row')
-            div(class='col-12')
-                .btn-group.btn-group-toggle(data-toggle='buttons' class='right')
-                    label.btn.btn-secondary.active
-                        input#option1(type='radio', name='options', checked='')
-                        |  Заполнено
-                    label.btn.btn-secondary
-                        input#option2(type='radio', name='options')
-                        |  Ярослав
+        //- div(class='row')
+        //-     div(class='col-12')
+        //-         .btn-group.btn-group-toggle(data-toggle='buttons' class='right')
+        //-             label.btn.btn-secondary.active
+        //-                 input#option1(type='radio', name='options', checked='')
+        //-                 |  Заполнено
+        //-             label.btn.btn-secondary
+        //-                 input#option2(type='radio', name='options')
+        //-                 |  Ярослав
         .row.person-cont
             .col-md-6
                 .row.img.image-cont
-                    img.image-center.img-rounded.resized-image(id='imgPerson' src='img/person/ilyushin.jpg' alt='' )
+                    img.image-center.img-rounded.resized-image(id='imgPerson' src='' alt='' )
                 .row.details.detail-cont
                     .col-lg-12
                         blockquote
