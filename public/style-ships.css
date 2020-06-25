@@ -51,6 +51,10 @@ body, html {
   max-height: 200px;
   overflow-x: hidden;
 }
+.dropdown-item{
+  cursor: pointer;
+}
+
 .dropdown-item + .dropdown-menu {
 	display: none;
 }

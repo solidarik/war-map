@@ -210,11 +210,12 @@ class LoadPersons {
           } catch (e) {
             console.log(e)
           }
-        }
+        } 
+        // console.log('end parse');
       }
     )
   }
-
+ 
   //download("http://www.historian.by/ww2/person.xlsx","./public/data/persons.xlsx",parseExcel);
 }
 

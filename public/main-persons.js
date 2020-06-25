@@ -74,23 +74,23 @@ if (!Array.prototype.forEach) {
 
 //////////////////////////////////////////////////
 function startApp() {
-    var persons = new addPersons("persons-table", "data/persons_old.json");
+    var persons = new addPersons("persons-table", "data/persons.json");
     persons.clearTable();
     persons.fillTable();
     $("#persons-table tr:eq(0) td:first-child span").click();
    
-    $('#option1').closest('label').off('click').click(function() { 
-      var persons = new addPersons("persons-table", "data/persons_old.json");
-      persons.clearTable();
-      persons.fillTable();
-      $("#persons-table tr:eq(0) td:first-child span").click();
-    });
-    $('#option2').closest('label').off('click').click(function() { 
-      var persons = new addPersons("persons-table", "data/persons.json");
-      persons.clearTable();
-      persons.fillTable();
-      $("#persons-table tr:eq(0) td:first-child span").click();
-    });
+    // $('#option1').closest('label').off('click').click(function() { 
+    //   var persons = new addPersons("persons-table", "data/persons_old.json");
+    //   persons.clearTable();
+    //   persons.fillTable();
+    //   $("#persons-table tr:eq(0) td:first-child span").click();
+    // });
+    // $('#option2').closest('label').off('click').click(function() { 
+    //   var persons = new addPersons("persons-table", "data/persons.json");
+    //   persons.clearTable();
+    //   persons.fillTable();
+    //   $("#persons-table tr:eq(0) td:first-child span").click();
+    // });
 
 
 

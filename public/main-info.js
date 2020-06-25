@@ -614,6 +614,8 @@ function buildBubble(ldata, svg, projection, width) {
       } else if (ldata.jsonType == 'SAMARA') {
         flagCircleInMapLOc.addFlagCircleInMap()
       }
+      var amid =  new AddMapInfoDiagramm("mapContainerInfo",curDataYearFilter,parseInt(d3.select("#mapContainerInfo").style("width")),parseInt(d3.select("#mapContainerInfo").style("height")));
+      amid.addMapInfoDiagrammInDivTop5();
       console.timeEnd('addFlagCircleInMap')
       var updateFunction
       if (ldata.jsonType == 'UFA') {
@@ -645,7 +647,9 @@ function buildBubble(ldata, svg, projection, width) {
             width,
             ldata.dataFromFile
           )
-          flagCircleInMapLoc.addFlagCircleInMapNew()
+          flagCircleInMapLoc.addFlagCircleInMapNew();
+          var amid =  new AddMapInfoDiagramm("mapContainerInfo",curDataYearFilter,parseInt(d3.select("#mapContainerInfo").style("width")),parseInt(d3.select("#mapContainerInfo").style("height")));
+          amid.addMapInfoDiagrammInDivTop5();
         }
       } else if (ldata.jsonType == 'SAMARA') {
         updateFunction = function(h, handle, label, xScale) {
@@ -676,8 +680,11 @@ function buildBubble(ldata, svg, projection, width) {
             ldata.dataFromFile
           )
           flagCircleInMapLoc.addFlagCircleInMap()
+          var amid =  new AddMapInfoDiagramm("mapContainerInfo",curDataYearFilter,parseInt(d3.select("#mapContainerInfo").style("width")),parseInt(d3.select("#mapContainerInfo").style("height")));
+          amid.addMapInfoDiagrammInDivTop5();
         }
       }
+
       console.time('addSlider')
       addSlider.addSlider('vis', width, listYear, updateFunction)
       console.timeEnd('addSlider')

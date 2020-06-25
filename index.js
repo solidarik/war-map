@@ -54,3 +54,6 @@ app.socket = serverSocket(server, protocolFunctions)
 //     console.info('cron job completed');
 // });
 // cronJob.start();
+// console.log('start parse');
+// var lp = require('./loadDatabase/loadPersons.js');
+// lp.parseExcel();
