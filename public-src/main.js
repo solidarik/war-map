@@ -1,7 +1,7 @@
 import { MapControl } from './mapControl'
 import { LegendControl } from './legendControl'
 import { ClientProtocol } from './clientProtocol'
-import { YearControl } from './yearControl'
+import { InfoControl } from './infoControl'
 
 import $ from 'jquery'
 window.app = {}
@@ -27,7 +27,7 @@ function startApp() {
   const protocol = ClientProtocol.create()
   const mapControl = MapControl.create()
   const legendControl = LegendControl.create()
-  const yearControl = YearControl.create()
+  const infoControl = InfoControl.create()
 
   protocol.subscribe('setCurrentYear', (year) => {
     console.log(`year from the server ${year}`)
@@ -46,10 +46,15 @@ function startApp() {
 
   legendControl.subscribe('legendClick', () => {
     mapControl.hidePopup()
+    infoControl.hide()
   })
 
   mapControl.subscribe('changeYear', (year) => {
     protocol.getDataByYear(year)
+  })
+
+  mapControl.subscribe('selectFeatures', (items) => {
+    infoControl.updateItems(items)
   })
 
   $(

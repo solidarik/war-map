@@ -33,7 +33,6 @@
   },
   "homepage": "https://github.com/solidarik/war-map#readme",
   "dependencies": {
-    "@material-ui/core": "latest",
     "@popperjs/core": "^2.4.2",
     "@types/shelljs": "^0.8.8",
     "axios": "latest",
@@ -66,9 +65,6 @@
     "passport-local": "latest",
     "proj4": "^2.6.2",
     "pug": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "react-range": "latest",
     "shelljs": "^0.8.4",
     "socket.io": "latest",
     "socket.io-emitter": "latest",
@@ -82,8 +78,6 @@
     "@babel/plugin-syntax-class-properties": "^7.8.3",
     "@babel/plugin-syntax-jsx": "^7.10.1",
     "@babel/preset-react": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
     "mocha": "latest",
     "parcel-bundler": "latest"
   },

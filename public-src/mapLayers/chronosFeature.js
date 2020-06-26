@@ -21,7 +21,7 @@ class ChronosFeature extends SuperFeature {
   }
 
   static getHtmlInfo(feature) {
-    return <div>'Not implemented'</div>
+    return 'Not implemented'
   }
 
   static fillChronosFeature(info) {
@@ -30,7 +30,11 @@ class ChronosFeature extends SuperFeature {
         ...elem,
         icon: ChronosFeature.getIcon(),
         popupFirst: strHelper.ellipseLongString(elem.brief),
-        popupSecond: dateHelper.twoDateToStr(elem.startDate, elem.endDate, elem.isOnlyYear),
+        popupSecond: dateHelper.twoDateToStr(
+          elem.startDate,
+          elem.endDate,
+          elem.isOnlyYear
+        ),
         popupThird: elem.place,
         oneLine: strHelper.ellipseLongString(elem.brief),
       }

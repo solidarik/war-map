@@ -437,7 +437,7 @@ class BattleFeature extends SuperFeature {
         }, 1000)
       }
       */
-    return <div>'Not implemented'</div>
+    return 'Not implemented'
   }
 
   static getInnerLayer(feature) {

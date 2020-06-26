@@ -44,7 +44,7 @@ class SuperFeature {
   }
 
   static getHtmlInfo(feature) {
-    return <div>'Not implemented'</div>
+    return 'Not implemented'
   }
 
   static getInnerLayer(feature) {

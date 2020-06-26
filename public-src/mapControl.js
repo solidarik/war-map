@@ -215,6 +215,10 @@ export class MapControl extends EventEmitter {
       }
 
       let htmlContent = ''
+      if (features.length > 0) {
+        this.emit('selectFeatures', features)
+      }
+
       if (features.length == 1) {
         const feature = features[0]
         const info = feature.get('info')
