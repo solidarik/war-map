@@ -19,6 +19,8 @@ import proj4 from 'proj4'
 import { register } from 'ol/proj/proj4'
 import { default as olPopup } from 'ol-ext/overlay/Popup'
 import { default as olAnimatedCluster } from 'ol-ext/layer/AnimatedCluster'
+import { default as olFeatureAnimationZoom } from 'ol-ext/featureanimation/Zoom'
+import { easeOut } from 'ol/easing'
 
 const MAP_PARAMS = {
   min_year: 1914,
@@ -110,8 +112,8 @@ export class MapControl extends EventEmitter {
     })
 
     function getStyleSimple(feature, _) {
-      const featureClass = feature.get('featureClass')
-      const style = featureClass.getStyleFeature(
+      const classFeature = feature.get('classFeature')
+      const style = classFeature.getStyleFeature(
         feature,
         window.map.view.getZoom()
       )
@@ -122,8 +124,8 @@ export class MapControl extends EventEmitter {
       const size = feature.get('features').length
       if (size == 1) {
         const oneFeature = feature.get('features')[0]
-        const featureClass = oneFeature.get('featureClass')
-        const style = featureClass.getStyleFeature(
+        const classFeature = oneFeature.get('classFeature')
+        const style = classFeature.getStyleFeature(
           oneFeature,
           window.map.view.getZoom()
         )
@@ -238,9 +240,16 @@ export class MapControl extends EventEmitter {
         console.log(`Cluster ${features.length} features`)
       }
 
+      const featureCoord = featureEvent.getGeometry().getFirstCoordinate()
+      clearInterval(window.pulse)
+
+      window.pulse = setInterval(() => {
+        this.pulseFeature(featureCoord)
+      }, 1000)
+
       //todo Showing HTML content
       window.map.popup.show(
-        featureEvent.getGeometry().getFirstCoordinate(),
+        featureCoord,
         `<div class="popupDiv">${htmlContent}</div>`
       )
       return
@@ -282,6 +291,36 @@ export class MapControl extends EventEmitter {
 
   static create() {
     return new MapControl()
+  }
+
+  pulseFeature(coord) {
+    const f = new olFeature(new olGeom.Point(coord))
+    f.setStyle(
+      new olStyle.Style({
+        image: new olStyle.Circle({
+          radius: 30,
+          stroke: new olStyle.Stroke({ color: 'red', width: 3 }),
+        }),
+        // image: new olStyle.RegularShape({
+        //   fill: new olStyle.Fill({
+        //     color: '#fff',
+        //   }),
+        //   stroke: new olStyle.Stroke({ color: 'black', width: 3 }),
+        //   points: 4,
+        //   radius: 80,
+        //   radius2: 0,
+        //   angle: 0,
+        // }),
+      })
+    )
+    this.map.animateFeature(
+      f,
+      new olFeatureAnimationZoom({
+        fade: easeOut,
+        duration: 1500,
+        easing: easeOut,
+      })
+    )
   }
 
   setCurrentYearFromServer(year) {
@@ -409,8 +448,13 @@ export class MapControl extends EventEmitter {
     window.map.popup.hide()
   }
 
+  clearPulse() {
+    clearInterval(window.pulse)
+  }
+
   changeYear(year) {
     this.hidePopup()
+    this.clearPulse()
     this.currentYear = year
     this.yearLayer.getSource().refresh()
     this.emit('changeYear', year)
@@ -435,7 +479,7 @@ export class MapControl extends EventEmitter {
   addFeature(item) {
     const ft = new olFeature({
       info: item,
-      featureClass: item.classFeature,
+      classFeature: item.classFeature,
       geometry: new olGeom.Point(item.point),
     })
 

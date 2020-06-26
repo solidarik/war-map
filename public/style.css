@@ -285,10 +285,13 @@ body {
   left: 0px;
   width: 100%;
   overflow: hidden;
-  max-height: 300px;
+  max-height: 600px;
   border-radius: 0px;
   color: white;
   background-color: rgba(40, 40, 40, 0.5) !important;
+}
+
+#events-info-content {
 }
 
 #yandex-container {
@@ -296,12 +299,6 @@ body {
   right: 0;
   bottom: 0;
   z-index: 2;
-}
-
-#events-info-content {
-  height: 200px;
-  width: 100%;
-  overflow-y: scroll;
 }
 
 #legend-container {
@@ -608,8 +605,23 @@ input.form-control {
   max-width: 300px;
   min-width: 100px;
   min-height: 1em;
-  background-color: white;
+  /* background-color: white; */
 }
+
+.ol-popup div {
+  border: none;
+}
+
+.ol-popup .anchor {
+  visibility: hidden;
+}
+
+.ol-popup.default > div {
+  border: none !important;
+  color: black !important;
+  background-color: rgba(40, 40, 40, 0.5) !important;
+}
+
 /* Image on popup */
 .ol-popup img {
   float: left;
@@ -617,51 +629,22 @@ input.form-control {
   max-width: 100px;
   max-height: 100px;
 }
+
+.ol-popup button {
+  background-color: transparent !important;
+}
+
+.ol-popup-content {
+  color: white;
+  font-weight: normal;
+}
 /* no image content tooltips */
 .ol-popup.tooltips img {
   display: none;
 }
 
-/* Custom orange style (tips) */
-.ol-popup.tips.orange {
-  border-color: #da7;
-  background-color: #eca;
-}
-.ol-popup.tips.orange .anchor::before {
-  border-color: #da7 transparent;
-}
-.ol-popup-middle.tips.orange .anchor::before {
-  border-color: transparent #da7;
-}
-
-/* orange style (default) */
-.ol-popup.default.orange {
-  border: 4px solid #f96;
-}
-.ol-popup.default.orange .anchor {
-  margin: -15px 18px;
-}
-.ol-popup.default.orange .anchor::after {
-  margin: 6px /*border:4 +2 px */ -9px;
-}
-.ol-popup-middle.default.orange .anchor::after {
-  margin: -9px 6px /*border:4 +2 px */;
-}
-.ol-popup.default.orange .anchor::before {
-  border-color: #f96 transparent;
-}
-.ol-popup-middle.default.orange .anchor::before {
-  border-color: transparent #da7;
-}
-.ol-popup.default.orange .closeBox {
-  background-color: rgba(255, 153, 102, 0.7);
-}
-.ol-popup.default.orange .closeBox:hover {
-  background-color: rgba(255, 153, 102, 1);
-}
-
 .popupDiv h1 {
-  font-size: 1.5em;
+  font-size: 1.4em;
 }
 
 .popupDiv h2 {
@@ -674,7 +657,6 @@ input.form-control {
 }
 
 .popupDiv span {
-  color: black;
   font-size: 1.2em;
   /* white-space: nowrap; */
 }

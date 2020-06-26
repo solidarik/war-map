@@ -74840,7 +74840,443 @@ ol_layer_AnimatedCluster.prototype.postanimate = function (e) {
 
 var _default = ol_layer_AnimatedCluster;
 exports.default = _default;
-},{"../util/ext":"mA78","ol/layer/Vector":"AGre","ol/source/Vector":"v3xZ","ol/Feature":"E2jd","ol/easing":"k82w","ol/extent":"L0Vw","ol/geom/Point":"IIKA","../util/getVectorContext":"qKNN"}],"p4qv":[function(require,module,exports) {
+},{"../util/ext":"mA78","ol/layer/Vector":"AGre","ol/source/Vector":"v3xZ","ol/Feature":"E2jd","ol/easing":"k82w","ol/extent":"L0Vw","ol/geom/Point":"IIKA","../util/getVectorContext":"qKNN"}],"pE3F":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _ext = _interopRequireDefault(require("../util/ext"));
+
+var _Object = _interopRequireDefault(require("ol/Object"));
+
+var _easing = require("ol/easing");
+
+var _Map = _interopRequireDefault(require("ol/Map"));
+
+var _extent = require("ol/extent");
+
+var _Observable = require("ol/Observable");
+
+var _Base = _interopRequireDefault(require("ol/layer/Base"));
+
+var _Style = _interopRequireDefault(require("ol/style/Style"));
+
+var _Circle = _interopRequireDefault(require("ol/style/Circle"));
+
+var _Stroke = _interopRequireDefault(require("ol/style/Stroke"));
+
+var _getVectorContext = _interopRequireDefault(require("../util/getVectorContext"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/*
+  Copyright (c) 2016 Jean-Marc VIGLINO, 
+  released under the CeCILL license (http://www.cecill.info/).
+*/
+
+/** Feature animation base class
+ * Use the {@link _ol_Map_#animateFeature} or {@link _ol_layer_Vector_#animateFeature} to animate a feature
+ * on postcompose in a map or a layer
+* @constructor
+* @fires animationstart
+* @fires animating
+* @fires animationend
+* @param {ol_featureAnimationOptions} options
+*	@param {Number} options.duration duration of the animation in ms, default 1000
+*	@param {bool} options.revers revers the animation direction
+*	@param {Number} options.repeat number of time to repeat the animation, default 0
+*	@param {ol.style.Style} options.hiddenStyle a style to display the feature when playing the animation
+*	  to be used to make the feature selectable when playing animation 
+*	  (@see {@link ../examples/map.featureanimation.select.html}), default the feature 
+*	  will be hidden when playing (and not selectable)
+*	@param {ol_easing_Function} options.fade an easing function used to fade in the feature, default none
+*	@param {ol_easing_Function} options.easing an easing function for the animation, default ol_easing_linear
+*/
+var ol_featureAnimation = function (options) {
+  options = options || {};
+  this.duration_ = typeof options.duration == 'number' ? options.duration >= 0 ? options.duration : 0 : 1000;
+  this.fade_ = typeof options.fade == 'function' ? options.fade : null;
+  this.repeat_ = Number(options.repeat);
+  var easing = typeof options.easing == 'function' ? options.easing : _easing.linear;
+  if (options.revers) this.easing_ = function (t) {
+    return 1 - easing(t);
+  };else this.easing_ = easing;
+  this.hiddenStyle = options.hiddenStyle;
+
+  _Object.default.call(this);
+};
+
+(0, _ext.default)(ol_featureAnimation, _Object.default);
+/** Hidden style: a transparent style
+ */
+
+ol_featureAnimation.hiddenStyle = new _Style.default({
+  image: new _Circle.default({}),
+  stroke: new _Stroke.default({
+    color: 'transparent'
+  })
+});
+/** Draw a geometry 
+* @param {olx.animateFeatureEvent} e
+* @param {ol.geom} geom geometry for shadow
+* @param {ol.geom} shadow geometry for shadow (ie. style with zIndex = -1)
+* @private
+*/
+
+ol_featureAnimation.prototype.drawGeom_ = function (e, geom, shadow) {
+  if (this.fade_) {
+    e.context.globalAlpha = this.fade_(1 - e.elapsed);
+  }
+
+  var style = e.style;
+
+  for (var i = 0; i < style.length; i++) {
+    // Prevent crach if the style is not ready (image not loaded)
+    try {
+      var vectorContext = e.vectorContext || (0, _getVectorContext.default)(e);
+      vectorContext.setStyle(style[i]);
+      if (style[i].getZIndex() < 0) vectorContext.drawGeometry(shadow || geom);else vectorContext.drawGeometry(geom);
+    } catch (e) {
+      /* ok */
+    }
+  }
+};
+/** Function to perform manipulations onpostcompose. 
+ * This function is called with an ol_featureAnimationEvent argument.
+ * The function will be overridden by the child implementation.    
+ * Return true to keep this function for the next frame, false to remove it.
+ * @param {ol_featureAnimationEvent} e
+ * @return {bool} true to continue animation.
+ * @api 
+ */
+
+
+ol_featureAnimation.prototype.animate = function ()
+/* e */
+{
+  return false;
+};
+/** An animation controler object an object to control animation with start, stop and isPlaying function.    
+ * To be used with {@link olx.Map#animateFeature} or {@link ol.layer.Vector#animateFeature}
+ * @typedef {Object} ol.animationControler
+ * @property {function} start - start animation.
+ * @property {function} stop - stop animation option arguments can be passed in animationend event.
+ * @property {function} isPlaying - return true if animation is playing.
+ */
+
+/** Animate feature on a map
+ * @function 
+ * @fires animationstart, animationend
+ * @param {ol.Feature} feature Feature to animate
+ * @param {ol_featureAnimation|Array<ol_featureAnimation>} fanim the animation to play
+ * @return {olx.animationControler} an object to control animation with start, stop and isPlaying function
+ */
+
+
+_Map.default.prototype.animateFeature = function (feature, fanim) {
+  // Animate on last visible layer
+  function animLayer(layers) {
+    for (var l, i = layers.length - 1; l = layers[i]; i--) {
+      if (l.getVisible()) {
+        if (l.getLayers) {
+          if (animLayer(l.getLayers().getArray())) return true;
+        } else {
+          var controller = l.animateFeature(feature, fanim);
+          return controller;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  return animLayer(this.getLayers().getArray());
+};
+/** Animate feature on a vector layer 
+ * @fires animationstart, animationend
+ * @param {ol.Feature} feature Feature to animate
+ * @param {ol_featureAnimation|Array<ol_featureAnimation>} fanim the animation to play
+ * @param {boolean} useFilter use the filters of the layer
+ * @return {olx.animationControler} an object to control animation with start, stop and isPlaying function
+ */
+
+
+_Base.default.prototype.animateFeature = function (feature, fanim, useFilter) {
+  var self = this;
+  var listenerKey; // Save style
+
+  var style = feature.getStyle();
+  var flashStyle = style || (this.getStyleFunction ? this.getStyleFunction()(feature) : null);
+  if (!flashStyle) flashStyle = [];
+  if (!(flashStyle instanceof Array)) flashStyle = [flashStyle]; // Structure pass for animating
+
+  var event = {
+    // Frame context
+    vectorContext: null,
+    frameState: null,
+    start: 0,
+    time: 0,
+    elapsed: 0,
+    extent: false,
+    // Feature information
+    feature: feature,
+    geom: feature.getGeometry(),
+    typeGeom: feature.getGeometry().getType(),
+    bbox: feature.getGeometry().getExtent(),
+    coord: (0, _extent.getCenter)(feature.getGeometry().getExtent()),
+    style: flashStyle
+  };
+  if (!(fanim instanceof Array)) fanim = [fanim]; // Remove null animations
+
+  for (var i = fanim.length - 1; i >= 0; i--) {
+    if (fanim[i].duration_ === 0) fanim.splice(i, 1);
+  }
+
+  var nb = 0,
+      step = 0; // Filter availiable on the layer
+
+  var filters = useFilter && this.getFilters ? this.getFilters() : [];
+
+  function animate(e) {
+    event.type = e.type;
+
+    try {
+      event.vectorContext = e.vectorContext || (0, _getVectorContext.default)(e);
+    } catch (e) {
+      /* nothing todo */
+    }
+
+    event.frameState = e.frameState;
+    event.inversePixelTransform = e.inversePixelTransform;
+
+    if (!event.extent) {
+      event.extent = e.frameState.extent;
+      event.start = e.frameState.time;
+      event.context = e.context;
+    }
+
+    event.time = e.frameState.time - event.start;
+    event.elapsed = event.time / fanim[step].duration_;
+    if (event.elapsed > 1) event.elapsed = 1; // Filter
+
+    e.context.save();
+    filters.forEach(function (f) {
+      if (f.get('active')) f.precompose(e);
+    });
+
+    if (this.getOpacity) {
+      e.context.globalAlpha = this.getOpacity();
+    } // Stop animation?
+
+
+    if (!fanim[step].animate(event)) {
+      nb++; // Repeat animation
+
+      if (nb < fanim[step].repeat_) {
+        event.extent = false;
+      } else if (step < fanim.length - 1) {
+        // newt step
+        fanim[step].dispatchEvent({
+          type: 'animationend',
+          feature: feature
+        });
+        step++;
+        nb = 0;
+        event.extent = false;
+      } else {
+        // the end
+        stop();
+      }
+    } else {
+      var animEvent = {
+        type: 'animating',
+        step: step,
+        start: event.start,
+        time: event.time,
+        elapsed: event.elapsed,
+        rotation: event.rotation || 0,
+        geom: event.geom,
+        coordinate: event.coord,
+        feature: feature
+      };
+      fanim[step].dispatchEvent(animEvent);
+      self.dispatchEvent(animEvent);
+    }
+
+    filters.forEach(function (f) {
+      if (f.get('active')) f.postcompose(e);
+    });
+    e.context.restore(); // tell OL3 to continue postcompose animation
+
+    e.frameState.animate = true;
+  } // Stop animation
+
+
+  function stop(options) {
+    (0, _Observable.unByKey)(listenerKey);
+    listenerKey = null;
+    feature.setStyle(style); // Send event
+
+    var event = {
+      type: 'animationend',
+      feature: feature
+    };
+
+    if (options) {
+      for (var i in options) if (options.hasOwnProperty(i)) {
+        event[i] = options[i];
+      }
+    }
+
+    fanim[step].dispatchEvent(event);
+    self.dispatchEvent(event);
+  } // Launch animation
+
+
+  function start(options) {
+    if (fanim.length && !listenerKey) {
+      listenerKey = self.on(['postcompose', 'postrender'], animate.bind(self)); // map or layer?
+
+      if (self.renderSync) self.renderSync();else self.changed(); // Hide feature while animating
+
+      feature.setStyle(fanim[step].hiddenStyle || ol_featureAnimation.hiddenStyle); // Send event
+
+      var event = {
+        type: 'animationstart',
+        feature: feature
+      };
+
+      if (options) {
+        for (var i in options) if (options.hasOwnProperty(i)) {
+          event[i] = options[i];
+        }
+      }
+
+      fanim[step].dispatchEvent(event);
+      self.dispatchEvent(event);
+    }
+  }
+
+  start(); // Return animation controler
+
+  return {
+    start: start,
+    stop: stop,
+    isPlaying: function () {
+      return !!listenerKey;
+    }
+  };
+};
+
+var _default = ol_featureAnimation;
+exports.default = _default;
+},{"../util/ext":"mA78","ol/Object":"fB8e","ol/easing":"k82w","ol/Map":"ZXtR","ol/extent":"L0Vw","ol/Observable":"TW86","ol/layer/Base":"o2hU","ol/style/Style":"JtXZ","ol/style/Circle":"D2sG","ol/style/Stroke":"dz0b","../util/getVectorContext":"qKNN"}],"p9rF":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.ol_featureAnimation_ZoomOut = exports.ol_featureAnimation_Zoom = void 0;
+
+var _ext = _interopRequireDefault(require("../util/ext"));
+
+var _FeatureAnimation = _interopRequireDefault(require("./FeatureAnimation"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/*
+  Copyright (c) 2016 Jean-Marc VIGLINO, 
+  released under the CeCILL license (http://www.cecill.info/).
+  
+*/
+
+/** Zoom animation: feature zoom in (for points)
+ * @constructor
+ * @extends {ol_featureAnimation}
+ * @param {ol_featureAnimationZoomOptions} options
+ *  @param {bool} options.zoomOut to zoom out
+ */
+var ol_featureAnimation_Zoom = function (options) {
+  options = options || {};
+
+  _FeatureAnimation.default.call(this, options);
+
+  this.set('zoomout', options.zoomOut);
+};
+
+exports.ol_featureAnimation_Zoom = ol_featureAnimation_Zoom;
+(0, _ext.default)(ol_featureAnimation_Zoom, _FeatureAnimation.default);
+/** Zoom animation: feature zoom out (for points)
+ * @constructor
+ * @extends {ol_featureAnimation}
+ * @param {ol_featureAnimationZoomOptions} options
+ */
+
+var ol_featureAnimation_ZoomOut = function (options) {
+  options = options || {};
+  options.zoomOut = true;
+  ol_featureAnimation_Zoom.call(this, options);
+};
+
+exports.ol_featureAnimation_ZoomOut = ol_featureAnimation_ZoomOut;
+(0, _ext.default)(ol_featureAnimation_ZoomOut, ol_featureAnimation_Zoom);
+/** Animate
+* @param {ol_featureAnimationEvent} e
+*/
+
+ol_featureAnimation_Zoom.prototype.animate = function (e) {
+  var fac = this.easing_(e.elapsed);
+
+  if (fac) {
+    if (this.get('zoomout')) fac = 1 / fac;
+    var style = e.style;
+    var i,
+        imgs,
+        sc = [];
+
+    for (i = 0; i < style.length; i++) {
+      imgs = style[i].getImage();
+
+      if (imgs) {
+        sc[i] = imgs.getScale(); // ol >= v6
+
+        if (e.type === 'postrender') imgs.setScale(sc[i] * fac / e.frameState.pixelRatio);else imgs.setScale(sc[i] * fac);
+      }
+    }
+
+    this.drawGeom_(e, e.geom);
+
+    for (i = 0; i < style.length; i++) {
+      imgs = style[i].getImage();
+      if (imgs) imgs.setScale(sc[i]);
+    }
+  }
+  /*
+    var sc = this.easing_(e.elapsed);
+    if (sc)
+    {	e.context.save()
+      console.log(e)
+        var ratio = e.frameState.pixelRatio;
+        var m = e.frameState.coordinateToPixelTransform;
+        var dx = (1/(sc)-1)* ratio * (m[0]*e.coord[0] + m[1]*e.coord[1] +m[4]);
+        var dy = (1/(sc)-1)*ratio * (m[2]*e.coord[0] + m[3]*e.coord[1] +m[5]);
+        e.context.scale(sc,sc);
+        e.context.translate(dx,dy);
+        this.drawGeom_(e, e.geom);
+      e.context.restore()
+    }
+  */
+
+
+  return e.time <= this.duration_;
+};
+
+var _default = ol_featureAnimation_Zoom;
+exports.default = _default;
+},{"../util/ext":"mA78","./FeatureAnimation":"pE3F"}],"p4qv":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -74879,6 +75315,10 @@ var _proj3 = require("ol/proj/proj4");
 var _Popup = _interopRequireDefault(require("ol-ext/overlay/Popup"));
 
 var _AnimatedCluster = _interopRequireDefault(require("ol-ext/layer/AnimatedCluster"));
+
+var _Zoom = _interopRequireDefault(require("ol-ext/featureanimation/Zoom"));
+
+var _easing = require("ol/easing");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -75000,8 +75440,8 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
     });
 
     function getStyleSimple(feature, _) {
-      var featureClass = feature.get('featureClass');
-      var style = featureClass.getStyleFeature(feature, window.map.view.getZoom());
+      var classFeature = feature.get('classFeature');
+      var style = classFeature.getStyleFeature(feature, window.map.view.getZoom());
       return style;
     }
 
@@ -75010,9 +75450,9 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
 
       if (size == 1) {
         var oneFeature = feature.get('features')[0];
-        var featureClass = oneFeature.get('featureClass');
+        var classFeature = oneFeature.get('classFeature');
 
-        var _style = featureClass.getStyleFeature(oneFeature, window.map.view.getZoom());
+        var _style = classFeature.getStyleFeature(oneFeature, window.map.view.getZoom());
 
         return _style;
       }
@@ -75112,10 +75552,15 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
         });
         htmlContent += "</table>";
         console.log("Cluster ".concat(features.length, " features"));
-      } //todo Showing HTML content
+      }
 
+      var featureCoord = featureEvent.getGeometry().getFirstCoordinate();
+      clearInterval(window.pulse);
+      window.pulse = setInterval(function () {
+        _this.pulseFeature(featureCoord);
+      }, 1000); //todo Showing HTML content
 
-      window.map.popup.show(featureEvent.getGeometry().getFirstCoordinate(), "<div class=\"popupDiv\">".concat(htmlContent, "</div>"));
+      window.map.popup.show(featureCoord, "<div class=\"popupDiv\">".concat(htmlContent, "</div>"));
       return;
     });
     map.on('moveend', function () {
@@ -75150,6 +75595,35 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
   }
 
   _createClass(MapControl, [{
+    key: "pulseFeature",
+    value: function pulseFeature(coord) {
+      var f = new _Feature.default(new olGeom.Point(coord));
+      f.setStyle(new olStyle.Style({
+        image: new olStyle.Circle({
+          radius: 30,
+          stroke: new olStyle.Stroke({
+            color: 'red',
+            width: 3
+          })
+        }) // image: new olStyle.RegularShape({
+        //   fill: new olStyle.Fill({
+        //     color: '#fff',
+        //   }),
+        //   stroke: new olStyle.Stroke({ color: 'black', width: 3 }),
+        //   points: 4,
+        //   radius: 80,
+        //   radius2: 0,
+        //   angle: 0,
+        // }),
+
+      }));
+      this.map.animateFeature(f, new _Zoom.default({
+        fade: _easing.easeOut,
+        duration: 1500,
+        easing: _easing.easeOut
+      }));
+    }
+  }, {
     key: "setCurrentYearFromServer",
     value: function setCurrentYearFromServer(year) {
       this.changeYear(year);
@@ -75270,9 +75744,15 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       window.map.popup.hide();
     }
   }, {
+    key: "clearPulse",
+    value: function clearPulse() {
+      clearInterval(window.pulse);
+    }
+  }, {
     key: "changeYear",
     value: function changeYear(year) {
       this.hidePopup();
+      this.clearPulse();
       this.currentYear = year;
       this.yearLayer.getSource().refresh();
       this.emit('changeYear', year);
@@ -75303,7 +75783,7 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
     value: function addFeature(item) {
       var ft = new _Feature.default({
         info: item,
-        featureClass: item.classFeature,
+        classFeature: item.classFeature,
         geometry: new olGeom.Point(item.point)
       });
       var source = item.simple ? this.simpleSource : this.clusterSource.getSource();
@@ -75486,7 +75966,7 @@ var YearControl = /*#__PURE__*/function (_SuperCustomControl) {
 
   return YearControl;
 }(SuperCustomControl);
-},{"ol":"tUV8","ol/style":"TZKB","ol/geom":"z54l","ol/Feature":"E2jd","ol/proj":"VAQc","ol/control":"bioX","ol/layer/Tile":"PqrZ","ol/layer/Vector":"AGre","ol/source":"Vrgk","ol/tilegrid":"gNrJ","ol/interaction":"wWIt","./eventEmitter":"STwH","proj4":"HchQ","ol/proj/proj4":"IEbX","ol-ext/overlay/Popup":"ScDZ","ol-ext/layer/AnimatedCluster":"NY4m"}],"LZLq":[function(require,module,exports) {
+},{"ol":"tUV8","ol/style":"TZKB","ol/geom":"z54l","ol/Feature":"E2jd","ol/proj":"VAQc","ol/control":"bioX","ol/layer/Tile":"PqrZ","ol/layer/Vector":"AGre","ol/source":"Vrgk","ol/tilegrid":"gNrJ","ol/interaction":"wWIt","./eventEmitter":"STwH","proj4":"HchQ","ol/proj/proj4":"IEbX","ol-ext/overlay/Popup":"ScDZ","ol-ext/layer/AnimatedCluster":"NY4m","ol-ext/featureanimation/Zoom":"p9rF","ol/easing":"k82w"}],"LZLq":[function(require,module,exports) {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -93561,14 +94041,32 @@ var InfoControl = /*#__PURE__*/function (_EventEmitter) {
 
     _this = _super.call(this); //first must
 
+    _this.listDiv = $('#events-info-content')[0];
+    _this.imgDiv = $('#event-image-div')[0];
     window.infoControl = _assertThisInitialized(_this);
     return _this;
   }
 
   _createClass(InfoControl, [{
+    key: "showItemInfo",
+    value: function showItemInfo(item) {
+      var classFeature = item.get('classFeature');
+      console.log("show item info, classFeature: ".concat(classFeature));
+      this.listDiv.innerHTML = classFeature.getHtmlInfo();
+    }
+  }, {
+    key: "showItemList",
+    value: function showItemList(items) {
+      console.log("show item list: ".concat(items.length));
+    }
+  }, {
     key: "updateItems",
     value: function updateItems(items) {
-      console.log("update items: ".concat(JSON.stringify(items)));
+      if (1 == items.length) {
+        this.showItemInfo(items[0]);
+      } else {
+        this.showItemList(items);
+      }
     }
   }], [{
     key: "create",

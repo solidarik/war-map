@@ -16,3 +16,5 @@ dist/
 node_modules/
 geacron/
 loadDatabase/python/out_*
+*-copy.*
+* - copy.*
