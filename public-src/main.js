@@ -51,6 +51,7 @@ function startApp() {
 
   mapControl.subscribe('changeYear', (year) => {
     protocol.getDataByYear(year)
+    infoControl.hide()
   })
 
   infoControl.subscribe('hide', () => {
