@@ -688,6 +688,10 @@ input.form-control {
   visibility: hidden;
 }
 
+.click-element {
+  cursor: pointer;
+}
+
 .ol-popup.default > div {
   border: none !important;
   color: black !important;

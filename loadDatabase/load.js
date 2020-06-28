@@ -61,17 +61,17 @@ Promise.resolve(true)
   //     mediator: agreementsJsonMediator,
   //   })
   // })
-  // .then(() => {
-  //   return dbHelper.clearDb('battles')
-  // })
-  // .then(() => {
-  //   return dbHelper.saveFilesFrom({
-  //     source: 'python/out_battles',
-  //     procdir: 'python/out_battles_process',
-  //     errdir: 'python/out_battles_errors',
-  //     mediator: battlesJsonMediator,
-  //   })
-  // })
+  .then(() => {
+    return dbHelper.clearDb('battles')
+  })
+  .then(() => {
+    return dbHelper.saveFilesFrom({
+      source: 'python/out_battles',
+      procdir: 'python/out_battles_process',
+      errdir: 'python/out_battles_errors',
+      mediator: battlesJsonMediator,
+    })
+  })
   .then(() => {
     return dbHelper.clearDb('persons')
   })

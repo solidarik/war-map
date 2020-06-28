@@ -56,7 +56,15 @@ class BattlesJsonMediator extends SuperJsonMediator {
         maps.push(map)
       })
 
-      const all_coords = this.getAllCoordsFromMap(maps[0])
+      let centerOfFirstMaps
+      let hullCoords = []
+      for (let i = 0; i < maps.length; i++) {
+        const all_coords = this.getAllCoordsFromMap(maps[i])
+        hullCoords.push(this.getHullCoords(all_coords))
+        if (i === 0) {
+          centerOfFirstMaps = this.getCenterOfCoords(all_coords)
+        }
+      }
 
       const newJson = {
         ...json,
@@ -64,8 +72,8 @@ class BattlesJsonMediator extends SuperJsonMediator {
         endDate: moment.utc(json.endDate, 'DD.MM.YYYY'),
         isWinnerUSSR: strHelper.compareEngLanguage(json.winner, 'CCCР'),
         isWinnerGermany: strHelper.compareEngLanguage(json.winner, 'Германия'),
-        point: this.getCenterOfCoords(all_coords),
-        hullCoords: this.getHullCoords(all_coords),
+        point: centerOfFirstMaps,
+        hullCoords: hullCoords,
         filename: fileHelper.getFileNameFromPath(filePath),
         maps: maps,
       }

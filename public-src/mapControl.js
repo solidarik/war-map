@@ -6,7 +6,7 @@ import {
   fromLonLat,
   toLonLat,
   get as getProjection,
-  transformExtent,
+  //transformExtent,
 } from 'ol/proj'
 import * as olControl from 'ol/control'
 import { default as olLayer } from 'ol/layer/Tile'
@@ -21,8 +21,9 @@ import { default as olPopup } from 'ol-ext/overlay/Popup'
 import { default as olAnimatedCluster } from 'ol-ext/layer/AnimatedCluster'
 import { default as olFeatureAnimationZoom } from 'ol-ext/featureanimation/Zoom'
 import { easeOut } from 'ol/easing'
-import TileSource from 'ol/source/Tile'
 import ClassHelper from '../helper/classHelper'
+import StrHelper from '../helper/strHelper'
+import BattleFeature from './mapLayers/battleFeature'
 
 const MAP_PARAMS = {
   min_year: 1914,
@@ -61,16 +62,6 @@ export class MapControl extends EventEmitter {
         }),
         url:
           'http://vec0{1-4}.maps.yandex.net/tiles?l=map&v=4.55.2&z={z}&x={x}&y={y}&scale=2&lang=ru_RU',
-        // url:
-        //   'http://vec0{1-4}.maps.yandex.net/tiles?l=map&v=4.55.2&x={x}&y={y}&z={z}',
-        // tileUrlFunction: (tileCoord, pixelRatio, projection) => {
-        //   return this.getYandexLayerUrl.call(
-        //     this,
-        //     tileCoord,
-        //     pixelRatio,
-        //     projection
-        //   )
-        // },
       }),
     })
 
@@ -180,16 +171,29 @@ export class MapControl extends EventEmitter {
     this.simpleSource = simpleSource
     map.addLayer(simpleLayer)
 
+    let battleMapSource = new olSource.Vector()
+    let battleMapLayer = new olLayerVector({
+      source: battleMapSource,
+      zIndex: 100,
+      updateWithAnimating: true,
+      updateWhileInteracting: true,
+    })
+    this.battleMapLayer = battleMapLayer
+    this.battleMapSource = battleMapSource
+    map.addLayer(battleMapLayer)
+
     // Hull Source
     let hullSource = new olSource.Vector()
     let hullLayer = new olLayerVector({
       source: hullSource,
-      zIndex: 2,
-      style: getStyleHull,
+      opacity: 0.5,
+      zIndex: 10,
+      updateWithAnimating: true,
+      updateWhileInteracting: true,
     })
     this.hullLayer = hullLayer
     this.hullSource = hullSource
-    map.addLayer(hullLayre)
+    map.addLayer(hullLayer)
 
     // Cluster Source
     let clusterSource = new olSource.Cluster({
@@ -250,7 +254,7 @@ export class MapControl extends EventEmitter {
         features.forEach((feature) => {
           const info = feature.get('info')
           htmlContent += `<tr>
-            <td><img src="${info.icon}" alt="Girl in a jacket"></td>
+            <td><img src="${info.icon}" alt="${info.oneLine}"></td>
             <td><span>${info.oneLine}</span></td>
           </tr>`
         })
@@ -263,11 +267,12 @@ export class MapControl extends EventEmitter {
       this.currentFeatureCoord = featureCoord
       this.showPulse()
 
-      //todo Showing HTML content
-      window.map.popup.show(
-        featureCoord,
-        `<div class="popupDiv">${htmlContent}</div>`
-      )
+      if (featureEvent.get('classFeature') !== BattleFeature) {
+        window.map.popup.show(
+          featureCoord,
+          `<div class="popupDiv">${htmlContent}</div>`
+        )
+      }
       return
     })
 
@@ -308,9 +313,99 @@ export class MapControl extends EventEmitter {
     return new MapControl()
   }
 
+  createGeom(mo) {
+    let geom
+    switch (mo.kind) {
+      case 'Point':
+        geom = new ol.geom.Point(mo.coords)
+        break
+      case 'LineString':
+        geom = new ol.geom.LineString(mo.coords)
+        break
+      case 'Polygon':
+        geom = new ol.geom.Polygon(mo.coords)
+        break
+    }
+    return geom
+  }
+
+  showMapContour(info) {
+    const features = info.map.features
+    if (!features) return
+
+    this.hullSource.clear()
+    this.battleMapSource.clear()
+    console.log(`>>>>>>>> showMapContour ${info.hullCoords}`)
+
+    let all_coords = []
+    for (let i = 0; i < features.length; i++) {
+      let geom = features[i].geometry
+      let style_prop = features[i].properties
+      let style = {}
+      if (style_prop.fill) {
+        style.fill = new olStyle.Fill({
+          color: StrHelper.hexToRgbA(
+            style_prop.fill,
+            style_prop['fill-opacity']
+          ),
+        })
+      }
+      if (style_prop.stroke) {
+        style.stroke = new olStyle.Stroke({
+          color: StrHelper.hexToRgbA(
+            style_prop.stroke,
+            style_prop['stroke-opacity']
+          ),
+          width: style_prop['stroke-width'],
+        })
+      }
+      var coords = []
+      if (geom.type === 'Point') {
+        coords = new fromLonLat(geom.coordinates)
+        all_coords.push(coords)
+      } else {
+        let srcCoords =
+          geom.type === 'Polygon' ? geom.coordinates[0] : geom.coordinates
+        for (let j = 0; j < srcCoords.length; j++) {
+          let point = new fromLonLat(srcCoords[j])
+          coords.push(point)
+          all_coords.push(point)
+        }
+        if (geom.type === 'Polygon') {
+          coords = [coords]
+        }
+      }
+      let ft = new olFeature({
+        uid: 100,
+        name: 'test',
+        geometry: this.createGeom({ kind: geom.type, coords: coords }),
+      })
+      ft.setStyle(new olStyle.Style(style))
+      this.battleMapSource.addFeature(ft)
+
+      //обрамление
+      let polygon = this.createGeom({
+        kind: 'Polygon',
+        coords: [info.hullCoords],
+      })
+      polygon.scale(1.03, 1.03)
+      this.hullSource.addFeature(
+        new olFeature({
+          uid: 1000,
+          name: 'test2',
+          geometry: polygon,
+        })
+      )
+    }
+
+    this.battleMapLayer.setVisible(true)
+    this.hullLayer.setVisible(true)
+  }
+
   showAdditionalInfo(info) {
     this.emit('showAdditionalInfo', undefined)
     this.hidePulse()
+    this.showMapContour(info)
     this.simpleLayer.setVisible(false)
     this.clusterLayer.setVisible(false)
     ClassHelper.addClass(
@@ -320,12 +415,15 @@ export class MapControl extends EventEmitter {
   }
 
   returnNormalMode() {
+    this.emit('returnNormalMode', undefined)
     ClassHelper.removeClass(
       document.getElementById('year-control'),
       'hide-element'
     )
 
     this.showPulse()
+    this.battleMapLayer.setVisible(false)
+    this.hullLayer.setVisible(false)
     this.simpleLayer.setVisible(true)
     this.clusterLayer.setVisible(true)
   }

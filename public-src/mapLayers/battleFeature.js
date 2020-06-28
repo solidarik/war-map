@@ -1,9 +1,8 @@
-import convexHull from 'monotone-convex-hull-2d'
-import strHelper from '../../helper/strHelper'
-import dateHelper from '../../helper/dateHelper'
-import imageHelper from '../../helper/imageHelper'
+import StrHelper from '../../helper/strHelper'
+import DateHelper from '../../helper/dateHelper'
 import SuperFeature from './superFeature'
 import * as olStyle from 'ol/style'
+import ImageHelper from '../../helper/imageHelper'
 
 class BattleFeature extends SuperFeature {
   static getIcon() {
@@ -42,7 +41,7 @@ class BattleFeature extends SuperFeature {
     return res.map((elem) => {
       return {
         ...elem,
-        popupFirst: dateHelper.twoDateToStr(elem.startDate, elem.endDate),
+        popupFirst: DateHelper.twoDateToStr(elem.startDate, elem.endDate),
         popupSecond: elem.name,
         oneLine: elem.name,
       }
@@ -101,8 +100,8 @@ class BattleFeature extends SuperFeature {
   static getIconStyleFeature(feature, zoom) {
     const info = feature.get('info')
 
-    const allyTroops = strHelper.getNumber(info.ally_troops)
-    const enemTroops = strHelper.getNumber(info.enem_troops)
+    const allyTroops = StrHelper.getNumber(info.ally_troops)
+    const enemTroops = StrHelper.getNumber(info.enem_troops)
     const starSizes = [
       { count: 2500, size: 1 },
       { count: 5000, size: 1 },
@@ -149,8 +148,8 @@ class BattleFeature extends SuperFeature {
   static getStarStyleFeature(feature, zoom) {
     const info = feature.get('info')
 
-    const allyTroops = strHelper.getNumber(info.ally_troops)
-    const enemTroops = strHelper.getNumber(info.enem_troops)
+    const allyTroops = StrHelper.getNumber(info.ally_troops)
+    const enemTroops = StrHelper.getNumber(info.enem_troops)
     let starSize = 4
 
     const starSizes = [
@@ -244,8 +243,8 @@ class BattleFeature extends SuperFeature {
     }
 
     const getComparison = (one, two) => {
-      const oneNumber = strHelper.getNumber(one)
-      const twoNumber = strHelper.getNumber(two)
+      const oneNumber = StrHelper.getNumber(one)
+      const twoNumber = StrHelper.getNumber(two)
       //if (oneNumber * twoNumber == 0) return '<td></td>'
       const maxNumber = Math.max(oneNumber, twoNumber)
 
@@ -257,7 +256,7 @@ class BattleFeature extends SuperFeature {
           aria-valuenow="${number}"
           aria-valuemin="0"
           aria-valuemax="${maxNumber}">${
-          input > 0 ? strHelper.numberWithCommas(input) : input
+          input > 0 ? StrHelper.numberWithCommas(input) : input
         }
         </div></div>`
       }
@@ -288,11 +287,11 @@ class BattleFeature extends SuperFeature {
 
     // ${getTdWithClassName(
     //   '',
-    //   one > 0 ? strHelper.numberWithCommas(one) : one
+    //   one > 0 ? StrHelper.numberWithCommas(one) : one
     // )}
     // ${getTdWithClassName(
     //   'right-align',
-    //   two > 0 ? strHelper.numberWithCommas(two) : two
+    //   two > 0 ? StrHelper.numberWithCommas(two) : two
     // )}
     return ''
   }
@@ -325,7 +324,7 @@ class BattleFeature extends SuperFeature {
     const imgUrl = window.CURRENT_ITEM.imgUrl
     if (!imgUrl) return
 
-    this._resizeImage(imgUrl, 300, (canvas) => {
+    ImageHelper.resizeImage(imgUrl, 300, (canvas) => {
       imgDiv.appendChild(canvas)
     })
   }
@@ -335,14 +334,14 @@ class BattleFeature extends SuperFeature {
     let delim = ''
     for (let i = 0; i < info.maps.length; i++) {
       html += `${delim}
-        <span class="event-feature-color" onclick="window.BattleFeature.showContour(${i})">${
+        <span class="click-element event-feature-color" onclick="window.BattleFeature.showContour(${i})">${
         info.maps.length == 1 ? 'Вект.' : i + 1
       }</span>`
       delim = '&nbsp'
     }
     if (info.imgUrl) {
       html += `${delim}
-        <span class="event-feature-color" onclick="window.BattleFeature.showImage()">Граф.</span>`
+        <span class="click-element event-feature-color" onclick="window.BattleFeature.showImage()">Граф.</span>`
     }
 
     return `<td>${caption}</td><td>${html}</td>`
@@ -351,7 +350,7 @@ class BattleFeature extends SuperFeature {
   static getHtmlInfo(info) {
     window.CURRENT_ITEM = info
 
-    const dates = dateHelper.twoDateToStr(info.startDate, info.endDate)
+    const dates = DateHelper.twoDateToStr(info.startDate, info.endDate)
     const hCell = this.getHtmlCell
 
     const oneSide = this.arrayToText(info.allies)
@@ -464,33 +463,6 @@ class BattleFeature extends SuperFeature {
     throw 'Not implemented'
   }
 
-  static getAllCoordsFromMap(map) {
-    let all_coords = []
-
-    for (let i = 0; i < map.features.length; i++) {
-      let geom = map.features[i].geometry
-      if (geom.type === 'Point') {
-        all_coords.push(new ol.proj.fromLonLat(geom.coordinates))
-      } else {
-        let srcCoords =
-          geom.type === 'Polygon' ? geom.coordinates[0] : geom.coordinates
-        for (let j = 0; j < srcCoords.length; j++) {
-          all_coords.push(new ol.proj.fromLonLat(srcCoords[j]))
-        }
-      }
-    }
-    return all_coords
-  }
-
-  getCenterOfMap(map) {
-    if (!map.features) {
-      return null
-    }
-
-    const all_coords = this.getAllCoordsFromMap(map)
-    return this.getMedianXY(all_coords)
-  }
-
   setActiveEvent(featureEvent) {
     this.activeFeatureEvent = featureEvent
     this.isShowContour = false
@@ -520,91 +492,6 @@ class BattleFeature extends SuperFeature {
     const c = 'hover-on-text'
     if (!elem) return
     b ? elem.classList.add(c) : elem.classList.remove(c)
-  }
-
-  showActiveEventContour() {
-    const ft = this.activeFeatureEvent
-
-    this.isShowContour = !this.isShowContour
-    this.battlesSource.clear()
-    this.hullSource.clear()
-
-    if (this.isShowContour) {
-      this.showEventContour(ft.get('eventMap'))
-    }
-  }
-
-  showEventContour(map) {
-    this.battlesSource.clear()
-    this.hullSource.clear()
-
-    let features = map.features
-
-    if (!features) {
-      return
-    }
-
-    let all_coords = []
-    for (let i = 0; i < features.length; i++) {
-      let geom = features[i].geometry
-      let style_prop = features[i].properties
-      let style = {}
-      if (style_prop.fill) {
-        style.fill = new olStyle.Fill({
-          color: strHelper.hexToRgbA(
-            style_prop.fill,
-            style_prop['fill-opacity']
-          ),
-        })
-      }
-      if (style_prop.stroke) {
-        style.stroke = new olStyle.Stroke({
-          color: strHelper.hexToRgbA(
-            style_prop.stroke,
-            style_prop['stroke-opacity']
-          ),
-          width: style_prop['stroke-width'],
-        })
-      }
-      var coords = []
-      if (geom.type === 'Point') {
-        coords = new ol.proj.fromLonLat(geom.coordinates)
-        all_coords.push(coords)
-      } else {
-        let srcCoords =
-          geom.type === 'Polygon' ? geom.coordinates[0] : geom.coordinates
-        for (let j = 0; j < srcCoords.length; j++) {
-          let point = new ol.proj.fromLonLat(srcCoords[j])
-          coords.push(point)
-          all_coords.push(point)
-        }
-        if (geom.type === 'Polygon') {
-          coords = [coords]
-        }
-      }
-      let ft = new ol.Feature({
-        uid: 100,
-        name: 'test',
-        geometry: this.createGeom({ kind: geom.type, coords: coords }),
-      })
-      ft.setStyle(new olStyle.Style(style))
-      this.battlesSource.addFeature(ft)
-    }
-
-    let hull_indexes = convexHull(all_coords)
-    let hull_coords = []
-    hull_indexes.forEach((idx) => {
-      hull_coords.push(all_coords[idx])
-    })
-
-    let polygon = this.createGeom({ kind: 'Polygon', coords: [hull_coords] })
-    polygon.scale(1.03, 1.03)
-    let ft = new ol.Feature({
-      uid: 1000,
-      name: 'test2',
-      geometry: polygon,
-    })
-    this.hullSource.addFeature(ft)
   }
 }
 
