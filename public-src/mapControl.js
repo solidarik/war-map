@@ -335,7 +335,6 @@ export class MapControl extends EventEmitter {
 
     this.hullSource.clear()
     this.battleMapSource.clear()
-    console.log(`>>>>>>>> showMapContour ${info.hullCoords}`)
 
     let all_coords = []
     for (let i = 0; i < features.length; i++) {

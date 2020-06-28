@@ -53,10 +53,6 @@ function startApp() {
     protocol.getDataByYear(year)
   })
 
-  mapControl.subscribe('mapclick', () => {
-    infoControl.hide()
-  })
-
   infoControl.subscribe('hide', () => {
     mapControl.returnNormalMode()
   })

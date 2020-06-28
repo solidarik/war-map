@@ -46,10 +46,6 @@ class SuperFeature {
   static getHtmlInfo(feature) {
     return 'Not implemented'
   }
-
-  static getInnerLayer(feature) {
-    throw 'Not implemented'
-  }
 }
 
 module.exports = SuperFeature

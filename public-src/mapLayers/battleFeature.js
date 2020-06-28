@@ -319,14 +319,28 @@ class BattleFeature extends SuperFeature {
   }
 
   static showImage() {
-    const imgDiv = document.getElementById('event-image-div')
-    imgDiv.innerHTML = ''
-    const imgUrl = window.CURRENT_ITEM.imgUrl
-    if (!imgUrl) return
+    const feature = window.CURRENT_ITEM
+    if (!feature.imgUrl) return
 
-    ImageHelper.resizeImage(imgUrl, 300, (canvas) => {
-      imgDiv.appendChild(canvas)
-    })
+    $('#imgModalLabel').html(feature.name)
+    $('.modal-body').html(`
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+    `)
+    $('#imgModal').modal()
+
+    setTimeout(() => {
+      ImageHelper.resizeImage(
+        feature.imgUrl,
+        $('.modal-body').width(),
+        (canvas) => {
+          $('.modal-body').html(canvas)
+        }
+      )
+    }, 1000)
   }
 
   static getMapsCell(caption, info) {
@@ -353,12 +367,18 @@ class BattleFeature extends SuperFeature {
     const dates = DateHelper.twoDateToStr(info.startDate, info.endDate)
     const hCell = this.getHtmlCell
 
-    const oneSide = this.arrayToText(info.allies)
-    const twoSide = this.arrayToText(info.enemies)
+    let oneSide = this.arrayToText(info.allies)
+    let twoSide = this.arrayToText(info.enemies)
 
     const oneSideColor = this.getColorBySideName(oneSide, 'rgba(0,0,255,0.5)')
     const twoSideColor = this.getColorBySideName(twoSide, 'rgba(0,255,0,0.5)')
     BattleFeature.sideColors = [oneSideColor, twoSideColor]
+
+    if (-1 < oneSide.indexOf(info.winner)) {
+      oneSide += ' (победитель)'
+    } else if (-1 < twoSide.indexOf(info.winner)) {
+      twoSide += ' (победитель)'
+    }
 
     let tData = this.getMapsCell('Карты событий', info)
     tData += hCell('Участники', oneSide, twoSide)
@@ -400,67 +420,12 @@ class BattleFeature extends SuperFeature {
           ${tData}
         </tbody>
       </table>
+      <div class="source-info">
+        <a target='_blank' rel='noopener noreferrer' href=${info.srcUrl}>Источник информации</a>
+      </div>
     </div>
     `
-
     return html
-    /*
-        const eventId = info.id
-        let table2 = `
-        <table class="table table-sm table-borderless" id="table-control">
-          <tr><td
-            id="showEventContol"
-            onclick="window.map.showActiveEventContour()"
-            onmouseenter="window.map.setCursorPointer(this, true);"
-            onmouseleave="window.map.setCursorPointer(this, false);">Показать/скрыть контур</td></tr>
-          <tr><td
-            id="showMapControl"
-            onclick="window.map.showActiveEventMap()"
-            onmouseenter="window.map.setCursorPointer(this, true);"
-            onmouseleave="window.map.setCursorPointer(this, false);">Показать карту</td></tr>
-        </table>`
-        content += table2
-      }
-
-      if ('' == content) return
-
-      if (info.srcUrl && 0 < info.srcUrl.length) {
-        content +=
-          '<span class="small-silver-text"><a href="' +
-          info.srcUrl +
-          '" target="_blank">Источник</a></span>'
-      }
-
-      const coords = featureEvent.getGeometry().getFirstCoordinate()
-      window.map.popup.show(coords, content)
-
-      /* Show Big Image */
-    /*
-      if (isHit && isExistUrl) {
-        window.map.showEventContour(info.eventMap)
-
-        $('#imgModalLabel').html(info.name)
-        $('.modal-body').html(`
-        <div class="d-flex justify-content-center">
-          <div class="spinner-border" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div>
-        `)
-        $('#imgModal').modal()
-
-        setTimeout(() => {
-          resizeImage(imgUrl, $('.modal-body').width(), canvas => {
-            $('.modal-body').html(canvas)
-          })
-        }, 1000)
-      }
-      */
-    return 'Not implemented'
-  }
-
-  static getInnerLayer(feature) {
-    throw 'Not implemented'
   }
 
   setActiveEvent(featureEvent) {
