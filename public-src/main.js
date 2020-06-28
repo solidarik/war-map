@@ -55,6 +55,7 @@ function startApp() {
 
   infoControl.subscribe('hide', () => {
     mapControl.returnNormalMode()
+    mapControl.hidePulse()
   })
 
   mapControl.subscribe('selectFeatures', (items) => {

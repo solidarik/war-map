@@ -299,6 +299,7 @@ body {
 #events-info-container a {
   color: white;
   font-size: 1em;
+  margin-left: 0.5em;
 }
 
 #events-info-content::-webkit-scrollbar-track {
