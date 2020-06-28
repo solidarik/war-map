@@ -63,8 +63,14 @@ class StrHelper {
     throw new Error(`Bad Hex ${hex}`)
   }
 
+  static numberWithCommas(input, comma = ',') {
+    return input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, comma)
+  }
+
   static getNumber(value) {
     if (value == undefined) return 0
+    value = this.getAllNumbers(value)
+    0 < value.length && (value = value[0])
     const tryFloat = parseFloat(value)
     const isNaN =
       typeof Number.isNaN !== 'undefined'
@@ -73,6 +79,23 @@ class StrHelper {
         ? true
         : false
     return isNaN ? 0 : tryFloat
+  }
+
+  static getAllNumbers(input, floatDelim = '.') {
+    // К примеру, есть строка: '123 adsf asdf  234324 22'
+    // Получаем из нее массив строковых чисел: ['123', '234324', '22']"""
+    input = input.replace('\n', '')
+    input = input.replace(',', floatDelim)
+    input = input.replace('.', floatDelim)
+    //return input.replace(/[(][^)]*[)]+/g, '')
+    const r = new RegExp(`[0-9${floatDelim}]+`, 'g')
+    let result = []
+    let m
+    while ((m = r.exec(input)) != null) {
+      result.push(m[0])
+    }
+    // let result = input.match(regexp) || []
+    return result
   }
 
   static varToString(varObj) {

@@ -32,11 +32,13 @@ block content
   div.content(role="content" id='content' dragable='true')
     div.map(class='fill panel panel-default' id='map' data-role='map')
     div(id='legend-container')
-      button(id='legend-button' class='btn btn-dark btn-small' type='button')
+      button(id='legend-button' class='right-corner-button btn btn-dark btn-small' type='button')
           span(id='legend-span' class='mdi mdi-format-list-bulleted mdi-24px')
       div(id='legend-div' class='noselect legend-div-hide')
 
     div(id='events-info-container')
+      button(id='events-info-closeButton' class='right-corner-button btn btn-dark btn-small' type='button')
+          span(id='events-info-span' class='mdi mdi-window-close mdi-16px')
       div(id='events-info-content' class='table-responsive')
 
   +footer()

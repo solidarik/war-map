@@ -156,15 +156,20 @@ body {
   padding: 0px;
 }
 
-.yandex-metrica {
+#yandex-container {
   position: absolute;
-  right: 0px;
-  bottom: 0px;
+  right: 0;
+  top: 0;
+  z-index: 2;
 }
 
 @media screen and (max-width: 768px) {
   .nav {
     display: inline-block;
+  }
+
+  #yandex-container {
+    visibility: hidden;
   }
 }
 
@@ -284,21 +289,83 @@ body {
   bottom: 0px;
   left: 0px;
   width: 100%;
-  overflow: hidden;
-  max-height: 600px;
-  border-radius: 0px;
+  overflow-y: auto;
+  border-radius: 0;
+  /* background-color: rgba(180, 180, 180, 0.6) !important; */
   color: white;
   background-color: rgba(40, 40, 40, 0.5) !important;
 }
 
-#events-info-content {
+#events-info-content::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #f5f5f5;
 }
 
-#yandex-container {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
+#events-info-content::-webkit-scrollbar {
+  width: 6px;
+  background-color: #f5f5f5;
+}
+
+#events-info-content::-webkit-scrollbar-thumb {
+  background-color: rgba(40, 40, 40, 0.8);
+}
+
+#events-info-content {
+  transition: max-height 0.1s ease-out;
+  -webkit-transition: max-height 0.1s ease-out;
+}
+
+.events-info-hide {
+  max-height: 0px;
+}
+
+.events-info-show {
+  max-height: 300px;
+}
+
+#events-info-content table {
+  /* color: rgba(40, 40, 40, 0.8) !important; */
+  color: white;
+}
+
+#events-info-closeButton {
+  margin-top: 0.2em;
+  margin-right: 0.2em;
+  background-color: transparent !important;
+  border: none;
+}
+
+.battle-info {
+  font-size: 1em;
+  font-size: 14px;
+  margin: 0.4em;
+}
+
+.battle-info h1 {
+  margin-left: 0.2em;
+  margin-right: 1em;
+  font-size: 1.6em;
+}
+
+.battle-info h2 {
+  margin-left: 0.2em;
+  font-size: 1.4em;
+}
+
+.battle-info table {
+  font-size: 1.2em;
+}
+
+.battle-info .progress {
+  background-color: transparent;
+  border-radius: 0;
+}
+
+.battle-info .progress-bar {
+  border: none;
+  border-radius: 0;
+  font-size: 1.4em;
+  padding: 0 5px;
 }
 
 #legend-container {
@@ -309,7 +376,7 @@ body {
   color: rgba(255, 255, 255, 0.5);
 }
 
-#legend-button {
+.right-corner-button {
   position: absolute;
   right: 3px;
   top: 3px;
@@ -605,6 +672,7 @@ input.form-control {
   max-width: 300px;
   min-width: 100px;
   min-height: 1em;
+  font-family: Helvetica, Arial, sans-serif;
   /* background-color: white; */
 }
 
@@ -613,6 +681,10 @@ input.form-control {
 }
 
 .ol-popup .anchor {
+  visibility: hidden;
+}
+
+.hide-element {
   visibility: hidden;
 }
 
@@ -677,7 +749,7 @@ input.form-control {
 }
 
 .bold-text {
-  font-weight: bold;
+  font-size: 1.2em;
 }
 
 .small-silver-text {

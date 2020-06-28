@@ -75276,7 +75276,41 @@ ol_featureAnimation_Zoom.prototype.animate = function (e) {
 
 var _default = ol_featureAnimation_Zoom;
 exports.default = _default;
-},{"../util/ext":"mA78","./FeatureAnimation":"pE3F"}],"p4qv":[function(require,module,exports) {
+},{"../util/ext":"mA78","./FeatureAnimation":"pE3F"}],"LZLq":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var ClassHelper = /*#__PURE__*/function () {
+  function ClassHelper() {
+    _classCallCheck(this, ClassHelper);
+  }
+
+  _createClass(ClassHelper, null, [{
+    key: "addClass",
+    value: function addClass(element, className) {
+      var arr = element.className.split(' ');
+
+      if (arr.indexOf(className) == -1) {
+        arr.push(className);
+      }
+
+      element.className = arr.join(' ');
+    }
+  }, {
+    key: "removeClass",
+    value: function removeClass(element, className) {
+      element.className = element.className.replace(className, '').trim();
+    }
+  }]);
+
+  return ClassHelper;
+}();
+
+module.exports = ClassHelper;
+},{}],"p4qv":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -75319,6 +75353,10 @@ var _AnimatedCluster = _interopRequireDefault(require("ol-ext/layer/AnimatedClus
 var _Zoom = _interopRequireDefault(require("ol-ext/featureanimation/Zoom"));
 
 var _easing = require("ol/easing");
+
+var _Tile2 = _interopRequireDefault(require("ol/source/Tile"));
+
+var _classHelper = _interopRequireDefault(require("../helper/classHelper"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -75366,6 +75404,7 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
 
     _this = _super.call(this); //first must
 
+    window.map = _assertThisInitialized(_this);
     var yaex = [-20037508.342789244, -20037508.342789244, 20037508.342789244, 20037508.342789244];
 
     _proj2.default.defs('EPSG:3395', '+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs');
@@ -75498,8 +75537,19 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       updateWhileInteracting: true,
       style: getStyleSimple
     });
+    _this.simpleLayer = simpleLayer;
     _this.simpleSource = simpleSource;
-    map.addLayer(simpleLayer); // Cluster Source
+    map.addLayer(simpleLayer); // Hull Source
+
+    var hullSource = new olSource.Vector();
+    var hullLayer = new _Vector.default({
+      source: hullSource,
+      zIndex: 2,
+      style: getStyleHull
+    });
+    _this.hullLayer = hullLayer;
+    _this.hullSource = hullSource;
+    map.addLayer(hullLayre); // Cluster Source
 
     var clusterSource = new olSource.Cluster({
       distance: 10,
@@ -75511,10 +75561,14 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       animationDuration: _this.isEnableAnimate ? 400 : 0,
       style: getStyleCluster
     });
+    _this.clusterLayer = clusterLayer;
     map.addLayer(clusterLayer);
     _this.clusterSource = clusterSource;
     map.on('click', function (event) {
       window.map.popup.hide();
+
+      _this.emit('mapclick', undefined);
+
       var coordinates = event.coordinate;
       var lonLatCoords = new _proj.toLonLat(coordinates);
       console.log("clicked on map: ".concat(coordinates, "; WGS: ").concat(lonLatCoords));
@@ -75555,10 +75609,10 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       }
 
       var featureCoord = featureEvent.getGeometry().getFirstCoordinate();
-      clearInterval(window.pulse);
-      window.pulse = setInterval(function () {
-        _this.pulseFeature(featureCoord);
-      }, 1000); //todo Showing HTML content
+      _this.currentFeatureCoord = featureCoord;
+
+      _this.showPulse(); //todo Showing HTML content
+
 
       window.map.popup.show(featureCoord, "<div class=\"popupDiv\">".concat(htmlContent, "</div>"));
       return;
@@ -75585,7 +75639,6 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
         map.getTargetElement().style.cursor = '';
       }
     });
-    window.map = _assertThisInitialized(_this);
     _this.map = map;
     _this.view = view;
     setTimeout(function () {
@@ -75595,6 +75648,25 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
   }
 
   _createClass(MapControl, [{
+    key: "showAdditionalInfo",
+    value: function showAdditionalInfo(info) {
+      this.emit('showAdditionalInfo', undefined);
+      this.hidePulse();
+      this.simpleLayer.setVisible(false);
+      this.clusterLayer.setVisible(false);
+
+      _classHelper.default.addClass(document.getElementById('year-control'), 'hide-element');
+    }
+  }, {
+    key: "returnNormalMode",
+    value: function returnNormalMode() {
+      _classHelper.default.removeClass(document.getElementById('year-control'), 'hide-element');
+
+      this.showPulse();
+      this.simpleLayer.setVisible(true);
+      this.clusterLayer.setVisible(true);
+    }
+  }, {
     key: "pulseFeature",
     value: function pulseFeature(coord) {
       var f = new _Feature.default(new olGeom.Point(coord));
@@ -75744,15 +75816,25 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
       window.map.popup.hide();
     }
   }, {
-    key: "clearPulse",
-    value: function clearPulse() {
+    key: "hidePulse",
+    value: function hidePulse() {
       clearInterval(window.pulse);
+    }
+  }, {
+    key: "showPulse",
+    value: function showPulse() {
+      var _this4 = this;
+
+      clearInterval(window.pulse);
+      window.pulse = setInterval(function () {
+        _this4.pulseFeature(_this4.currentFeatureCoord);
+      }, 1000);
     }
   }, {
     key: "changeYear",
     value: function changeYear(year) {
       this.hidePopup();
-      this.clearPulse();
+      this.hidePulse();
       this.currentYear = year;
       this.yearLayer.getSource().refresh();
       this.emit('changeYear', year);
@@ -75792,12 +75874,12 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "refreshInfo",
     value: function refreshInfo(info) {
-      var _this4 = this;
+      var _this5 = this;
 
       this.simpleSource.clear();
       this.clusterSource.getSource().clear();
       info.forEach(function (item) {
-        return _this4.addFeature(item);
+        return _this5.addFeature(item);
       });
     }
   }], [{
@@ -75859,42 +75941,42 @@ var YearControl = /*#__PURE__*/function (_SuperCustomControl) {
   }]);
 
   function YearControl(inputParams) {
-    var _this5;
+    var _this6;
 
     _classCallCheck(this, YearControl);
 
-    _this5 = _super3.call(this, inputParams);
+    _this6 = _super3.call(this, inputParams);
     var caption = inputParams.caption;
     var hint = inputParams.hint || caption;
-    _this5.year = inputParams.year;
-    _this5.handler = inputParams.handler;
+    _this6.year = inputParams.year;
+    _this6.handler = inputParams.handler;
     var yearInput = document.createElement('input');
     yearInput.className = 'input-without-focus';
     yearInput.title = hint;
     yearInput.setAttribute('id', 'year-input');
-    yearInput.value = _this5.year;
+    yearInput.value = _this6.year;
     yearInput.addEventListener('keyup', function (event) {
       if (event.keyCode == 13) {
-        _this5._inputKeyUp();
+        _this6._inputKeyUp();
 
         event.preventDefault();
       }
     });
-    _this5.yearInput = yearInput;
+    _this6.yearInput = yearInput;
     var yearLeftButton = document.createElement('button');
-    yearLeftButton.innerHTML = _this5.getBSIconHTML('mdi mdi-step-backward-2');
+    yearLeftButton.innerHTML = _this6.getBSIconHTML('mdi mdi-step-backward-2');
     yearLeftButton.title = 'Предыдущий год';
     yearLeftButton.setAttribute('id', 'year-left-button');
     yearLeftButton.addEventListener('click', function () {
-      _this5._leftButtonClick();
+      _this6._leftButtonClick();
     }, false); // yearLeftButton.addEventListener('touchstart', () => { this._leftButtonClick(); }, false);
 
     var yearRightButton = document.createElement('button');
-    yearRightButton.innerHTML = _this5.getBSIconHTML('mdi mdi-step-forward-2');
+    yearRightButton.innerHTML = _this6.getBSIconHTML('mdi mdi-step-forward-2');
     yearRightButton.title = 'Следующий год';
     yearRightButton.setAttribute('id', 'year-right-button');
     yearRightButton.addEventListener('click', function () {
-      _this5._rightButtonClick();
+      _this6._rightButtonClick();
     }, false); // yearRightButton.addEventListener('touchstart', () => { this._rightButtonClick(); }, false);
 
     var parentDiv = document.createElement('div');
@@ -75903,15 +75985,15 @@ var YearControl = /*#__PURE__*/function (_SuperCustomControl) {
     parentDiv.appendChild(yearLeftButton);
     parentDiv.appendChild(yearInput);
     parentDiv.appendChild(yearRightButton);
-    _this5.element = parentDiv;
-    olControl.Control.call(_assertThisInitialized(_this5), {
+    _this6.element = parentDiv;
+    olControl.Control.call(_assertThisInitialized(_this6), {
       label: 'test',
       hint: 'test',
       tipLabel: caption,
       element: parentDiv // target: get(inputParams, "target")
 
     });
-    return _this5;
+    return _this6;
   }
 
   _createClass(YearControl, [{
@@ -75966,39 +76048,7 @@ var YearControl = /*#__PURE__*/function (_SuperCustomControl) {
 
   return YearControl;
 }(SuperCustomControl);
-},{"ol":"tUV8","ol/style":"TZKB","ol/geom":"z54l","ol/Feature":"E2jd","ol/proj":"VAQc","ol/control":"bioX","ol/layer/Tile":"PqrZ","ol/layer/Vector":"AGre","ol/source":"Vrgk","ol/tilegrid":"gNrJ","ol/interaction":"wWIt","./eventEmitter":"STwH","proj4":"HchQ","ol/proj/proj4":"IEbX","ol-ext/overlay/Popup":"ScDZ","ol-ext/layer/AnimatedCluster":"NY4m","ol-ext/featureanimation/Zoom":"p9rF","ol/easing":"k82w"}],"LZLq":[function(require,module,exports) {
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var ClassHelper = /*#__PURE__*/function () {
-  function ClassHelper() {
-    _classCallCheck(this, ClassHelper);
-  }
-
-  _createClass(ClassHelper, null, [{
-    key: "addClass",
-    value: function addClass(element, className) {
-      var arr = element.className.split(' ');
-
-      if (arr.indexOf(className) == -1) {
-        element.className += className;
-      }
-    }
-  }, {
-    key: "removeClass",
-    value: function removeClass(element, className) {
-      element.className = element.className.replace(className, '');
-    }
-  }]);
-
-  return ClassHelper;
-}();
-
-module.exports = ClassHelper;
-},{}],"uf5M":[function(require,module,exports) {
+},{"ol":"tUV8","ol/style":"TZKB","ol/geom":"z54l","ol/Feature":"E2jd","ol/proj":"VAQc","ol/control":"bioX","ol/layer/Tile":"PqrZ","ol/layer/Vector":"AGre","ol/source":"Vrgk","ol/tilegrid":"gNrJ","ol/interaction":"wWIt","./eventEmitter":"STwH","proj4":"HchQ","ol/proj/proj4":"IEbX","ol-ext/overlay/Popup":"ScDZ","ol-ext/layer/AnimatedCluster":"NY4m","ol-ext/featureanimation/Zoom":"p9rF","ol/easing":"k82w","ol/source/Tile":"MN9s","../helper/classHelper":"LZLq"}],"uf5M":[function(require,module,exports) {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -76034,6 +76084,9 @@ var JsHelper = /*#__PURE__*/function () {
 
       return len;
     }
+  }, {
+    key: "isNaN",
+    value: function isNaN(x) {}
   }]);
 
   return JsHelper;
@@ -76816,12 +76869,41 @@ var StrHelper = /*#__PURE__*/function () {
       throw new Error("Bad Hex ".concat(hex));
     }
   }, {
+    key: "numberWithCommas",
+    value: function numberWithCommas(input) {
+      var comma = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';
+      return input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, comma);
+    }
+  }, {
     key: "getNumber",
     value: function getNumber(value) {
       if (value == undefined) return 0;
+      value = this.getAllNumbers(value);
+      0 < value.length && (value = value[0]);
       var tryFloat = parseFloat(value);
       var isNaN = typeof Number.isNaN !== 'undefined' ? Number.isNaN(tryFloat) : tryFloat !== tryFloat ? true : false;
       return isNaN ? 0 : tryFloat;
+    }
+  }, {
+    key: "getAllNumbers",
+    value: function getAllNumbers(input) {
+      var floatDelim = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '.';
+      // К примеру, есть строка: '123 adsf asdf  234324 22'
+      // Получаем из нее массив строковых чисел: ['123', '234324', '22']"""
+      input = input.replace('\n', '');
+      input = input.replace(',', floatDelim);
+      input = input.replace('.', floatDelim); //return input.replace(/[(][^)]*[)]+/g, '')
+
+      var r = new RegExp("[0-9".concat(floatDelim, "]+"), 'g');
+      var result = [];
+      var m;
+
+      while ((m = r.exec(input)) != null) {
+        result.push(m[0]);
+      } // let result = input.match(regexp) || []
+
+
+      return result;
     }
   }, {
     key: "varToString",
@@ -82582,7 +82664,49 @@ var DateHelper = /*#__PURE__*/function () {
 }();
 
 module.exports = DateHelper;
-},{"../helper/strHelper":"IGBU","moment":"a2Bw"}],"hPGt":[function(require,module,exports) {
+},{"../helper/strHelper":"IGBU","moment":"a2Bw"}],"vmMN":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var ImageHelper = /*#__PURE__*/function () {
+  function ImageHelper() {
+    _classCallCheck(this, ImageHelper);
+  }
+
+  _createClass(ImageHelper, null, [{
+    key: "resizeImage",
+    value: function resizeImage(url, fixWidth, callback) {
+      var sourceImage = new Image();
+
+      sourceImage.onload = function () {
+        // Create a canvas with the desired dimensions
+        var canvas = document.createElement('canvas');
+        var imgWidth = this.width;
+        var aspectRatio = Math.round(imgWidth / fixWidth);
+        var imgHeight = this.height;
+        var fixHeight = Math.round(imgHeight / aspectRatio);
+        canvas.width = fixWidth;
+        canvas.height = fixHeight; // Scale and draw the source image to the canvas
+
+        var ctx = canvas.getContext('2d');
+        ctx.globalAlpha = 0.6;
+        ctx.drawImage(sourceImage, 0, 0, fixWidth, fixHeight); // Convert the canvas to a data URL in PNG format
+
+        if (callback) callback(canvas);
+      };
+
+      return sourceImage.src = url;
+    }
+  }]);
+
+  return ImageHelper;
+}();
+
+module.exports = ImageHelper;
+},{}],"hPGt":[function(require,module,exports) {
 "use strict";
 
 var olStyle = _interopRequireWildcard(require("ol/style"));
@@ -82673,6 +82797,8 @@ var _monotoneConvexHull2d = _interopRequireDefault(require("monotone-convex-hull
 var _strHelper = _interopRequireDefault(require("../../helper/strHelper"));
 
 var _dateHelper = _interopRequireDefault(require("../../helper/dateHelper"));
+
+var _imageHelper = _interopRequireDefault(require("../../helper/imageHelper"));
 
 var _superFeature = _interopRequireDefault(require("./superFeature"));
 
@@ -83119,175 +83245,161 @@ var BattleFeature = /*#__PURE__*/function (_SuperFeature) {
       };
     }
   }, {
-    key: "getHtmlInfo",
-    value: function getHtmlInfo(feature) {
-      /*
-      let content = `<h3>${info.name}</h3>`
-        switch (kind) {
-          case 'chronos':
-            content = `<h3>${info.place}</h3>`
-            break
-          case 'politics':
-            content = `<h3>${info.place}</h3>`
-            break
-          default:
-            break
-        }
-          let isFirstRow = true
-          const getHtmlForFeatureEvent = (event) => {
-          const getHtmlCell = (caption, param1, param2, isBold = false) => {
-            const f = (value) => {
-              if (Array.isArray(value)) {
-                return value.length > 0
-                  ? value.join(', ').replace(/, /g, '<br/>')
-                  : '-'
-              } else {
-                if (value == undefined) return '-'
-                const tryFloat = parseFloat(value)
-                const isNaN =
-                  typeof Number.isNaN !== 'undefined'
-                    ? Number.isNaN(tryFloat)
-                    : tryFloat !== tryFloat
-                    ? true
-                    : false
-                return isNaN
-                  ? value.replace(/, /g, '<br />')
-                  : tryFloat.toString()
-              }
-            }
-              const one = f(param1)
-            const two = f(param2)
-              const getTdWithClassName = (defaultClass, value) => {
-              const className = isBold
-                ? defaultClass + ' ' + 'bold-text'
-                : defaultClass
-              return className.trim() != ''
-                ? `<td class="${className}">${value}</td>`
-                : `<td>${value}</td>`
-            }
-              if ('-' != one || '-' != two) {
-              let tr = `<tr>
-                ${getTdWithClassName('left-align', caption)}
-                ${getTdWithClassName('', one)}
-                ${getTdWithClassName('right-align', two)}
-              </tr>`
-              return tr
-            }
-              return ''
-          }
-            let html = ''
-          html += getHtmlCell('Участники', info.allies, info.enemies, true)
-          html += getHtmlCell(
-            'Силы сторон (чел.)',
-            info.ally_troops,
-            info.enem_troops
-          )
-          html += getHtmlCell('Потери (чел.)', info.ally_losses, info.enem_losses)
-          html += getHtmlCell('Убитые (чел.)', info.ally_deads, info.enem_deads)
-          html += getHtmlCell(
-            'Пленные (чел.)',
-            info.ally_prisoners,
-            info.enem_prisoners
-          )
-          html += getHtmlCell(
-            'Раненые (чел.)',
-            info.ally_woundeds,
-            info.enem_woundeds
-          )
-          html += getHtmlCell(
-            'Пропавшие без вести (чел.)',
-            info.ally_missing,
-            info.enem_missing
-          )
-          html += getHtmlCell(
-            'Танков (шт.)',
-            info.ally_tanks_cnt,
-            info.enem_tanks_cnt
-          )
-          html += getHtmlCell(
-            'Самолетов (шт.)',
-            info.ally_airplans_cnt,
-            info.enem_airplans_cnt
-          )
-          html += getHtmlCell(
-            'Кораблей (шт.)',
-            info.ally_ships_cnt,
-            info.enem_ships_cnt
-          )
-          html += getHtmlCell(
-            'Подводных лодок (шт.)',
-            info.ally_submarines_cnt,
-            info.enem_submarines_cnt
-          )
-            return html
-        }
-          if ('politics' === kind) {
-          const startDate = info.startDate
-          const endDate = info.endDate
-          if (startDate) {
-            const dateStr =
-              endDate != undefined && startDate != endDate
-                ? `${startDate} - ${endDate}`
-                : startDate
-            content += '<h4>' + dateStr + '</h4>'
-          }
-            let results = info.results
-          if (results) {
-            results = results.replace(/[.,]\s*$/, '')
-            content += '<p>' + results + '</p>'
-          }
-        } else if ('chronos' === kind) {
-          const startDate = info.startDate
-          const endDate = info.endDate
-          if (startDate) {
-            let dateStr =
-              endDate != undefined && startDate != endDate
-                ? `${startDate} - ${endDate}`
-                : startDate
-            if (info.isOnlyYear) {
-              dateStr = dateStr.slice(-4)
-            }
-            content += '<h4>' + dateStr + '</h4>'
-          }
-            let results = info.brief
-          if (results) {
-            results = results.replace(/[.,]\s*$/, '')
-            content += '<p>' + results + '</p>'
-          }
-        } else if ('persons' === kind) {
-          content = `<h3>${info.surname} ${info.name} ${info.middlename}</h3>`
-          const startDate = info.dateBirth
-          const endDate = info.dateDeath
-          if (startDate) {
-            let dateStr =
-              endDate != undefined && startDate != endDate
-                ? `${startDate} - ${endDate}`
-                : startDate
-            content += '<h4>' + dateStr + '</h4>'
-          }
-            let results = info.description
-          if (results) {
-            results = results.replace(/[.,]\s*$/, '')
-            content += '<p class="content-description">' + results + '</p>'
-          }
+    key: "arrayToText",
+    value: function arrayToText(input) {
+      if (Array.isArray(input)) {
+        return input.length > 0 ? input.join('<br />') : '-';
+      } else {
+        if (input == undefined) return '-';
+      }
+
+      return input;
+    }
+  }, {
+    key: "getHtmlCell",
+    value: function getHtmlCell(caption, param1, param2) {
+      var isFirstRow = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+      var f = function f(value) {
+        if (Array.isArray(value)) {
+          return value.length > 0 ? value.join(', ').replace(/, /g, '<br/>') : '-';
         } else {
-          window.map.setActiveEvent(featureEvent)
-            const startDate = info.startDate
-          const endDate = info.endDate
-          if (startDate) {
-            const dateStr =
-              endDate != undefined && startDate != endDate
-                ? `${startDate} - ${endDate}`
-                : startDate
-            content += '<h4>' + dateStr + '</h4>'
-          }
-            let table = `
-            <table class="table table-sm table-borderless" id="table-info">
-            <tbody>
-            ${getHtmlForFeatureEvent(featureEvent)}
-            </tbody></table>`
-          content += `<p>${table}</p>`
-            const eventId = info.id
+          if (value == undefined) return '-';
+          var tryFloat = parseFloat(value);
+
+          var _isNaN = typeof Number.isNaN !== 'undefined' ? Number.isNaN(tryFloat) : tryFloat !== tryFloat ? true : false;
+
+          return _isNaN ? value.replace(/, /g, '<br />') : tryFloat.toString();
+        }
+      };
+
+      var one = f(param1);
+      var two = f(param2);
+
+      var getTdWithClassName = function getTdWithClassName(defaultClass, value) {
+        var className = isFirstRow ? defaultClass + ' ' + 'bold-text' : defaultClass;
+        return className.trim() != '' ? "<td class=\"".concat(className, "\">").concat(value, "</td>") : "<td>".concat(value, "</td>");
+      };
+
+      var getComparison = function getComparison(one, two) {
+        var oneNumber = _strHelper.default.getNumber(one);
+
+        var twoNumber = _strHelper.default.getNumber(two); //if (oneNumber * twoNumber == 0) return '<td></td>'
+
+
+        var maxNumber = Math.max(oneNumber, twoNumber);
+
+        var getProgressDiv = function getProgressDiv(input, number, maxNumber, bgColor) {
+          var numberWidth = Math.floor(number / maxNumber * 100);
+          return "<div class=\"progress\" style=\"height:2rem\"><div class=\"progress-bar\"\n          style=\"width: ".concat(numberWidth, "%; background-color: ").concat(bgColor, "\"\n          role=\"progressbar\"\n          aria-valuenow=\"").concat(number, "\"\n          aria-valuemin=\"0\"\n          aria-valuemax=\"").concat(maxNumber, "\">").concat(input > 0 ? _strHelper.default.numberWithCommas(input) : input, "\n        </div></div>");
+        };
+
+        return "<td style='width:100%'>\n          ".concat(getProgressDiv(one, oneNumber, maxNumber, BattleFeature.sideColors[0]), "\n          ").concat(getProgressDiv(two, twoNumber, maxNumber, BattleFeature.sideColors[1]), "\n      </td>");
+      };
+
+      if ('-' != one || '-' != two) {
+        var tr = "<tr>\n        ".concat(getTdWithClassName('left-align', caption), "\n        ").concat(isFirstRow ? '<td></td>' : getComparison(one, two), "\n      </tr>");
+        return tr;
+      } // ${getTdWithClassName(
+      //   '',
+      //   one > 0 ? strHelper.numberWithCommas(one) : one
+      // )}
+      // ${getTdWithClassName(
+      //   'right-align',
+      //   two > 0 ? strHelper.numberWithCommas(two) : two
+      // )}
+
+
+      return '';
+    }
+  }, {
+    key: "getColorBySideName",
+    value: function getColorBySideName(input, elseColor) {
+      if (-1 < input.indexOf('Россия') || -1 < input.indexOf('СССР')) {
+        return 'rgba(255, 0, 0, 0.5)';
+      } else if (-1 < input.indexOf('Германия')) {
+        return 'rgba(40, 40, 40, 0.5)';
+      } else return elseColor;
+    }
+  }, {
+    key: "showContour",
+    value: function showContour(num) {
+      if (num == window.CURRENT_ADD_NUM) {
+        window.map.returnNormalMode.call(window.map);
+        window.CURRENT_ADD_NUM = undefined;
+        return;
+      }
+
+      window.CURRENT_ADD_NUM = num;
+      var info = window.CURRENT_ITEM;
+      var map = info.maps[num];
+      var hullCoords = info.hullCoords[num];
+      window.map.showAdditionalInfo.call(window.map, {
+        map: map,
+        hullCoords: hullCoords
+      });
+    }
+  }, {
+    key: "showImage",
+    value: function showImage() {
+      var imgDiv = document.getElementById('event-image-div');
+      imgDiv.innerHTML = '';
+      var imgUrl = window.CURRENT_ITEM.imgUrl;
+      if (!imgUrl) return;
+
+      this._resizeImage(imgUrl, 300, function (canvas) {
+        imgDiv.appendChild(canvas);
+      });
+    }
+  }, {
+    key: "getMapsCell",
+    value: function getMapsCell(caption, info) {
+      var html = '';
+      var delim = '';
+
+      for (var i = 0; i < info.maps.length; i++) {
+        html += "".concat(delim, "\n        <span class=\"event-feature-color\" onclick=\"window.BattleFeature.showContour(").concat(i, ")\">").concat(info.maps.length == 1 ? 'Вект.' : i + 1, "</span>");
+        delim = '&nbsp';
+      }
+
+      if (info.imgUrl) {
+        html += "".concat(delim, "\n        <span class=\"event-feature-color\" onclick=\"window.BattleFeature.showImage()\">\u0413\u0440\u0430\u0444.</span>");
+      }
+
+      return "<td>".concat(caption, "</td><td>").concat(html, "</td>");
+    }
+  }, {
+    key: "getHtmlInfo",
+    value: function getHtmlInfo(info) {
+      window.CURRENT_ITEM = info;
+
+      var dates = _dateHelper.default.twoDateToStr(info.startDate, info.endDate);
+
+      var hCell = this.getHtmlCell;
+      var oneSide = this.arrayToText(info.allies);
+      var twoSide = this.arrayToText(info.enemies);
+      var oneSideColor = this.getColorBySideName(oneSide, 'rgba(0,0,255,0.5)');
+      var twoSideColor = this.getColorBySideName(twoSide, 'rgba(0,255,0,0.5)');
+      BattleFeature.sideColors = [oneSideColor, twoSideColor];
+      var tData = this.getMapsCell('Карты событий', info);
+      tData += hCell('Участники', oneSide, twoSide);
+      tData += hCell('Силы сторон', info.ally_troops, info.enem_troops);
+      tData += hCell('Потери', info.ally_losses, info.enem_losses);
+      tData += hCell('Убитые', info.ally_deads, info.enem_deads);
+      tData += hCell('Пленные', info.ally_prisoners, info.enem_prisoners);
+      tData += hCell('Раненые', info.ally_woundeds, info.enem_woundeds);
+      tData += hCell('Пропавшие без вести', info.ally_missing, info.enem_missing);
+      tData += hCell('Числ. танков', info.ally_tanks_cnt, info.enem_tanks_cnt);
+      tData += hCell('Потери танков', info.ally_tanks_lost, info.enem_tanks_lost);
+      tData += hCell('Числ. самолетов', info.ally_airplans_cnt, info.enem_airplans_cnt);
+      tData += hCell('Потери самолетов', info.ally_airplans_lost, info.enem_airplans_lost);
+      tData += hCell('Числ. кораблей', info.ally_ships_cnt, info.enem_ships_cnt);
+      tData += hCell('Потери кораблей', info.ally_ships_lost, info.enem_ships_lost);
+      tData += hCell('Подводных лодок', info.ally_submarines_cnt, info.enem_submarines_cnt);
+      var html = "<div class=\"battle-info\">\n      <h1>".concat(info.name, "</h1>\n      <h2>").concat(dates, "</h2>\n      <table class=\"table table-sm table-borderless\" id=\"table-info\">\n        <tbody>\n          ").concat(tData, "\n        </tbody>\n      </table>\n    </div>\n    ");
+      return html;
+      /*
+          const eventId = info.id
           let table2 = `
           <table class="table table-sm table-borderless" id="table-control">
             <tr><td
@@ -83333,6 +83445,7 @@ var BattleFeature = /*#__PURE__*/function (_SuperFeature) {
           }, 1000)
         }
         */
+
       return 'Not implemented';
     }
   }, {
@@ -83367,7 +83480,8 @@ var BattleFeature = /*#__PURE__*/function (_SuperFeature) {
 }(_superFeature.default);
 
 module.exports = BattleFeature;
-},{"monotone-convex-hull-2d":"nEKu","../../helper/strHelper":"IGBU","../../helper/dateHelper":"IrKG","./superFeature":"hPGt","ol/style":"TZKB"}],"QR23":[function(require,module,exports) {
+window.BattleFeature = BattleFeature;
+},{"monotone-convex-hull-2d":"nEKu","../../helper/strHelper":"IGBU","../../helper/dateHelper":"IrKG","../../helper/imageHelper":"vmMN","./superFeature":"hPGt","ol/style":"TZKB"}],"QR23":[function(require,module,exports) {
 "use strict";
 
 var _superFeature = _interopRequireDefault(require("./superFeature"));
@@ -84184,6 +84298,22 @@ var LegendControl = /*#__PURE__*/function (_EventEmitter) {
       this.updateCounter(this.rawInfo);
       this.repaintLegend();
       this.filterInfo();
+    }
+  }, {
+    key: "switchOff",
+    value: function switchOff() {
+      _classHelper.default.removeClass(this.legendDiv, 'legend-div-show');
+
+      _classHelper.default.addClass(this.legendDiv, 'legend-div-hide');
+
+      _classHelper.default.addClass(this.legendButton, 'hide-element');
+    }
+  }, {
+    key: "switchOn",
+    value: function switchOn() {
+      _classHelper.default.removeClass(this.legendButton, 'hide-element');
+
+      this.showHideLegend();
     }
   }], [{
     key: "create",
@@ -94007,6 +94137,10 @@ exports.InfoControl = void 0;
 
 var _eventEmitter = require("./eventEmitter");
 
+var _classHelper = _interopRequireDefault(require("../helper/classHelper"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -94041,18 +94175,37 @@ var InfoControl = /*#__PURE__*/function (_EventEmitter) {
 
     _this = _super.call(this); //first must
 
-    _this.listDiv = $('#events-info-content')[0];
-    _this.imgDiv = $('#event-image-div')[0];
+    _this.contentDiv = document.getElementById('events-info-content');
+    _this.closeButton = document.getElementById('events-info-closeButton');
+    _this.imgDiv = document.getElementById('event-image-div');
+
+    _this.closeButton.addEventListener('click', function () {
+      window.infoControl.hide.call(window.infoControl);
+    });
+
     window.infoControl = _assertThisInitialized(_this);
     return _this;
   }
 
   _createClass(InfoControl, [{
+    key: "hide",
+    value: function hide() {
+      _classHelper.default.removeClass(window.infoControl.contentDiv, 'events-info-show');
+
+      _classHelper.default.addClass(window.infoControl.contentDiv, 'events-info-hide');
+
+      this.emit('hide', undefined);
+    }
+  }, {
     key: "showItemInfo",
     value: function showItemInfo(item) {
+      _classHelper.default.removeClass(window.infoControl.contentDiv, 'events-info-hide');
+
+      _classHelper.default.addClass(window.infoControl.contentDiv, 'events-info-show');
+
       var classFeature = item.get('classFeature');
-      console.log("show item info, classFeature: ".concat(classFeature));
-      this.listDiv.innerHTML = classFeature.getHtmlInfo();
+      var info = item.get('info');
+      this.contentDiv.innerHTML = classFeature.getHtmlInfo(info);
     }
   }, {
     key: "showItemList",
@@ -94080,7 +94233,7 @@ var InfoControl = /*#__PURE__*/function (_EventEmitter) {
 
 
 exports.InfoControl = InfoControl;
-},{"./eventEmitter":"STwH"}],"juYr":[function(require,module,exports) {
+},{"./eventEmitter":"STwH","../helper/classHelper":"LZLq"}],"juYr":[function(require,module,exports) {
 var global = arguments[3];
 var process = require("process");
 var define;
@@ -104986,7 +105139,7 @@ function fixMapHeight() {
   var mapDiv = (0, _jquery.default)("div[data-role='map']:visible:visible");
   if (navbar.outerHeight()) mapHeight = mapHeight - navbar.outerHeight();
   mapDiv.height(mapHeight);
-  if (window.map) window.map.fixMapHeight();
+  if (window.map && window.map.fixMapHeight) window.map.fixMapHeight();
 }
 
 function changeWindowSize() {
@@ -105023,8 +105176,20 @@ function startApp() {
   mapControl.subscribe('changeYear', function (year) {
     protocol.getDataByYear(year);
   });
+  mapControl.subscribe('mapclick', function () {
+    infoControl.hide();
+  });
+  infoControl.subscribe('hide', function () {
+    mapControl.returnNormalMode();
+  });
   mapControl.subscribe('selectFeatures', function (items) {
     infoControl.updateItems(items);
+  });
+  mapControl.subscribe('showAdditionalInfo', function () {
+    legendControl.switchOff();
+  });
+  mapControl.subscribe('returnNormalMode', function () {
+    legendControl.switchOn();
   });
   (0, _jquery.default)(document.getElementsByClassName('ol-attribution ol-unselectable ol-control ol-collapsed')).remove();
   changeWindowSize();

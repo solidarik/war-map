@@ -1,10 +1,6 @@
-const inetHelper = require('../helper/inetHelper')
-const dateHelper = require('../helper/dateHelper')
+const strHelper = require('../helper/strHelper')
 
-const checkedCoordsPath = 'loadDatabase\\dataSources\\checkedCoords.json'
-inetHelper.loadCoords(checkedCoordsPath)
+let value = strHelper.getNumber('более 23482289737,345 1000.523 важно 555100')
+value = strHelper.numberWithCommas(value)
 
-const places = ''
-const date = dateHelper.ignoreAlterDate(places)
-
-console.log(`>>>>>>>> date ${date}`)
+console.log(`>>>>>>>> value ${value}`)

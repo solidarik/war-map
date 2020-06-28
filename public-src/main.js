@@ -14,7 +14,7 @@ function fixMapHeight() {
   if (navbar.outerHeight()) mapHeight = mapHeight - navbar.outerHeight()
 
   mapDiv.height(mapHeight)
-  if (window.map) window.map.fixMapHeight()
+  if (window.map && window.map.fixMapHeight) window.map.fixMapHeight()
 }
 
 function changeWindowSize() {
@@ -53,8 +53,24 @@ function startApp() {
     protocol.getDataByYear(year)
   })
 
+  mapControl.subscribe('mapclick', () => {
+    infoControl.hide()
+  })
+
+  infoControl.subscribe('hide', () => {
+    mapControl.returnNormalMode()
+  })
+
   mapControl.subscribe('selectFeatures', (items) => {
     infoControl.updateItems(items)
+  })
+
+  mapControl.subscribe('showAdditionalInfo', () => {
+    legendControl.switchOff()
+  })
+
+  mapControl.subscribe('returnNormalMode', () => {
+    legendControl.switchOn()
   })
 
   $(

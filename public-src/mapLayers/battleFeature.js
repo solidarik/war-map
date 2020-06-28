@@ -1,6 +1,7 @@
 import convexHull from 'monotone-convex-hull-2d'
 import strHelper from '../../helper/strHelper'
 import dateHelper from '../../helper/dateHelper'
+import imageHelper from '../../helper/imageHelper'
 import SuperFeature from './superFeature'
 import * as olStyle from 'ol/style'
 
@@ -204,188 +205,207 @@ class BattleFeature extends SuperFeature {
     }
   }
 
-  static getHtmlInfo(feature) {
-    /*
-    let content = `<h3>${info.name}</h3>`
-      switch (kind) {
-        case 'chronos':
-          content = `<h3>${info.place}</h3>`
-          break
-        case 'politics':
-          content = `<h3>${info.place}</h3>`
-          break
-        default:
-          break
-      }
+  static arrayToText(input) {
+    if (Array.isArray(input)) {
+      return input.length > 0 ? input.join('<br />') : '-'
+    } else {
+      if (input == undefined) return '-'
+    }
+    return input
+  }
 
-      let isFirstRow = true
-
-      const getHtmlForFeatureEvent = (event) => {
-        const getHtmlCell = (caption, param1, param2, isBold = false) => {
-          const f = (value) => {
-            if (Array.isArray(value)) {
-              return value.length > 0
-                ? value.join(', ').replace(/, /g, '<br/>')
-                : '-'
-            } else {
-              if (value == undefined) return '-'
-              const tryFloat = parseFloat(value)
-              const isNaN =
-                typeof Number.isNaN !== 'undefined'
-                  ? Number.isNaN(tryFloat)
-                  : tryFloat !== tryFloat
-                  ? true
-                  : false
-              return isNaN
-                ? value.replace(/, /g, '<br />')
-                : tryFloat.toString()
-            }
-          }
-
-          const one = f(param1)
-          const two = f(param2)
-
-          const getTdWithClassName = (defaultClass, value) => {
-            const className = isBold
-              ? defaultClass + ' ' + 'bold-text'
-              : defaultClass
-            return className.trim() != ''
-              ? `<td class="${className}">${value}</td>`
-              : `<td>${value}</td>`
-          }
-
-          if ('-' != one || '-' != two) {
-            let tr = `<tr>
-              ${getTdWithClassName('left-align', caption)}
-              ${getTdWithClassName('', one)}
-              ${getTdWithClassName('right-align', two)}
-            </tr>`
-            return tr
-          }
-
-          return ''
-        }
-
-        let html = ''
-        html += getHtmlCell('Участники', info.allies, info.enemies, true)
-        html += getHtmlCell(
-          'Силы сторон (чел.)',
-          info.ally_troops,
-          info.enem_troops
-        )
-        html += getHtmlCell('Потери (чел.)', info.ally_losses, info.enem_losses)
-        html += getHtmlCell('Убитые (чел.)', info.ally_deads, info.enem_deads)
-        html += getHtmlCell(
-          'Пленные (чел.)',
-          info.ally_prisoners,
-          info.enem_prisoners
-        )
-        html += getHtmlCell(
-          'Раненые (чел.)',
-          info.ally_woundeds,
-          info.enem_woundeds
-        )
-        html += getHtmlCell(
-          'Пропавшие без вести (чел.)',
-          info.ally_missing,
-          info.enem_missing
-        )
-        html += getHtmlCell(
-          'Танков (шт.)',
-          info.ally_tanks_cnt,
-          info.enem_tanks_cnt
-        )
-        html += getHtmlCell(
-          'Самолетов (шт.)',
-          info.ally_airplans_cnt,
-          info.enem_airplans_cnt
-        )
-        html += getHtmlCell(
-          'Кораблей (шт.)',
-          info.ally_ships_cnt,
-          info.enem_ships_cnt
-        )
-        html += getHtmlCell(
-          'Подводных лодок (шт.)',
-          info.ally_submarines_cnt,
-          info.enem_submarines_cnt
-        )
-
-        return html
-      }
-
-      if ('politics' === kind) {
-        const startDate = info.startDate
-        const endDate = info.endDate
-        if (startDate) {
-          const dateStr =
-            endDate != undefined && startDate != endDate
-              ? `${startDate} - ${endDate}`
-              : startDate
-          content += '<h4>' + dateStr + '</h4>'
-        }
-
-        let results = info.results
-        if (results) {
-          results = results.replace(/[.,]\s*$/, '')
-          content += '<p>' + results + '</p>'
-        }
-      } else if ('chronos' === kind) {
-        const startDate = info.startDate
-        const endDate = info.endDate
-        if (startDate) {
-          let dateStr =
-            endDate != undefined && startDate != endDate
-              ? `${startDate} - ${endDate}`
-              : startDate
-          if (info.isOnlyYear) {
-            dateStr = dateStr.slice(-4)
-          }
-          content += '<h4>' + dateStr + '</h4>'
-        }
-
-        let results = info.brief
-        if (results) {
-          results = results.replace(/[.,]\s*$/, '')
-          content += '<p>' + results + '</p>'
-        }
-      } else if ('persons' === kind) {
-        content = `<h3>${info.surname} ${info.name} ${info.middlename}</h3>`
-        const startDate = info.dateBirth
-        const endDate = info.dateDeath
-        if (startDate) {
-          let dateStr =
-            endDate != undefined && startDate != endDate
-              ? `${startDate} - ${endDate}`
-              : startDate
-          content += '<h4>' + dateStr + '</h4>'
-        }
-
-        let results = info.description
-        if (results) {
-          results = results.replace(/[.,]\s*$/, '')
-          content += '<p class="content-description">' + results + '</p>'
-        }
+  static getHtmlCell(caption, param1, param2, isFirstRow = false) {
+    const f = (value) => {
+      if (Array.isArray(value)) {
+        return value.length > 0 ? value.join(', ').replace(/, /g, '<br/>') : '-'
       } else {
-        window.map.setActiveEvent(featureEvent)
+        if (value == undefined) return '-'
+        const tryFloat = parseFloat(value)
+        const isNaN =
+          typeof Number.isNaN !== 'undefined'
+            ? Number.isNaN(tryFloat)
+            : tryFloat !== tryFloat
+            ? true
+            : false
+        return isNaN ? value.replace(/, /g, '<br />') : tryFloat.toString()
+      }
+    }
 
-        const startDate = info.startDate
-        const endDate = info.endDate
-        if (startDate) {
-          const dateStr =
-            endDate != undefined && startDate != endDate
-              ? `${startDate} - ${endDate}`
-              : startDate
-          content += '<h4>' + dateStr + '</h4>'
+    const one = f(param1)
+    const two = f(param2)
+
+    const getTdWithClassName = (defaultClass, value) => {
+      const className = isFirstRow
+        ? defaultClass + ' ' + 'bold-text'
+        : defaultClass
+      return className.trim() != ''
+        ? `<td class="${className}">${value}</td>`
+        : `<td>${value}</td>`
+    }
+
+    const getComparison = (one, two) => {
+      const oneNumber = strHelper.getNumber(one)
+      const twoNumber = strHelper.getNumber(two)
+      //if (oneNumber * twoNumber == 0) return '<td></td>'
+      const maxNumber = Math.max(oneNumber, twoNumber)
+
+      const getProgressDiv = (input, number, maxNumber, bgColor) => {
+        const numberWidth = Math.floor((number / maxNumber) * 100)
+        return `<div class="progress" style="height:2rem"><div class="progress-bar"
+          style="width: ${numberWidth}%; background-color: ${bgColor}"
+          role="progressbar"
+          aria-valuenow="${number}"
+          aria-valuemin="0"
+          aria-valuemax="${maxNumber}">${
+          input > 0 ? strHelper.numberWithCommas(input) : input
         }
+        </div></div>`
+      }
 
-        let table = `
-          <table class="table table-sm table-borderless" id="table-info">
-          <tbody>
-          ${getHtmlForFeatureEvent(featureEvent)}
-          </tbody></table>`
-        content += `<p>${table}</p>`
+      return `<td style='width:100%'>
+          ${getProgressDiv(
+            one,
+            oneNumber,
+            maxNumber,
+            BattleFeature.sideColors[0]
+          )}
+          ${getProgressDiv(
+            two,
+            twoNumber,
+            maxNumber,
+            BattleFeature.sideColors[1]
+          )}
+      </td>`
+    }
 
+    if ('-' != one || '-' != two) {
+      let tr = `<tr>
+        ${getTdWithClassName('left-align', caption)}
+        ${isFirstRow ? '<td></td>' : getComparison(one, two)}
+      </tr>`
+      return tr
+    }
+
+    // ${getTdWithClassName(
+    //   '',
+    //   one > 0 ? strHelper.numberWithCommas(one) : one
+    // )}
+    // ${getTdWithClassName(
+    //   'right-align',
+    //   two > 0 ? strHelper.numberWithCommas(two) : two
+    // )}
+    return ''
+  }
+
+  static getColorBySideName(input, elseColor) {
+    if (-1 < input.indexOf('Россия') || -1 < input.indexOf('СССР')) {
+      return 'rgba(255, 0, 0, 0.5)'
+    } else if (-1 < input.indexOf('Германия')) {
+      return 'rgba(40, 40, 40, 0.5)'
+    } else return elseColor
+  }
+
+  static showContour(num) {
+    if (num == window.CURRENT_ADD_NUM) {
+      window.map.returnNormalMode.call(window.map)
+      window.CURRENT_ADD_NUM = undefined
+      return
+    }
+
+    window.CURRENT_ADD_NUM = num
+    const info = window.CURRENT_ITEM
+    const map = info.maps[num]
+    const hullCoords = info.hullCoords[num]
+    window.map.showAdditionalInfo.call(window.map, { map, hullCoords })
+  }
+
+  static showImage() {
+    const imgDiv = document.getElementById('event-image-div')
+    imgDiv.innerHTML = ''
+    const imgUrl = window.CURRENT_ITEM.imgUrl
+    if (!imgUrl) return
+
+    this._resizeImage(imgUrl, 300, (canvas) => {
+      imgDiv.appendChild(canvas)
+    })
+  }
+
+  static getMapsCell(caption, info) {
+    let html = ''
+    let delim = ''
+    for (let i = 0; i < info.maps.length; i++) {
+      html += `${delim}
+        <span class="event-feature-color" onclick="window.BattleFeature.showContour(${i})">${
+        info.maps.length == 1 ? 'Вект.' : i + 1
+      }</span>`
+      delim = '&nbsp'
+    }
+    if (info.imgUrl) {
+      html += `${delim}
+        <span class="event-feature-color" onclick="window.BattleFeature.showImage()">Граф.</span>`
+    }
+
+    return `<td>${caption}</td><td>${html}</td>`
+  }
+
+  static getHtmlInfo(info) {
+    window.CURRENT_ITEM = info
+
+    const dates = dateHelper.twoDateToStr(info.startDate, info.endDate)
+    const hCell = this.getHtmlCell
+
+    const oneSide = this.arrayToText(info.allies)
+    const twoSide = this.arrayToText(info.enemies)
+
+    const oneSideColor = this.getColorBySideName(oneSide, 'rgba(0,0,255,0.5)')
+    const twoSideColor = this.getColorBySideName(twoSide, 'rgba(0,255,0,0.5)')
+    BattleFeature.sideColors = [oneSideColor, twoSideColor]
+
+    let tData = this.getMapsCell('Карты событий', info)
+    tData += hCell('Участники', oneSide, twoSide)
+    tData += hCell('Силы сторон', info.ally_troops, info.enem_troops)
+    tData += hCell('Потери', info.ally_losses, info.enem_losses)
+    tData += hCell('Убитые', info.ally_deads, info.enem_deads)
+    tData += hCell('Пленные', info.ally_prisoners, info.enem_prisoners)
+    tData += hCell('Раненые', info.ally_woundeds, info.enem_woundeds)
+    tData += hCell('Пропавшие без вести', info.ally_missing, info.enem_missing)
+    tData += hCell('Числ. танков', info.ally_tanks_cnt, info.enem_tanks_cnt)
+    tData += hCell('Потери танков', info.ally_tanks_lost, info.enem_tanks_lost)
+    tData += hCell(
+      'Числ. самолетов',
+      info.ally_airplans_cnt,
+      info.enem_airplans_cnt
+    )
+    tData += hCell(
+      'Потери самолетов',
+      info.ally_airplans_lost,
+      info.enem_airplans_lost
+    )
+    tData += hCell('Числ. кораблей', info.ally_ships_cnt, info.enem_ships_cnt)
+    tData += hCell(
+      'Потери кораблей',
+      info.ally_ships_lost,
+      info.enem_ships_lost
+    )
+    tData += hCell(
+      'Подводных лодок',
+      info.ally_submarines_cnt,
+      info.enem_submarines_cnt
+    )
+
+    const html = `<div class="battle-info">
+      <h1>${info.name}</h1>
+      <h2>${dates}</h2>
+      <table class="table table-sm table-borderless" id="table-info">
+        <tbody>
+          ${tData}
+        </tbody>
+      </table>
+    </div>
+    `
+
+    return html
+    /*
         const eventId = info.id
         let table2 = `
         <table class="table table-sm table-borderless" id="table-control">
@@ -589,3 +609,4 @@ class BattleFeature extends SuperFeature {
 }
 
 module.exports = BattleFeature
+window.BattleFeature = BattleFeature

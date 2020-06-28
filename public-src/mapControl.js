@@ -21,6 +21,8 @@ import { default as olPopup } from 'ol-ext/overlay/Popup'
 import { default as olAnimatedCluster } from 'ol-ext/layer/AnimatedCluster'
 import { default as olFeatureAnimationZoom } from 'ol-ext/featureanimation/Zoom'
 import { easeOut } from 'ol/easing'
+import TileSource from 'ol/source/Tile'
+import ClassHelper from '../helper/classHelper'
 
 const MAP_PARAMS = {
   min_year: 1914,
@@ -31,6 +33,8 @@ const MAP_PARAMS = {
 export class MapControl extends EventEmitter {
   constructor() {
     super() //first must
+
+    window.map = this
 
     const yaex = [
       -20037508.342789244,
@@ -172,8 +176,20 @@ export class MapControl extends EventEmitter {
       updateWhileInteracting: true,
       style: getStyleSimple,
     })
+    this.simpleLayer = simpleLayer
     this.simpleSource = simpleSource
     map.addLayer(simpleLayer)
+
+    // Hull Source
+    let hullSource = new olSource.Vector()
+    let hullLayer = new olLayerVector({
+      source: hullSource,
+      zIndex: 2,
+      style: getStyleHull,
+    })
+    this.hullLayer = hullLayer
+    this.hullSource = hullSource
+    map.addLayer(hullLayre)
 
     // Cluster Source
     let clusterSource = new olSource.Cluster({
@@ -186,12 +202,14 @@ export class MapControl extends EventEmitter {
       animationDuration: this.isEnableAnimate ? 400 : 0,
       style: getStyleCluster,
     })
+    this.clusterLayer = clusterLayer
     map.addLayer(clusterLayer)
 
     this.clusterSource = clusterSource
 
     map.on('click', (event) => {
       window.map.popup.hide()
+      this.emit('mapclick', undefined)
 
       const coordinates = event.coordinate
       const lonLatCoords = new toLonLat(coordinates)
@@ -241,11 +259,9 @@ export class MapControl extends EventEmitter {
       }
 
       const featureCoord = featureEvent.getGeometry().getFirstCoordinate()
-      clearInterval(window.pulse)
 
-      window.pulse = setInterval(() => {
-        this.pulseFeature(featureCoord)
-      }, 1000)
+      this.currentFeatureCoord = featureCoord
+      this.showPulse()
 
       //todo Showing HTML content
       window.map.popup.show(
@@ -280,7 +296,6 @@ export class MapControl extends EventEmitter {
       }
     })
 
-    window.map = this
     this.map = map
     this.view = view
 
@@ -291,6 +306,28 @@ export class MapControl extends EventEmitter {
 
   static create() {
     return new MapControl()
+  }
+
+  showAdditionalInfo(info) {
+    this.emit('showAdditionalInfo', undefined)
+    this.hidePulse()
+    this.simpleLayer.setVisible(false)
+    this.clusterLayer.setVisible(false)
+    ClassHelper.addClass(
+      document.getElementById('year-control'),
+      'hide-element'
+    )
+  }
+
+  returnNormalMode() {
+    ClassHelper.removeClass(
+      document.getElementById('year-control'),
+      'hide-element'
+    )
+
+    this.showPulse()
+    this.simpleLayer.setVisible(true)
+    this.clusterLayer.setVisible(true)
   }
 
   pulseFeature(coord) {
@@ -448,13 +485,20 @@ export class MapControl extends EventEmitter {
     window.map.popup.hide()
   }
 
-  clearPulse() {
+  hidePulse() {
     clearInterval(window.pulse)
+  }
+
+  showPulse() {
+    clearInterval(window.pulse)
+    window.pulse = setInterval(() => {
+      this.pulseFeature(this.currentFeatureCoord)
+    }, 1000)
   }
 
   changeYear(year) {
     this.hidePopup()
-    this.clearPulse()
+    this.hidePulse()
     this.currentYear = year
     this.yearLayer.getSource().refresh()
     this.emit('changeYear', year)

@@ -15,6 +15,10 @@ class JsHelper {
 
     return len
   }
+
+  static isNaN(x) {
+    
+  }
 }
 
 module.exports = JsHelper

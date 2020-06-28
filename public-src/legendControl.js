@@ -328,4 +328,15 @@ export class LegendControl extends EventEmitter {
     this.repaintLegend()
     this.filterInfo()
   }
+
+  switchOff() {
+    ClassHelper.removeClass(this.legendDiv, 'legend-div-show')
+    ClassHelper.addClass(this.legendDiv, 'legend-div-hide')
+    ClassHelper.addClass(this.legendButton, 'hide-element')
+  }
+
+  switchOn() {
+    ClassHelper.removeClass(this.legendButton, 'hide-element')
+    this.showHideLegend()
+  }
 }
