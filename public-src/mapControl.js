@@ -24,6 +24,8 @@ import { easeOut } from 'ol/easing'
 import ClassHelper from '../helper/classHelper'
 import StrHelper from '../helper/strHelper'
 import BattleFeature from './mapLayers/battleFeature'
+import AgreementFeature from './mapLayers/agreementFeature'
+import ChronosFeature from './mapLayers/chronosFeature'
 
 const MAP_PARAMS = {
   min_year: 1914,
@@ -243,9 +245,12 @@ export class MapControl extends EventEmitter {
         this.emit('selectFeatures', features)
       }
 
+      let classFeature = undefined
+
       if (features.length == 1) {
         const feature = features[0]
         const info = feature.get('info')
+        classFeature = feature.get('classFeature')
         htmlContent += `<h1>${info.popupFirst}</h1>
             <h2>${info.popupSecond}</h2>
             ${info.popupThird ? '<h2>' + info.popupThird + '</h2>' : ''}`
@@ -267,7 +272,12 @@ export class MapControl extends EventEmitter {
       this.currentFeatureCoord = featureCoord
       this.showPulse()
 
-      if (featureEvent.get('classFeature') !== BattleFeature) {
+      if (
+        ![BattleFeature, AgreementFeature, ChronosFeature].includes(
+          classFeature
+        )
+      ) {
+        console.log(featureEvent.get('classFeature'))
         window.map.popup.show(
           featureCoord,
           `<div class="popupDiv">${htmlContent}</div>`

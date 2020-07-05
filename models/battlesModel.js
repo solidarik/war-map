@@ -12,6 +12,11 @@ var battlesSchema = new mongoose.Schema(
     endDate: Date,
     kind: String,
     point: [],
+    pageUrl: {
+      type: String,
+      unique: true,
+      required: 'Не определена уникальная ссылка',
+    },
     imgUrl: String,
     srcUrl: String,
     enemies: [],

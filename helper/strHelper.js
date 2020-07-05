@@ -1,4 +1,29 @@
 class StrHelper {
+  static toTranslitStr(input) {
+    if (!input || input == '') return ''
+
+    input = input.toLowerCase().trim()
+
+    const rus =
+      'й,ц,у,к,е,н,г,ш,щ,з,х,ъ,ф,ы,в,а,п,р,о,л,д,ж,э,я,ч,с,м,и,т,ь,б,ю'
+    const tr =
+      'y,c,u,k,e,n,g,sh,sch,z,h,,f,yi,v,a,p,r,o,l,d,j,e,ya,ch,s,m,i,t,,b,yu'
+
+    const rusArr = rus.split(',')
+    const trArr = tr.split(',')
+    const allowArr = '1234567890qwertyuiopasdfghjklzxcvbnm'.split('')
+
+    let output = ''
+    for (let i = 0; i < input.length; i++) {
+      const word = input.charAt(i)
+      const rusIdx = rusArr.indexOf(word)
+      const isRusWord = rusIdx > -1
+      const isAllowWord = allowArr.indexOf(word) > -1
+      output += isRusWord ? trArr[rusIdx] : isAllowWord ? word : '_'
+    }
+    return output.replace(/[_]+/g, '_')
+  }
+
   static strToEngSymbols(input) {
     if (!input || input == '') return ''
 
@@ -9,6 +34,18 @@ class StrHelper {
     rus.split('').forEach((s, i) => {
       output = input.replace(new RegExp(s, 'g'), eng[i])
     })
+    return output
+  }
+
+  static generatePageUrl(input, len = 50) {
+    if (Array.isArray(input)) {
+      input = input.join('_')
+    }
+
+    let output = this.toTranslitStr(input)
+    if (output.length > len) {
+      output = output.substring(0, len)
+    }
     return output
   }
 

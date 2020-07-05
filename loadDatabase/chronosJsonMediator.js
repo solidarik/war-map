@@ -1,5 +1,6 @@
 const ChronosModel = require('../models/chronosModel')
 const inetHelper = require('../helper/inetHelper')
+const StrHelper = require('../helper/strHelper')
 const SuperJsonMediator = require('./superJsonMediator')
 const moment = require('moment')
 
@@ -23,12 +24,18 @@ class ChronosJsonMediator extends SuperJsonMediator {
             resolve({ error: `не удалось определить координаты` })
           const newJson = {
             // _name: name_id,
+            startDateStr: json.startDate,
             startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
             isOnlyYear: json.isOnlyYear == 'True' ? true : false,
             place: json.place,
             point: placeCoords[0],
             brief: json.brief,
             srcUrl: json.srcUrl,
+            pageUrl: StrHelper.generatePageUrl([
+              json.place,
+              json.startDate,
+              json.brief,
+            ]),
           }
           resolve(newJson)
         })

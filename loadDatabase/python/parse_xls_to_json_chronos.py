@@ -7,7 +7,8 @@ print(sys.stdout.encoding)
 
 root_folder = 'out_chronos'
 
-col_place, col_startDate, col_brief, col_url = tuple(range(0, 4, 1))
+col_place, col_startDate, col_brief, col_url, col_remark, col_priority, col_comment = tuple(
+    range(0, 7, 1))
 
 
 def is_empty_value(row, col):
@@ -15,8 +16,12 @@ def is_empty_value(row, col):
     return (v == '')
 
 
-def get_sheet_value(row, col):
-    v = scheet.cell(row, col).value
+def get_sheet_value(row, col, isSimple=False):
+    cell_value = scheet.cell(row, col).value
+    if (isSimple and isinstance(cell_value, float)):
+        v = str(int(round(cell_value, 0)))
+    else:
+        v = str(cell_value)
     return v.replace('"', '\\"').rstrip().rstrip(',')
 
 
@@ -40,6 +45,12 @@ def get_sheet_value_date(row, col):
         m = int(helper.get_month_num(date_groups[2]))
 
     return '{:02d}.{:02d}.{}'.format(d, m, y), is_only_year
+
+
+def capitalizeFirst(input):
+    if (len(input) < 1 or input[0].isupper()):
+        return input
+    return input[0].upper() + input[1:]
 
 
 def get_sheet_value_arr(row, col, split_char=';'):
@@ -74,10 +85,14 @@ for row in range(START_ROW, END_ROW):
             continue
 
         chrono['place'] = get_sheet_value(row, col_place)
+        chrono['startDateStr'] = get_sheet_value(row, col_startDate, True)
         chrono['startDate'], chrono['isOnlyYear'] = get_sheet_value_date(
             row, col_startDate)
-        chrono['brief'] = get_sheet_value(row, col_brief)
+        chrono['brief'] = capitalizeFirst(get_sheet_value(row, col_brief))
         chrono['srcUrl'] = get_sheet_value(row, col_url)
+        chrono['remark'] = capitalizeFirst(get_sheet_value(row, col_remark))
+        chrono['priority'] = get_sheet_value(row, col_priority, True)
+        chrono['comment'] = capitalizeFirst(get_sheet_value(row, col_comment))
 
         entities.append(chrono)
     except Exception as e:

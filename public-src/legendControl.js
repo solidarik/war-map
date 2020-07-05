@@ -6,7 +6,7 @@ import AgreementFeature from './mapLayers/agreementFeature'
 import ChronosFeature from './mapLayers/chronosFeature'
 import PersonFeature from './mapLayers/personFeature'
 import { CookieHelper } from './cookieHelper'
-import TileSource from 'ol/source/Tile'
+//import TileSource from 'ol/source/Tile'
 
 export class LegendControl extends EventEmitter {
   constructor() {

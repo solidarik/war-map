@@ -11,6 +11,11 @@ var agreementsSchema = new mongoose.Schema(
     kind: String,
     place: String,
     point: [],
+    pageUrl: {
+      type: String,
+      unique: true,
+      required: 'Не определена уникальная ссылка',
+    },
     imgUrl: String,
     player1: String,
     player2: String,

@@ -319,10 +319,10 @@ class BattleFeature extends SuperFeature {
   }
 
   static showImage() {
-    const feature = window.CURRENT_ITEM
-    if (!feature.imgUrl) return
+    const info = window.CURRENT_ITEM
+    if (!info.imgUrl) return
 
-    $('#imgModalLabel').html(feature.name)
+    $('#imgModalLabel').html(info.name)
     $('.modal-body').html(`
     <div class="d-flex justify-content-center">
       <div class="spinner-border" role="status">
@@ -334,7 +334,7 @@ class BattleFeature extends SuperFeature {
 
     setTimeout(() => {
       ImageHelper.resizeImage(
-        feature.imgUrl,
+        info.imgUrl,
         $('.modal-body').width(),
         (canvas) => {
           $('.modal-body').html(canvas)
@@ -412,7 +412,7 @@ class BattleFeature extends SuperFeature {
       info.enem_submarines_cnt
     )
 
-    const html = `<div class="battle-info">
+    const html = `<div class="battle-info info-panel">
       <h1>${info.name}</h1>
       <h2>${dates}</h2>
       <table class="table table-sm table-borderless" id="table-info">

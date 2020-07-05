@@ -341,25 +341,30 @@ body {
   border: none;
 }
 
-.battle-info {
+.info-panel {
   font-size: 1em;
   font-size: 14px;
   margin: 0.4em;
 }
 
-.battle-info h1 {
+.info-panel h1 {
   margin-left: 0.2em;
   margin-right: 1em;
   font-size: 1.6em;
 }
 
-.battle-info h2 {
+.info-panel h2 {
   margin-left: 0.2em;
   font-size: 1.4em;
 }
 
-.battle-info table {
-  font-size: 1.2em;
+.info-panel table {
+  font-size: 1.4em;
+}
+
+.info-panel p {
+  font-size: 1.4em;
+  margin-left: 0.2em;
 }
 
 .battle-info .progress {

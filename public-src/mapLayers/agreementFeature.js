@@ -1,5 +1,5 @@
 import SuperFeature from './superFeature'
-import dateHelper from '../../helper/dateHelper'
+import DateHelper from '../../helper/dateHelper'
 
 class AgreementFeature extends SuperFeature {
   static getIcon() {
@@ -19,8 +19,25 @@ class AgreementFeature extends SuperFeature {
     }
   }
 
-  static getHtmlInfo(feature) {
-    return 'Not implemented'
+  static getHtmlInfo(info) {
+    window.CURRENT_ITEM = info
+    const dates = DateHelper.twoDateToStr(info.startDate, info.endDate)
+    const html = `<div class="agreement-info info-panel">
+      <h1>${info.place}. ${info.kind}</h1>
+      <h2>${dates}</h2>
+      <table class="table table-sm table-borderless" id="table-info">
+        <tbody>
+          <tr><td>Участники</td><td>${info.player1}</td></tr>
+          <tr><td></td><td>${info.player2}</td></tr>
+        </tbody>
+      </table>
+      <p>${info.results}</p>
+      <div class="source-info">
+        <a target='_blank' rel='noopener noreferrer' href=${info.srcUrl}>Источник информации</a>
+      </div>
+    </div>
+    `
+    return html
   }
 
   static fillAgreementFeature(info) {
@@ -29,7 +46,7 @@ class AgreementFeature extends SuperFeature {
         ...elem,
         icon: AgreementFeature.getIcon(),
         popupFirst: elem.kind,
-        popupSecond: dateHelper.twoDateToStr(elem.startDate, elem.endDate),
+        popupSecond: DateHelper.twoDateToStr(elem.startDate, elem.endDate),
         popupThird: elem.place,
         oneLine: elem.kind,
       }

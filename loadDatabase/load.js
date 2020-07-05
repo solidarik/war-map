@@ -39,17 +39,17 @@ Promise.resolve(true)
   //     mediator: usersJsonMediator
   //   })
   // })
-  // .then(() => {
-  //   return dbHelper.clearDb('chronos')
-  // })
-  // .then(() => {
-  //   return dbHelper.saveFilesFrom({
-  //     source: 'python/out_chronos',
-  //     procdir: 'python/out_chronos_process',
-  //     errdir: 'python/out_chronos_errors',
-  //     mediator: chronosJsonMediator,
-  //   })
-  // })
+  .then(() => {
+    return dbHelper.clearDb('chronos')
+  })
+  .then(() => {
+    return dbHelper.saveFilesFrom({
+      source: 'python/out_chronos',
+      procdir: 'python/out_chronos_process',
+      errdir: 'python/out_chronos_errors',
+      mediator: chronosJsonMediator,
+    })
+  })
   // .then(() => {
   //   return dbHelper.clearDb('agreements')
   // })
@@ -61,28 +61,28 @@ Promise.resolve(true)
   //     mediator: agreementsJsonMediator,
   //   })
   // })
-  .then(() => {
-    return dbHelper.clearDb('battles')
-  })
-  .then(() => {
-    return dbHelper.saveFilesFrom({
-      source: 'python/out_battles',
-      procdir: 'python/out_battles_process',
-      errdir: 'python/out_battles_errors',
-      mediator: battlesJsonMediator,
-    })
-  })
-  .then(() => {
-    return dbHelper.clearDb('persons')
-  })
-  .then(() => {
-    return dbHelper.saveFilesFrom({
-      source: '../public/data/persons.json',
-      procdir: 'out/out_person_process',
-      errdir: 'out/out_person_errors',
-      mediator: personsJsonMediator,
-    })
-  })
+  // .then(() => {
+  //   return dbHelper.clearDb('battles')
+  // })
+  // .then(() => {
+  //   return dbHelper.saveFilesFrom({
+  //     source: 'python/out_battles',
+  //     procdir: 'python/out_battles_process',
+  //     errdir: 'python/out_battles_errors',
+  //     mediator: battlesJsonMediator,
+  //   })
+  // })
+  // .then(() => {
+  //   return dbHelper.clearDb('persons')
+  // })
+  // .then(() => {
+  //   return dbHelper.saveFilesFrom({
+  //     source: '../public/data/persons.json',
+  //     procdir: 'out/out_person_process',
+  //     errdir: 'out/out_person_errors',
+  //     mediator: personsJsonMediator,
+  //   })
+  // })
   .then(() => {
     log.success(chalk.cyan(`окончание процесса загрузки`))
     dbHelper.free()
