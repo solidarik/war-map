@@ -256,7 +256,7 @@ class BattleFeature extends SuperFeature {
           aria-valuenow="${number}"
           aria-valuemin="0"
           aria-valuemax="${maxNumber}">${
-          input > 0 ? StrHelper.numberWithCommas(input) : input
+          number > 0 ? StrHelper.numberWithCommas(input) : input
         }
         </div></div>`
       }
