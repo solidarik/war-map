@@ -22,7 +22,7 @@ class AgreementFeature extends SuperFeature {
   static getHtmlInfo(info) {
     window.CURRENT_ITEM = info
     const dates = DateHelper.twoDateToStr(info.startDate, info.endDate)
-    const html = `<div class="agreement-info info-panel">
+    const html = `<div class="agreement-info panel-info">
       <h1>${info.place}. ${info.kind}</h1>
       <h2>${dates}</h2>
       <table class="table table-sm table-borderless" id="table-info">

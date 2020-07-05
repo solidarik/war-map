@@ -412,7 +412,7 @@ class BattleFeature extends SuperFeature {
       info.enem_submarines_cnt
     )
 
-    const html = `<div class="battle-info info-panel">
+    const html = `<div class="battle-info panel-info">
       <h1>${info.name}</h1>
       <h2>${dates}</h2>
       <table class="table table-sm table-borderless" id="table-info">

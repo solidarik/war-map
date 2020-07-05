@@ -296,12 +296,6 @@ body {
   background-color: rgba(40, 40, 40, 0.5) !important;
 }
 
-#events-info-container a {
-  color: white;
-  font-size: 1em;
-  margin-left: 0.5em;
-}
-
 #events-info-content::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   background-color: #f5f5f5;
@@ -341,30 +335,42 @@ body {
   border: none;
 }
 
-.info-panel {
+.panel-info {
   font-size: 1em;
   font-size: 14px;
   margin: 0.4em;
+  margin-left: 0.6em;
 }
 
-.info-panel h1 {
-  margin-left: 0.2em;
+.panel-info h1 {
   margin-right: 1em;
   font-size: 1.6em;
 }
 
-.info-panel h2 {
-  margin-left: 0.2em;
+.panel-info h2 {
   font-size: 1.4em;
 }
 
-.info-panel table {
+.panel-info table {
   font-size: 1.4em;
 }
 
-.info-panel p {
+.panel-info p {
   font-size: 1.4em;
-  margin-left: 0.2em;
+}
+
+.panel-info img {
+  vertical-align: center;
+  margin-right: 0.5em;
+}
+
+.source-info {
+  font-size: 1.2em;
+  text-decoration: underline;
+}
+
+.source-info a {
+  color: white;
 }
 
 .battle-info .progress {
@@ -750,7 +756,7 @@ input.form-control {
 
 .hover-on-text {
   cursor: pointer;
-  color: red;
+  background-color: rgba(40, 40, 40, 0.5);
 }
 
 .left-align {

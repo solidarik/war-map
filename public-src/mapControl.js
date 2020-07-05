@@ -17,7 +17,7 @@ import * as olInteraction from 'ol/interaction'
 import { EventEmitter } from './eventEmitter'
 import proj4 from 'proj4'
 import { register } from 'ol/proj/proj4'
-import { default as olPopup } from 'ol-ext/overlay/Popup'
+//import { default as olPopup } from 'ol-ext/overlay/Popup'
 import { default as olAnimatedCluster } from 'ol-ext/layer/AnimatedCluster'
 import { default as olFeatureAnimationZoom } from 'ol-ext/featureanimation/Zoom'
 import { easeOut } from 'ol/easing'
@@ -80,6 +80,7 @@ export class MapControl extends EventEmitter {
       // projection: 'EPSG:3395',
     })
 
+    /* temporarily disable-popup
     this.popup = new olPopup({
       popupClass: 'default shadow', //"default shadow", "tooltips", "warning" "black" "default", "tips", "shadow",
       closeBox: true,
@@ -93,6 +94,7 @@ export class MapControl extends EventEmitter {
       autoPan: true,
       autoPanAnimation: { duration: this.isEnableAnimate ? 250 : 0 },
     })
+    */
 
     const map = new olMap({
       interactions: olInteraction.defaults({
@@ -103,7 +105,7 @@ export class MapControl extends EventEmitter {
         //new olControl.FullScreen()
       ]),
       layers: [rasterLayer],
-      overlays: [this.popup],
+      //disable-popup overlays: [this.popup],
       target: 'map',
       view: view,
     })
@@ -214,7 +216,7 @@ export class MapControl extends EventEmitter {
     this.clusterSource = clusterSource
 
     map.on('click', (event) => {
-      window.map.popup.hide()
+      // disable-popup window.map.popup.hide()
       this.emit('mapclick', undefined)
 
       const coordinates = event.coordinate
@@ -240,13 +242,19 @@ export class MapControl extends EventEmitter {
         features[0] = featureEvent
       }
 
-      let htmlContent = ''
       if (features.length > 0) {
         this.emit('selectFeatures', features)
       }
 
-      let classFeature = undefined
+      const featureCoord = featureEvent.getGeometry().getFirstCoordinate()
+      this.currentFeatureCoord = featureCoord
+      this.showPulse()
 
+      return
+      //disable-popup
+
+      let htmlContent = ''
+      let classFeature = undefined
       if (features.length == 1) {
         const feature = features[0]
         const info = feature.get('info')
@@ -266,11 +274,6 @@ export class MapControl extends EventEmitter {
         htmlContent += `</table>`
         console.log(`Cluster ${features.length} features`)
       }
-
-      const featureCoord = featureEvent.getGeometry().getFirstCoordinate()
-
-      this.currentFeatureCoord = featureCoord
-      this.showPulse()
 
       if (
         ![BattleFeature, AgreementFeature, ChronosFeature].includes(
@@ -589,7 +592,9 @@ export class MapControl extends EventEmitter {
   }
 
   hidePopup() {
+    /* disable-popup
     window.map.popup.hide()
+    */
   }
 
   hidePulse() {

@@ -118,6 +118,19 @@ class StrHelper {
     return isNaN ? 0 : tryFloat
   }
 
+  static getMaxLenNumber(input) {
+    if (input === undefined) return undefined
+    let numbers = this.getAllNumbers(input)
+    if (numbers.length === 0) return undefined
+    let res = numbers[0]
+    for (let i = 1; i < numbers.length; i++) {
+      if (res.length < numbers[i].length) {
+        res = numbers[i]
+      }
+    }
+    return res
+  }
+
   static getAllNumbers(input, floatDelim = '.') {
     // К примеру, есть строка: '123 adsf asdf  234324 22'
     // Получаем из нее массив строковых чисел: ['123', '234324', '22']"""

@@ -1,12 +1,8 @@
 const PersonsModel = require('../models/personsModel')
-const strHelper = require('../helper/strHelper')
-const dateHelper = require('../helper/dateHelper')
-const geoHelper = require('../helper/geoHelper')
+const StrHelper = require('../helper/strHelper')
+const DateHelper = require('../helper/dateHelper')
 const inetHelper = require('../helper/inetHelper')
-const fileHelper = require('../helper/fileHelper')
 const SuperJsonMediator = require('./superJsonMediator')
-const moment = require('moment')
-const log = require('../helper/logHelper')
 
 class PersonsJsonMediator extends SuperJsonMediator {
   constructor() {
@@ -42,11 +38,29 @@ class PersonsJsonMediator extends SuperJsonMediator {
             surname: json.Surname,
             name: json.Name,
             middlename: json.MiddleName,
-            dateBirth: dateHelper.ignoreAlterDate(json.DateBirth),
-            dateDeath: dateHelper.ignoreAlterDate(json.DateDeath),
-            dateAchievement: dateHelper.ignoreAlterDate(json.DateAchievement),
+            dateBirth: DateHelper.ignoreAlterDate(json.DateBirth),
+            dateBirthStr: json.DateBirth,
+            dateDeath: DateHelper.ignoreAlterDate(json.DateDeath),
+            dateDeathStr: json.DateDeath,
+            dateAchievement: DateHelper.ignoreAlterDate(json.DateAchievement),
+            dateAchievementStr: json.DateAchievement,
+            deathYearStr: DateHelper.betweenYearTwoDates(
+              json.DateBirth,
+              json.DateDeath
+            ),
+            achievementYearStr: DateHelper.betweenYearTwoDates(
+              json.DateBirth,
+              json.DateAchievement
+            ),
             description: json.Description,
             fullDescription: json.FullDescription,
+            pageUrl:
+              'person/#sel=' +
+              StrHelper.generatePageUrl([
+                json.Surname,
+                json.Name,
+                json.DateBirth,
+              ]),
             srcUrl: json.Source,
             photoUrl: json.PhotoUrl,
             linkUrl: json.Link,

@@ -14,6 +14,18 @@ export class InfoControl extends EventEmitter {
     })
 
     window.infoControl = this
+
+    window.setActiveElement = (elem, b) => {
+      const c = 'hover-on-text'
+      if (!elem) return
+      b
+        ? elem.parentElement.classList.add(c)
+        : elem.parentElement.classList.remove(c)
+    }
+
+    window.showActiveItem = (item) => {
+      console.log(`show item: ${item}`)
+    }
   }
 
   hide() {
@@ -31,6 +43,30 @@ export class InfoControl extends EventEmitter {
   }
 
   showItemList(items) {
+    ClassHelper.removeClass(window.infoControl.contentDiv, 'events-info-hide')
+    ClassHelper.addClass(window.infoControl.contentDiv, 'events-info-show')
+    let html = `<div class='panel-info'>
+      <h1>Выберите событие</h1>
+      <table class='table table-sm table-borderless'>`
+    items.forEach((feature) => {
+      const info = feature.get('info')
+      html += `<tr>
+        <td
+          onclick="window.showActiveItem()"
+          onmouseenter="window.setActiveElement(this, true);"
+          onmouseleave="window.setActiveElement(this, false);">
+          <img src="${info.icon}" alt="${info.oneLine}">
+        </td>
+        <td
+          onclick="window.showActiveItem()"
+          onmouseenter="window.setActiveElement(this, true);"
+          onmouseleave="window.setActiveElement(this, false);">
+          <span>${info.oneLine}</span>
+        </td>
+      </tr>`
+    })
+    html += `</table></div>`
+    this.contentDiv.innerHTML = html
     console.log(`show item list: ${items.length}`)
   }
 
@@ -40,6 +76,7 @@ export class InfoControl extends EventEmitter {
     } else {
       this.showItemList(items)
     }
+    this.contentDiv.scrollTop = 0
   }
 
   static create() {

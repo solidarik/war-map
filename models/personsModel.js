@@ -15,6 +15,8 @@ var personsSchema = new mongoose.Schema(
     dateDeathStr: String,
     dateAchievement: Date,
     dateAchievementStr: String,
+    achievementYearStr: String,
+    deathYearStr: String,
     description: String,
     fullDescription: String,
     pageUrl: {

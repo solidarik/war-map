@@ -12,6 +12,31 @@ class DateHelper {
     procDate = procDate.replace(/-/g, '.')
     if (procDate.length == 4) {
       procDate = `01.01.${procDate}`
+    } else if (procDate.split('.').length !== 3) {
+      const months = [
+        'янв',
+        'фев',
+        'март',
+        'апр',
+        'май',
+        'июнь',
+        'июль',
+        'авг',
+        'сен',
+        'окт',
+        'ноя',
+        'дек',
+      ]
+      let year = strHelper.getMaxLenNumber(input)
+      let month = 1
+      year = year.length == 2 ? '19' + year : year
+      for (let i = 0; i < months.length; i++) {
+        if (-1 < input.indexOf(months[i])) {
+          month = i + 1
+          break
+        }
+      }
+      procDate = `01.${month}.${year}`
     }
     const dmy = procDate.split('.')
     let d = parseInt(dmy[0])
@@ -49,6 +74,25 @@ class DateHelper {
       : isOnlyYear
       ? this.getYearStr(startDate)
       : startDateStr
+  }
+
+  static betweenYearTwoDates(startDate, endDate, isEndText = true) {
+    const startDateMoment = this.ignoreAlterDate(startDate)
+    const endDateMoment = this.ignoreAlterDate(endDate)
+
+    if (!startDateMoment || !endDateMoment) return undefined
+
+    const diffYear = endDateMoment.diff(startDateMoment, 'years')
+
+    if (!isEndText) return diffYear
+
+    if (diffYear % 10 === 1 && diffYear !== 11) return diffYear + ' год'
+    else
+      return (diffYear >= 5 && diffYear <= 19) ||
+        diffYear % 10 > 4 ||
+        diffYear % 10 === 0
+        ? diffYear + ' лет'
+        : diffYear + ' года'
   }
 }
 

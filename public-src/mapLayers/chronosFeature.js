@@ -22,7 +22,7 @@ class ChronosFeature extends SuperFeature {
 
   static getHtmlInfo(info) {
     window.CURRENT_ITEM = info
-    const html = `<div class="chronos-info info-panel">
+    const html = `<div class="chronos-info panel-info">
       <h1>${info.place}</h1>
       <h2>${info.startDateStr}</h2>
       <p>${info.brief}</p>

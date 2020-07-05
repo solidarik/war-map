@@ -32,8 +32,47 @@ class PersonFeature extends SuperFeature {
     }
   }
 
-  static getHtmlInfo(feature) {
-    return 'Not implemented'
+  static getHtmlInfo(info) {
+    window.CURRENT_ITEM = info
+    const delimSymbol = '<br/>'
+    const html = `<div class="person-info panel-info">
+      <h1>${info.surname} ${info.name} ${info.middlename}</h1>
+      <table class="table table-sm table-borderless" id="table-info">
+        <tbody>
+          ${
+            info.dateAchievementStr
+              ? '<tr><td>Подвиг</td><td>' +
+                info.dateAchievementStr +
+                ' (' +
+                info.achievementYearStr +
+                ')' +
+                delimSymbol +
+                info.placeAchievement +
+                '</td></tr>'
+              : ''
+          }
+          ${
+            info.dateDeathStr
+              ? '<tr><td>Смерть</td><td>' +
+                info.dateDeathStr +
+                ' (' +
+                info.deathYearStr +
+                ')' +
+                delimSymbol +
+                info.placeDeath +
+                '</td></tr>'
+              : ''
+          }
+        </tbody>
+      </table>
+      <div class="source-info">
+        <a target='_blank' rel='noopener noreferrer' href=${
+          info.pageUrl
+        }>Подробнее</a>
+      </div>
+    </div>
+    `
+    return html
   }
 
   static getFio(info) {

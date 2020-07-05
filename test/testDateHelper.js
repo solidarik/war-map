@@ -83,6 +83,13 @@ describe('check  alterDate', () => {
   })
 })
 
+describe('test human date', () => {
+  const v5 = ['авг 1924', moment.utc('01.08.1924', 'DD.MM.YYYY')]
+  it(it_name(v5), () => {
+    check_equal(v5, dateHelper.ignoreAlterDate)
+  })
+})
+
 describe('test mocha test system', () => {
   it('test assert', () => {
     assert.equal(false, false)
