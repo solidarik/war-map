@@ -320,7 +320,7 @@ body {
 }
 
 .events-info-show {
-  max-height: 300px;
+  max-height: 320px;
 }
 
 #events-info-content table {
@@ -353,6 +353,7 @@ body {
 
 .panel-info table {
   font-size: 1.4em;
+  margin-bottom: 0.1em;
 }
 
 .panel-info td:first-child {

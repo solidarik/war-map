@@ -8,6 +8,8 @@ var agreementsSchema = new mongoose.Schema(
       required: 'Не задана начальная дата события',
     },
     endDate: Date,
+    startDateStr: String,
+    endDateStr: String,
     kind: String,
     place: String,
     point: [],

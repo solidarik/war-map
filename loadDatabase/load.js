@@ -39,17 +39,17 @@ Promise.resolve(true)
   //     mediator: usersJsonMediator
   //   })
   // })
-  // .then(() => {
-  //   return dbHelper.clearDb('chronos')
-  // })
-  // .then(() => {
-  //   return dbHelper.saveFilesFrom({
-  //     source: 'python/out_chronos',
-  //     procdir: 'python/out_chronos_process',
-  //     errdir: 'python/out_chronos_errors',
-  //     mediator: chronosJsonMediator,
-  //   })
-  // })
+  .then(() => {
+    return dbHelper.clearDb('chronos')
+  })
+  .then(() => {
+    return dbHelper.saveFilesFrom({
+      source: 'python/out_chronos',
+      procdir: 'python/out_chronos_process',
+      errdir: 'python/out_chronos_errors',
+      mediator: chronosJsonMediator,
+    })
+  })
   .then(() => {
     return dbHelper.clearDb('agreements')
   })

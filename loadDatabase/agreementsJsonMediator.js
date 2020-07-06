@@ -18,6 +18,8 @@ class AgreementsJsonMediator extends SuperJsonMediator {
           const newJson = {
             startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
             endDate: moment.utc(json.endDate, 'DD.MM.YYYY'),
+            startDateStr: json.startDate,
+            endDateStr: json.endDate,
             kind: json.kind ? json.kind : '',
             place: json.place,
             point: placeCoords[0],

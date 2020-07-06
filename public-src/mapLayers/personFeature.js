@@ -66,7 +66,7 @@ class PersonFeature extends SuperFeature {
           }
         </tbody>
       </table>
-      <p>${StrHelper.ellipseLongString(info.description)}</p>
+      <p>${info.description}</p>
       <div class="source-info">
         <a target='_blank' rel='noopener noreferrer' href=${
           info.pageUrl

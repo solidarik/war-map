@@ -24,7 +24,7 @@ class ChronosJsonMediator extends SuperJsonMediator {
             resolve({ error: `не удалось определить координаты` })
           const newJson = {
             // _name: name_id,
-            startDateStr: json.startDate,
+            startDateStr: json.startDateStr,
             startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
             isOnlyYear: json.isOnlyYear == 'True' ? true : false,
             place: json.place,

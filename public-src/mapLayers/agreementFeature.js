@@ -21,7 +21,7 @@ class AgreementFeature extends SuperFeature {
 
   static getHtmlInfo(info) {
     window.CURRENT_ITEM = info
-    const dates = DateHelper.twoDateToStr(info.startDate, info.endDate)
+    const dates = DateHelper.twoDateToStr2(info.startDateStr, info.endDateStr)
     const html = `<div class="agreement-info panel-info">
       <h1>${info.place}. ${info.kind}</h1>
       <h2>${dates}</h2>

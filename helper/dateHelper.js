@@ -76,6 +76,12 @@ class DateHelper {
       : startDateStr
   }
 
+  static twoDateToStr2(startDateStr, endDateStr) {
+    return endDateStr != undefined && startDateStr != endDateStr
+      ? `${startDateStr} - ${endDateStr}`
+      : startDateStr
+  }
+
   static betweenYearTwoDates(startDate, endDate, isEndText = true) {
     const startDateMoment = this.ignoreAlterDate(startDate)
     const endDateMoment = this.ignoreAlterDate(endDate)
