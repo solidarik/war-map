@@ -23,8 +23,15 @@ export class InfoControl extends EventEmitter {
         : elem.parentElement.classList.remove(c)
     }
 
-    window.showActiveItem = (item) => {
-      console.log(`show item: ${item}`)
+    window.showActiveItem = (id) => {
+      const items = window.infoControl.items
+      console.log(`showActiveItem: ${id}`)
+      for (let i = 0; i < items.length; i++) {
+        if (id === items[i].get('info')._id) {
+          window.infoControl.showItemInfo(items[i])
+          break
+        }
+      }
     }
   }
 
@@ -43,6 +50,7 @@ export class InfoControl extends EventEmitter {
   }
 
   showItemList(items) {
+    this.items = items
     ClassHelper.removeClass(window.infoControl.contentDiv, 'events-info-hide')
     ClassHelper.addClass(window.infoControl.contentDiv, 'events-info-show')
     let html = `<div class='panel-info'>
@@ -52,13 +60,13 @@ export class InfoControl extends EventEmitter {
       const info = feature.get('info')
       html += `<tr>
         <td
-          onclick="window.showActiveItem()"
+          onclick="window.showActiveItem('${info._id}')"
           onmouseenter="window.setActiveElement(this, true);"
           onmouseleave="window.setActiveElement(this, false);">
           <img src="${info.icon}" alt="${info.oneLine}">
         </td>
         <td
-          onclick="window.showActiveItem()"
+          onclick="window.showActiveItem('${info._id}')"
           onmouseenter="window.setActiveElement(this, true);"
           onmouseleave="window.setActiveElement(this, false);">
           <span>${info.oneLine}</span>

@@ -33,6 +33,7 @@ var personsSchema = new mongoose.Schema(
     placeBirthCoords: [],
     placeDeath: String,
     placeDeathCoords: [],
+    activity: String,
   },
   {
     timestamps: false,

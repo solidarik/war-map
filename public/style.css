@@ -355,6 +355,10 @@ body {
   font-size: 1.4em;
 }
 
+.panel-info td:first-child {
+  padding-left: 0;
+}
+
 .panel-info p {
   font-size: 1.4em;
 }

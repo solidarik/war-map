@@ -70,6 +70,7 @@ class PersonsJsonMediator extends SuperJsonMediator {
             placeBirthCoords: placeBirthCoords,
             placeDeath: json.PlaceDeath,
             placeDeathCoords: placeDeathCoords,
+            activity: json.FieldActivity,
           }
 
           resolve(newJson)

@@ -1,6 +1,6 @@
 import SuperFeature from './superFeature'
-import dateHelper from '../../helper/dateHelper'
-import strHelper from '../../helper/strHelper'
+import DateHelper from '../../helper/dateHelper'
+import StrHelper from '../../helper/strHelper'
 
 class PersonFeature extends SuperFeature {
   static getIcon() {
@@ -37,6 +37,7 @@ class PersonFeature extends SuperFeature {
     const delimSymbol = '<br/>'
     const html = `<div class="person-info panel-info">
       <h1>${info.surname} ${info.name} ${info.middlename}</h1>
+      <h2>${info.activity}</h2>
       <table class="table table-sm table-borderless" id="table-info">
         <tbody>
           ${
@@ -52,7 +53,7 @@ class PersonFeature extends SuperFeature {
               : ''
           }
           ${
-            info.dateDeathStr
+            info.dateDeathStr && info.dateDeathStr !== info.dateAchievementStr
               ? '<tr><td>Смерть</td><td>' +
                 info.dateDeathStr +
                 ' (' +
@@ -65,6 +66,7 @@ class PersonFeature extends SuperFeature {
           }
         </tbody>
       </table>
+      <p>${StrHelper.ellipseLongString(info.description)}</p>
       <div class="source-info">
         <a target='_blank' rel='noopener noreferrer' href=${
           info.pageUrl
@@ -94,7 +96,7 @@ class PersonFeature extends SuperFeature {
             point: elem.placeBirthCoords[0],
             icon: PersonFeature.getBirthIcon(),
             popupFirst: `${PersonFeature.getFio(elem)}`,
-            popupSecond: `Дата рождения: ${dateHelper.dateToStr(
+            popupSecond: `Дата рождения: ${DateHelper.dateToStr(
               elem.dateBirth
             )}`,
             popupThird: `Место рождения: ${elem.placeBirth}`,
@@ -109,10 +111,10 @@ class PersonFeature extends SuperFeature {
             point: elem.placeAchievementCoords[0],
             icon: PersonFeature.getAchievementIcon(),
             popupFirst: `${PersonFeature.getFio(elem)}`,
-            popupSecond: `Дата подвига: ${dateHelper.dateToStr(
+            popupSecond: `Дата подвига: ${DateHelper.dateToStr(
               elem.dateAchievement
             )}`,
-            popupThird: `Место подвига: ${strHelper.shrinkStringBeforeDelim(
+            popupThird: `Место подвига: ${StrHelper.shrinkStringBeforeDelim(
               elem.placeAchievement,
               ';'
             )}`,
@@ -127,7 +129,7 @@ class PersonFeature extends SuperFeature {
             point: elem.placeDeathCoords[0],
             icon: PersonFeature.getDeathIcon(),
             popupFirst: `${PersonFeature.getFio(elem)}`,
-            popupSecond: `Дата смерти: ${dateHelper.dateToStr(elem.dateDeath)}`,
+            popupSecond: `Дата смерти: ${DateHelper.dateToStr(elem.dateDeath)}`,
             popupThird: `Место смерти: ${elem.placeDeath}`,
           }
         })
