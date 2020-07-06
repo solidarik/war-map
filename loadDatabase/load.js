@@ -50,17 +50,17 @@ Promise.resolve(true)
   //     mediator: chronosJsonMediator,
   //   })
   // })
-  // .then(() => {
-  //   return dbHelper.clearDb('agreements')
-  // })
-  // .then(() => {
-  //   return dbHelper.saveFilesFrom({
-  //     source: 'python/out_agreements',
-  //     procdir: 'python/out_agreements_process',
-  //     errdir: 'python/out_agreements_errors',
-  //     mediator: agreementsJsonMediator,
-  //   })
-  // })
+  .then(() => {
+    return dbHelper.clearDb('agreements')
+  })
+  .then(() => {
+    return dbHelper.saveFilesFrom({
+      source: 'python/out_agreements',
+      procdir: 'python/out_agreements_process',
+      errdir: 'python/out_agreements_errors',
+      mediator: agreementsJsonMediator,
+    })
+  })
   // .then(() => {
   //   return dbHelper.clearDb('battles')
   // })

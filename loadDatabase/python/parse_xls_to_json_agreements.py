@@ -30,7 +30,7 @@ def get_sheet_value_arr(row, col, split_char=';'):
 
 
 filename = os.path.dirname(
-    os.path.abspath(__file__)) + '/Международные отношения 2-0.xlsx'
+    os.path.abspath(__file__)) + '/Международные отношения 3-0.xlsx'
 book = xlrd.open_workbook(filename, encoding_override="cp1251")
 
 scheet = book.sheet_by_index(0)

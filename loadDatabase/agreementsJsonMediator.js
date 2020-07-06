@@ -1,6 +1,6 @@
 const AgreementsModel = require('../models/agreementsModel')
-const geoHelper = require('../helper/geoHelper')
-const inetHelper = require('../helper/inetHelper')
+const InetHelper = require('../helper/inetHelper')
+const StrHelper = require('../helper/strHelper')
 const SuperJsonMediator = require('./superJsonMediator')
 const moment = require('moment')
 
@@ -13,8 +13,7 @@ class AgreementsJsonMediator extends SuperJsonMediator {
 
   processJson(json) {
     return new Promise((resolve, reject) => {
-      inetHelper
-        .getCoordsForCityOrCountry(json.place)
+      InetHelper.getCoordsForCityOrCountry(json.place)
         .then((placeCoords) => {
           const newJson = {
             startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
@@ -27,6 +26,7 @@ class AgreementsJsonMediator extends SuperJsonMediator {
             results: json.results,
             imgUrl: json.imgUrl,
             srcUrl: json.srcUrl,
+            pageUrl: StrHelper.generatePageUrl([json.kind]),
           }
 
           !placeCoords && console.log('json', newJson)

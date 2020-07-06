@@ -1,7 +1,7 @@
 const PersonsModel = require('../models/personsModel')
 const StrHelper = require('../helper/strHelper')
 const DateHelper = require('../helper/dateHelper')
-const inetHelper = require('../helper/inetHelper')
+const InetHelper = require('../helper/inetHelper')
 const SuperJsonMediator = require('./superJsonMediator')
 
 class PersonsJsonMediator extends SuperJsonMediator {
@@ -23,9 +23,9 @@ class PersonsJsonMediator extends SuperJsonMediator {
       }
 
       let promises = [
-        inetHelper.getCoordsForCityOrCountry(json.PlaceAchievement),
-        inetHelper.getCoordsForCityOrCountry(json.PlaceBirth),
-        inetHelper.getCoordsForCityOrCountry(json.PlaceDeath),
+        InetHelper.getCoordsForCityOrCountry(json.PlaceAchievement),
+        InetHelper.getCoordsForCityOrCountry(json.PlaceBirth),
+        InetHelper.getCoordsForCityOrCountry(json.PlaceDeath),
       ]
 
       Promise.all(promises)
@@ -54,13 +54,7 @@ class PersonsJsonMediator extends SuperJsonMediator {
             ),
             description: json.Description,
             fullDescription: json.FullDescription,
-            pageUrl:
-              'person/#sel=' +
-              StrHelper.generatePageUrl([
-                json.Surname,
-                json.Name,
-                json.DateBirth,
-              ]),
+            pageUrl: StrHelper.generatePageUrl([json.Surname, json.Name]),
             srcUrl: json.Source,
             photoUrl: json.PhotoUrl,
             linkUrl: json.Link,
