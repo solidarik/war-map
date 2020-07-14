@@ -246,7 +246,11 @@ var AddMapInfoDiagramm = /*#__PURE__*/function () {
         return 0;
       });
       console.log(JSON.stringify(this.data));
-      var first5tData = this.data.slice(0, 5);
+      var first5tData = this.data.filter(function (d) {
+        return d.iso3 != "OWD";
+      });
+      console.log(JSON.stringify(this.data));
+      first5tData = first5tData.slice(0, 5);
       console.log(JSON.stringify(first5tData)); // set the ranges
 
       var x = d3.scaleBand().range([0, width]).padding(0.1);
@@ -262,7 +266,9 @@ var AddMapInfoDiagramm = /*#__PURE__*/function () {
         return d.iso3;
       })); //console.log("d3.max=" + d3.max(this.data, function (d) { return d.value; }));
 
-      var maxY = d3.max(this.data, function (d) {
+      var maxY = d3.max(this.data.filter(function (d) {
+        return d.iso3 != "OWD";
+      }), function (d) {
         return d.value;
       });
       var uniY = d3.max(this.data, function (d) {

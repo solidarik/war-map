@@ -320,7 +320,12 @@ class AddMapInfoDiagramm {
             return 0;
         });
         console.log(JSON.stringify(this.data));
-        var first5tData = this.data.slice(0, 5);
+        var first5tData = this.data.filter((d)=>{
+            return d.iso3!="OWD";
+        });
+        console.log(JSON.stringify(this.data));
+        first5tData = first5tData.slice(0, 5);
+
         console.log(JSON.stringify(first5tData));
         // set the ranges
         var x = d3.scaleBand()
@@ -346,7 +351,7 @@ class AddMapInfoDiagramm {
         //console.log("this.data.map=" + this.data.map(function (d) { return d.date; }));
         x.domain(first5tData.map(function (d) { return d.iso3; }));
         //console.log("d3.max=" + d3.max(this.data, function (d) { return d.value; }));
-        var maxY = d3.max(this.data, function (d) { return d.value; });
+        var maxY = d3.max(this.data.filter((d)=>{return d.iso3!="OWD";}), function (d) { return d.value; });
         var uniY = d3.max(this.data, function (d) { return d.rusUnit; });
         var couY = "ТОП 5 " + d3.max(this.data, function (d) { return d.rusIndicator; });
         y.domain([0, maxY]);
