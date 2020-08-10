@@ -1,6 +1,6 @@
 extends layout
 block head
-  link(rel='stylesheet' href='/style-person.css')
+  link(rel='stylesheet' href='/style-task.css')
 
   script(src='/libs/oboe-browser.min.js')
   script(src='/libs/d3.min.js')
@@ -15,53 +15,24 @@ block content
     +header('task')
     div.content(role='content' id='content' dragable='true')
         .row.person-cont
-            //- .col-md-4
-            //-     .row.details.detail-cont
-            //-         .col-lg-12
-            //-             blockquote
-            //-                 h5 Описание задачи
-            //-                 h5(id='Name')
-            //-                     | Задача
-            //-                 small
-            //-                     cite(id='Workman' title='Исполнитоель')
-            //-                         | Имя
-            //-                     br
-            //-                     cite(id='Status' title='Статус')
-            //-                         | В процессе
-            //-                     br
-            //-                     cite(id='Date' title='Срок')
-            //-                         | февраль 1977
-            //-                     i.icon-map-marker
-            //-         .col-lg-12
-            //-             p(id='Description')
-            //-                 | Надо что-то делать
-            .col-md-6
+            .col-md-6(align='center')
                 .row.details.detail-cont
                     blockquote
                         h5 Факты о войне
-                .row.details.detail-cont
+                .row.details.detail-cont.gradient-border(id='box')
                     p(id='Hint')
                         | 
-            .col-md-6
+                .row.details.detail-cont(style='display: block;')
+                    button.btn.btn-dark(type='button' id='nextHint') 
+                        | Следующий факт
+            .col-md-6(align='center')
                 .row.details.detail-cont
                     blockquote
                         h5 Этот день в истории
-                .row.details.detail-cont
+                .row.details.detail-cont.gradient-border(id='box')
                     p(id='100YearsAgo')
                         | 
-                    //- .card(style='width: 18rem;')
-                    //-     img.card-img-top(src='...' alt='...')
-                    //-     .card-body
-                    //-         h5.card-title Card title
-                    //-         p.card-text
-                    //-         | Some quick example text to build on the card title and make up the bulk of the card&apos;s content.
-                    //-         a.btn.btn-primary(href='#') Go somewhere
-    //- div(id='persons-info-container')
-    //-   button(id="collapse-person-button" class="btn btn-dark btn-small" type="button" data-toggle="collapse" data-target="#collapse-persons-info" aria-expanded="false" aria-controls="collapsePersonInfo")
-    //-     span(class="mdi mdi-chevron-double-down")
-    //-   div(class="collapse show" id="collapse-persons-info")
-    //-     div(id='persons-info-content' class='table-responsive')
-    //-          table.table.table-sm.table-borderless(id='persons-table')
+
 
 
 
