@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Хроника военных действий</title>
+    <!--bootstrap-->
+    <script src="/libs/jquery.min.js"></script>
+    <link rel="stylesheet" href="/libs/bootstrap.min.css" />
+    <script src="/libs/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/socket.io/socket.io.js"></script>
+    <!--favicon-->
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicon/favicon-32x32.png"
+      sizes="32x32"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicon/favicon-16x16.png"
+      sizes="16x16"
+    />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#ff0000" />
+    <meta name="msapplication-TileColor" content="#2b5797" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="stylesheet" href="/style-person.css" />
+    <script src="/libs/oboe-browser.min.js"></script>
+    <script src="/libs/d3.min.js"></script>
+    <!--script(src='/libs/jquery.min.js')-->
+    <script src="/addPersons.js"></script>
+    <script src="/main-persons.js"></script>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="container-fluid">
+        <nav
+          class="navbar navbar-dark bg-dark"
+          id="head-navbar"
+          data-role="navbar"
+        >
+          <div class="container-fluid">
+            <ul class="nav navbar-nav" style="white-space: nowrap;">
+              <li class="nav-item">
+                <a class="nav-link" href="/events">События</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/info">Инфограф</a>
+              </li>
+              <li class="nav-item active">
+                <a class="nav-link" href="/person">Личности</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/about">О проекте</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/task">День в истории</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/armament">Вооружение</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <div class="content" role="content" id="content" dragable="true">
+          <div class="row person-cont">
+            <div class="col-md-6">
+              <div class="row img image-cont">
+                <img
+                  class="image-center img-rounded resized-image"
+                  id="imgPerson"
+                  src=""
+                  alt=""
+                />
+              </div>
+              <div class="row details detail-cont">
+                <div class="col-lg-12">
+                  <blockquote>
+                    <h5 id="FIO"></h5>
+                    <small
+                      ><cite id="LifeTime" title="Дата и место рождения"></cite
+                      ><br /><cite
+                        id="AchievementPlace"
+                        title="Место активности"
+                      ></cite
+                      ><br /><cite
+                        id="DeathTime"
+                        title="Дата и место смерти"
+                      ></cite
+                      ><i class="icon-map-marker"></i
+                    ></small>
+                  </blockquote>
+                </div>
+                <div class="col-lg-12"><p id="description"></p></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="row details detail-cont">
+                <h5>Описание</h5>
+                <p id="fullDescription"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="persons-info-container">
+          <button
+            class="btn btn-dark btn-small"
+            id="collapse-person-button"
+            type="button"
+            data-toggle="collapse"
+            data-target="#collapse-persons-info"
+            aria-expanded="false"
+            aria-controls="collapsePersonInfo"
+          >
+            <span class="mdi mdi-chevron-double-down"></span>
+          </button>
+          <div class="collapse show" id="collapse-persons-info">
+            <div class="table-responsive" id="persons-info-content">
+              <table
+                class="table table-sm table-borderless"
+                id="persons-table"
+              ></table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

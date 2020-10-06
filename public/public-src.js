@@ -82235,7 +82235,8 @@ var YearControl = /*#__PURE__*/function (_SuperCustomControl) {
       var reg = /^[1,2][8,9,0]\d{2}$/;
       if (!reg.test(year)) return false;
       var intYear = parseInt(year) + incr;
-      if (intYear < YearControl.min_year) return false;
+      if (intYear < YearControl.min_year) return true; //temporarily
+
       if (intYear > YearControl.max_year) return false;
       if (oldValue == intYear) return false;
       return true;

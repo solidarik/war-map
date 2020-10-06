@@ -26,7 +26,7 @@ blockquote {
   margin-right: auto;
 }
 .detail-cont {
-  border-left: 3px solid #ded4da;
+  /* border-left: 3px solid #ded4da; */
   margin: 2%;
 }
 .detail-cont p {
