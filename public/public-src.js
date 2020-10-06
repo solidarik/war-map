@@ -82232,7 +82232,8 @@ var YearControl = /*#__PURE__*/function (_SuperCustomControl) {
     key: "_checkYear",
     value: function _checkYear(year, incr) {
       var oldValue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-      var reg = /^[1,2][8,9,0]\d{2}$/;
+      //var reg = /^[1,2][8,9,0]\d{2}$/
+      var reg = /^\d+$/;
       if (!reg.test(year)) return false;
       var intYear = parseInt(year) + incr;
       if (intYear < YearControl.min_year) return true; //temporarily
