@@ -1,0 +1,111 @@
+body {
+  display: block;
+  overflow-x: hidden;
+  /* background-color: #e6f7ff; */
+  background-image: url(img/paper.jpg);
+  background-size: 100% 100%;
+}
+h5 {
+  text-align: center;
+}
+cite {
+  text-align: center;
+}
+
+blockquote {
+  margin: auto;
+  padding: 1%;
+  text-align: center;
+}
+.person-cont {
+  padding: 1%;
+}
+.image-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.detail-cont {
+  /* border-left: 3px solid #ded4da; */
+  margin: 2%;
+}
+.detail-cont p {
+  font-size: 15px;
+  padding: 1%;
+}
+
+#persons-info-container {
+  width: 100%;
+  max-height: 300px;
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  border-radius: 0px;
+  color: white;
+  background-color: rgba(40, 40, 40, 0.5) !important;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #f5f5f5;
+}
+
+.table-responsive::-webkit-scrollbar {
+  width: 6px;
+  background-color: #f5f5f5;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: rgba(40, 40, 40, 0.8);
+}
+
+#persons-info-content {
+  height: 200px;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+#persons-table {
+  color: white;
+}
+
+#persons-table thead {
+  font-weight: bolder;
+}
+
+#persons-table th {
+  overflow: hidden;
+  position: sticky;
+  top: 0;
+  background-color: rgba(40, 40, 40, 0.8);
+  cursor: url('img/arrows.png'), auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  color: white;
+}
+th,
+td {
+  padding: 8px 16px;
+}
+
+#collapse-person-button {
+  margin: 0.2em;
+  padding: 0 0.5em;
+  height: 1.5em;
+  line-height: 1.5em;
+}
+
+.resized-image {
+  width: auto;
+  height: 290px;
+  border-image: url(img/border.png) 25% stretch;
+  border-width: 40px;
+  border-style: solid;
+}
+
+.right {
+  float: right;
+}
