@@ -78,22 +78,6 @@ function startApp() {
     holyPersons.clearTable();
     holyPersons.fillTable();
     $("#persons-table tr:eq(0) td:first-child span").click();
-   
-    // $('#option1').closest('label').off('click').click(function() { 
-    //   var persons = new addPersons("persons-table", "data/persons_old.json");
-    //   persons.clearTable();
-    //   persons.fillTable();
-    //   $("#persons-table tr:eq(0) td:first-child span").click();
-    // });
-    // $('#option2').closest('label').off('click').click(function() { 
-    //   var persons = new addPersons("persons-table", "data/persons.json");
-    //   persons.clearTable();
-    //   persons.fillTable();
-    //   $("#persons-table tr:eq(0) td:first-child span").click();
-    // });
-
-
-
 }
 
 $(document).ready(function () {
@@ -106,16 +90,6 @@ $(document).ready(function () {
       $('#collapse-person-button').children().removeClass('mdi-chevron-double-down').addClass('mdi-chevron-double-up');
     }
   });
-
-  // $('#collapse-persons-info').on('shown.bs.collapse', function() {
-  //   console.log('shown.bs.collapse');
-  //   $('#collapse-person-button').children().removeClass('mdi-chevron-double-up').addClass('mdi-chevron-double-down');
-  // });
-
-  // $('#collapse-persons-info').on('hidden.bs.collapse', function()  {
-  //   console.log('hidden.bs.collapse');
-  //   $('#collapse-person-button').children().removeClass('mdi-chevron-double-down').addClass('mdi-chevron-double-up');
-  // });
 });
 
 /////////////////////////////////////////////////

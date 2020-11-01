@@ -57,6 +57,6 @@ app.socket = serverSocket(server, protocolFunctions)
 // console.log('start parse');
 // var lp = require('./loadDatabase/loadPersons.js');
 // lp.parseExcel();
-// console.log('start parse');
-// var lhp = require('./loadDatabase/loadHolyPersons.js');
-// lhp.parseExcel('./public/data/holy_persons.xlsx','./public/data/holy_persons.json');
+ console.log('start parse');
+ var lhp = require('./loadDatabase/loadHolyPersons.js');
+ lhp.parseExcel('./public/data/holy_persons.xlsx','./public/data/holy_persons.json');

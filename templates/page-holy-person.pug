@@ -1,6 +1,6 @@
 extends layout
 block head
-
+  link(rel='stylesheet' href='libs/materialdesignicons.min.css')
   link(rel='stylesheet' href='/style-holy-person.css')
 
   script(src='/libs/oboe-browser.min.js')
@@ -14,15 +14,6 @@ block head
 block content
     +header('person')
     div.content(role='content' id='content' dragable='true')
-        //- div(class='row')
-        //-     div(class='col-12')
-        //-         .btn-group.btn-group-toggle(data-toggle='buttons' class='right')
-        //-             label.btn.btn-secondary.active
-        //-                 input#option1(type='radio', name='options', checked='')
-        //-                 |  Заполнено
-        //-             label.btn.btn-secondary
-        //-                 input#option2(type='radio', name='options')
-        //-                 |  Ярослав
         .row.person-cont
             .col-md-6
                 .row.img.image-cont
@@ -31,32 +22,27 @@ block content
                     .col-lg-12
                         blockquote
                             h5(id='FIO')
-                                //-Сергей Владимирович Ильюшин
                             small
                                 cite(id='LifeTime' title='Дата и место рождения')
-                                    //- | 18 (30) марта 1894
-                                    //- br
-                                    //- | дер. Дилялево, Вологодский уезд, Вологодская губерния, Российская империя
                                 br
-                                cite(id='AchievementPlace' title='Место активности')
-                                    //- | Москва
+                                cite(id='AchievementPlace' title='Место подвига')
                                 br
-                                cite(id='DeathTime' title='Дата и место смерти')
-                                    //- | 9 февраля 1977
-                                    //- br
-                                    //- | Москва
+                                cite(id='DeathTime' title='Дата смерти, захоронение')
+                                br
+                                cite(id='DateCanonization' title='Дата канонизации')
+                                br
+                                cite(id='HolinessStatus' title='Статус святости')
+                                br
+                                cite(id='DateVeneration' title='Дата почитания')
+                                br
+                                cite(id='FieldActivity' title='Сфера деятельности')
                                 i.icon-map-marker
                     .col-lg-12
                         p(id='description')
-                            //- | Выдающийся советский авиаконструктор, разработчик самого массового боевого самолёта в истории — штурмовика Ил-2. Трижды Герой Социалистического Труда (1941, 1957, 1974). Единственный лауреат семи Сталинских премий, генерал-полковник инженерно-технической службы (1967; с 1971 года — генерал-полковник-инженер), академик АН СССР (1968).
-                            //- a(href='https://ru.wikipedia.org/wiki/%D0%98%D0%BB%D1%8C%D1%8E%D1%88%D0%B8%D0%BD,_%D0%A1%D0%B5%D1%80%D0%B3%D0%B5%D0%B9_%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B8%D1%87') Подробнее...
             .col-md-6
                 .row.details.detail-cont
-                    //- blockquote
                     h5 Описание
                     p(id='fullDescription')
-                        //- | Ил-2 — советский штурмовик времён Второй мировой войны, созданный в ОКБ-240 под руководством Сергея Владимировича Ильюшина. Самый массовый боевой самолёт в истории авиации, было выпущено более 36 тысяч штук. Конструкторы называли разработанный ими самолёт «летающим танком». Пилоты-истребители люфтваффе прозвали Ил-2 «бетонным самолётом» (нем. Betonflugzeug). По утверждению некоторых советских авторов, солдаты вермахта называли его «чумой» (нем. Schwarzer Tod, дословно: «чёрная смерть»). Ил-2 принимал участие в боях на всех театрах военных действий Великой Отечественной войны, а также в Советско-японской войне. В феврале 1941 года началось серийное производство (приказ А. И. Шахурина № 739 от 14.12.1940).
-                        //- a(href='https://ru.wikipedia.org/wiki/%D0%98%D0%BB-2') Подробнее...
     div(id='persons-info-container')
       button(id="collapse-person-button" class="btn btn-dark btn-small" type="button" data-toggle="collapse" data-target="#collapse-persons-info" aria-expanded="false" aria-controls="collapsePersonInfo")
         span(class="mdi mdi-chevron-double-down")

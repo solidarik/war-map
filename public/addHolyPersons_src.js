@@ -19,27 +19,42 @@ class addHolyPersons {
         ' ' +
         thisThis.data[id].Name +
         ' ' +
-        thisThis.data[id].MiddleName + 
-        '<br>'+
-        thisThis.data[id].NameInMonasticism
+        thisThis.data[id].MiddleName
     )
     $('#LifeTime').html(
-      'Дата и место рождения - ' +
+      '<b>Дата и место рождения</b> - ' +
         thisThis.data[id].DateBirth +
         ' ' +
         thisThis.data[id].PlaceBirth
     )
     $('#AchievementPlace').html(
-      'Место и дата подвига - ' + thisThis.data[id].PlaceAchievement+'-' + thisThis.data[id].PlaceAchievement+';'
-      +thisThis.data[id].PlaceAchievement1 +'-'+ thisThis.data[id].PlaceAchievement1+';'
-      +thisThis.data[id].PlaceAchievement2 + thisThis.data[id].PlaceAchievement2
+      '<b>Место и дата подвига</b> - ' + thisThis.data[id].PlaceAchievement+'-' + thisThis.data[id].DateAchievement+';'
+      +thisThis.data[id].PlaceAchievement1 +'-'+ thisThis.data[id].DateAchievement1+';'
+      +thisThis.data[id].PlaceAchievement2 + thisThis.data[id].DateAchievement2
     )
     $('#DeathTime').html(
-      'Дата и место смерти - ' +
+      '<b>Дата смерти, захоронение</b> - ' +
         thisThis.data[id].DateDeath +
         ' ' +
         thisThis.data[id].PlaceDeath
     )
+    $('#DateCanonization').html(
+      '<b>Дата канонизации</b> - ' +
+        thisThis.data[id].DateCanonization
+    )
+    $('#HolinessStatus').html(
+      '<b>Статус святости</b> - ' +
+        thisThis.data[id].HolinessStatus
+    )    
+    $('#DateVeneration').html(
+      '<b>Дата почитания</b> - ' +
+        thisThis.data[id].DateVeneration
+    )  
+    $('#FieldActivity').html(
+      '<b>Сфера деятельности</b> - ' +
+        thisThis.data[id].FieldActivity
+    )  
+
     $('#imgPerson').src = thisThis.data[id].PhotoUrl
     $('#imgPerson').attr('src', thisThis.data[id].PhotoUrl)
     // $('#description').html(
@@ -52,7 +67,7 @@ class addHolyPersons {
     $('#fullDescription').html(
       thisThis.data[id].Description +
         " <a target='_blank' rel='noopener noreferrer' href='" +
-        thisThis.data[id].Link +
+        thisThis.data[id].Source +
         "'>" +
         'Подробнее...</a>'
     )
@@ -71,16 +86,18 @@ class addHolyPersons {
     var columnCount = columns.length
     var row = $(table[0].insertRow(-1))
     for (var i = 0; i < columnCount; i++) {
-      if (i == 1 || i == 2 || i == 3 || i == 6) {
+      if (i == 0 || i == 1 || i == 3 || i == 4|| i == 5) {
         var headerCell = $('<th />')
         if (columns[i] == 'Surname') {
           headerCell.html('Фамилия')
         } else if (columns[i] == 'Name') {
           headerCell.html('Имя')
-        } else if (columns[i] == 'MiddleName') {
-          headerCell.html('Отчество')
-        } else if (columns[i] == 'FieldActivity') {
-          headerCell.html('Сфера деятельности')
+        } else if (columns[i] == 'DateBirth') {
+          headerCell.html('Дата рождения')
+        } else if (columns[i] == 'PlaceBirth') {
+          headerCell.html('Место рождения')
+        }  else if (columns[i] == 'NameInMonasticism') {
+          headerCell.html('Имя в монашестве')
         } else {
           headerCell.html('N/A')
         }
@@ -93,7 +110,7 @@ class addHolyPersons {
       row.addClass('hand-cursor')
       row.attr('id', i)
       for (var j = 0; j < columnCount; j++) {
-        if (j == 1 || j == 2 || j == 3 || j == 6) {
+        if (j == 0 || j == 1 || j == 3 || j == 4|| j == 5) {
           var cell = $('<td />')
           cell.html(obj[i][columns[j]])
           row.append(cell)
