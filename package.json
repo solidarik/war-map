@@ -8,9 +8,10 @@
   },
   "scripts": {
     "test": "mocha -c",
-    "prebuild": "parcel build --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js",
-    "parcel-dev": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js",
-    "watch": "nodemon -w public-src -x npm run parcel-dev",
+    "prebuild": "concurrently --kill-others \"npm run parcel-ww2\" \"npm run parcel-religion\"",
+    "parcel-ww2": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js",
+    "parcel-religion": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index-religion.js && cp dist/index.js public/public-src-religion.js",
+    "watch": "nodemon -w public-src -x npm run prebuild",
     "dev": "nodemon index.js",
     "build-pages": "node "
   },
@@ -79,6 +80,7 @@
     "@babel/plugin-syntax-class-properties": "^7.8.3",
     "@babel/plugin-syntax-jsx": "^7.10.1",
     "@babel/preset-react": "latest",
+    "concurrently": "^5.3.0",
     "mocha": "latest",
     "parcel-bundler": "latest"
   },

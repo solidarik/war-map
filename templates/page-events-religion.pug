@@ -1,0 +1,44 @@
+extends layout
+
+block head
+  link(rel="stylesheet" href="/libs/materialdesignicons.min.css")
+
+  link(rel="stylesheet" href="/libs/ol.css")
+  //script(src="/libs/ol.js")
+
+  link(rel="stylesheet" href="/libs/ol-ext.min.css")
+  //script(src="/libs/ol-ext.min.js")
+
+  script(src="public-src-religion.js")
+
+  script.
+    (function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w
+
+block content
+  +header('events-religion')
+
+  div(class="modal fade" id="imgModal" tabindex="-1" role="dialog" aria-labelledby="imgModalLabel" aria-hidden="true")
+    div(class="modal-dialog modal-lg" role="document")
+      div(class="modal-content")
+        div(class="modal-header")
+          h5(class="modal-title" id="imgModalLabel")
+            | Modal Title
+          button(type="button" class="close" data-dismiss="modal" aria-label="Close")
+            span(aria-hidden="true")
+              | &times
+        div(class="modal-body")
+          | ...
+
+  div.content(role="content" id='content' dragable='true')
+    div.map(class='fill panel panel-default' id='map' data-role='map')
+    div(id='legend-container')
+      button(id='legend-button' class='right-corner-button btn btn-dark btn-small' type='button')
+          span(id='legend-span' class='mdi mdi-format-list-bulleted mdi-24px')
+      div(id='legend-div' class='noselect legend-div-hide')
+
+    div(id='events-info-container')
+      button(id='events-info-closeButton' class='right-corner-button btn btn-dark btn-small' type='button')
+          span(id='events-info-span' class='mdi mdi-window-close mdi-16px')
+      div(id='events-info-content' class='table-responsive')
+
+  +footer()
