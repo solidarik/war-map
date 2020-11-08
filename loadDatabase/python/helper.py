@@ -49,7 +49,8 @@ __all__ = [
     'clear_folder', 'create_folder', 'get_files_by_folder', 'extract_archives',
     'keep_files_by_template', 'sortlist_by_length', 'sync_files_by_dest',
     'leave_fresh_files', 'remove_items_from_tuples', 'add_prefix_to_array',
-    'merge_tuples', 'check_exist_english', 'remove_spaces'
+    'merge_tuples', 'check_exist_english', 'remove_spaces',
+    'get_date_from_input'
 ]
 
 # region CONFIG FUNCTIONS
@@ -164,6 +165,117 @@ def path_leaf(path):
     return tail or ntpath.basename(head)
 
 
+def str8_to_date(value: str):
+    """
+    Преобразование строки формата YYYYMMDD в дату Python
+    :param value: входная строка, пока ожидается 8 символов
+    :return: Возвращается кортеж: дата и строка параметр-ошибка
+    """
+    python_date = None
+    err = None
+
+    try:
+        if len(str(value)) == 8:
+            python_date = datetime.datetime.strptime(str(value), "%Y%m%d")
+        elif len(str(value)) == 10:
+            python_date = datetime.datetime.strptime(str(value), "%d.%m.%Y")
+        else:
+            err = NotImplementedError(
+                f'Дату не из 8 символов пока не умеем обрабатывать {str(value)}'
+            )
+    except EOFError as exc:
+        err = f'Error datetime processing: {value}, error {exc}'
+
+    return python_date, err
+
+
+def get_date_from_input(inputText):
+
+    outputStr = ''
+    isUserText = False
+    isOnlyYear = False
+    isFound = False
+    d, m, y = -1, -1, -999
+
+    if not inputText:
+        raise ValueError('Пустая дата')
+
+    # если в дате указан год
+    if not isFound:
+        try:
+            testStr = str(int(inputText))
+            if len(testStr) < 5 and int(testStr) < 2020:
+                y = int(testStr)
+                isFound = True
+                isOnlyYear = True
+                outputStr = testStr
+        except:
+            pass
+
+    # если ячейка в Excel представлена как "дата"
+    if not isFound:
+        if type(inputText) == float:
+            inputText = int(inputText)
+            dt = datetime.datetime.fromordinal(
+                datetime.datetime(1900, 1, 1).toordinal() + inputText - 2)
+            d, m, y = dt.day, dt.month, dt.year
+            isFound = True
+
+    # если дата до н.э.
+    if not isFound:
+        inputText = str(inputText).strip()
+        date_groups = get_search_groups_in_regexp(r'(\d*).*до н.*', inputText)
+        if date_groups:
+            y = int(date_groups[0])
+            y = -y
+            isUserText = True
+            isOnlyYear = True
+            isFound = True
+            outputStr = inputText
+
+    # если даты формата dd.mm.yyyy или dd/mm/yyyy
+    if not isFound:
+        date_groups = get_search_groups_in_regexp(
+            r'(\d{1,2})\S(\d{1,2})\S(\d{1,4})', inputText)
+        if date_groups:
+            d = int(date_groups[0])
+            m = int(date_groups[1])
+            y = int(date_groups[2])
+            isFound = True
+
+    # если дата типа "1984, 1 мая"
+    if not isFound:
+        date_groups = get_search_groups_in_regexp(
+            r'(\d*)\s*[,]\s*(\d+)\s*(\S+)', inputText)
+        if date_groups:
+            y = int(date_groups[0])
+            d = int(date_groups[1])
+            m = int(get_month_num(date_groups[2]))
+            isFound = True
+
+    # если дата типа "15 июня 1389 (года)"
+    if (not isFound):
+        date_groups = get_search_groups_in_regexp(r'(\d*)\s*(\S*)\s*(\d*)\s*',
+                                                  inputText)
+        if date_groups:
+            d = int(date_groups[0])
+            m = int(get_month_num(date_groups[1]))
+            y = int(date_groups[2])
+            isFound = True
+
+    if not isFound:
+        raise ValueError('Не удалось распарсить дату')
+
+    if (not isUserText and not isOnlyYear):
+        outputStr = '{:02d}.{:02d}.{}'.format(d, m, y)
+    return {
+        "ymd": [y, m, d],
+        "outputStr": outputStr,
+        "isOnlyYear": isOnlyYear,
+        "isUserText": isUserText
+    }
+
+
 def get_date_from_filename(filename):
 
     err = None
@@ -171,6 +283,7 @@ def get_date_from_filename(filename):
 
     now = datetime.datetime.now()
     year = now.year
+    month = 0
 
     m = re.search('^.*([0-9]{4}).*$', filename)
     if m:

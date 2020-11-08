@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "mocha -c",
+    "pytest": "cd test && pytest -s -q --color=yes",
     "prebuild": "concurrently --kill-others \"npm run parcel-ww2\" \"npm run parcel-religion\"",
     "parcel-ww2": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js",
     "parcel-religion": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index-religion.js && cp dist/index.js public/public-src-religion.js",
