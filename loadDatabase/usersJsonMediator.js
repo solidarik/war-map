@@ -10,6 +10,9 @@ class UserJsonMediator extends SuperJsonMediator {
     }
 
     //processJson from parent class
+    processJson(json) {
+        return new Promise((resolve) => { resolve(json) })
+    }
 }
 
 module.exports = new UserJsonMediator();

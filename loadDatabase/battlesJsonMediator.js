@@ -1,7 +1,7 @@
 const BattleModel = require('../models/battlesModel')
-const geoHelper = require('../helper/geoHelper')
-const strHelper = require('../helper/strHelper')
-const fileHelper = require('../helper/fileHelper')
+const GeoHelper = require('../helper/geoHelper')
+const StrHelper = require('../helper/strHelper')
+const FileHelper = require('../helper/fileHelper')
 const SuperJsonMediator = require('./superJsonMediator')
 const moment = require('moment')
 const log = require('../helper/logHelper')
@@ -20,12 +20,12 @@ class BattlesJsonMediator extends SuperJsonMediator {
     for (let i = 0; i < map.features.length; i++) {
       let geom = map.features[i].geometry
       if (geom.type === 'Point') {
-        all_coords.push(geoHelper.fromLonLat(geom.coordinates))
+        all_coords.push(GeoHelper.fromLonLat(geom.coordinates))
       } else {
         let srcCoords =
           geom.type === 'Polygon' ? geom.coordinates[0] : geom.coordinates
         for (let j = 0; j < srcCoords.length; j++) {
-          all_coords.push(geoHelper.fromLonLat(srcCoords[j]))
+          all_coords.push(GeoHelper.fromLonLat(srcCoords[j]))
         }
       }
     }
@@ -33,7 +33,7 @@ class BattlesJsonMediator extends SuperJsonMediator {
   }
 
   getCenterOfCoords(all_coords) {
-    return geoHelper.getMedianXY(all_coords)
+    return GeoHelper.getMedianXY(all_coords)
   }
 
   getHullCoords(all_coords) {
@@ -51,8 +51,8 @@ class BattlesJsonMediator extends SuperJsonMediator {
       if (!Array.isArray(json.features)) json.features = [json.features]
 
       json.features.forEach((featureFile) => {
-        const featurePath = fileHelper.composePath('новые карты', featureFile)
-        const map = fileHelper.getJsonFromFile(featurePath)
+        const featurePath = FileHelper.composePath('новые карты', featureFile)
+        const map = FileHelper.getJsonFromFile(featurePath)
         maps.push(map)
       })
 
@@ -70,12 +70,16 @@ class BattlesJsonMediator extends SuperJsonMediator {
         ...json,
         startDate: moment.utc(json.startDate, 'DD.MM.YYYY'),
         endDate: moment.utc(json.endDate, 'DD.MM.YYYY'),
-        isWinnerUSSR: strHelper.compareEngLanguage(json.winner, 'CCCР'),
-        isWinnerGermany: strHelper.compareEngLanguage(json.winner, 'Германия'),
+        isWinnerUSSR: StrHelper.compareEngLanguage(json.winner, 'CCCР'),
+        isWinnerGermany: StrHelper.compareEngLanguage(json.winner, 'Германия'),
         point: centerOfFirstMaps,
         hullCoords: hullCoords,
-        filename: fileHelper.getFileNameFromPath(filePath),
+        filename: FileHelper.getFileNameFromPath(filePath),
         maps: maps,
+        pageUrl: StrHelper.generatePageUrl([
+          json.name,
+          json.startDate,
+        ]),
       }
 
       resolve(newJson)
