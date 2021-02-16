@@ -170,3 +170,20 @@ body::-webkit-scrollbar-thumb {
 .quote-card.yellow-card:after {
   color: #fbc02d;
 }
+
+a {
+  color: #99ccff;
+}
+a:hover {
+  color: #6699ff;
+}
+
+#atlas {
+  float: right;
+  margin: 10px;
+  width: 40px;
+  height: 40px;
+  background-image: url(../images/temple.png);
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+}

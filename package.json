@@ -9,12 +9,11 @@
   "scripts": {
     "test": "mocha -c",
     "pytest": "cd test && pytest -s -q --color=yes",
-    "prebuild": "concurrently --kill-others \"npm run parcel-ww2\" \"npm run parcel-religion\"",
+    "prebuild": "concurrently --kill-others \"npm run parcel-ww2\"",
     "parcel-ww2": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js",
     "parcel-religion": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index-religion.js && cp dist/index.js public/public-src-religion.js",
     "watch": "nodemon -w public-src -x npm run prebuild",
-    "dev": "nodemon index.js",
-    "build-pages": "node "
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -36,8 +35,8 @@
   },
   "homepage": "https://github.com/solidarik/war-map#readme",
   "dependencies": {
-    "@popperjs/core": "^2.4.2",
-    "@types/shelljs": "^0.8.8",
+    "@popperjs/core": "latest",
+    "@types/shelljs": "latest",
     "axios": "latest",
     "chalk": "latest",
     "co-busboy": "latest",
@@ -69,17 +68,18 @@
     "proj4": "^2.6.2",
     "pug": "latest",
     "shelljs": "^0.8.4",
-    "socket.io": "latest",
+    "socket.io": "^3.0.1",
+    "socket.io-client": "^3.0.1",
     "socket.io-emitter": "latest",
     "socket.io-redis": "latest",
     "winston": "latest",
     "xlsx": "latest"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/plugin-syntax-class-properties": "^7.8.3",
-    "@babel/plugin-syntax-jsx": "^7.10.1",
+    "@babel/core": "^7.12.7",
+    "@babel/plugin-syntax-class-properties": "latest",
+    "@babel/plugin-syntax-jsx": "latest",
+    "@babel/preset-env": "^7.12.7",
     "@babel/preset-react": "latest",
     "concurrently": "^5.3.0",
     "mocha": "latest",
@@ -88,15 +88,5 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ],
-  "babel": {
-    "plugins": [
-      [
-        "@babel/plugin-proposal-class-properties",
-        {
-          "loose": true
-        }
-      ]
-    ]
-  }
+  ]
 }

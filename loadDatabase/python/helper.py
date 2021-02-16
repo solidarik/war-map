@@ -264,7 +264,7 @@ def get_date_from_input(inputText):
             isFound = True
 
     if not isFound:
-        raise ValueError('Не удалось распарсить дату')
+        raise ValueError(f'Не удалось распарсить дату из текста {inputText}')
 
     if (not isUserText and not isOnlyYear):
         outputStr = '{:02d}.{:02d}.{}'.format(d, m, y)

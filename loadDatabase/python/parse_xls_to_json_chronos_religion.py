@@ -57,18 +57,6 @@ END_ROW = scheet.nrows
 
 print(f"Input count lines from Excel: {END_ROW}")
 
-print(' teeeesttt ')
-
-test_col = col_startDate
-test_row = 69
-res = helper.get_date_from_input(7723.0)
-print(res)
-#print(GetSheetValue(test_row, test_col, True))
-#print(GetSheetValueDate(test_row, test_col))
-sys.exit(0)
-
-print(' teeeesttt ')
-
 entities = []
 for row in range(START_ROW, END_ROW):
     chrono = {}
@@ -88,13 +76,21 @@ for row in range(START_ROW, END_ROW):
         chrono['place'] = GetSheetValue(row, col_place)
         chrono['startDateStr'] = startDateStr
         if ('' != startDateStr):
-            chrono['startDate'], chrono['startDateYear'] = GetSheetValueDate(
-                row, col_startDate)
+            res = GetSheetValueDate(row, col_startDate)
+            chrono["startYear"] = res["ymd"][0]
+            chrono["startMonth"] = res["ymd"][1]
+            chrono["startDay"] = res["ymd"][2]
+            chrono["startDateStr"] = res["outputStr"]
+            chrono["startIsOnlyYear"] = res["isOnlyYear"]
 
         chrono['endDateStr'] = GetSheetValue(row, col_endDate)
         if ('' != chrono['endDateStr']):
-            chrono['endDate'], chrono['endDateYear'] = GetSheetValueDate(
-                row, col_endDate)
+            res = GetSheetValueDate(row, col_endDate)
+            chrono["endYear"] = res["ymd"][0]
+            chrono["endMonth"] = res["ymd"][1]
+            chrono["endDay"] = res["ymd"][2]
+            chrono["endDateStr"] = res["outputStr"]
+            chrono["endIsOnlyYear"] = res["isOnlyYear"]
 
         chrono['shortBrief'] = capitalizeFirst(
             GetSheetValue(row, col_shortBrief))

@@ -8,7 +8,8 @@ const agreementsJsonMediator = require('../loadDatabase/agreementsJsonMediator')
 const chronosJsonMediator = require('../loadDatabase/chronosJsonMediator')
 const personsJsonMediator = require('../loadDatabase/personsJsonMediator')
 const usersJsonMediator = require('../loadDatabase/usersJsonMediator')
-const loadPersons = require('../loadDatabase/loadPersons')
+const chronosReligionJsonMediator = require('../loadDatabase/chronosReligionJsonMediator')
+//const loadPersons = require('../loadDatabase/loadPersons')
 
 // loadPersons.download(
 //   'http://www.historian.by/ww2/person.xlsx',
@@ -30,61 +31,72 @@ inetHelper.loadCoords(checkedCoordsPath)
 dbHelper = new DbHelper()
 
 Promise.resolve(true)
+  // .then(() => {
+  //   return dbHelper.clearDb('users')
+  // })
+  // .then(() => {
+  //   return dbHelper.saveFilesFrom({
+  //     source: 'dataSources/secretUsers.json',
+  //     procdir: 'out/out_user_process',
+  //     errdir: 'out/out_user_errors',
+  //     mediator: usersJsonMediator
+  //   })
+  // })
+  // .then(() => {
+  //   return dbHelper.clearDb('chronos')
+  // })
+  // .then(() => {
+  //   return dbHelper.saveFilesFrom({
+  //     source: 'python/out_chronos',
+  //     procdir: 'out/out_chronos_process',
+  //     errdir: 'out/out_chronos_errors',
+  //     mediator: chronosJsonMediator,
+  //   })
+  // })
+  // .then(() => {
+  //   return dbHelper.clearDb('agreements')
+  // })
+  // .then(() => {
+  //   return dbHelper.saveFilesFrom({
+  //     source: 'python/out_agreements',
+  //     procdir: 'out/out_agreements_process',
+  //     errdir: 'out/out_agreements_errors',
+  //     mediator: agreementsJsonMediator,
+  //   })
+  // })
+  // .then(() => {
+  //   return dbHelper.clearDb('battles')
+  // })
+  // .then(() => {
+  //   return dbHelper.saveFilesFrom({
+  //     source: 'python/out_battles',
+  //     procdir: 'out/out_battles_process',
+  //     errdir: 'out/out_battles_errors',
+  //     mediator: battlesJsonMediator,
+  //   })
+  // })
+  // .then(() => {
+  //   return dbHelper.clearDb('persons')
+  // })
+  // .then(() => {
+  //   return dbHelper.saveFilesFrom({
+  //     source: '../public/data/persons.json',
+  //     procdir: 'out/out_person_process',
+  //     errdir: 'out/out_person_errors',
+  //     mediator: personsJsonMediator,
+  //   })
+  // })
   .then(() => {
-    return dbHelper.clearDb('users')
-  })
-  .then(() => {
-    return dbHelper.saveFilesFrom({
-      source: 'dataSources/secretUsers.json',
-      procdir: 'out/out_user_process',
-      errdir: 'out/out_user_errors',
-      mediator: usersJsonMediator
+      return dbHelper.clearDb('chronosReligion')
     })
-  })
-  .then(() => {
-    return dbHelper.clearDb('chronos')
-  })
-  .then(() => {
-    return dbHelper.saveFilesFrom({
-      source: 'python/out_chronos',
-      procdir: 'out/out_chronos_process',
-      errdir: 'out/out_chronos_errors',
-      mediator: chronosJsonMediator,
+    .then(() => {
+      return dbHelper.saveFilesFrom({
+        source: 'python/out_chronos_religion',
+        procdir: 'out/out_chronos_religion_process',
+        errdir: 'out/out_chronos_religion_errors',
+        mediator: chronosReligionJsonMediator,
+      })
     })
-  })
-  .then(() => {
-    return dbHelper.clearDb('agreements')
-  })
-  .then(() => {
-    return dbHelper.saveFilesFrom({
-      source: 'python/out_agreements',
-      procdir: 'out/out_agreements_process',
-      errdir: 'out/out_agreements_errors',
-      mediator: agreementsJsonMediator,
-    })
-  })
-  .then(() => {
-    return dbHelper.clearDb('battles')
-  })
-  .then(() => {
-    return dbHelper.saveFilesFrom({
-      source: 'python/out_battles',
-      procdir: 'out/out_battles_process',
-      errdir: 'out/out_battles_errors',
-      mediator: battlesJsonMediator,
-    })
-  })
-  .then(() => {
-    return dbHelper.clearDb('persons')
-  })
-  .then(() => {
-    return dbHelper.saveFilesFrom({
-      source: '../public/data/persons.json',
-      procdir: 'out/out_person_process',
-      errdir: 'out/out_person_errors',
-      mediator: personsJsonMediator,
-    })
-  })
   .then(() => {
     log.success(chalk.cyan(`окончание процесса загрузки`))
     dbHelper.free()
