@@ -4,7 +4,7 @@
   "description": "War moves",
   "main": "index.js",
   "engines": {
-    "node": "8.10.0"
+    "node": "10.x"
   },
   "scripts": {
     "test": "mocha -c",
