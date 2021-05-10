@@ -57,6 +57,7 @@
     "koa-session": "latest",
     "koa-session-mongoose": "latest",
     "koa-static": "latest",
+    "lodash": "latest",
     "main.js": "latest",
     "moment": "latest",
     "mongoose": "latest",
