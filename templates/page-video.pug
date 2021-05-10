@@ -1,0 +1,26 @@
+extends layout
+block head
+  link(rel='stylesheet' href='/style-video.css')
+
+  script(src='/libs/oboe-browser.min.js')
+  script(src='/libs/d3.min.js')
+  //script(src='/libs/jquery.min.js')
+  script(src="/libs/bootstrap-notify.min.js")
+
+  script(src='/main-video.js')
+
+block content
+    +header('video')
+    div.content(role='content' id='content' dragable='true')
+        .d-flex.justify-content-center
+            .row
+                .h5 О исторических событиях в рамках Великой Отечественной Войны
+        .d-flex.justify-content-center
+            .row
+                iframe(width='727' height='382' src='https://www.youtube.com/embed/53vu1i6XOZ8' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen='')
+
+
+
+
+
+
