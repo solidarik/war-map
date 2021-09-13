@@ -83743,18 +83743,32 @@ var MapControl = /*#__PURE__*/function (_EventEmitter) {
         classFeature: item.classFeature,
         geometry: new olGeom.Point(item.point)
       });
-      var source = item.simple ? this.simpleSource : this.clusterSource.getSource(); // source.addFeature(ft)
+      var source = item.simple ? this.simpleSource : this.clusterSource.getSource();
+      source.addFeature(ft);
     }
   }, {
     key: "refreshInfo",
     value: function refreshInfo(info) {
-      var _this5 = this;
-
       this.simpleSource.clear();
       this.clusterSource.getSource().clear();
+      var simpleSourceFeatures = [];
+      var clusterSourceFeatures = []; //оптимизация для ускорения добавления на карту
+
       info.forEach(function (item) {
-        return _this5.addFeature(item);
+        var ft = new _Feature.default({
+          info: item,
+          classFeature: item.classFeature,
+          geometry: new olGeom.Point(item.point)
+        });
+
+        if (item.simple) {
+          simpleSourceFeatures.push(ft);
+        } else {
+          clusterSourceFeatures.push(ft);
+        }
       });
+      this.simpleSource.addFeatures(simpleSourceFeatures);
+      this.clusterSource.getSource().addFeatures(clusterSourceFeatures);
     }
   }], [{
     key: "create",
@@ -83804,42 +83818,42 @@ var YearControl = /*#__PURE__*/function (_SuperCustomControl) {
   var _super3 = _createSuper(YearControl);
 
   function YearControl(inputParams) {
-    var _this6;
+    var _this5;
 
     _classCallCheck(this, YearControl);
 
-    _this6 = _super3.call(this, inputParams);
+    _this5 = _super3.call(this, inputParams);
     var caption = inputParams.caption;
     var hint = inputParams.hint || caption;
-    _this6.year = inputParams.year;
-    _this6.handler = inputParams.handler;
+    _this5.year = inputParams.year;
+    _this5.handler = inputParams.handler;
     var yearInput = document.createElement('input');
     yearInput.className = 'input-without-focus';
     yearInput.title = hint;
     yearInput.setAttribute('id', 'year-input');
-    yearInput.value = _this6.year;
+    yearInput.value = _this5.year;
     yearInput.addEventListener('keyup', function (event) {
       if (event.keyCode == 13) {
-        _this6._inputKeyUp();
+        _this5._inputKeyUp();
 
         event.preventDefault();
       }
     });
-    _this6.yearInput = yearInput;
+    _this5.yearInput = yearInput;
     var yearLeftButton = document.createElement('button');
-    yearLeftButton.innerHTML = _this6.getBSIconHTML('mdi mdi-step-backward-2');
+    yearLeftButton.innerHTML = _this5.getBSIconHTML('mdi mdi-step-backward-2');
     yearLeftButton.title = 'Предыдущий год';
     yearLeftButton.setAttribute('id', 'year-left-button');
     yearLeftButton.addEventListener('click', function () {
-      _this6._leftButtonClick();
+      _this5._leftButtonClick();
     }, false); // yearLeftButton.addEventListener('touchstart', () => { this._leftButtonClick(); }, false);
 
     var yearRightButton = document.createElement('button');
-    yearRightButton.innerHTML = _this6.getBSIconHTML('mdi mdi-step-forward-2');
+    yearRightButton.innerHTML = _this5.getBSIconHTML('mdi mdi-step-forward-2');
     yearRightButton.title = 'Следующий год';
     yearRightButton.setAttribute('id', 'year-right-button');
     yearRightButton.addEventListener('click', function () {
-      _this6._rightButtonClick();
+      _this5._rightButtonClick();
     }, false); // yearRightButton.addEventListener('touchstart', () => { this._rightButtonClick(); }, false);
 
     var parentDiv = document.createElement('div');
@@ -83848,15 +83862,15 @@ var YearControl = /*#__PURE__*/function (_SuperCustomControl) {
     parentDiv.appendChild(yearLeftButton);
     parentDiv.appendChild(yearInput);
     parentDiv.appendChild(yearRightButton);
-    _this6.element = parentDiv;
-    olControl.Control.call(_assertThisInitialized(_this6), {
+    _this5.element = parentDiv;
+    olControl.Control.call(_assertThisInitialized(_this5), {
       label: 'test',
       hint: 'test',
       tipLabel: caption,
       element: parentDiv // target: get(inputParams, "target")
 
     });
-    return _this6;
+    return _this5;
   }
 
   _createClass(YearControl, [{

@@ -650,13 +650,33 @@ export class MapControl extends EventEmitter {
       ? this.simpleSource
       : this.clusterSource.getSource()
 
-    // source.addFeature(ft)
+    source.addFeature(ft)
   }
 
   refreshInfo(info) {
     this.simpleSource.clear()
     this.clusterSource.getSource().clear()
-    info.forEach((item) => this.addFeature(item))
+
+    let simpleSourceFeatures = []
+    let clusterSourceFeatures = []
+
+    //оптимизация для ускорения добавления на карту
+    info.forEach((item) => {
+      const ft = new olFeature({
+        info: item,
+        classFeature: item.classFeature,
+        geometry: new olGeom.Point(item.point),
+      })
+
+      if (item.simple) {
+        simpleSourceFeatures.push(ft)
+      } else {
+        clusterSourceFeatures.push(ft)
+      }
+    })
+
+    this.simpleSource.addFeatures(simpleSourceFeatures)
+    this.clusterSource.getSource().addFeatures(clusterSourceFeatures)
   }
 }
 
