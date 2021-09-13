@@ -56,15 +56,15 @@ export class MapControl extends EventEmitter {
     const rasterLayer = new olLayer({
       preload: 5,
       zIndex: 0,
-      // source: new olSource.OSM(),
-      source: new olSource.XYZ({
-        projection: 'EPSG:3395',
-        tileGrid: olTilegrid.createXYZ({
-          extent: yaex,
-        }),
-        url:
-          'http://vec0{1-4}.maps.yandex.net/tiles?l=map&v=4.55.2&z={z}&x={x}&y={y}&scale=2&lang=ru_RU',
-      }),
+      source: new olSource.OSM(),
+      // source: new olSource.XYZ({
+      //   projection: 'EPSG:3395',
+      //   tileGrid: olTilegrid.createXYZ({
+      //     extent: yaex,
+      //   }),
+      //   url:
+      //     'http://vec0{1-4}.maps.yandex.net/tiles?l=map&v=4.55.2&z={z}&x={x}&y={y}&scale=2&lang=ru_RU',
+      // }),
     })
 
     this.isEnableAnimate = MAP_PARAMS.isEnableAnimate
@@ -201,7 +201,7 @@ export class MapControl extends EventEmitter {
 
     // Cluster Source
     let clusterSource = new olSource.Cluster({
-      distance: 10,
+      distance: 15,
       source: new olSource.Vector(),
     })
     let clusterLayer = new olAnimatedCluster({
@@ -290,10 +290,14 @@ export class MapControl extends EventEmitter {
     })
 
     map.on('moveend', () => {
+
+      console.log('moveend', this.isDisableMoveend)
       if (this.isDisableMoveend) {
         this.isDisableMoveend = false
         return
       }
+
+      console.log('moveend before savepermalink')
       window.map.savePermalink.call(window.map)
     })
 
@@ -543,6 +547,8 @@ export class MapControl extends EventEmitter {
   }
 
   savePermalink() {
+
+    console.log('savePermalink')
     if (this.isDisableSavePermalink) {
       this.isDisableSavePermalink = false
     }
@@ -560,6 +566,7 @@ export class MapControl extends EventEmitter {
       center: this.view.getCenter(),
     }
 
+    console.log('pushstate')
     window.history.pushState(state, 'map', hash)
   }
 
@@ -642,7 +649,8 @@ export class MapControl extends EventEmitter {
     let source = item.simple
       ? this.simpleSource
       : this.clusterSource.getSource()
-    source.addFeature(ft)
+
+    // source.addFeature(ft)
   }
 
   refreshInfo(info) {
@@ -653,6 +661,7 @@ export class MapControl extends EventEmitter {
 }
 
 window.onpopstate = (event) => {
+  console.log('onpopstate')
   const map = window.map
   map.isDisableSavePermalink = true
   map.isDisableMoveend = true
