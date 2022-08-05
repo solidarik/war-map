@@ -10,11 +10,10 @@ module.exports = {
   mongoose: {
     uri: process.env.MONGODB_URI || 'mongodb://localhost/app',
     options: {
-      keepAlive: 1,
-      poolSize: 5,
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useUnifiedTopology: true,
+      keepAlive: true ,
+      maxPoolSize: 5,
+      serverSelectionTimeoutMS: 5000,
+      family: process.env.MONGODB_FAMILY || 4
     },
   },
   crypto: {
