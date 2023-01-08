@@ -1,16 +1,17 @@
 const defer = require('config/defer').deferConfig
 const path = require('path')
 
+const dotenv = require('dotenv')
+dotenv.config()
+
 module.exports = {
-  // secret data can be moved to env variables
-  // or a separate config
-  secret: 'mysecret',
+  secret: process.env.MY_SECRET || 'mysecret',
   port: process.env.PORT || 3000,
   redis_uri: process.env.REDISCLOUD_URL || 'redis://localhost:6379',
   mongoose: {
     uri: process.env.MONGODB_URI || 'mongodb://localhost/app',
     options: {
-      keepAlive: true ,
+      keepAlive: true,
       maxPoolSize: 5,
       serverSelectionTimeoutMS: 5000,
       family: process.env.MONGODB_FAMILY || 4

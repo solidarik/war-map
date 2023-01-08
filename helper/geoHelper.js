@@ -1,4 +1,6 @@
-class GeoHelper {
+import StrHelper from './strHelper.js'
+
+export default class GeoHelper {
   static fromLonLat(input) {
     if (!input || input.length !== 2) {
       return undefined
@@ -22,6 +24,41 @@ class GeoHelper {
       output[i + 1] = y
     }
     return output
+  }
+
+  static coordsToBaseFormat(coords) {
+    if (coords.lon == undefined || coords.lat == undefined) {
+      return undefined
+    }
+    if (coords.lon == 0 && coords.lat == 0) {
+      return undefined
+    }
+    return this.fromLonLat([coords.lon, coords.lat])
+  }
+
+  static getCoordsFromHumanCoords(input) {
+    //ширина возвращается первым аргументом lat
+    //долгота возвращается вторым аргументом lon
+
+    //сначала проверяем на координаты типа x_y
+    const arr = input.split('_')
+    if (arr.length == 2) {
+      return arr.reverse().map(item => Number(item))
+    }
+
+    let output = input.replace(/[°]/g, '.')
+    output = output.replace(/[′]/g, '')
+    output = output.replace(/[″]/g, '')
+
+    let numbers = StrHelper.getAllNumbers(output)
+    if (output.includes('ю. ш.') || output.includes('S')) {
+      numbers[0] = -numbers[0]
+    }
+    if (output.includes('з. д.') || output.includes('W')) {
+      numbers[1] = -numbers[1]
+    }
+
+    return [parseFloat(numbers[0]), parseFloat(numbers[1])].reverse()
   }
 
   static getCenterCoord(ft) {
@@ -59,5 +96,3 @@ class GeoHelper {
     else return (values[half - 1] + values[half]) / 2.0
   }
 }
-
-module.exports = GeoHelper

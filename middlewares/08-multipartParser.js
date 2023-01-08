@@ -4,8 +4,8 @@
 // for routes which require custom file handling
 // can introduce config to ignore them here
 
-const busboy = require('co-busboy');
-const convert = require('koa-convert');
+import busboy from 'co-busboy'
+import convert from 'koa-convert'
 
 const parseFunc = convert(function* (next) {
   // the body isn't multipart, so busboy can't parse it
@@ -44,4 +44,4 @@ const parseFunc = convert(function* (next) {
   yield* next;
 });
 
-exports.init = app => app.use(parseFunc);
+export function init(app) { return app.use(parseFunc) }

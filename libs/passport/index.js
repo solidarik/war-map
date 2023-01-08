@@ -1,6 +1,6 @@
-const passport = require('koa-passport');
+import passport from 'koa-passport'
 
-require('./serialize');
-require('./localStrategy');
+import('./serialize.js')
+import('./localStrategy.js')
 
-module.exports = passport;
+export default passport

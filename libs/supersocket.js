@@ -94,7 +94,9 @@ function socket(server) {
 
 
 let socketEmitter = require('socket.io-emitter');
-let redisClient = require('redis').createClient(config.redis_uri, {no_ready_check: true});
+
+//let redisClient = require('redis').createClient(config.redis_uri, {no_ready_check: true});
+let redisClient = require('redis').createClient(config.redis_uri, {no_ready_check: false});
 socket.emitter = socketEmitter(redisClient);
 
 module.exports = socket;

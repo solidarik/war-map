@@ -1,8 +1,8 @@
 import io from 'socket.io-client'
-import { EventEmitter } from './eventEmitter'
-import { CookieHelper } from './cookieHelper'
+import EventEmitter from './eventEmitter.js'
+import CookieHelper from './cookieHelper.js'
 
-export class ClientProtocol extends EventEmitter {
+export default class ClientProtocol extends EventEmitter {
   constructor() {
     super()
     let socket = io()
@@ -14,7 +14,6 @@ export class ClientProtocol extends EventEmitter {
       const data = JSON.parse(msg)
       const serverYear = data.year
       const cookieYear = CookieHelper.getCookie('year')
-
       this.emit(
         'setCurrentYear',
         serverYear ? serverYear : cookieYear ? cookieYear : '1945'
@@ -73,6 +72,19 @@ export class ClientProtocol extends EventEmitter {
         this.emit('refreshInfo', JSON.parse(msg))
       }
     )
+  }
+
+  getPersonItem(id) {
+    const searchData = { 'id': id }
+    this.socket.emit('clGetPersonItem', JSON.stringify(searchData),
+      (msg) => {
+        const res = JSON.parse(msg)
+        if (res.error) {
+          console.log(`Ошибка от сервера ${res.error}`)
+        } else {
+          this.emit('onGetPersonItem', res)
+        }
+      })
   }
 
   static create() {

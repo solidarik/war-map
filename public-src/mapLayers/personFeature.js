@@ -1,6 +1,6 @@
-import SuperFeature from './superFeature'
-import DateHelper from '../../helper/dateHelper'
-import StrHelper from '../../helper/strHelper'
+import SuperFeature from './superFeature.js'
+import DateHelper from '../../helper/dateHelper.js'
+import StrHelper from '../../helper/strHelper.js'
 
 class PersonFeature extends SuperFeature {
   static getIcon() {
@@ -68,9 +68,8 @@ class PersonFeature extends SuperFeature {
       </table>
       <p>${info.description}</p>
       <div class="source-info">
-        <a target='_blank' rel='noopener noreferrer' href=${
-          info.pageUrl
-        }>Подробнее</a>
+        <a target='_blank' rel='noopener noreferrer' href=
+        person/${info.pageUrl}>Подробнее</a>
       </div>
     </div>
     `
@@ -89,11 +88,11 @@ class PersonFeature extends SuperFeature {
     let res = []
     switch (kind) {
       case 'birth':
-        if (!info.personBirth) return res
-        res = info.personBirth.map((elem) => {
+        if (!info.personsBirth) return res
+        res = info.personsBirth.map((elem) => {
           return {
             ...elem,
-            point: elem.placeBirthCoords[0],
+            point: elem.placeBirthCoords,
             icon: PersonFeature.getBirthIcon(),
             popupFirst: `${PersonFeature.getFio(elem)}`,
             popupSecond: `Дата рождения: ${DateHelper.dateToStr(
@@ -108,7 +107,7 @@ class PersonFeature extends SuperFeature {
         res = info.personsAchievement.map((elem) => {
           return {
             ...elem,
-            point: elem.placeAchievementCoords[0],
+            point: elem.placeAchievementCoords,
             icon: PersonFeature.getAchievementIcon(),
             popupFirst: `${PersonFeature.getFio(elem)}`,
             popupSecond: `Дата подвига: ${DateHelper.dateToStr(
@@ -126,7 +125,7 @@ class PersonFeature extends SuperFeature {
         res = info.personsDeath.map((elem) => {
           return {
             ...elem,
-            point: elem.placeDeathCoords[0],
+            point: elem.placeDeathCoords,
             icon: PersonFeature.getDeathIcon(),
             popupFirst: `${PersonFeature.getFio(elem)}`,
             popupSecond: `Дата смерти: ${DateHelper.dateToStr(elem.dateDeath)}`,

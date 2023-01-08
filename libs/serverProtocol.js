@@ -1,4 +1,4 @@
-class ServerProtocol {
+export default class ServerProtocol {
     constructor() {
         let protocol = new Map();
         this.protocol = protocol;
@@ -12,5 +12,3 @@ class ServerProtocol {
         this.protocol.set(func, name);
     }
 }
-
-module.exports = ServerProtocol;

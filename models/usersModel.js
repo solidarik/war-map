@@ -1,7 +1,6 @@
-const mongoose = require('mongoose')
-const crypto = require('crypto')
-const _ = require('lodash')
-const config = require('config')
+import mongoose from 'mongoose'
+import crypto from 'crypto'
+import config from 'config'
 
 const userSchema = new mongoose.Schema(
   {
@@ -43,7 +42,7 @@ const userSchema = new mongoose.Schema(
 
 userSchema
   .virtual('password')
-  .set(function(password) {
+  .set(function (password) {
     if (password !== undefined) {
       if (password.length < 3) {
         this.invalidate('password', 'Пароль должен быть минимум 4 символа.')
@@ -69,11 +68,11 @@ userSchema
       this.passwordHash = undefined
     }
   })
-  .get(function() {
+  .get(function () {
     return this._plainPassword
   })
 
-userSchema.methods.checkPassword = function(password) {
+userSchema.methods.checkPassword = function (password) {
   console.log('password', password)
   if (!password) return false // empty password means no login by password
   if (!this.passwordHash) return false // this user does not have password (the line below would hang!)
@@ -89,4 +88,4 @@ userSchema.methods.checkPassword = function(password) {
   return cryptoHash == this.passwordHash
 }
 
-module.exports = mongoose.model('users', userSchema, 'users')
+export default mongoose.model('users', userSchema, 'users')

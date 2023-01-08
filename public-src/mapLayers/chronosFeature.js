@@ -1,6 +1,6 @@
-import SuperFeature from './superFeature'
-import strHelper from '../../helper/strHelper'
-import dateHelper from '../../helper/dateHelper'
+import SuperFeature from './superFeature.js'
+import strHelper from '../../helper/strHelper.js'
+import dateHelper from '../../helper/dateHelper.js'
 
 class ChronosFeature extends SuperFeature {
   static getIcon() {
@@ -21,20 +21,23 @@ class ChronosFeature extends SuperFeature {
   }
 
   static getHtmlInfo(info) {
+    console.log(`chronosFeatureInfo: ${JSON.stringify(info)}`)
     window.CURRENT_ITEM = info
-    const html = `<div class="chronos-info panel-info">
+    let html = `<div class="chronos-info panel-info">
       <h1>${info.place}</h1>
-      <h2>${info.startDateStr}</h2>
+      <h2>${info.start.dateStr}</h2>
       <p>${info.brief}</p>
       ${info.comment ? '<p>' + info.comment + '</p>' : ''}
-      ${info.remark ? '<p>' + info.remark + '</p>' : ''}
-      <div class="source-info">
-        <a target='_blank' rel='noopener noreferrer' href=${
-          info.srcUrl
-        }>Источник информации</a>
+      ${info.remark ? '<p>' + info.remark + '</p>' : ''}`
+    if (info.srcUrl) {
+      html += `<div class="source-info">
+          <a target='_blank' rel='noopener noreferrer' href=${
+            info.srcUrl
+          }>Подробнее</a>
+        </div>
       </div>
-    </div>
-    `
+      `
+    }
     return html
   }
 

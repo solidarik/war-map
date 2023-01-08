@@ -1,6 +1,6 @@
-let passport = require('koa-passport');
-let LocalStrategy = require('passport-local');
-let User = require('../../models/usersModel');
+import passport from 'koa-passport'
+import LocalStrategy from 'passport-local'
+import usersModel from '../../models/usersModel.js'
 
 // Стратегия берёт поля из req.body
 // Вызывает для них функцию
@@ -12,28 +12,28 @@ passport.use('local',
     passReqToCallback: true, // req for more complex cases
   },
 
-  // Три возможных итога функции
-  // done(null, user[, info]) ->
-  //   strategy.success(user, info)
-  // done(null, false[, info]) ->
-  //   strategy.fail(info)
-  // done(err) ->
-  //   strategy.error(err)
-  function(req, email, password, done) {
+    // Три возможных итога функции
+    // done(null, user[, info]) ->
+    //   strategy.success(user, info)
+    // done(null, false[, info]) ->
+    //   strategy.fail(info)
+    // done(err) ->
+    //   strategy.error(err)
+    function (req, email, password, done) {
 
-    const isEmail = /^[-.\w]+@([\w-]+\.)+[\w-]{2,12}$/.test(email);
-    const findObj = isEmail ? { email: email } : { login: email };
+      const isEmail = /^[-.\w]+@([\w-]+\.)+[\w-]{2,12}$/.test(email);
+      const findObj = isEmail ? { email: email } : { login: email };
 
-    User.findOne(findObj, function(err, user) {
+      usersModel.findOne(findObj, function (err, user) {
 
-      if (err) {
-        return done(err);
-      }
+        if (err) {
+          return done(err);
+        }
 
-      if (!user || !user.checkPassword(password)) {
-        return done(null, false, 'Нет такого пользователя или пароль неверен.');
-      }
+        if (!user || !user.checkPassword(password)) {
+          return done(null, false, 'Нет такого пользователя или пароль неверен.');
+        }
 
-      return done(null, user);
-    });
-  }));
+        return done(null, user);
+      });
+    }));

@@ -1,32 +1,34 @@
 {
   "name": "war-map",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "War moves",
   "main": "index.js",
+  "type": "module",
   "engines": {
-    "node": "10.x"
+    "node": "19.x"
   },
   "scripts": {
     "test": "mocha -c",
     "pytest": "cd test && pytest -s -q --color=yes",
-    "prebuild": "concurrently --kill-others \"npm run parcel-ww2\"",
-    "parcel-ww2": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js",
-    "parcel-religion": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index-religion.js && cp dist/index.js public/public-src-religion.js",
-    "watch": "nodemon -w public-src -x npm run prebuild",
-    "dev": "nodemon index.js"
+    "build-minify": "parcel build --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js",
+    "build": "parcel build --no-minify --no-source-maps --no-content-hash public-src/index.js && cp dist/index.js public/public-src.js",
+    "watch": "nodemon -w public-src -x npm run build",
+    "dev": "nodemon --es-module-specifier-resolution=node index.js index.js",
+    "start": "node --es-module-specifier-resolution=node index.js",
+    "pack": "webpack --config webpack.config.js",
+    "pack-map": "concurrently --kill-others \"npm run build\""
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/solidarik/war-map.git"
   },
   "keywords": [
+    "WWII",
     "warmap",
-    "openlayer",
-    "nodejs",
-    "koa",
-    "move",
     "troops",
-    "WWII"
+    "openlayer",
+    "koa",
+    "move"
   ],
   "author": "Ildar Gubaydullin",
   "license": "ISC",
@@ -45,6 +47,9 @@
     "cron": "latest",
     "d3-geo-projection": "latest",
     "d3v4": "latest",
+    "dotenv": "latest",
+    "google-auth-library": "latest",
+    "googleapis": "latest",
     "jquery": "latest",
     "koa": "latest",
     "koa-bodyparser": "latest",
@@ -66,25 +71,32 @@
     "ol": "latest",
     "ol-ext": "latest",
     "passport-local": "latest",
-    "proj4": "^2.6.2",
+    "proj4": "latest",
     "pug": "latest",
-    "shelljs": "^0.8.4",
-    "socket.io": "^3.0.1",
-    "socket.io-client": "^3.0.1",
+    "readline": "latest",
+    "shelljs": "latest",
+    "socket.io": "latest",
+    "socket.io-client": "latest",
     "socket.io-emitter": "latest",
     "socket.io-redis": "latest",
     "winston": "latest",
     "xlsx": "latest"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.7",
+    "@babel/core": "latest",
     "@babel/plugin-syntax-class-properties": "latest",
     "@babel/plugin-syntax-jsx": "latest",
-    "@babel/preset-env": "^7.12.7",
+    "@babel/preset-env": "latest",
     "@babel/preset-react": "latest",
-    "concurrently": "^5.3.0",
+    "babel-loader": "latest",
+    "concurrently": "latest",
+    "imagemagick": "latest",
     "mocha": "latest",
-    "parcel-bundler": "latest"
+    "node-fetch": "latest",
+    "parcel-bundler": "latest",
+    "sharp": "latest",
+    "webpack": "latest",
+    "webpack-cli": "latest"
   },
   "browserslist": [
     "> 1%",

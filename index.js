@@ -1,63 +1,57 @@
 // long stack trace (+clarify from co) if needed
 if (process.env.TRACE) {
-  require('./libs/trace')
+  import('./libs/trace.js')
 }
 
-const Koa = require('koa')
+import Koa from 'koa'
 
 const app = new Koa()
-app.use(require('koa-range'))
+import KoaRange from 'koa-range'
+app.use(KoaRange)
 
-const config = require('config')
-const mongoose = require('./libs/mongoose')
+import config from 'config'
+import mongoose from './libs/mongoose.js'
 
 // keys for in-koa KeyGrip cookie signing (used in session, maybe other modules)
 app.keys = [config.secret]
 app.mongoose = mongoose
 
-const path = require('path')
-const fs = require('fs')
+import path from 'path'
+import fs from 'fs'
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const middlewares = fs.readdirSync(path.join(__dirname, 'middlewares')).sort()
-middlewares.forEach((handler) => require('./middlewares/' + handler).init(app))
 
-/*
-middlewares.forEach(function(middleware) {
-  app.use(require('./middlewares/' + middleware));
-});*/
+const forEachPromise = new Promise(async resolve => {
+  for (let i = 0; i < middlewares.length; i++) {
+    const handlerName = middlewares[i]
+    const middleware = await import(`./middlewares/${handlerName}`)
+    middleware.init(app)
+  }
 
-app.use(require('./routes/routes.js'))
+  app.use((await import('./routes/routes.js')).default)
 
-const serverSocket = require('./libs/serverSocket')
+  const server = app.listen(config.port)
 
-const server = app.listen(config.port)
+  let protocolFunctions = []
+  const protocolClasses = fs
+    .readdirSync(path.join(__dirname, 'socketProtocol'))
+    .sort()
+  for (let i = 0; i < protocolClasses.length; i++) {
+    const handlerName = protocolClasses[i]
+    const protocol = (await import(`./socketProtocol/${handlerName}`)).default
+    protocolFunctions.push(protocol.getProtocol(app))
+  }
 
-let protocolFunctions = []
-const protocolClasses = fs
-  .readdirSync(path.join(__dirname, 'socketProtocol'))
-  .sort()
-protocolClasses.forEach((handler) => {
-  let protocolClass = require('./socketProtocol/' + handler)
-  protocolClass.init()
-  protocolFunctions.push(protocolClass.getProtocol(app))
+  const serverSocket = (await import('./libs/serverSocket.js')).default
+  app.socket = serverSocket(server, protocolFunctions)
+
+  resolve(true)
 })
 
-app.socket = serverSocket(server, protocolFunctions)
-
-// var cron = require('cron');
-// var lp = require('./loadDatabase/loadPersons.js');
-// //0 */3 * * * * every 3 minutes
-// //0 0 */8 * * * every 8 hours
-// var cronJob = cron.job("0 0 */8 * * *", function(){
-//     // perform operation e.g. GET request http.get() etc.
-//     lp.download("http://www.historian.by/ww2/person.xlsx","./public/data/persons.xlsx",lp.parseExcel);
-//     console.info('cron job completed');
-// });
-// cronJob.start();
-// console.log('start parse');
-// var lp = require('./loadDatabase/loadPersons.js');
-// lp.parseExcel();
-
-//  console.log('start parse');
-//  var lhp = require('./loadDatabase/loadHolyPersons.js');
-//  lhp.parseExcel('./public/data/holy_persons.xlsx','./public/data/holy_persons.json');
+forEachPromise.then()

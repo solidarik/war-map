@@ -1,3 +1,6 @@
 // Usually served by Nginx
-const serve = require('koa-static')
-exports.init = app => app.use(serve('public'))
+import serve from 'koa-static'
+
+export function init(app) {
+    return app.use(serve('public'))
+}

@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose'
+
 var dictIndicatorsSchema = new mongoose.Schema({
   code: {
     type: Number,
@@ -15,4 +16,4 @@ dictIndicatorsSchema.virtual('fullNameRus').get( () => {
     return this.short_name_eng;
 });
 
-module.exports = mongoose.model('dictIndicators', dictIndicatorsSchema, 'dictIndicators');
+export default mongoose.model('dictIndicators', dictIndicatorsSchema, 'dictIndicators');

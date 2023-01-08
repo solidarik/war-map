@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose'
+
 var dictSourcesSchema = new mongoose.Schema({
   sourceCode: {
     type: String,
@@ -11,4 +12,4 @@ var dictSourcesSchema = new mongoose.Schema({
   timestamps: false
 });
 
-module.exports = mongoose.model('dictSources', dictSourcesSchema, 'dictSources');
+export default mongoose.model('dictSources', dictSourcesSchema, 'dictSources');

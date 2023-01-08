@@ -1,7 +1,7 @@
-import { EventEmitter } from './eventEmitter'
-import ClassHelper from '../helper/classHelper'
+import EventEmitter from './eventEmitter.js'
+import ClassHelper from '../helper/classHelper.js'
 
-export class InfoControl extends EventEmitter {
+export default class InfoControl extends EventEmitter {
   constructor() {
     super() //first must
 

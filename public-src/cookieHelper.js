@@ -1,4 +1,4 @@
-export class CookieHelper {
+export default class CookieHelper {
   static getCookie(name, defaultValue = undefined) {
     var matches = document.cookie.match(
       new RegExp(

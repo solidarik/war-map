@@ -1,19 +1,53 @@
-const ServerProtocol = require('../libs/serverProtocol')
-const BattlesModel = require('../models/battlesModel')
-const AgreementsModel = require('../models/agreementsModel')
-const ChronosModel = require('../models/chronosModel')
-const PersonsModel = require('../models/personsModel')
+import ServerProtocol from '../libs/serverProtocol.js'
+import BattlesModel from '../models/battlesModel.js'
+import AgreementsModel from '../models/agreementsModel.js'
+import ChronosModel from '../models/chronosModel.js'
+import PersonsModel from '../models/personsModel.js'
 
 class BattlesProtocol extends ServerProtocol {
+
+  constructor() {
+    super()
+    this.init()
+  }
+
   init() {
     super.addHandler('clQueryDataByYear', this.getDataByYear)
     super.addHandler('clGetCurrentYear', this.getCurrentYear)
+    super.addHandler('clGetPersons', this.getPersons)
+    super.addHandler('clGetPersonItem', this.getPersonItem)
   }
 
   getCurrentYear(socket, msg, cb) {
     let res = {}
     res.year = undefined // todo
     cb(JSON.stringify(res))
+  }
+
+  getPersonItem(socket, msg, cb) {
+
+    let data = JSON.parse(msg)
+    let res = {}
+    try {
+      PersonsModel.find({ '_id': data.id })
+        .then(
+          (res) => {
+            if (res.length == 0) {
+              throw new Error('Person by id is not Found')
+            } else {
+              cb(
+                JSON.stringify(res[0])
+              )
+            }
+          })
+        .catch((error) => {
+          cb(JSON.stringify({ error: error }))
+        })
+    } catch (err) {
+      res.err = 'Ошибка возврата персоны: ' + err
+      res.events = ''
+      cb(JSON.stringify(res))
+    }
   }
 
   getDataByYear(socket, msg, cb) {
@@ -36,7 +70,7 @@ class BattlesProtocol extends ServerProtocol {
       const promices = [
         BattlesModel.find(defaultSearchParam),
         AgreementsModel.find(defaultSearchParam),
-        ChronosModel.find(defaultSearchParam),
+        ChronosModel.find({'start.year': data.year}),
         PersonsModel.find({
           dateBirth: searchDates,
         }),
@@ -50,6 +84,7 @@ class BattlesProtocol extends ServerProtocol {
 
       Promise.all(promices)
         .then((res) => {
+
           cb(
             JSON.stringify({
               battles: res[0],
@@ -72,4 +107,4 @@ class BattlesProtocol extends ServerProtocol {
   }
 }
 
-module.exports = new BattlesProtocol()
+export default new BattlesProtocol()

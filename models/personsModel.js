@@ -1,8 +1,12 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 var personsSchema = new mongoose.Schema(
   {
     pageId: Number,
+    loadStatus: String,
+    isOnMap: Boolean,
+    lineSource: Number,
+
     surname: String,
     name: String,
     middlename: String,
@@ -26,7 +30,7 @@ var personsSchema = new mongoose.Schema(
     },
     srcUrl: String,
     photoUrl: String,
-    linkUrl: String,
+    linkUrls: [],
     placeAchievement: String,
     placeAchievementCoords: [],
     placeBirth: String,
@@ -42,4 +46,4 @@ var personsSchema = new mongoose.Schema(
 
 personsSchema.statics.publicFields = ['surname', 'name', 'middlename']
 
-module.exports = mongoose.model('persons', personsSchema)
+export default mongoose.model('persons', personsSchema)

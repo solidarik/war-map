@@ -5,6 +5,10 @@ Thubms.db
 *.class
 *.py[co]
 
+.env
+*credentials*
+*token*
+
 secret*
 
 *.class

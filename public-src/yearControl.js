@@ -2,7 +2,7 @@
 import * as React from 'react'
 import { Range } from 'react-range'
 import ReactDOM from 'react-dom'
-import { EventEmitter } from './eventEmitter'
+import EventEmitter from './eventEmitter.js'
 //import RangeControl from './rangeControl'
 
 class SuperSimple extends React.Component {
@@ -80,7 +80,7 @@ class SuperSimple extends React.Component {
   }
 }
 
-export class YearControl extends EventEmitter {
+export default class YearControl extends EventEmitter {
   constructor() {
     super() //first must
 

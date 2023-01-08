@@ -1,6 +1,6 @@
-var http = require('http')
-var fs = require('fs')
-const XLSX = require('xlsx')
+import http from 'http'
+import fs from 'fs'
+import XLSX from 'xlsx'
 
 function formatDate(date) {
   var d = new Date(date),
@@ -210,13 +210,13 @@ class LoadPersons {
           } catch (e) {
             console.log(e)
           }
-        } 
+        }
         // console.log('end parse');
       }
     )
   }
- 
+
   //download("http://www.historian.by/ww2/person.xlsx","./public/data/persons.xlsx",parseExcel);
 }
 
-module.exports = new LoadPersons()
+export default new LoadPersons()

@@ -1,23 +1,59 @@
-const log = require('../helper/logHelper')
-const fileHelper = require('../helper/fileHelper')
-const geoHelper = require('../helper/geoHelper')
-const strHelper = require('../helper/strHelper')
-const config = require('config')
-const chalk = require('chalk')
-const axios = require('axios')
-const { info } = require('../helper/logHelper')
+import Log from '../helper/logHelper.js'
+const log = Log.create()
+
+import FileHelper from '../helper/fileHelper.js'
+import StrHelper from '../helper/strHelper.js'
+import axios from 'axios'
+import chalk from 'chalk'
 
 class InetHelper {
-  constructor() {}
+  constructor() { }
 
-  loadCoords(filename) {
-    this.coords = fileHelper.isFileExists(filename)
-      ? fileHelper.getJsonFromFile(filename)
+  loadCoords() {
+
+    const filename = FileHelper.composePath('loadDatabase/dataSources/checkedCoords.json')
+
+    this.coords = FileHelper.isFileExists(filename)
+      ? FileHelper.getJsonFromFile(filename)
       : {}
+    console.log(chalk.gray(`Кол-во сохраненных координат ${Object.keys(this.coords).length}`))
+    let itemNames = []
+    for (let coordName in this.coords) {
+      itemNames.push(coordName)
+    }
+    itemNames.sort()
+    let newCoords = []
+    for (let i = 0; i < itemNames.length; i++) {
+      const itemName = itemNames[i].toLowerCase().trim()
+      const itemCoords = this.coords[itemNames[i]]
+      if (!newCoords[itemName]) {
+        newCoords[itemName] = { 'lat': itemCoords.lat, 'lon': itemCoords.lon }
+      }
+    }
+
+    this.coords = { ...newCoords }
+
+    for (let name in this.coords) {
+      this.coords[name.trim()] = this.coords[name]
+    }
   }
 
-  saveCoords(filename) {
-    fileHelper.saveJsonToFileSync(this.coords, filename)
+  isExistCoord(coordName) {
+    const itemName = coordName.toLowerCase().trim()
+    return (itemName in this.coords)
+  }
+
+  addCoord(coordName, coordValue) {
+    const itemName = coordName.toLowerCase().trim()
+    if (itemName in this.coords)
+      return false
+    this.coords[itemName] = coordValue
+  }
+
+  saveCoords() {
+    const filename = FileHelper.composePath('loadDatabase/dataSources/checkedCoords.json')
+    console.log(`Before saving coords... Length: ${Object.keys(this.coords).length}`)
+    FileHelper.saveJsonToFileSync(this.coords, filename)
   }
 
   getDataFromUrl(url) {
@@ -28,7 +64,7 @@ class InetHelper {
           resolve(response.data)
         })
         .catch((error) => {
-          log.error(`Error! axios was broken: ${error}`)
+          log.error(`Error! axios was broken: ${error} ${url}`)
           reject(error)
         })
     })
@@ -62,29 +98,54 @@ class InetHelper {
     })
   }
 
-  async getCoordsForCityOrCountry(input) {
-    const promises = input.split(';').map((local) => {
-      return this.getLocalCoordsForName(local.trim())
-    })
+  getLonLatSavedCoords(input) {
+    input = input.replace(/"/g, '')
+    let testNames = [input]
 
-    return await Promise.all(promises)
-  }
+    input = input.trim().toLowerCase()
+    testNames.push(input)
 
-  async getLocalCoordsForName(input) {
-    const name = strHelper.shrinkStringBeforeDelim(input)
+    let name = StrHelper.shrinkStringBeforeDelim(input)
+    testNames.push(name)
 
-    if (!name) {
-      return undefined
+    input = input.replace(',', '')
+    testNames.push(input)
+
+    testNames.push(StrHelper.removeShortStrings(name, '', true).replace('  ', ' '))
+    testNames.push(StrHelper.removeShortStrings(name, '', false).replace('  ', ' '))
+
+    testNames = testNames.filter((value, index, self) => self.indexOf(value) === index)
+
+    for (let i = 0; i < testNames.length; i++) {
+      const name = testNames[i]
+      if (name && this.coords && this.coords[name]) {
+        const coords = this.coords[name]
+        return coords
+      }
     }
 
-    const isExistCoords = this.coords && this.coords[name]
-    let coords = null
-    try {
-      coords = isExistCoords
-        ? this.coords[name]
-        : await this.getCoordsFromWiki(name)
+    return false
+  }
 
-      return coords ? geoHelper.fromLonLat([coords.lon, coords.lat]) : null
+  async searchCoordsByName(input) {
+
+    if (!input) return null
+
+    const existCoords = this.getLonLatSavedCoords(input)
+    if (existCoords) {
+      return existCoords
+    }
+
+    // console.log(`Не найдены предустановленные координаты для ${input}`)
+
+    input = input.replace(',', '')
+    let name = StrHelper.shrinkStringBeforeDelim(input)
+    name = StrHelper.removeShortStrings(name)
+
+    let coords = null
+
+    try {
+      coords = await this.getCoordsFromWiki(name)
 
       //const isRus = /[а-яА-ЯЁё]/.test(name)
       //if (isRus) {
@@ -95,13 +156,15 @@ class InetHelper {
       //  if (coords) return coords
       //}
     } catch (error) {
-      throw error
+      log.error(`Ошибка получения данных из Wiki ${error}`)
     } finally {
-      if (this.coords && !isExistCoords && coords) {
+      if (coords && this.coords) {
         this.coords[name] = coords
-        log.info(`новая координата ${JSON.stringify(coords)} для места ${name}`)
+        log.info(`Новая координата ${JSON.stringify(coords)} для места ${name}`)
       }
     }
+
+    return coords ? coords : null
   }
 
   async getCoordsByPageId(pageId, isRus) {
@@ -117,11 +180,11 @@ class InetHelper {
     const json = await this.getDataFromUrl(url)
     const coords = json['query']['pages'][pageId]['coordinates']
     return coords && coords.length > 0
-      ? { lon: coords[0].lon, lat: coords[0].lat }
+      ? { lat: coords[0].lat, lon: coords[0].lon }
       : null
   }
 
-  async getCoordsFromWiki(name) {
+  async  getCoordsFromWiki(name) {
     let coords = undefined
     try {
       const isRus = /[а-яА-ЯЁё]/.test(name)
@@ -283,9 +346,7 @@ class InetHelper {
               generator: 'prefixsearch',
               prop: encodeURI('pageprops|description'),
               ppprop: 'displaytitle',
-              gpssearch: encodeURI(stringSearch),
-              gpsnamespace: 0,
-              gpslimit: 6,
+              gpssearch: encodeURI(stringSearch)
             },
             isRus
           )
@@ -293,6 +354,12 @@ class InetHelper {
           this.getDataFromUrl(url)
             .then((json) => {
               //если используется другая библиотека может понадобится JSON.parse
+              if (!json.hasOwnProperty('query') ||
+                !json['query'].hasOwnProperty('pages')) {
+                resolve(null)
+                return null
+              }
+
               const pages = json['query']['pages']
               resolve(Object.keys(pages)[0])
             })
@@ -369,4 +436,4 @@ InetHelper.getInstance = function () {
   return global.singleton_instance
 }
 
-module.exports = InetHelper.getInstance()
+export default InetHelper.getInstance()

@@ -1,3 +1,3 @@
-module.exports = async function(ctx, next) {
+export default async function(ctx, next) {
     ctx.body = ctx.render('page-aircrafts');
 };

@@ -1,14 +1,14 @@
-import { EventEmitter } from './eventEmitter'
-import ClassHelper from '../helper/classHelper'
-import JsHelper from '../helper/jsHelper'
-import BattleFeature from './mapLayers/battleFeature'
-import AgreementFeature from './mapLayers/agreementFeature'
-import ChronosFeature from './mapLayers/chronosFeature'
-import PersonFeature from './mapLayers/personFeature'
-import { CookieHelper } from './cookieHelper'
+import EventEmitter from './eventEmitter.js'
+import ClassHelper from '../helper/classHelper.js'
+import JsHelper from '../helper/jsHelper.js'
+import BattleFeature from './mapLayers/battleFeature.js'
+import AgreementFeature from './mapLayers/agreementFeature.js'
+import ChronosFeature from './mapLayers/chronosFeature.js'
+import PersonFeature from './mapLayers/personFeature.js'
+import CookieHelper from './cookieHelper.js'
 //import TileSource from 'ol/source/Tile'
 
-export class LegendControl extends EventEmitter {
+export default class LegendControl extends EventEmitter {
   constructor() {
     super() //first must
 
@@ -24,9 +24,19 @@ export class LegendControl extends EventEmitter {
     this.lines = this.addLines()
     this.linesCount = 9
     const isCheckArr = CookieHelper.getCookie('isCheckArrLegend', undefined)
-    this.isCheckArr = isCheckArr
-      ? JSON.parse(isCheckArr)
-      : JsHelper.fillArray(true, this.linesCount)
+
+    try {
+      this.isCheckArr = isCheckArr
+        ? JSON.parse(isCheckArr)
+        : JsHelper.fillArray(true, this.linesCount)
+    }
+    catch(err) {
+      console.log(`Error parse isCheckArr: ${isCheckArr}`)
+      this.isCheckArr = JsHelper.fillArray(true, this.linesCount)
+      CookieHelper.setCookie('isCheckArrLegend', JSON.stringify(this.isCheckArr))
+    }
+
+    console.log(`isCheckArr: ${this.isCheckArr}`)
 
     this.items = []
     this.uniqueItems = {}
@@ -176,10 +186,10 @@ export class LegendControl extends EventEmitter {
 
   getHTMLIcons(line) {
     let htmlIcon = ''
-    if (line.icon) htmlIcon += `<img src="${line.icon}" alt="Girl in a jacket">`
+    if (line.icon) htmlIcon += `<img src="${line.icon}" alt="${line.caption}">`
     else {
       this.getIcons(line).forEach((icon) => {
-        htmlIcon += `<img src="${icon}" alt="Girl in a jacket">`
+        htmlIcon += `<img src="${icon}" alt="${line.caption}">`
       })
     }
     return htmlIcon
@@ -280,7 +290,7 @@ export class LegendControl extends EventEmitter {
     for (let id = 0; id < this.linesCount; id++) {
       const line = this.searchLinesById(id)
       //injection classFeature property to every item
-      const fillResult = line.fillFunction.call(
+      let fillResult = line.fillFunction.call(
         this,
         rawInfo,
         line.fillFunctionKind
@@ -294,6 +304,7 @@ export class LegendControl extends EventEmitter {
         this.items[id].forEach((item) => {
           this.uniqueItems[item._id] = item
         })
+
       } else {
         console.log(`Не удалось инициализировать массив для ${line.caption}`)
       }

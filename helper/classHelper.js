@@ -1,4 +1,4 @@
-class ClassHelper {
+export default class ClassHelper {
   static addClass(element, className) {
     if (!element || !element.className) return
     let arr = element.className.split(' ')
@@ -13,5 +13,3 @@ class ClassHelper {
     element.className = element.className.replace(className, '').trim()
   }
 }
-
-module.exports = ClassHelper

@@ -1,4 +1,9 @@
-class ImageHelper {
+import axios from 'axios'
+import fs from 'fs'
+import path from 'path'
+import fileHelper from '../helper/fileHelper.js'
+
+export default class ImageHelper {
   static resizeImage(url, fixWidth, callback) {
     var sourceImage = new Image()
 
@@ -26,6 +31,59 @@ class ImageHelper {
 
     return (sourceImage.src = url)
   }
-}
 
-module.exports = ImageHelper
+  static loadImageToFile(folder, url, fileName) {
+    return new Promise((resolve) => {
+      try {
+
+        res = { saved: false, warning: null, error: null, url: url }
+
+        const re = /(?:\.([^.]+))?$/
+        const ext = re.exec(url)[1]
+        let selectedExt = 'png'
+
+        if (ext) {
+          const acceptedExt = ['png', 'jpg', 'gif']
+          for (let i = 0; i < acceptedExt.length; i++) {
+            if (ext.indexOf(acceptedExt[i])) {
+              selectedExt = acceptedExt[i]
+              break
+            }
+          }
+        }
+        fileName += '.' + selectedExt
+
+        const localFilePath = path.resolve(__dirname, folder, fileName);
+
+        if (fileHelper.isFileExists(localFilePath)) {
+          res.warning = 'File is exist'
+          resolve(res)
+          return
+        }
+
+        axios({
+          method: 'GET',
+          url: url,
+          responseType: 'stream',
+          timeout: 1000,
+
+        })
+          .then(response => {
+            const w = response.data.pipe(fs.createWriteStream(localFilePath))
+            w.on('finish', () => {
+              res.saved = true
+              resolve(res)
+            })
+          })
+          .catch(err => {
+            res.error = `Error in axios catch ${err}`
+            resolve(res)
+          })
+      } catch (err) {
+        res.error = `Program error in ${arguments.callee.toString()}`
+        resolve(res)
+      }
+
+    })
+  }
+}

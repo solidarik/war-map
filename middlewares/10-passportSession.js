@@ -1,1 +1,3 @@
-exports.init = app => app.use(require('koa-passport').session());
+
+import { default as passport } from 'koa-passport'
+export function init(app) { return app.use(passport.session()) }

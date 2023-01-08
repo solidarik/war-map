@@ -1,10 +1,13 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 var battlesSchema = new mongoose.Schema(
   {
     pageId: Number,
+    loadStatus: String,
+    isOnMap: Boolean,
+    lineSource: Number,
+
     name: String,
-    filename: String,
     startDate: {
       type: Date,
       required: 'Не задана начальная дата события',
@@ -19,6 +22,8 @@ var battlesSchema = new mongoose.Schema(
     },
     imgUrl: String,
     srcUrl: String,
+    correction: String,
+    comment: String,
     enemies: [],
     allies: [],
     winner: String,
@@ -62,4 +67,4 @@ var battlesSchema = new mongoose.Schema(
 
 battlesSchema.statics.publicFields = ['startDate', 'endDate']
 
-module.exports = mongoose.model('battles', battlesSchema, 'battles')
+export default mongoose.model('battles', battlesSchema, 'battles')

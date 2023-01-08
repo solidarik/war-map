@@ -1,8 +1,12 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 var agreementsSchema = new mongoose.Schema(
   {
     pageId: Number,
+    loadStatus: String,
+    isOnMap: Boolean,
+    lineSource: Number,
+
     startDate: {
       type: Date,
       required: 'Не задана начальная дата события',
@@ -10,6 +14,7 @@ var agreementsSchema = new mongoose.Schema(
     endDate: Date,
     startDateStr: String,
     endDateStr: String,
+
     kind: String,
     place: String,
     point: [],
@@ -31,4 +36,4 @@ var agreementsSchema = new mongoose.Schema(
 
 agreementsSchema.statics.publicFields = ['startDate', 'endDate']
 
-module.exports = mongoose.model('agreements', agreementsSchema, 'agreements')
+export default mongoose.model('agreements', agreementsSchema, 'agreements')

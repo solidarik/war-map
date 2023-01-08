@@ -1,4 +1,4 @@
-class StrHelper {
+export default class StrHelper {
   static toTranslitStr(input) {
     if (!input || input == '') return ''
 
@@ -24,6 +24,27 @@ class StrHelper {
     return output.replace(/[_]+/g, '_')
   }
 
+  static isExistNumber(input) {
+    if (!input || input == '') return false
+    const numbers = StrHelper.getAllNumbers(input)
+    return numbers.length > 0
+  }
+
+  static isRussianLetter(input) {
+    return input.length === 1 && /[А-Яа-я]/i.test(input)
+  }
+
+  static isEnglishLetter(input) {
+    return input.length === 1 && /[A-Za-z]/i.test(input)
+  }
+
+  static isNumeric(input) {
+    input = input + ''
+    //https://stackoverflow.com/questions/175739/how-can-i-check-if-a-string-is-a-valid-number
+    return !isNaN(input) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+      !isNaN(parseFloat(input)) // ...and ensure strings of whitespace fail
+  }
+
   static strToEngSymbols(input) {
     if (!input || input == '') return ''
 
@@ -37,15 +58,37 @@ class StrHelper {
     return output
   }
 
+  static replaceEnd(input, end) {
+    const inputLen = input.length
+    const endLen = end.length
+    const output = input.substring(0, inputLen - endLen)
+    return (output + end)
+  }
+
+  static removeShortStrings(inputText, regstring, onlyEnd = true) {
+    if (!regstring) {
+      const shortRegExp = onlyEnd ? `[а-яa-z]{1,2}[.]$` : `[а-яa-z]{1,2}[.]`
+      //[а-яa-z]{1,2}[.]*\s
+      regstring = new RegExp(shortRegExp, 'g')
+    }
+    return inputText.replace(regstring, '').trim()
+  }
+
+
   static generatePageUrl(input, len = 50) {
     if (Array.isArray(input)) {
-      input = input.join('_')
+      input = input.map(elem => elem.trim()).filter((elem) => elem.length > 0).join('_')
     }
 
     let output = this.toTranslitStr(input)
     if (output.length > len) {
       output = output.substring(0, len)
     }
+
+    if (output[output.length - 1] == '_') {
+      output = output.substring(0, len - 1)
+    }
+
     return output
   }
 
@@ -56,6 +99,7 @@ class StrHelper {
   }
 
   static ellipseLongString(input, len = 100, end = '...') {
+    if (!input) return input
     return input.length > len ? input.substring(0, len) + end : input
   }
 
@@ -72,11 +116,18 @@ class StrHelper {
     return input.replace(/[(][^)]*[)]/g, '')
   }
 
+  static pad(num, size) {
+    num = num.toString();
+    while (num.length < size) num = "0" + num;
+    return num;
+  }
+
   static ignoreSpaces(input) {
     if (!input) return input
     input = '' + input
     return input.replace(/\s/g, '')
   }
+
 
   static getTwoStringByLastDelim(input, delim = '.') {
     const lastIndexOf = input.lastIndexOf(delim)
@@ -113,8 +164,8 @@ class StrHelper {
       typeof Number.isNaN !== 'undefined'
         ? Number.isNaN(tryFloat)
         : tryFloat !== tryFloat
-        ? true
-        : false
+          ? true
+          : false
     return isNaN ? 0 : tryFloat
   }
 
@@ -131,6 +182,19 @@ class StrHelper {
     return res
   }
 
+  static getAllIntegerNumbers(input) {
+    // К примеру, есть строка: '123 adsf asdf  234324 22'
+    // Получаем из нее массив строковых чисел: ['123', '234324', '22']"""
+    input = input.replace('\n', '')
+    const r = new RegExp(`[0-9]+`, 'g')
+    let result = []
+    let m
+    while ((m = r.exec(input)) != null) {
+      (m[0] != '.') && result.push(m[0])
+    }
+    return result
+  }
+
   static getAllNumbers(input, floatDelim = '.') {
     // К примеру, есть строка: '123 adsf asdf  234324 22'
     // Получаем из нее массив строковых чисел: ['123', '234324', '22']"""
@@ -139,18 +203,50 @@ class StrHelper {
     input = input.replace('.', floatDelim)
     //return input.replace(/[(][^)]*[)]+/g, '')
     const r = new RegExp(`[0-9${floatDelim}]+`, 'g')
+    const existNumbers = new RegExp(`[0-9]+`, 'g')
     let result = []
     let m
     while ((m = r.exec(input)) != null) {
-      result.push(m[0])
+      (m[0] != '.' && existNumbers.exec(m[0])) && result.push(m[0])
     }
     // let result = input.match(regexp) || []
     return result
   }
 
+  static getSearchGroupsInRegexp(regStr, input) {
+    let res = []
+    const matches = input.match(new RegExp(regStr))
+    if (!matches || matches.length < 1)
+      return
+
+    for (let iMatch = 1; iMatch < matches.length; iMatch++) {
+      res.push(matches[iMatch])
+    }
+    return res
+  }
+
+  static removeByRegExp(regStr, input) {
+    if (!input) return input
+    input = '' + input
+    const r = new RegExp(regStr, 'g')
+    return input.replace(r, '')
+  }
+
   static varToString(varObj) {
     return Object.keys(varObj)[0]
   }
-}
 
-module.exports = StrHelper
+  static capitalizeFirstLetter(input) {
+    if (!input) {
+      return ''
+    }
+    return input.charAt(0).toUpperCase() + input.slice(1)
+  }
+
+  static capitalizeFirstLetterAllWords(input) {
+    if (!input) {
+      return ''
+    }
+    return input.split(' ').map(this.capitalizeFirstLetter).join(' ')
+  }
+}

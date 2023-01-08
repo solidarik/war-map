@@ -1,5 +1,5 @@
-import SuperFeature from './superFeature'
-import DateHelper from '../../helper/dateHelper'
+import SuperFeature from './superFeature.js'
+import DateHelper from '../../helper/dateHelper.js'
 
 class AgreementFeature extends SuperFeature {
   static getIcon() {

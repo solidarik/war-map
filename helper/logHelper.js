@@ -1,21 +1,34 @@
-const chalk = require('chalk');
-const moment = require('moment');
-const { createLogger, format, transports } = require('winston');
-const { combine, timestamp, label, colorize, splat, printf } = format;
+import chalk from 'chalk'
+import winston from 'winston'
 
-class Log {
-    constructor() {
+const createLogger = winston.createLogger
+const transports = winston.transports
+const { combine, colorize, splat, printf } = winston.format;
+
+export default class Log {
+    static create(fileName = undefined) {
+        return new Log(fileName)
+    }
+
+    constructor(fileName = undefined) {
 
         const myFormat = printf(info => {
-            return `${moment().format('YYYY-MM-DD hh:mm:ss').trim()} ${info.level}: ${info.message}`;
+            // return `${moment().format('YYYY-MM-DD hh:mm:ss').trim()} ${info.level}: ${info.message}`;
+            return `${info.message}`;
         });
+
+        let logTransports = [new transports.Console()]
+        if (fileName) {
+            logTransports.push(new transports.File({ filename: fileName }))
+        }
+
         const log = createLogger({
             format: combine(
                 splat(),
                 colorize(),
                 myFormat
             ),
-            transports: [new transports.Console()]
+            transports: logTransports
         });
 
         this.log = log;
@@ -37,21 +50,10 @@ class Log {
     }
 
     success(text) {
-        log.info(chalk.blue(text));
+        this.log.info(chalk.blue(text));
     }
 
     boom(text) {
-        log.info(chalk.magenta(text));
+        this.log.info(chalk.magenta(text));
     }
 }
-
-let log = new Log();
-
-warn = (text) => { log.warn(text); }
-info = (text) => { log.info(text); }
-error  = (text, err) => { log.error(text, err) }
-warn = (text) => { log.warn(text); }
-success = (text) => { log.success(text); }
-boom = (text) => { log.boom(text); }
-
-module.exports = log;

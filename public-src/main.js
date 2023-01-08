@@ -1,7 +1,7 @@
-import { MapControl } from './mapControl'
-import { LegendControl } from './legendControl'
-import { ClientProtocol } from './clientProtocol'
-import { InfoControl } from './infoControl'
+import MapControl from './mapControl.js'
+import LegendControl from './legendControl.js'
+import ClientProtocol from './clientProtocol.js'
+import InfoControl from './infoControl.js'
 
 import $ from 'jquery'
 window.app = {}
@@ -30,7 +30,6 @@ function startApp() {
   const infoControl = InfoControl.create()
 
   protocol.subscribe('setCurrentYear', (year) => {
-    console.log(`year from the server ${year}`)
     mapControl.setCurrentYearFromServer(year)
   })
 

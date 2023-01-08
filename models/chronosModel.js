@@ -1,15 +1,30 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 var chronosSchema = new mongoose.Schema(
   {
     pageId: Number,
-    startDate: {
-      type: Date,
-      required: 'Не задана начальная дата события',
+    loadStatus: String,
+    isOnMap: Boolean,
+    lineSource: Number,
+
+    start: {
+      year: Number,
+      month: Number,
+      day: Number,
+      dateStr: String,
+      isOnlyYear: Boolean,
+      isOnlyCentury: Boolean,
+      century: Number
     },
-    startDateStr: String,
-    isOnlyYear: Boolean,
-    endDate: Date,
+    end: {
+      year: Number,
+      month: Number,
+      day: Number,
+      dateStr: String,
+      isOnlyYear: Boolean,
+      isOnlyCentury: Boolean,
+      century: Number
+    },
     place: String,
     point: [],
     pageUrl: {
@@ -33,4 +48,4 @@ var chronosSchema = new mongoose.Schema(
 
 chronosSchema.statics.publicFields = ['startDate', 'endDate', 'isOnlyYear']
 
-module.exports = mongoose.model('chronos', chronosSchema)
+export default mongoose.model('chronos', chronosSchema)

@@ -1,10 +1,13 @@
-class SuperJsonMediator {
+export default class SuperJsonMediator {
+
   addObjectToBase(json) {
     return new Promise((resolve, reject) => {
       const obj = new this.model(json)
       obj
         .save()
-        .then((res) => resolve(obj['_id'.toString()]))
+        .then((res) => {
+          resolve(obj['_id'.toString()])
+        })
         .catch((err) => {
           reject(err)
         })
@@ -37,5 +40,3 @@ class SuperJsonMediator {
     })
   }
 }
-
-module.exports = SuperJsonMediator

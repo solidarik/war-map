@@ -1,4 +1,4 @@
 
 // request/response logger
-const logger = require('koa-logger');
-exports.init = app => app.use(logger());
+import logger from 'koa-logger'
+export function init(app) { return app.use(logger()) }

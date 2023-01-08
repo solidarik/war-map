@@ -14,18 +14,19 @@ import { default as olLayerVector } from 'ol/layer/Vector'
 import * as olSource from 'ol/source'
 import * as olTilegrid from 'ol/tilegrid'
 import * as olInteraction from 'ol/interaction'
-import { EventEmitter } from './eventEmitter'
 import proj4 from 'proj4'
 import { register } from 'ol/proj/proj4'
 //import { default as olPopup } from 'ol-ext/overlay/Popup'
 import { default as olAnimatedCluster } from 'ol-ext/layer/AnimatedCluster'
 import { default as olFeatureAnimationZoom } from 'ol-ext/featureanimation/Zoom'
 import { easeOut } from 'ol/easing'
-import ClassHelper from '../helper/classHelper'
-import StrHelper from '../helper/strHelper'
-import BattleFeature from './mapLayers/battleFeature'
-import AgreementFeature from './mapLayers/agreementFeature'
-import ChronosFeature from './mapLayers/chronosFeature'
+
+import EventEmitter from './eventEmitter.js'
+import ClassHelper from '../helper/classHelper.js'
+import StrHelper from '../helper/strHelper.js'
+import BattleFeature from './mapLayers/battleFeature.js'
+import AgreementFeature from './mapLayers/agreementFeature.js'
+import ChronosFeature from './mapLayers/chronosFeature.js'
 
 const MAP_PARAMS = {
   min_year: 1914,
@@ -33,7 +34,7 @@ const MAP_PARAMS = {
   isEnableAnimate: true,
 }
 
-export class MapControl extends EventEmitter {
+export default class MapControl extends EventEmitter {
   constructor() {
     super() //first must
 
@@ -640,6 +641,7 @@ export class MapControl extends EventEmitter {
   }
 
   addFeature(item) {
+
     const ft = new olFeature({
       info: item,
       classFeature: item.classFeature,

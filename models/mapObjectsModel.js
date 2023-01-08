@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose'
+
 var mapObjectSchema = new mongoose.Schema({
   uid: {
     type: String,
@@ -35,4 +36,4 @@ var mapObjectSchema = new mongoose.Schema({
 });
 
 
-module.exports = mongoose.model('mapObjects', mapObjectSchema, 'mapObjects');
+export default mongoose.model('mapObjects', mapObjectSchema, 'mapObjects');

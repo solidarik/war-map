@@ -1,38 +1,38 @@
-const errorHandler = async function(ctx, next) {
+export function init(app) {
+    return app.use(async (ctx, next) => {
 
-    try {
-        await next();
-    } catch (e) {
+        try {
+            await next();
+        } catch (e) {
 
-        let preferredType = ctx.accepts('html', 'json');
+            let preferredType = ctx.accepts('html', 'json');
 
-        if (e.status) {
-            // could use template methods to render error page
-            ctx.body = e.message;
-            ctx.status = e.status;
-        } else if (e.name == "ValidationError") {
+            if (e.status) {
+                // could use template methods to render error page
+                ctx.body = e.message;
+                ctx.status = e.status;
+            } else if (e.name == "ValidationError") {
 
-            ctx.status = 400;
+                ctx.status = 400;
 
-            let errors = {};
+                let errors = {};
 
-            for (let field in e.errors) {
-                errors[field] = e.errors[field].message;
-            }
+                for (let field in e.errors) {
+                    errors[field] = e.errors[field].message;
+                }
 
-            if (preferredType == "json") {
-                ctx.body = {
-                    errors: errors
-                };
+                if (preferredType == "json") {
+                    ctx.body = {
+                        errors: errors
+                    };
+                } else {
+                    ctx.body = "Некорректные параметры.";
+                }
             } else {
-                ctx.body = "Некорректные параметры.";
+                ctx.body = "Error 500";
+                ctx.status = 500;
+                console.error(e.message, e.stack);
             }
-        } else {
-            ctx.body = "Error 500";
-            ctx.status = 500;
-            console.error(e.message, e.stack);
         }
-    }
-};
-
-exports.init = app => app.use(errorHandler);
+    })
+}
