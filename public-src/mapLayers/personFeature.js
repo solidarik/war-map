@@ -35,10 +35,23 @@ class PersonFeature extends SuperFeature {
   static getHtmlInfo(info) {
     window.CURRENT_ITEM = info
     const delimSymbol = '<br/>'
-    const html = `<div class="person-info panel-info">
+
+    let imgHtml = ''
+    const photoUrl = info.photoUrl
+    if (photoUrl) {
+      imgHtml = `<img src="${photoUrl}" class="rounded float-start imageFeatureInfo"></img>`
+    }
+
+    let html = `<div class="person-info panel-info">
+    <div class="row">
+      <div class="col-md-auto">
+        ${imgHtml}
+      </div>
+      <div class="col">
       <h1>${info.surname} ${info.name} ${info.middlename}</h1>
       <h2>${info.activity}</h2>
       <table class="table table-sm table-borderless" id="table-info">
+        <thead>
         <tbody>
           ${
             info.dateAchievementStr
@@ -70,6 +83,7 @@ class PersonFeature extends SuperFeature {
       <div class="source-info">
         <a target='_blank' rel='noopener noreferrer' href=
         person/${info.pageUrl}>Подробнее</a>
+      </div>
       </div>
     </div>
     `

@@ -33,6 +33,11 @@ body {
   background-position: left top; */
 }
 
+.imageFeatureInfo {
+  margin-top: 5px;
+  width: 200px;
+}
+
 .nav > li {
   display: inline-block;
   width: initial;

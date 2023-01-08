@@ -43,7 +43,7 @@ const getPersons = async function (ctx, next) {
   //const persons = await personsModel.find({})
 
   //ctx.state = {'persons': JSON.parse(persons)}
-  ctx.state = { 'persons': persons }
+  ctx.state = { 'persons': persons, 'description': 'Герои ВОВ' }
   next()
 }
 
@@ -57,7 +57,13 @@ const getPerson = async function (ctx, next) {
 
   // const persons = await personsModel.find({})
 
-  ctx.state = { 'person': person[0], 'persons': [] }
+  const fio = [person[0].surname, person[0].name, person[0].middlename].join(' ')
+
+  ctx.state = {
+    'person': person[0],
+    'persons': [],
+    'description': `${fio}. ${person[0].description}`
+  }
   next()
 }
 

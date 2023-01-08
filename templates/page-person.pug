@@ -8,6 +8,8 @@ block head
   script(src='/libs/d3.min.js')
   //script(src='/libs/jquery.min.js')
 
+  meta(name='description', content=`${JSON.parse(state).description}`)
+
   script(src='/libs/main-persons.js')
 
 block content
