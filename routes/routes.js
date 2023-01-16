@@ -60,7 +60,7 @@ const getPerson = async function (ctx, next) {
   const fio = [person[0].surname, person[0].name, person[0].middlename].join(' ')
   let img = person[0].photoUrl ? `${person[0].photoUrl.replaceAll('\\', '/')}` : '/favicon/favicon-32x32.png'
   if (img[0] == '/') {
-    img = `http://ww3d.ru/${img}`
+    img = `http://ww3d.ru${img}`
   }
 
   ctx.state = {
