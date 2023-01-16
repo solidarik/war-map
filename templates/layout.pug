@@ -3,28 +3,32 @@ doctype html
 html
 
   head
-    meta(name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no")
+    meta(name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
     title Хроника военных действий
 
     //bootstrap
-    script(src="/libs/jquery.min.js" defer=defer)
-    link(rel="stylesheet" href="/libs/bootstrap.min.css")
-    script(src="/libs/popper.min.js" defer=defer)
-    script(src="/libs/bootstrap.min.js" defer=defer)
+    script(src='/libs/jquery.min.js' defer=defer)
+    link(rel='stylesheet' href='/libs/bootstrap.min.css')
+    script(src='/libs/popper.min.js' defer=defer)
+    script(src='/libs/bootstrap.min.js' defer=defer)
 
-    link(rel="stylesheet" href="/style.css")
+    link(rel='stylesheet' href='/style.css')
 
-    script(src="/socket.io/socket.io.js")
+    script(src='/socket.io/socket.io.js')
 
     //favicon
-    link(rel="icon" type="image/png" href="/favicon/favicon-32x32.png" sizes="32x32")
-    link(rel="icon" type="image/png" href="/favicon/favicon-16x16.png" sizes="16x16")
-    link(rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png")
-    link(rel="manifest" href="/site.webmanifest")
-    link(rel="mask-icon" href="/safari-pinned-tab.svg" color="#ff0000")
-    meta(name="msapplication-TileColor" content="#2b5797")
-    meta(name="theme-color" content="#ffffff")
-    mata(property="og:site_name" content="Хроника военных действий")
+    link(rel='icon' type='image/png' href='/favicon/favicon-32x32.png' sizes='32x32')
+    link(rel='icon' type='image/png' href='/favicon/favicon-16x16.png' sizes='16x16')
+    link(rel='apple-touch-icon' sizes='180x180' href='/apple-touch-icon.png')
+    link(rel='manifest' href='/site.webmanifest')
+    link(rel='mask-icon' href='/safari-pinned-tab.svg' color='#ff0000')
+    meta(name='msapplication-TileColor' content='#2b5797')
+    meta(name='theme-color' content='#ffffff')
+
+    mata(property='og:title' content='Хроника военных действий')
+    mata(property='og:type' content='website')
+    mata(property='og:site_name' content='Хроника военных действий')
+    meta(property='og:image' itemprop='image' content='/favicon/favicon-32x32.png')
 
     script.
       window.state = !{state}
