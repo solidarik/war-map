@@ -31,15 +31,15 @@ Promise.resolve(true)
   .then(() => {
     return dbHelper.connect()
   })
-  // .then(() => {
-  //   return xlsGoogleParserChronos.processData(dbHelper)
-  // })
-  // .then(() => {
-  //   return xlsGoogleParserAgreements.processData(dbHelper)
-  // })
-  // .then(() => {
-  //   return xlsGoogleParserBattles.processData(dbHelper)
-  // })
+  .then(() => {
+    return xlsGoogleParserChronos.processData(dbHelper)
+  })
+  .then(() => {
+    return xlsGoogleParserAgreements.processData(dbHelper)
+  })
+  .then(() => {
+    return xlsGoogleParserBattles.processData(dbHelper)
+  })
   .then(() => {
     return fileParserPersons.processData(dbHelper)
   })
