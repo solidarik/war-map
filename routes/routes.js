@@ -58,11 +58,14 @@ const getPerson = async function (ctx, next) {
   // const persons = await personsModel.find({})
 
   const fio = [person[0].surname, person[0].name, person[0].middlename].join(' ')
+  const img = person[0].photoUrl ? person[0].photoUrl : '/favicon/favicon-32x32.png'
 
   ctx.state = {
     'person': person[0],
     'persons': [],
-    'description': `${fio}. ${person[0].description}`
+    'description': `${person[0].description}`,
+    'fio': `${fio}`,
+    'img': `${img}`
   }
   next()
 }
