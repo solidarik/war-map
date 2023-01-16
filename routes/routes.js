@@ -58,7 +58,10 @@ const getPerson = async function (ctx, next) {
   // const persons = await personsModel.find({})
 
   const fio = [person[0].surname, person[0].name, person[0].middlename].join(' ')
-  const img = person[0].photoUrl ? `http://ww3d.ru${person[0].photoUrl.replaceAll('\\', '/')}` : '/favicon/favicon-32x32.png'
+  let img = person[0].photoUrl ? `${person[0].photoUrl.replaceAll('\\', '/')}` : '/favicon/favicon-32x32.png'
+  if (img[0] == '/') {
+    img = `http://ww3d.ru/${img}`
+  }
 
   ctx.state = {
     'person': person[0],
