@@ -50,7 +50,7 @@ const getPersons = async function (ctx, next) {
 const getPerson = async function (ctx, next) {
 
   const person = await personsModel.find({ 'pageUrl': ctx.params.name })
-  if (!person) return
+  if (!person || person.length == 0) return
 
   // persons = await redisClient.get('persons')
   // if (!persons) return

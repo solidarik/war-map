@@ -67,7 +67,7 @@ export default class FileParserPersons extends FileParser {
                     let writeResult = await photo.writeAsync(destFullUrl)
 
                     const destShortUrl = `public/img/person-short/${pageUrl}.png`
-                    photo.resize(256, Jimp.AUTO).quality(100)
+                    photo.resize(600, Jimp.AUTO).quality(100)
                     writeResult = await photo.writeAsync(destShortUrl)
                     json.photoFullUrl = `/img/person-full/${pageUrl}.png`
                     json.photoShortUrl = `/img/person-short/${pageUrl}.png`
