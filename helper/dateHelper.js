@@ -303,7 +303,6 @@ export default class DateHelper {
       "day": d,
       "century": century,
       "dateStr": outputStr,
-      'date': (y > 0) ? 
       "isOnlyYear": isOnlyYear,
       "isOnlyCentury": isOnlyCentury,
       "isUserText": isUserText

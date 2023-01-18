@@ -32,11 +32,12 @@ export default class ImageHelper {
     return (sourceImage.src = url)
   }
 
-  static loadImageToFile(folder, url, fileName) {
+  static loadImageToFile(url, fileName) {
+    let res = { saved: false, warning: null, error: null, url: url }
+
     return new Promise((resolve) => {
       try {
 
-        res = { saved: false, warning: null, error: null, url: url }
 
         const re = /(?:\.([^.]+))?$/
         const ext = re.exec(url)[1]
@@ -51,11 +52,9 @@ export default class ImageHelper {
             }
           }
         }
-        fileName += '.' + selectedExt
+        // fileName += '.' + selectedExt
 
-        const localFilePath = path.resolve(__dirname, folder, fileName);
-
-        if (fileHelper.isFileExists(localFilePath)) {
+        if (fileHelper.isFileExists(fileName)) {
           res.warning = 'File is exist'
           resolve(res)
           return
@@ -69,7 +68,7 @@ export default class ImageHelper {
 
         })
           .then(response => {
-            const w = response.data.pipe(fs.createWriteStream(localFilePath))
+            const w = response.data.pipe(fs.createWriteStream(fileName))
             w.on('finish', () => {
               res.saved = true
               resolve(res)
@@ -80,7 +79,7 @@ export default class ImageHelper {
             resolve(res)
           })
       } catch (err) {
-        res.error = `Program error in ${arguments.callee.toString()}`
+        res.error = `Program error in ${err}`
         resolve(res)
       }
 

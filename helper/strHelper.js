@@ -128,6 +128,13 @@ export default class StrHelper {
     return input.replace(/\s/g, '')
   }
 
+  static getLastAfterDelim(input, delim = '.') {
+    const lastIndexOf = input.lastIndexOf(delim)
+    if (lastIndexOf < 0)
+      return undefined
+
+    return input.substr(lastIndexOf + 1, input.length).trim()
+  }
 
   static getTwoStringByLastDelim(input, delim = '.') {
     const lastIndexOf = input.lastIndexOf(delim)

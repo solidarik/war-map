@@ -59,8 +59,8 @@ export default class addPersons extends EventEmitter {
       'Дата и место смерти - ' +
         cur.dateDeathStr + ' ' + cur.placeDeath
     )
-    $('#imgPerson').src = cur.photoUrl
-    $('#imgPerson').attr('src', cur.photoUrl)
+    $('#imgPerson').src = cur.photoFullUrl
+    $('#imgPerson').attr('src', cur.photoFullUrl)
     $('#description').html(
       cur.description +
       (!cur.srcUrl ? '' :

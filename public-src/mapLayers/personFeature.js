@@ -37,7 +37,7 @@ class PersonFeature extends SuperFeature {
     const delimSymbol = '<br/>'
 
     let imgHtml = ''
-    const photoUrl = info.photoUrl
+    const photoUrl = info.photoShortUrl
     if (photoUrl) {
       imgHtml = `<img src="${photoUrl}" class="rounded float-start imageFeatureInfo"></img>`
     }

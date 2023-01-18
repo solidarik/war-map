@@ -1,6 +1,5 @@
 import path from 'path'
 import fs from 'fs'
-import { fileURLToPath } from 'url'
 
 export default class FileHelper {
 
@@ -50,8 +49,8 @@ export default class FileHelper {
   }
 
   static getJsonFromFile(filePath) {
-    let obj = JSON.parse(fs.readFileSync(filePath, 'utf8'))
-    return obj
+    const content = fs.readFileSync(filePath, {encoding: 'utf8'})
+    return JSON.parse(content)
   }
 
   static textJson(json) {

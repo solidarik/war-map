@@ -1,6 +1,9 @@
 import FileParser from '../loadDatabase/fileParser.js'
 import PersonModel from '../models/personsModel.js'
 import DateHelper from '../helper/dateHelper.js'
+import Jimp from 'jimp'
+import ImageHelper from '../helper/imageHelper.js'
+import StrHelper from '../helper/strHelper.js'
 
 export default class FileParserPersons extends FileParser {
 
@@ -11,6 +14,7 @@ export default class FileParserPersons extends FileParser {
         this.pageUrls = ['surname', 'name']
         this.model = PersonModel
         this.filepath = filepath
+        // this.maxRow = 2
     }
 
     async getJsonFromRow(row) {
@@ -34,7 +38,47 @@ export default class FileParserPersons extends FileParser {
             json.description = row.Description
             json.fullDescription = row.FullDescription
             json.srcUrl = row.Source
-            json.photoUrl = row.PhotoUrl
+
+            console.log(json.surname)
+
+            const pageUrl = this.getPageUrl(json)
+
+            try {
+                let photoUrl = row.PhotoUrl
+                if (photoUrl) {
+                    photoUrl = photoUrl.replaceAll('\\', '/')
+                    console.log(photoUrl)
+                    if (photoUrl[0] == '/') {
+                        const filename = StrHelper.getLastAfterDelim(photoUrl, '/')
+                        photoUrl = `public/img/person/${filename}`
+                    } else {
+                        const middleUrl = `public/img/person-middle/${pageUrl}.png`
+                        const res = await ImageHelper.loadImageToFile(photoUrl, middleUrl)
+                        if (res.error) {
+                            throw Error(`Не удалось обработать фото ${row.PhotoUrl}: ${res.error}`)
+                        }
+                        photoUrl = middleUrl
+                    }
+
+                    const destFullUrl = `public/img/person-full/${pageUrl}.png`
+                    console.log(`srcUrl: ${photoUrl}, destFullUrl: ${destFullUrl}`)
+
+                    let photo = await Jimp.read(photoUrl)
+
+                    await photo.getBufferAsync(Jimp.MIME_PNG)
+                    let writeResult = await photo.writeAsync(destFullUrl)
+
+                    const destShortUrl = `public/img/person-short/${pageUrl}.png`
+                    photo.resize(256, Jimp.AUTO).quality(100)
+                    writeResult = await photo.writeAsync(destShortUrl)
+                    json.photoFullUrl = `/img/person-full/${pageUrl}.png`
+                    json.photoShortUrl = `/img/person-short/${pageUrl}.png`
+                }
+            } catch (err) {
+                console.error(err)
+                json.warningArr.push('' + err)
+            }
+
             json.linkUrls = row.Link.split(' http')
             json.linkUrls = json.linkUrls.filter(item => (item && item.length != 0))
             json.linkUrls = json.linkUrls.map((item, idx) => (idx == 0 ? item : 'http' + item))

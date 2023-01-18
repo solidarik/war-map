@@ -335,13 +335,13 @@ export default class MapControl extends EventEmitter {
     let geom
     switch (mo.kind) {
       case 'Point':
-        geom = new ol.geom.Point(mo.coords)
+        geom = new olGeom.Point(mo.coords)
         break
       case 'LineString':
-        geom = new ol.geom.LineString(mo.coords)
+        geom = new olGeom.LineString(mo.coords)
         break
       case 'Polygon':
-        geom = new ol.geom.Polygon(mo.coords)
+        geom = new olGeom.Polygon(mo.coords)
         break
     }
     return geom

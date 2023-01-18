@@ -11,6 +11,10 @@ Thubms.db
 
 *secret*
 
+*person-short*
+*person-full*
+*person-middle*
+
 *.class
 
 package-lock.json
