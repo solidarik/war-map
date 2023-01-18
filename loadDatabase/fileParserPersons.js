@@ -47,7 +47,6 @@ export default class FileParserPersons extends FileParser {
                 let photoUrl = row.PhotoUrl
                 if (photoUrl) {
                     photoUrl = photoUrl.replaceAll('\\', '/')
-                    console.log(photoUrl)
                     if (photoUrl[0] == '/') {
                         const filename = StrHelper.getLastAfterDelim(photoUrl, '/')
                         photoUrl = `public/img/person/${filename}`
@@ -61,7 +60,6 @@ export default class FileParserPersons extends FileParser {
                     }
 
                     const destFullUrl = `public/img/person-full/${pageUrl}.png`
-                    console.log(`srcUrl: ${photoUrl}, destFullUrl: ${destFullUrl}`)
 
                     let photo = await Jimp.read(photoUrl)
 

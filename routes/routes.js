@@ -69,7 +69,7 @@ const getPerson = async function (ctx, next) {
     'persons': [],
     'description': `${person[0].description}`,
     'fio': `${fio}`,
-    'img': `${img}`
+    'img': `http://ww3d.ru${img}`
   }
   next()
 }
