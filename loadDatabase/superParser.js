@@ -44,10 +44,15 @@ export default class SuperParser {
         return StrHelper.generatePageUrl(pageUrlsLocal)
     }
 
-    async processData(dbHelper) {
+    async processData(dbHelper, isClearData = false) {
 
         const modelName = this.model.collection.collectionName
-        await dbHelper.clearModel(this.model)
+
+        if (!isClearData) {
+            console.log(`Очистка модели ${this.name}`)
+            await dbHelper.clearModel(this.model)
+        }
+
         this.log.info(chalk.yellow(`Загрузка ${this.name}`))
 
         let insertObjects = []

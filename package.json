@@ -50,6 +50,7 @@
     "dotenv": "latest",
     "google-auth-library": "latest",
     "googleapis": "latest",
+    "iconv": "^3.0.1",
     "jimp": "^0.16.2",
     "jquery": "latest",
     "koa": "latest",

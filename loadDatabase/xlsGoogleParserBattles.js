@@ -9,12 +9,13 @@ import convexHull from 'monotone-convex-hull-2d'
 
 export default class XlsGoogleParserBattles extends XlsGoogleParser {
 
-    constructor(log) {
+    constructor(log, spreadsheetId, kind) {
         super()
         this.log = log
         this.name = 'ВОВ. Битвы'
         this.pageUrls = ['name', 'startDateStr']
-        this.spreadsheetId = process.env.GOOGLE_SHEET_ID_BATTLES
+        this.kind = kind
+        this.spreadsheetId = spreadsheetId
         this.range = 'A1:AP'
         this.model = BattlesModel
 
@@ -167,6 +168,7 @@ export default class XlsGoogleParserBattles extends XlsGoogleParser {
             json.isWinnerUSSR = StrHelper.compareEngLanguage(json.winner, 'CCCР')
             json.isWinnerGermany = StrHelper.compareEngLanguage(json.winner, 'Германия')
             json.hullCoords = hullCoords
+            json.kind = this.kind
 
         } catch (e) {
             json.errorArr.push('' + e)

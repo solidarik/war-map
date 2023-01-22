@@ -14,7 +14,7 @@ const filePath2 = '../models/battlesModel.js';
 ;(async function() {
   try {
 
-    const coords = await inetHelper.getLonLatSavedCoords('Цецылювка, Польша')
+    const coords = await inetHelper.getLonLatSavedCoords('с. Киевское, Крымский район, Краснодарский край, РСФСР, СССР')
     console.log(coords)
 
     await dbHelper.connect();

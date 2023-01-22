@@ -13,6 +13,7 @@ const log = Log.create('load.log')
 import XlsGoogleParserChronos from './xlsGoogleParserChronos.js'
 import XlsGoogleParserAgreements from './xlsGoogleParserAgreements.js'
 import XlsGoogleParserBattles from './xlsGoogleParserBattles.js'
+import XlsGoogleParserPersons from './xlsGoogleParserPersons.js'
 import FileParserPersons from './fileParserPersons.js'
 
 log.success(chalk.greenBright(`Запуск процесса загрузки ${DateHelper.nowToStr()}`))
@@ -24,7 +25,15 @@ const dbHelper = new DbHelper()
 
 const xlsGoogleParserChronos = new XlsGoogleParserChronos(log)
 const xlsGoogleParserAgreements = new XlsGoogleParserAgreements(log)
-const xlsGoogleParserBattles = new XlsGoogleParserBattles(log)
+
+const wowSheetId = process.env.GOOGLE_SHEET_ID_BATTLES
+const xlsGoogleParserBattles = new XlsGoogleParserBattles(log, wowSheetId, 'wow')
+
+const wmwSheetId = process.env.GOOGLE_SHEET_ID_BATTLES_WMW
+const xlsGoogleParserBattlesWMW = new XlsGoogleParserBattles(log, wmwSheetId, 'wmw')
+
+const xlsGoogleParserPersons = new XlsGoogleParserPersons(log)
+
 const fileParserPersons = new FileParserPersons(log, './public/data/persons.json')
 
 Promise.resolve(true)
@@ -37,12 +46,18 @@ Promise.resolve(true)
   // .then(() => {
   //   return xlsGoogleParserAgreements.processData(dbHelper)
   // })
-  // .then(() => {
-  //   return xlsGoogleParserBattles.processData(dbHelper)
-  // })
   .then(() => {
-    return fileParserPersons.processData(dbHelper)
+    return xlsGoogleParserBattles.processData(dbHelper, true)
   })
+  .then(() => {
+    return xlsGoogleParserBattlesWMW.processData(dbHelper, false)
+  })
+  // .then(() => {
+  //   return xlsGoogleParserPersons.processData(dbHelper)
+  // })
+  // .then(() => {
+  //   return fileParserPersons.processData(dbHelper)
+  // })
   .then(() => {
     log.success(chalk.greenBright(`Окончание процесса загрузки ${DateHelper.nowToStr()}`))
     dbHelper.free()

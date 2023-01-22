@@ -109,13 +109,13 @@ class InetHelper {
 
   getLonLatSavedCoords(input) {
     input = input.replace(/"/g, '')
+
     let testNames = [input]
+    testNames.push(input.trim().toLowerCase())
 
     input = input.trim().toLowerCase()
-    testNames.push(input)
 
-    input = input.replace(',', '')
-    testNames.push(input)
+    testNames.push(input.replace(',', ''))
 
     let name = StrHelper.shrinkStringBeforeDelim(input)
     testNames.push(name)

@@ -39,6 +39,7 @@ var personsSchema = new mongoose.Schema(
     placeDeath: String,
     placeDeathCoords: [],
     activity: String,
+    isInvertor: Boolean
   },
   {
     timestamps: false,

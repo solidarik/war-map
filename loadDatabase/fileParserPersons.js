@@ -10,7 +10,7 @@ export default class FileParserPersons extends FileParser {
     constructor(log, filepath) {
         super()
         this.log = log
-        this.name = 'ВОВ. Персоны'
+        this.name = 'ВОВ. Герои'
         this.pageUrls = ['surname', 'name']
         this.model = PersonModel
         this.filepath = filepath
@@ -39,8 +39,6 @@ export default class FileParserPersons extends FileParser {
             json.fullDescription = row.FullDescription
             json.srcUrl = row.Source
 
-            console.log(json.surname)
-
             const pageUrl = this.getPageUrl(json)
 
             try {
@@ -54,7 +52,7 @@ export default class FileParserPersons extends FileParser {
                         const middleUrl = `public/img/person-middle/${pageUrl}.png`
                         const res = await ImageHelper.loadImageToFile(photoUrl, middleUrl)
                         if (res.error) {
-                            throw Error(`Не удалось обработать фото ${row.PhotoUrl}: ${res.error}`)
+                            throw Error(`Не удалось обработать фото ${row.PhotoUrl}`) //: ${res.error}`)
                         }
                         photoUrl = middleUrl
                     }
