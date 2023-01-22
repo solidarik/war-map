@@ -48,7 +48,7 @@ export default class SuperParser {
 
         const modelName = this.model.collection.collectionName
 
-        if (!isClearData) {
+        if (isClearData) {
             console.log(`Очистка модели ${this.name}`)
             await dbHelper.clearModel(this.model)
         }
