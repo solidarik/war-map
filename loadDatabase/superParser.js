@@ -44,7 +44,7 @@ export default class SuperParser {
         return StrHelper.generatePageUrl(pageUrlsLocal)
     }
 
-    async processData(dbHelper, isClearData = false) {
+    async processData(dbHelper, isClearData = true) {
 
         const modelName = this.model.collection.collectionName
 

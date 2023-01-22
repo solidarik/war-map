@@ -52,9 +52,9 @@ Promise.resolve(true)
   .then(() => {
     return xlsGoogleParserBattlesWMW.processData(dbHelper, false)
   })
-  // .then(() => {
-  //   return xlsGoogleParserPersons.processData(dbHelper)
-  // })
+  .then(() => {
+    return xlsGoogleParserPersons.processData(dbHelper)
+  })
   // .then(() => {
   //   return fileParserPersons.processData(dbHelper)
   // })
